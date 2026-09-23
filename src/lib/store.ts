@@ -1,0 +1,171 @@
+import { useCallback, useEffect, useState } from "react";
+import type { ClassId } from "./ges";
+
+export interface School {
+  name: string;
+  address: string;
+  term: string;
+  academicYear: string;
+  reopeningDate: string;
+  classTeacher: string;
+  headTeacher: string;
+  totalAttendance: string;
+}
+
+export interface Student {
+  id: string;
+  name: string;
+  admissionNo: string;
+  classId: ClassId;
+  attendance: string;
+  /** subject name -> { sba, exam } */
+  scores: Record<string, { sba: number | null; exam: number | null }>;
+  conduct: string;
+  interest: string;
+}
+
+export interface AppData {
+  school: School;
+  students: Student[];
+}
+
+const STORAGE_KEY = "sba-report-cards-v1";
+
+export const DEFAULT_SCHOOL: School = {
+  name: "",
+  address: "",
+  term: "Term 1",
+  academicYear: "2025/2026",
+  reopeningDate: "",
+  classTeacher: "",
+  headTeacher: "",
+  totalAttendance: "60",
+};
+
+const initialData: AppData = { school: DEFAULT_SCHOOL, students: [] };
+
+let data: AppData = initialData;
+let hydrated = false;
+const listeners = new Set<() => void>();
+
+function emit() {
+  listeners.forEach((l) => l());
+}
+
+function persist() {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    /* storage unavailable */
+  }
+}
+
+function hydrate() {
+  if (hydrated || typeof window === "undefined") return;
+  hydrated = true;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as Partial<AppData>;
+      data = {
+        school: { ...DEFAULT_SCHOOL, ...(parsed.school ?? {}) },
+        students: parsed.students ?? [],
+      };
+    }
+  } catch {
+    /* ignore malformed data */
+  }
+  emit();
+}
+
+export function updateData(updater: (current: AppData) => AppData) {
+  data = updater(data);
+  persist();
+  emit();
+}
+
+export function useAppData() {
+  const [snapshot, setSnapshot] = useState<AppData>(data);
+
+  useEffect(() => {
+    hydrate();
+    const listener = () => setSnapshot(data);
+    listeners.add(listener);
+    listener();
+    return () => {
+      listeners.delete(listener);
+    };
+  }, []);
+
+  const setSchool = useCallback((patch: Partial<School>) => {
+    updateData((current) => ({ ...current, school: { ...current.school, ...patch } }));
+  }, []);
+
+  const addStudent = useCallback((name: string, classId: ClassId, admissionNo: string) => {
+    updateData((current) => ({
+      ...current,
+      students: [
+        ...current.students,
+        {
+          id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          name,
+          admissionNo,
+          classId,
+          attendance: "",
+          scores: {},
+          conduct: "",
+          interest: "",
+        },
+      ],
+    }));
+  }, []);
+
+  const updateStudent = useCallback((id: string, patch: Partial<Student>) => {
+    updateData((current) => ({
+      ...current,
+      students: current.students.map((s) => (s.id === id ? { ...s, ...patch } : s)),
+    }));
+  }, []);
+
+  const removeStudent = useCallback((id: string) => {
+    updateData((current) => ({
+      ...current,
+      students: current.students.filter((s) => s.id !== id),
+    }));
+  }, []);
+
+  const setScore = useCallback(
+    (id: string, subject: string, field: "sba" | "exam", value: number | null) => {
+      updateData((current) => ({
+        ...current,
+        students: current.students.map((s) =>
+          s.id === id
+            ? {
+                ...s,
+                scores: {
+                  ...s.scores,
+                  [subject]: {
+                    sba: s.scores[subject]?.sba ?? null,
+                    exam: s.scores[subject]?.exam ?? null,
+                    [field]: value,
+                  },
+                },
+              }
+            : s,
+        ),
+      }));
+    },
+    [],
+  );
+
+  return {
+    school: snapshot.school,
+    students: snapshot.students,
+    setSchool,
+    addStudent,
+    updateStudent,
+    removeStudent,
+    setScore,
+  };
+}
