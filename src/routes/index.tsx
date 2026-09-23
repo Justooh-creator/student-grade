@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { AppHeader } from "@/components/AppHeader";
 import { CLASS_LEVELS, EXAM_MAX, GRADE_BANDS, SBA_MAX, getClassLevel, type ClassId } from "@/lib/ges";
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { useAppData } from "@/lib/store";
