@@ -54,12 +54,11 @@ function Field({
 }
 
 function Index() {
-  const { school, students, setSchool, addStudent, updateStudent, removeStudent, setScore } = useAppData();
+  const { school, students, addStudent, updateStudent, removeStudent, setScore } = useAppData();
   const [classId, setClassId] = useState<ClassId>("b4");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newName, setNewName] = useState("");
   const [newAdmission, setNewAdmission] = useState("");
-  const [showSetup, setShowSetup] = useState(false);
 
   const level = getClassLevel(classId);
   const classStudents = useMemo(
@@ -73,44 +72,23 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      <header className="border-b border-border bg-primary text-primary-foreground">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
-          <div>
-            <p className="font-display text-base font-semibold leading-tight sm:text-lg">
-              {school.name || "SBA Report Cards"}
-            </p>
-            <p className="num text-[10px] uppercase tracking-[0.18em] text-primary-foreground/60">
-              GES · {school.term} · {school.academicYear}
-            </p>
-          </div>
-          <button
-            onClick={() => setShowSetup((v) => !v)}
-            className="rounded-md border border-primary-foreground/30 px-3 py-2 text-xs font-semibold hover:bg-primary-foreground/10"
-          >
-            {showSetup ? "Close setup" : "School setup"}
-          </button>
-        </div>
-      </header>
+      <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} />
 
       <main className="mx-auto max-w-5xl px-4">
-        {showSetup && (
-          <section className="mt-5 rounded-xl border border-border bg-card p-4">
-            <h2 className="text-sm font-semibold">School and term details</h2>
-            <p className="mt-1 text-xs text-muted-foreground">
-              These details appear on every report card.
+        {!school.name && (
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-accent/40 bg-accent/10 px-4 py-3">
+            <p className="text-sm">
+              Add your school name, term and signatories so they print on every report card.
             </p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <Field label="School name" value={school.name} onChange={(v) => setSchool({ name: v })} placeholder="e.g. Adukrom Basic School" />
-              <Field label="Address" value={school.address} onChange={(v) => setSchool({ address: v })} placeholder="P.O. Box 12, Koforidua" />
-              <Field label="Term" value={school.term} onChange={(v) => setSchool({ term: v })} />
-              <Field label="Academic year" value={school.academicYear} onChange={(v) => setSchool({ academicYear: v })} />
-              <Field label="Class teacher" value={school.classTeacher} onChange={(v) => setSchool({ classTeacher: v })} />
-              <Field label="Head teacher" value={school.headTeacher} onChange={(v) => setSchool({ headTeacher: v })} />
-              <Field label="Days school reopens" value={school.reopeningDate} onChange={(v) => setSchool({ reopeningDate: v })} placeholder="6th January 2026" />
-              <Field label="Total attendance days" value={school.totalAttendance} onChange={(v) => setSchool({ totalAttendance: v })} />
-            </div>
-          </section>
+            <Link
+              to="/setup"
+              className="rounded-md bg-accent px-4 py-2 text-xs font-semibold text-accent-foreground hover:opacity-90"
+            >
+              Open school setup
+            </Link>
+          </div>
         )}
+
 
         <section className="mt-5">
           <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
