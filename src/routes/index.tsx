@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { CLASS_LEVELS, EXAM_MAX, GRADE_BANDS, SBA_MAX, getClassLevel, type ClassId } from "@/lib/ges";
@@ -7,6 +7,12 @@ import { useAppData } from "@/lib/store";
 import { ordinal } from "@/lib/ges";
 
 export const Route = createFileRoute("/")({
+  validateSearch: (search: Record<string, unknown>): { class?: ClassId } => {
+    const c = search.class;
+    return typeof c === "string" && CLASS_LEVELS.some((l) => l.id === c)
+      ? { class: c as ClassId }
+      : {};
+  },
   head: () => ({
     meta: [
       { title: "SBA Report Cards — GES Score Entry" },
@@ -56,7 +62,10 @@ function Field({
 
 function Index() {
   const { school, students, addStudent, updateStudent, removeStudent, setScore } = useAppData();
-  const [classId, setClassId] = useState<ClassId>("b4");
+  const search = Route.useSearch();
+  const navigate = useNavigate();
+  const classId = search.class ?? "b4";
+  const setClassId = (c: ClassId) => navigate({ to: "/", search: { class: c } });
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newName, setNewName] = useState("");
   const [newAdmission, setNewAdmission] = useState("");
