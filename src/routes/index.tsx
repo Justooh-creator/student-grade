@@ -82,7 +82,7 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} />
+      <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={classId} />
 
       <main className="mx-auto max-w-5xl px-4">
         {!school.name && (
