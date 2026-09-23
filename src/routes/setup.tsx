@@ -47,6 +47,11 @@ function Field({
   );
 }
 
+const ACADEMIC_YEARS = Array.from({ length: 8 }, (_, i) => {
+  const start = 2024 + i;
+  return `${start}/${start + 1}`;
+});
+
 function SetupPage() {
   const { school, setSchool, students } = useAppData();
 
@@ -72,13 +77,40 @@ function SetupPage() {
               onChange={(v) => setSchool({ address: v })}
               placeholder="P.O. Box 12, Koforidua"
             />
-            <Field label="Term" value={school.term} onChange={(v) => setSchool({ term: v })} placeholder="Term 1" />
-            <Field
-              label="Academic year"
-              value={school.academicYear}
-              onChange={(v) => setSchool({ academicYear: v })}
-              placeholder="2025/2026"
-            />
+            <label className="block">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                Term
+              </span>
+              <select
+                value={school.term}
+                onChange={(e) => setSchool({ term: e.target.value })}
+                className="mt-1 h-10 w-full rounded-md border border-border bg-card px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              >
+                <option value="">Select term</option>
+                {["Term 1", "Term 2", "Term 3"].map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="block">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                Academic year
+              </span>
+              <select
+                value={school.academicYear}
+                onChange={(e) => setSchool({ academicYear: e.target.value })}
+                className="num mt-1 h-10 w-full rounded-md border border-border bg-card px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              >
+                <option value="">Select year</option>
+                {ACADEMIC_YEARS.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            </label>
             <Field
               label="Class teacher"
               value={school.classTeacher}
