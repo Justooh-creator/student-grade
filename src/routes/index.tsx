@@ -8,7 +8,7 @@ import { ordinal } from "@/lib/ges";
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>): { class?: ClassId } => {
-    const c = search.class;
+    const c = search["class"];
     return typeof c === "string" && CLASS_LEVELS.some((l) => l.id === c)
       ? { class: c as ClassId }
       : {};
