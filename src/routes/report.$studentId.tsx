@@ -63,8 +63,9 @@ function ReportPage() {
   const remark = teacherRemarkFor(result.average);
 
   return (
-    <div className="min-h-screen bg-background py-6">
-      <div className="no-print mx-auto mb-5 flex max-w-4xl flex-wrap items-center justify-between gap-3 px-4">
+    <div className="min-h-screen bg-background pb-6">
+      <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} />
+      <div className="no-print mx-auto my-5 flex max-w-4xl flex-wrap items-center justify-between gap-3 px-4">
         <Link to="/" className="text-sm font-semibold text-primary hover:underline">
           ← Back to score entry
         </Link>
