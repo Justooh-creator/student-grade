@@ -80,13 +80,13 @@ export const CLASS_LEVELS: ClassLevel[] = [
 ];
 
 export function getClassLevel(id: ClassId): ClassLevel {
-  return CLASS_LEVELS.find((c) => c.id === id) ?? CLASS_LEVELS[0];
+  return CLASS_LEVELS.find((c) => c.id === id) ?? CLASS_LEVELS[0]!;
 }
 
 export function nextClassName(id: ClassId): string {
   const index = CLASS_LEVELS.findIndex((c) => c.id === id);
   if (index < 0 || index === CLASS_LEVELS.length - 1) return "Completed Basic 9";
-  return CLASS_LEVELS[index + 1].name;
+  return CLASS_LEVELS[index + 1]!.name;
 }
 
 export interface GradeBand {
@@ -114,7 +114,7 @@ export const EXAM_MAX = 70;
 
 export function gradeFor(total: number): GradeBand {
   const rounded = Math.round(total);
-  return GRADE_BANDS.find((b) => rounded >= b.min && rounded <= b.max) ?? GRADE_BANDS[GRADE_BANDS.length - 1];
+  return GRADE_BANDS.find((b) => rounded >= b.min && rounded <= b.max) ?? GRADE_BANDS[GRADE_BANDS.length - 1]!;
 }
 
 export function ordinal(n: number): string {
