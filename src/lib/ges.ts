@@ -139,3 +139,29 @@ export function teacherRemarkFor(average: number): string {
   if (average >= 50) return "An average performance. Consistent study at home is needed.";
   return "Below expectation. Serious effort and close support are required next term.";
 }
+
+export const CONDUCT_PRESETS = [
+  "Respectful and well behaved",
+  "Punctual and regular",
+  "Hardworking and dedicated",
+  "Obedient and cooperative",
+  "Neat and organised",
+  "Friendly and helpful to others",
+  "Quiet but attentive",
+  "Needs to improve punctuality",
+  "Talkative in class",
+  "Needs to be more serious",
+];
+
+export const REMARK_PRESETS = [
+  "Excellent performance. Keep it up!",
+  "Very good work. Aim higher.",
+  "Good performance. Can do better.",
+  "Satisfactory. More effort needed.",
+  "Fair performance. Must work harder.",
+  "Weak performance. Needs serious attention.",
+  "Has improved greatly this term.",
+  "Promising learner. Keep working hard.",
+];
+
+export const MAX_STUDENTS_PER_CLASS = 35;

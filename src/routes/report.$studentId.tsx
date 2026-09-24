@@ -11,6 +11,7 @@ import {
 } from "@/lib/ges";
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { useAppData } from "@/lib/store";
+import { PrintButton } from "@/components/PaymentGate";
 
 export const Route = createFileRoute("/report/$studentId")({
   head: () => ({
@@ -61,7 +62,7 @@ function ReportPage() {
   }
 
   const position = ranking.positions.get(student.id) ?? 1;
-  const remark = teacherRemarkFor(result.average);
+  const remark = student.remark?.trim() || teacherRemarkFor(result.average);
 
   return (
     <div className="min-h-screen bg-background pb-6">
@@ -77,22 +78,25 @@ function ReportPage() {
             placeholder="Interest / hobby"
             className="h-10 w-48 rounded-md border border-border bg-card px-3 text-sm outline-none focus:border-primary"
           />
-          <button
-            onClick={() => window.print()}
-            className="h-10 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground hover:opacity-90"
-          >
-            Print / Save as PDF (A4)
-          </button>
+          <PrintButton />
         </div>
       </div>
 
       <div className="overflow-x-auto px-4 pb-10">
         <div className="print-sheet sheet-a4 mx-auto border border-rule px-[14mm] py-[12mm] text-[#1b1a16] shadow-[0_20px_50px_-30px_rgba(0,0,0,0.5)]">
-          <div className="border-b-2 border-[#1b1a16] pb-2 text-center">
+          <div className="relative border-b-2 border-[#1b1a16] pb-2 text-center">
+            {school.logo && (
+              <img src={school.logo} alt="School logo" className="absolute left-0 top-0 h-[22mm] w-[22mm] object-contain" />
+            )}
             <h1 className="font-display text-[18pt] font-bold uppercase tracking-[0.08em]">
               {school.name || "School Name"}
             </h1>
             <p className="text-[9pt]">{school.address || "School address"}</p>
+            {(school.district || school.region) && (
+              <p className="text-[9pt]">
+                {[school.district && `${school.district} District`, school.region && `${school.region} Region`].filter(Boolean).join(" · ")}
+              </p>
+            )}
             <p className="num mt-1 text-[9pt] font-semibold uppercase tracking-[0.18em]">
               Terminal Report — {school.term} · {school.academicYear}
             </p>

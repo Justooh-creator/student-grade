@@ -4,7 +4,9 @@ import { AppHeader } from "@/components/AppHeader";
 import { CLASS_LEVELS, EXAM_MAX, GRADE_BANDS, SBA_MAX, getClassLevel, type ClassId } from "@/lib/ges";
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { useAppData } from "@/lib/store";
-import { ordinal } from "@/lib/ges";
+import { ordinal, CONDUCT_PRESETS, REMARK_PRESETS, MAX_STUDENTS_PER_CLASS } from "@/lib/ges";
+import { PresetField } from "@/components/PresetField";
+import type { Student } from "@/lib/store";
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>): { class?: ClassId } => {
@@ -61,7 +63,7 @@ function Field({
 }
 
 function Index() {
-  const { school, students, addStudent, updateStudent, removeStudent, setScore } = useAppData();
+  const { school, students, importStudents, addStudent, updateStudent, removeStudent, setScore } = useAppData();
   const search = Route.useSearch();
   const navigate = useNavigate();
   const classId = search.class ?? "b4";
@@ -140,16 +142,66 @@ function Index() {
               <Field label="Learner name" value={newName} onChange={setNewName} placeholder="Full name" />
               <Field label="Admission no." value={newAdmission} onChange={setNewAdmission} placeholder="Optional" />
               <button
+                disabled={classStudents.length >= MAX_STUDENTS_PER_CLASS}
                 onClick={() => {
-                  if (!newName.trim()) return;
+                  if (!newName.trim() || classStudents.length >= MAX_STUDENTS_PER_CLASS) return;
                   addStudent(newName.trim(), classId, newAdmission.trim());
                   setNewName("");
                   setNewAdmission("");
                 }}
                 className="h-10 w-full rounded-md bg-accent text-sm font-semibold text-accent-foreground hover:opacity-90"
               >
-                Add learner
+                {classStudents.length >= MAX_STUDENTS_PER_CLASS ? "Class full (35 max)" : "Add learner"}
               </button>
+              <p className="num text-[10px] text-muted-foreground">
+                {classStudents.length} / {MAX_STUDENTS_PER_CLASS} learners
+              </p>
+              {["b7", "b8", "b9"].includes(classId) && (
+                <div className="grid grid-cols-2 gap-2 border-t border-border pt-2">
+                  <button
+                    onClick={() => {
+                      const blob = new Blob(
+                        [JSON.stringify({ type: "sba-class", classId, students: classStudents }, null, 2)],
+                        { type: "application/json" },
+                      );
+                      const a = document.createElement("a");
+                      a.href = URL.createObjectURL(blob);
+                      a.download = `${level.name.replace(/\s+/g, "-")}-records.json`;
+                      a.click();
+                    }}
+                    className="h-9 rounded-md border border-border text-xs font-semibold hover:bg-muted"
+                  >
+                    Export
+                  </button>
+                  <label className="flex h-9 cursor-pointer items-center justify-center rounded-md border border-border text-xs font-semibold hover:bg-muted">
+                    Import
+                    <input
+                      type="file"
+                      accept="application/json"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const f = e.target.files?.[0];
+                        e.target.value = "";
+                        if (!f) return;
+                        try {
+                          const parsed = JSON.parse(await f.text()) as { students?: Student[] };
+                          const list = (parsed.students ?? []).filter((s) => s.classId === classId);
+                          const existing = new Set(classStudents.map((s) => s.id));
+                          const newOnes = list.filter((s) => !existing.has(s.id)).length;
+                          if (classStudents.length + newOnes > MAX_STUDENTS_PER_CLASS) {
+                            alert(`Import would exceed ${MAX_STUDENTS_PER_CLASS} learners in this class.`);
+                            return;
+                          }
+                          importStudents(list);
+                          alert(`Imported ${list.length} learner record(s) into ${level.name}.`);
+                        } catch {
+                          alert("That file could not be read.");
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+              )}
             </div>
 
             <ul className="mt-4 space-y-1.5">
@@ -233,11 +285,25 @@ function Index() {
                     onChange={(v) => updateStudent(selected.id, { attendance: v })}
                     placeholder={`out of ${school.totalAttendance || "—"}`}
                   />
-                  <Field
+                  <PresetField
                     label="Attitude / conduct"
                     value={selected.conduct}
+                    presets={CONDUCT_PRESETS}
                     onChange={(v) => updateStudent(selected.id, { conduct: v })}
-                    placeholder="Respectful and punctual"
+                    placeholder="Select conduct"
+                  />
+                  <Field
+                    label="Interest / hobby"
+                    value={selected.interest}
+                    onChange={(v) => updateStudent(selected.id, { interest: v })}
+                    placeholder="Football, reading…"
+                  />
+                  <PresetField
+                    label="Class teacher's remark"
+                    value={selected.remark ?? ""}
+                    presets={REMARK_PRESETS}
+                    onChange={(v) => updateStudent(selected.id, { remark: v })}
+                    placeholder="Auto remark from average"
                   />
                 </div>
 

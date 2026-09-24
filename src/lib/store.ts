@@ -10,6 +10,9 @@ export interface School {
   classTeacher: string;
   headTeacher: string;
   totalAttendance: string;
+  region: string;
+  district: string;
+  logo: string;
 }
 
 export interface Student {
@@ -22,6 +25,7 @@ export interface Student {
   scores: Record<string, { sba: number | null; exam: number | null }>;
   conduct: string;
   interest: string;
+  remark: string;
 }
 
 export interface AppData {
@@ -40,6 +44,9 @@ export const DEFAULT_SCHOOL: School = {
   classTeacher: "",
   headTeacher: "",
   totalAttendance: "60",
+  region: "",
+  district: "",
+  logo: "",
 };
 
 const initialData: AppData = { school: DEFAULT_SCHOOL, students: [] };
@@ -116,6 +123,7 @@ export function useAppData() {
           scores: {},
           conduct: "",
           interest: "",
+          remark: "",
         },
       ],
     }));
@@ -159,7 +167,16 @@ export function useAppData() {
     [],
   );
 
+  const importStudents = useCallback((incoming: Student[]) => {
+    updateData((current) => {
+      const map = new Map(current.students.map((s) => [s.id, s]));
+      incoming.forEach((s) => map.set(s.id, { ...map.get(s.id), ...s }));
+      return { ...current, students: [...map.values()] };
+    });
+  }, []);
+
   return {
+    importStudents,
     school: snapshot.school,
     students: snapshot.students,
     setSchool,

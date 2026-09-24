@@ -1,6 +1,28 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppHeader } from "@/components/AppHeader";
 import { useAppData } from "@/lib/store";
+import { GHANA_REGIONS, REGION_NAMES } from "@/lib/ghana";
+
+function shrinkImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, 240 / Math.max(img.width, img.height));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width * scale);
+        c.height = Math.round(img.height * scale);
+        c.getContext("2d")?.drawImage(img, 0, 0, c.width, c.height);
+        resolve(c.toDataURL("image/png"));
+      };
+      img.onerror = reject;
+      img.src = reader.result as string;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
 export const Route = createFileRoute("/setup")({
   head: () => ({
@@ -77,6 +99,68 @@ function SetupPage() {
               onChange={(v) => setSchool({ address: v })}
               placeholder="P.O. Box 12, Koforidua"
             />
+            <label className="block">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                Region
+              </span>
+              <select
+                value={school.region}
+                onChange={(e) => setSchool({ region: e.target.value, district: "" })}
+                className="mt-1 h-10 w-full rounded-md border border-border bg-card px-3 text-sm text-foreground outline-none focus:border-primary"
+              >
+                <option value="">Select region</option>
+                {REGION_NAMES.map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </label>
+            <label className="block">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                District
+              </span>
+              <select
+                value={school.district}
+                disabled={!school.region}
+                onChange={(e) => setSchool({ district: e.target.value })}
+                className="mt-1 h-10 w-full rounded-md border border-border bg-card px-3 text-sm text-foreground outline-none focus:border-primary disabled:opacity-50"
+              >
+                <option value="">{school.region ? "Select district" : "Choose a region first"}</option>
+                {(GHANA_REGIONS[school.region] ?? []).map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </label>
+            <div className="sm:col-span-2">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                School logo
+              </span>
+              <div className="mt-1 flex items-center gap-3">
+                <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-background">
+                  {school.logo ? (
+                    <img src={school.logo} alt="School logo" className="h-full w-full object-contain" />
+                  ) : (
+                    <span className="text-[10px] text-muted-foreground">No logo</span>
+                  )}
+                </div>
+                <label className="cursor-pointer rounded-md border border-border px-3 py-2 text-xs font-semibold hover:bg-muted">
+                  Upload logo
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const f = e.target.files?.[0];
+                      if (f) setSchool({ logo: await shrinkImage(f) });
+                    }}
+                  />
+                </label>
+                {school.logo && (
+                  <button onClick={() => setSchool({ logo: "" })} className="text-xs text-muted-foreground hover:text-destructive">
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
             <label className="block">
               <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                 Term
