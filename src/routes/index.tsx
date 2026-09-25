@@ -7,6 +7,7 @@ import { useAppData } from "@/lib/store";
 import { ordinal, CONDUCT_PRESETS, REMARK_PRESETS, MAX_STUDENTS_PER_CLASS } from "@/lib/ges";
 import { PresetField } from "@/components/PresetField";
 import type { Student } from "@/lib/store";
+import { CloudShare } from "@/components/CloudShare";
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>): { class?: ClassId } => {
@@ -201,6 +202,9 @@ function Index() {
                     />
                   </label>
                 </div>
+              )}
+              {["b7", "b8", "b9"].includes(classId) && (
+                <CloudShare classId={classId} className={level.name} students={classStudents} />
               )}
             </div>
 

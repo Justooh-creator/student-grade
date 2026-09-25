@@ -2,6 +2,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import { CLASS_LEVELS, type ClassId } from "@/lib/ges";
 import { useAppData } from "@/lib/store";
+import { useUser } from "@/lib/auth";
 
 function WhatsAppIcon() {
   return (
@@ -36,6 +37,7 @@ export function AppHeader({
   const showClassJump = pathname === "/" || pathname.startsWith("/report");
   const [open, setOpen] = useState(false);
   const { students } = useAppData();
+  const { user } = useUser();
   const navClass = activeClass ?? "b4";
   const classStudents = students.filter((s) => s.classId === navClass);
 
@@ -90,6 +92,13 @@ export function AppHeader({
             activeProps={{ className: "bg-primary-foreground text-primary" }}
           >
             School setup
+          </Link>
+          <Link
+            to="/auth"
+            className="rounded-md border border-primary-foreground/25 px-3 py-2 text-xs font-semibold hover:bg-primary-foreground/10"
+            activeProps={{ className: "bg-primary-foreground text-primary" }}
+          >
+            {user ? "Account" : "Sign in"}
           </Link>
           <a href="https://wa.me/233249931038" target="_blank" rel="noreferrer" aria-label="WhatsApp" className="flex h-9 w-9 items-center justify-center rounded-md border border-primary-foreground/25 hover:bg-primary-foreground/10">
             <WhatsAppIcon />
