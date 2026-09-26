@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppHeader } from "@/components/AppHeader";
+import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
 import { GHANA_REGIONS, REGION_NAMES } from "@/lib/ghana";
 
@@ -25,6 +26,7 @@ function shrinkImage(file: File): Promise<string> {
 }
 
 export const Route = createFileRoute("/setup")({
+  validateSearch: validateClassSearch,
   head: () => ({
     meta: [
       { title: "School Setup — SBA Report Cards" },
@@ -76,10 +78,11 @@ const ACADEMIC_YEARS = Array.from({ length: 8 }, (_, i) => {
 
 function SetupPage() {
   const { school, setSchool, students } = useAppData();
+  const search = Route.useSearch();
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} />
+      <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={search.class} />
       <main className="mx-auto max-w-3xl px-4">
         <section className="mt-6 rounded-xl border border-border bg-card p-4 sm:p-6">
           <h1 className="text-lg font-semibold">School and term details</h1>
