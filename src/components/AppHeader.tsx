@@ -34,7 +34,7 @@ export function AppHeader({
   schoolName: string;
   term: string;
   year: string;
-  activeClass?: ClassId;
+  activeClass?: ClassId | undefined;
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);

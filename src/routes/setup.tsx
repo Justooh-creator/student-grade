@@ -2,6 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppHeader } from "@/components/AppHeader";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
+import { useState } from "react";
+import { format, parse, isValid } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { GHANA_REGIONS, REGION_NAMES } from "@/lib/ghana";
 
 function shrinkImage(file: File): Promise<string> {
@@ -210,12 +215,12 @@ function SetupPage() {
               onChange={(v) => setSchool({ headTeacher: v })}
               placeholder="Name of head teacher"
             />
-            <Field
-              label="Day school reopens"
-              value={school.reopeningDate}
-              onChange={(v) => setSchool({ reopeningDate: v })}
-              placeholder="6th January 2026"
-            />
+            <div className="block">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                Day school reopens
+              </span>
+              <ReopenPicker value={school.reopeningDate} onChange={(v) => setSchool({ reopeningDate: v })} />
+            </div>
             <Field
               label="Total attendance days"
               value={school.totalAttendance}
@@ -238,5 +243,31 @@ function SetupPage() {
         </section>
       </main>
     </div>
+  );
+}
+
+function ReopenPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const parsed = value ? parse(value, "do MMMM yyyy", new Date()) : undefined;
+  const date = parsed && isValid(parsed) ? parsed : undefined;
+  const [month, setMonth] = useState<Date>(date ?? new Date());
+  return (
+    <Popover onOpenChange={(o) => o && setMonth(date ?? new Date())}>
+      <PopoverTrigger asChild>
+        <button type="button" className="mt-1 flex h-10 w-full items-center gap-2 rounded-md border border-border bg-card px-3 text-left text-sm outline-none focus:border-primary">
+          <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+          {value ? value : <span className="text-muted-foreground">Pick reopening date</span>}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar
+          mode="single"
+          selected={date}
+          month={month}
+          onMonthChange={setMonth}
+          onSelect={(d) => d && onChange(format(d, "do MMMM yyyy"))}
+          className="p-3 pointer-events-auto"
+        />
+      </PopoverContent>
+    </Popover>
   );
 }
