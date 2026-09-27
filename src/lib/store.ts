@@ -22,7 +22,7 @@ export interface Student {
   classId: ClassId;
   attendance: string;
   /** subject name -> { sba, exam } */
-  scores: Record<string, { sba: number | null; exam: number | null }>;
+  scores: Record<string, { sba: number | null; exam: number | null; sbaRaw?: number | null; examRaw?: number | null }>;
   conduct: string;
   interest: string;
   remark: string;
@@ -167,6 +167,26 @@ export function useAppData() {
     [],
   );
 
+  /** Teacher enters raw marks out of 100; SBA is scaled to 30% and exam to 70%. */
+  const setRawScore = useCallback(
+    (id: string, subject: string, field: "sba" | "exam", raw: number | null) => {
+      const pct = field === "sba" ? 0.3 : 0.7;
+      const scaled = raw === null ? null : Math.round(raw * pct * 10) / 10;
+      updateData((current) => ({
+        ...current,
+        students: current.students.map((s) => {
+          if (s.id !== id) return s;
+          const prev = s.scores[subject] ?? { sba: null, exam: null };
+          return {
+            ...s,
+            scores: { ...s.scores, [subject]: { ...prev, [field]: scaled, [`${field}Raw`]: raw } },
+          };
+        }),
+      }));
+    },
+    [],
+  );
+
   const importStudents = useCallback((incoming: Student[]) => {
     updateData((current) => {
       const map = new Map(current.students.map((s) => [s.id, s]));
@@ -184,5 +204,6 @@ export function useAppData() {
     updateStudent,
     removeStudent,
     setScore,
+    setRawScore,
   };
 }
