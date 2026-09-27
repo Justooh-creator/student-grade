@@ -27,13 +27,14 @@ export function computeStudentResult(student: Student): StudentResult {
     if (sba === null && exam === null) {
       return { subject, sba, exam, total: null, grade: null, remark: "—" };
     }
-    const total = (sba ?? 0) + (exam ?? 0);
+    const total = Math.round(((sba ?? 0) + (exam ?? 0)) * 10) / 10;
     const band = gradeFor(total);
     return { subject, sba, exam, total, grade: band.grade, remark: band.remark };
   });
 
   const graded = subjects.filter((s) => s.total !== null);
-  const totalMarks = graded.reduce((sum, s) => sum + (s.total ?? 0), 0);
+  const totalMarks0 = graded.reduce((sum, s) => sum + (s.total ?? 0), 0);
+  const totalMarks = Math.round(totalMarks0 * 10) / 10;
   const aggregate = graded.reduce((sum, s) => sum + (s.grade ?? 0), 0);
 
   return {

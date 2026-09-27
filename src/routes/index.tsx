@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { school, students, setScore } = useAppData();
+  const { school, students, setRawScore } = useAppData();
   const search = Route.useSearch();
   const navigate = useNavigate();
   const classId = search.class ?? "b4";
@@ -85,13 +85,15 @@ function Index() {
               </div>
 
               <div className="mt-4 overflow-x-auto rounded-lg border border-border">
-                <table className="w-full min-w-[440px] text-sm">
+                <table className="w-full min-w-[560px] text-sm">
                   <thead>
                     <tr className="bg-muted/60 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
                       <th className="px-3 py-2 text-left font-semibold">Subject</th>
-                      <th className="px-2 py-2 text-center font-semibold">SBA /{SBA_MAX}</th>
-                      <th className="px-2 py-2 text-center font-semibold">Exam /{EXAM_MAX}</th>
-                      <th className="px-2 py-2 text-center font-semibold">Total</th>
+                      <th className="px-2 py-2 text-center font-semibold">SBA raw /100</th>
+                      <th className="px-2 py-2 text-center font-semibold">SBA {SBA_MAX}%</th>
+                      <th className="px-2 py-2 text-center font-semibold">Exam raw /100</th>
+                      <th className="px-2 py-2 text-center font-semibold">Exam {EXAM_MAX}%</th>
+                      <th className="px-2 py-2 text-center font-semibold">Total /100</th>
                       <th className="px-2 py-2 text-center font-semibold">Grade</th>
                     </tr>
                   </thead>
@@ -99,8 +101,10 @@ function Index() {
                     {result.subjects.map((row) => (
                       <tr key={row.subject} className="border-t border-border">
                         <td className="px-3 py-1.5 font-medium">{row.subject}</td>
-                        <td className="px-2 py-1.5 text-center"><ScoreInput max={SBA_MAX} value={row.sba} onChange={(v) => setScore(selected.id, row.subject, "sba", v)} /></td>
-                        <td className="px-2 py-1.5 text-center"><ScoreInput max={EXAM_MAX} value={row.exam} onChange={(v) => setScore(selected.id, row.subject, "exam", v)} /></td>
+                        <td className="px-2 py-1.5 text-center"><ScoreInput max={100} value={selected.scores[row.subject]?.sbaRaw ?? null} onChange={(v) => setRawScore(selected.id, row.subject, "sba", v)} /></td>
+                        <td className="num px-2 py-1.5 text-center text-muted-foreground">{row.sba ?? "—"}</td>
+                        <td className="px-2 py-1.5 text-center"><ScoreInput max={100} value={selected.scores[row.subject]?.examRaw ?? null} onChange={(v) => setRawScore(selected.id, row.subject, "exam", v)} /></td>
+                        <td className="num px-2 py-1.5 text-center text-muted-foreground">{row.exam ?? "—"}</td>
                         <td className="num px-2 py-1.5 text-center font-semibold">{row.total ?? "—"}</td>
                         <td className="px-2 py-1.5 text-center">
                           {row.grade ? (
@@ -113,7 +117,7 @@ function Index() {
                   <tfoot>
                     <tr className="border-t border-border bg-primary/5 text-sm font-semibold">
                       <td className="px-3 py-2">Total marks · aggregate <span className="num text-accent">{result.aggregate}</span></td>
-                      <td colSpan={2} />
+                      <td colSpan={4} />
                       <td className="num px-2 py-2 text-center">{result.totalMarks}</td>
                       <td />
                     </tr>
