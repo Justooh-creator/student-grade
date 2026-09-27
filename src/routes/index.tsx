@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ClassPicker } from "@/components/ClassPicker";
 import { EXAM_MAX, GRADE_BANDS, SBA_MAX, getClassLevel, ordinal } from "@/lib/ges";
@@ -158,17 +158,29 @@ function ScoreInput({
   max: number;
   onChange: (v: number | null) => void;
 }) {
+  const [invalid, setInvalid] = useState(false);
   return (
     <input
       inputMode="numeric"
       value={value === null ? "" : String(value)}
       onChange={(e) => {
         const raw = e.target.value.replace(/[^0-9]/g, "");
-        if (raw === "") return onChange(null);
-        onChange(Math.min(max, Number(raw)));
+        if (raw === "") {
+          setInvalid(false);
+          return onChange(null);
+        }
+        const n = Number(raw);
+        if (n > max) {
+          setInvalid(true);
+          return onChange(null);
+        }
+        setInvalid(false);
+        onChange(n);
       }}
-      className="num h-9 w-16 rounded-md border border-border bg-background text-center text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-      placeholder="—"
+      aria-invalid={invalid}
+      title={invalid ? `Maximum is ${max}` : undefined}
+      className={`num h-9 w-16 rounded-md border bg-background text-center text-sm outline-none focus:ring-2 ${invalid ? "border-2 border-destructive focus:border-destructive focus:ring-destructive/30" : "border-border focus:border-primary focus:ring-primary/20"}`}
+      placeholder={invalid ? `≤${max}` : "—"}
     />
   );
 }
