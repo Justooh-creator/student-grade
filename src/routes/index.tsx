@@ -59,7 +59,7 @@ function Index() {
                 <label className="block min-w-0 flex-1">
                   <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Select learner</span>
                   <div className="mt-1 flex gap-1.5">
-                    <button disabled={idx <= 0} onClick={() => go(classStudents[idx - 1].id)} aria-label="Previous learner" className="h-10 w-10 rounded-md border border-border disabled:opacity-40">‹</button>
+                    <button disabled={idx <= 0} onClick={() => go(classStudents[idx - 1]!.id)} aria-label="Previous learner" className="h-10 w-10 rounded-md border border-border disabled:opacity-40">‹</button>
                     <select
                       value={selected.id}
                       onChange={(e) => go(e.target.value)}
@@ -69,7 +69,7 @@ function Index() {
                         <option key={s.id} value={s.id}>{i + 1}. {s.name}{s.admissionNo ? ` (${s.admissionNo})` : ""}</option>
                       ))}
                     </select>
-                    <button disabled={idx >= classStudents.length - 1} onClick={() => go(classStudents[idx + 1].id)} aria-label="Next learner" className="h-10 w-10 rounded-md border border-border disabled:opacity-40">›</button>
+                    <button disabled={idx >= classStudents.length - 1} onClick={() => go(classStudents[idx + 1]!.id)} aria-label="Next learner" className="h-10 w-10 rounded-md border border-border disabled:opacity-40">›</button>
                   </div>
                 </label>
                 <div className="flex gap-4 text-right">

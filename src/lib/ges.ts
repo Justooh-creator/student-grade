@@ -165,3 +165,9 @@ export const REMARK_PRESETS = [
 ];
 
 export const MAX_STUDENTS_PER_CLASS = 35;
+
+export const INTEREST_PRESETS = [
+  "Football", "Reading", "Drawing and art", "Music and singing", "Drama", "Athletics",
+  "Science and experiments", "Computing / ICT", "Mathematics puzzles", "Debating",
+  "Cultural dance", "Volleyball", "Handwork and crafts", "Gardening",
+];
