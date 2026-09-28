@@ -65,12 +65,124 @@ export type Database = {
         }
         Relationships: []
       }
+      school_members: {
+        Row: {
+          created_at: string
+          id: string
+          role: string
+          school_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: string
+          school_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: string
+          school_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_members_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      school_students: {
+        Row: {
+          class_id: string
+          data: Json
+          id: string
+          school_id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          class_id: string
+          data?: Json
+          id: string
+          school_id: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          class_id?: string
+          data?: Json
+          id?: string
+          school_id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_students_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      schools: {
+        Row: {
+          created_by: string
+          details: Json
+          id: string
+          join_code: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_by: string
+          details?: Json
+          id?: string
+          join_code: string
+          name?: string
+          updated_at?: string
+        }
+        Update: {
+          created_by?: string
+          details?: Json
+          id?: string
+          join_code?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_school: {
+        Args: { _name: string }
+        Returns: {
+          created_by: string
+          details: Json
+          id: string
+          join_code: string
+          name: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "schools"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      is_school_member: { Args: { _school: string }; Returns: boolean }
+      join_school: { Args: { _code: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never
