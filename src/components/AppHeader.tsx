@@ -3,6 +3,7 @@ import { useState } from "react";
 import { CLASS_LEVELS, type ClassId } from "@/lib/ges";
 import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
+import { useCloud } from "@/lib/cloud";
 
 function WhatsAppIcon() {
   return (
@@ -40,6 +41,7 @@ export function AppHeader({
   const [open, setOpen] = useState(false);
   const { students } = useAppData();
   const { user } = useUser();
+  const cloud = useCloud();
   const navClass = activeClass ?? "b4";
   const classStudents = students.filter((s) => s.classId === navClass);
 
@@ -60,10 +62,13 @@ export function AppHeader({
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M3 12h18M3 18h18" /></svg>
         </button>
-        <div>
+        <div className="flex-1">
           <p className="font-display text-base font-semibold leading-tight sm:text-lg">{schoolName || "SBA Report Cards"}</p>
           <p className="num text-[10px] uppercase tracking-[0.18em] text-primary-foreground/60">GES · {term} · {year}</p>
         </div>
+        <Link to="/school-cloud" className="rounded-full border border-primary-foreground/25 px-2.5 py-1 text-[11px] font-bold">
+          {cloud.status === "synced" ? "● Cloud saved" : cloud.status === "saving" ? "○ Saving…" : cloud.status === "offline" ? "! Not saved" : cloud.status === "no-school" ? "Join school cloud" : cloud.status === "loading" ? "…" : "Offline mode"}
+        </Link>
       </div>
       <nav className="mx-auto mt-2 flex max-w-5xl overflow-x-auto px-2">
         {tabs.map((t) => {
@@ -93,6 +98,7 @@ export function AppHeader({
                 <Link to="/students" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">Student Details</Link>
                 <Link to="/" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">SBA Details</Link>
                 <Link to="/class-report/$classId" params={{ classId: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">Report</Link>
+                <Link to="/school-cloud" className="rounded px-2 py-1.5 text-sm font-semibold hover:bg-muted">School Cloud</Link>
                 <Link to="/auth" className="rounded px-2 py-1.5 text-sm hover:bg-muted">{user ? "Account" : "Sign in"}</Link>
               </div>
               <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Classes</p>

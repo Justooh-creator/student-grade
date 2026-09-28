@@ -3,7 +3,6 @@ import { useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ClassPicker, TextField } from "@/components/ClassPicker";
 import { PresetField } from "@/components/PresetField";
-import { CloudShare } from "@/components/CloudShare";
 import { CONDUCT_PRESETS, INTEREST_PRESETS, MAX_STUDENTS_PER_CLASS, REMARK_PRESETS, getClassLevel } from "@/lib/ges";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData, type Student } from "@/lib/store";
@@ -101,9 +100,6 @@ function StudentsPage() {
                   }}
                 />
               </label>
-              <div className="sm:col-span-2">
-                <CloudShare classId={classId} className={level.name} students={list} />
-              </div>
             </div>
           )}
         </section>
