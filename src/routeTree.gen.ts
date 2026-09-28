@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as SchoolCloudRouteImport } from './routes/school-cloud'
 import { Route as SetupRouteImport } from './routes/setup'
 import { Route as StudentsRouteImport } from './routes/students'
 import { Route as ClassReportClassIdRouteImport } from './routes/class-report.$classId'
@@ -24,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SchoolCloudRoute = SchoolCloudRouteImport.update({
+  id: '/school-cloud',
+  path: '/school-cloud',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SetupRoute = SetupRouteImport.update({
@@ -50,6 +56,7 @@ const ReportStudentIdRoute = ReportStudentIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/school-cloud': typeof SchoolCloudRoute
   '/setup': typeof SetupRoute
   '/students': typeof StudentsRoute
   '/class-report/$classId': typeof ClassReportClassIdRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/school-cloud': typeof SchoolCloudRoute
   '/setup': typeof SetupRoute
   '/students': typeof StudentsRoute
   '/class-report/$classId': typeof ClassReportClassIdRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/school-cloud': typeof SchoolCloudRoute
   '/setup': typeof SetupRoute
   '/students': typeof StudentsRoute
   '/class-report/$classId': typeof ClassReportClassIdRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/school-cloud'
     | '/setup'
     | '/students'
     | '/class-report/$classId'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/school-cloud'
     | '/setup'
     | '/students'
     | '/class-report/$classId'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
+    | '/school-cloud'
     | '/setup'
     | '/students'
     | '/class-report/$classId'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  SchoolCloudRoute: typeof SchoolCloudRoute
   SetupRoute: typeof SetupRoute
   StudentsRoute: typeof StudentsRoute
   ClassReportClassIdRoute: typeof ClassReportClassIdRoute
@@ -122,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/school-cloud': {
+      id: '/school-cloud'
+      path: '/school-cloud'
+      fullPath: '/school-cloud'
+      preLoaderRoute: typeof SchoolCloudRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/setup': {
@@ -158,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  SchoolCloudRoute: SchoolCloudRoute,
   SetupRoute: SetupRoute,
   StudentsRoute: StudentsRoute,
   ClassReportClassIdRoute: ClassReportClassIdRoute,
