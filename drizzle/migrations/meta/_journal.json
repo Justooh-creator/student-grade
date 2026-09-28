@@ -15,6 +15,13 @@
       "when": 1790554101054,
       "tag": "0001_school_cloud",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790554783954,
+      "tag": "0002_school_admin",
+      "breakpoints": true
     }
   ]
 }

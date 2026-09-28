@@ -181,8 +181,15 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      is_school_admin: { Args: { _school: string }; Returns: boolean }
       is_school_member: { Args: { _school: string }; Returns: boolean }
       join_school: { Args: { _code: string }; Returns: string }
+      regenerate_join_code: { Args: { _school: string }; Returns: string }
+      remove_member: { Args: { _member: string }; Returns: undefined }
+      set_member_role: {
+        Args: { _member: string; _role: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
