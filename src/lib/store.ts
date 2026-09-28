@@ -86,7 +86,32 @@ function hydrate() {
   emit();
 }
 
+type ChangeListener = (prev: AppData, next: AppData) => void;
+const changeListeners = new Set<ChangeListener>();
+
+/** Subscribe to local (user-made) edits — used by the cloud sync engine. */
+export function onLocalChange(cb: ChangeListener) {
+  changeListeners.add(cb);
+  return () => { changeListeners.delete(cb); };
+}
+
+export function getData() {
+  hydrate();
+  return data;
+}
+
 export function updateData(updater: (current: AppData) => AppData) {
+  hydrate();
+  const prev = data;
+  data = updater(data);
+  persist();
+  emit();
+  changeListeners.forEach((l) => l(prev, data));
+}
+
+/** Apply data coming from the cloud without echoing it back. */
+export function applyRemote(updater: (current: AppData) => AppData) {
+  hydrate();
   data = updater(data);
   persist();
   emit();
