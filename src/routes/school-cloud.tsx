@@ -6,6 +6,7 @@ import { useUser } from "@/lib/auth";
 import { useAppData } from "@/lib/store";
 import { AppHeader } from "@/components/AppHeader";
 import { useCloud, loadSchool, hasLocalBackup, uploadLocalBackup } from "@/lib/cloud";
+import { SchoolAdmin } from "@/components/SchoolAdmin";
 
 export const Route = createFileRoute("/school-cloud")({
   head: () => ({
@@ -83,6 +84,11 @@ function SchoolCloudPage() {
               </p>
               <p className="mt-2 text-sm text-muted-foreground">Every learner, mark and school detail from KG 1 to Basic 9 now saves live for all teachers in this school.</p>
             </div>
+            {cloud.role === "headteacher" ? (
+              <SchoolAdmin schoolId={cloud.schoolId} schoolName={cloud.schoolName ?? ""} joinCode={cloud.joinCode ?? ""} userId={user.id} />
+            ) : (
+              <p className="text-sm text-muted-foreground">Your role: <b>Teacher</b>. Ask your headteacher to manage teachers.</p>
+            )}
             {backupCount > 0 && (
               <div className={card}>
                 <p className="text-sm font-bold">This phone had {backupCount} learner(s) before joining.</p>
