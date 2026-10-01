@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ReportSheet } from "@/components/ReportSheet";
 import { PrintButton } from "@/components/PaymentGate";
+import { ClassTransfer } from "@/components/ClassTransfer";
 import { getClassLevel, type ClassId } from "@/lib/ges";
 import { useAppData } from "@/lib/store";
 
@@ -37,7 +38,10 @@ function ClassReportPage() {
           ← Back to score entry
         </Link>
         <p className="text-sm font-semibold">{level?.name} · {list.length} report card(s)</p>
-        {list.length > 0 && <PrintButton />}
+        <div className="flex flex-wrap items-center gap-2">
+          <ClassTransfer classId={classId} className={level.name} />
+          {list.length > 0 && <PrintButton />}
+        </div>
       </div>
       <div className="overflow-x-auto px-4 pb-10">
         {list.length === 0 && <p className="text-center text-sm text-muted-foreground">No learners in this class yet.</p>}

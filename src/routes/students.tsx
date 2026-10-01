@@ -6,6 +6,7 @@ import { PresetField } from "@/components/PresetField";
 import { CONDUCT_PRESETS, INTEREST_PRESETS, MAX_STUDENTS_PER_CLASS, REMARK_PRESETS, getClassLevel } from "@/lib/ges";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData, type Student } from "@/lib/store";
+import { ClassTransfer } from "@/components/ClassTransfer";
 
 export const Route = createFileRoute("/students")({
   validateSearch: validateClassSearch,
@@ -61,45 +62,8 @@ function StudentsPage() {
           <p className="num mt-2 text-[10px] text-muted-foreground">{list.length} / {MAX_STUDENTS_PER_CLASS} learners</p>
 
           {jhs && (
-            <div className="mt-3 grid gap-2 border-t border-border pt-3 sm:grid-cols-2">
-              <button
-                onClick={() => {
-                  const blob = new Blob([JSON.stringify({ type: "sba-class", classId, students: list }, null, 2)], { type: "application/json" });
-                  const a = document.createElement("a");
-                  a.href = URL.createObjectURL(blob);
-                  a.download = `${level.name.replace(/\s+/g, "-")}-records.json`;
-                  a.click();
-                }}
-                className="h-9 rounded-md border border-border text-xs font-semibold hover:bg-muted"
-              >
-                Export
-              </button>
-              <label className="flex h-9 cursor-pointer items-center justify-center rounded-md border border-border text-xs font-semibold hover:bg-muted">
-                Import
-                <input
-                  type="file"
-                  accept="application/json"
-                  className="hidden"
-                  onChange={async (e) => {
-                    const f = e.target.files?.[0];
-                    e.target.value = "";
-                    if (!f) return;
-                    try {
-                      const parsed = JSON.parse(await f.text()) as { students?: Student[] };
-                      const inc = (parsed.students ?? []).filter((s) => s.classId === classId);
-                      const ids = new Set(list.map((s) => s.id));
-                      if (list.length + inc.filter((s) => !ids.has(s.id)).length > MAX_STUDENTS_PER_CLASS) {
-                        alert(`Import would exceed ${MAX_STUDENTS_PER_CLASS} learners in this class.`);
-                        return;
-                      }
-                      importStudents(inc);
-                      alert(`Imported ${inc.length} learner record(s) into ${level.name}.`);
-                    } catch {
-                      alert("That file could not be read.");
-                    }
-                  }}
-                />
-              </label>
+            <div className="mt-3 border-t border-border pt-3">
+              <ClassTransfer classId={classId} className={level.name} />
             </div>
           )}
         </section>
