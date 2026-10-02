@@ -1,10 +1,12 @@
-import { getClassLevel, gradeFor, type ClassId } from "./ges";
+import { getClassLevel, gradeFor, isJhs, type ClassId } from "./ges";
 import type { Student } from "./store";
 
 export interface SubjectResult {
   subject: string;
   sba: number | null;
   exam: number | null;
+  sbaRaw: number | null;
+  examRaw: number | null;
   total: number | null;
   grade: number | null;
   remark: string;
@@ -16,6 +18,8 @@ export interface StudentResult {
   totalMarks: number;
   average: number;
   aggregate: number;
+  /** Basic 7–9 only: English + Maths + better of Science/Social + 3 best electives. */
+  bestSix: { subjects: { subject: string; grade: number }[]; aggregate: number } | null;
 }
 
 export function computeStudentResult(student: Student): StudentResult {
@@ -24,12 +28,14 @@ export function computeStudentResult(student: Student): StudentResult {
     const entry = student.scores[subject];
     const sba = entry?.sba ?? null;
     const exam = entry?.exam ?? null;
+    const sbaRaw = entry?.sbaRaw ?? null;
+    const examRaw = entry?.examRaw ?? null;
     if (sba === null && exam === null) {
-      return { subject, sba, exam, total: null, grade: null, remark: "—" };
+      return { subject, sba, exam, sbaRaw, examRaw, total: null, grade: null, remark: "—" };
     }
     const total = Math.round(((sba ?? 0) + (exam ?? 0)) * 10) / 10;
     const band = gradeFor(total);
-    return { subject, sba, exam, total, grade: band.grade, remark: band.remark };
+    return { subject, sba, exam, sbaRaw, examRaw, total, grade: band.grade, remark: band.remark };
   });
 
   const graded = subjects.filter((s) => s.total !== null);
@@ -37,7 +43,22 @@ export function computeStudentResult(student: Student): StudentResult {
   const totalMarks = Math.round(totalMarks0 * 10) / 10;
   const aggregate = graded.reduce((sum, s) => sum + (s.grade ?? 0), 0);
 
+  let bestSix: StudentResult["bestSix"] = null;
+  if (isJhs(student.classId)) {
+    const g = new Map(graded.map((r) => [r.subject, r.grade!]));
+    const pick: { subject: string; grade: number }[] = [];
+    for (const c of ["English Language", "Mathematics"]) if (g.has(c)) pick.push({ subject: c, grade: g.get(c)! });
+    const sci = ["Integrated Science", "Social Studies"].filter((c) => g.has(c)).map((c) => ({ subject: c, grade: g.get(c)! }));
+    sci.sort((a, b) => a.grade - b.grade);
+    if (sci[0]) pick.push(sci[0]);
+    const used = new Set(pick.map((p) => p.subject));
+    const electives = [...g.entries()].filter(([s]) => !used.has(s)).map(([subject, grade]) => ({ subject, grade })).sort((a, b) => a.grade - b.grade).slice(0, 3);
+    pick.push(...electives);
+    bestSix = { subjects: pick, aggregate: pick.reduce((a, p) => a + p.grade, 0) };
+  }
+
   return {
+    bestSix,
     subjects,
     gradedCount: graded.length,
     totalMarks,

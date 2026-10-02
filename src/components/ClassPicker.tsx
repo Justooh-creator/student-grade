@@ -1,4 +1,4 @@
-import { CLASS_LEVELS, SBA_MAX, EXAM_MAX, getClassLevel, type ClassId } from "@/lib/ges";
+import { CLASS_LEVELS, SBA_MAX, EXAM_MAX, getClassLevel, usesCat, type ClassId } from "@/lib/ges";
 
 export function ClassPicker({ value, onChange }: { value: ClassId; onChange: (c: ClassId) => void }) {
   const level = getClassLevel(value);
@@ -21,7 +21,7 @@ export function ClassPicker({ value, onChange }: { value: ClassId; onChange: (c:
         ))}
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
-        {level.stage} · {level.subjects.length} subjects · SBA {SBA_MAX} + Exam {EXAM_MAX} = 100
+        {level.stage} · {level.subjects.length} subjects · {usesCat(value) ? "SBA 50 (Tests, Project, Group) + Exam 50 = 100" : `SBA ${SBA_MAX} + Exam ${EXAM_MAX} = 100`}
       </p>
     </section>
   );
