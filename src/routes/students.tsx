@@ -6,7 +6,6 @@ import { PresetField } from "@/components/PresetField";
 import { CONDUCT_PRESETS, INTEREST_PRESETS, MAX_STUDENTS_PER_CLASS, REMARK_PRESETS, getClassLevel } from "@/lib/ges";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData, type Student } from "@/lib/store";
-import { ClassTransfer } from "@/components/ClassTransfer";
 
 export const Route = createFileRoute("/students")({
   validateSearch: validateClassSearch,
@@ -24,7 +23,7 @@ export const Route = createFileRoute("/students")({
 });
 
 function StudentsPage() {
-  const { school, students, addStudent, updateStudent, removeStudent, importStudents } = useAppData();
+  const { school, students, addStudent, updateStudent, removeStudent } = useAppData();
   const search = Route.useSearch();
   const navigate = useNavigate();
   const classId = search.class ?? "b4";
@@ -33,7 +32,6 @@ function StudentsPage() {
   const [name, setName] = useState("");
   const [adm, setAdm] = useState("");
   const full = list.length >= MAX_STUDENTS_PER_CLASS;
-  const jhs = ["b7", "b8", "b9"].includes(classId);
 
   return (
     <div className="min-h-screen bg-background pb-16">
@@ -61,11 +59,6 @@ function StudentsPage() {
           </div>
           <p className="num mt-2 text-[10px] text-muted-foreground">{list.length} / {MAX_STUDENTS_PER_CLASS} learners</p>
 
-          {jhs && (
-            <div className="mt-3 border-t border-border pt-3">
-              <ClassTransfer classId={classId} className={level.name} />
-            </div>
-          )}
         </section>
 
         <section className="mt-5 space-y-3">
