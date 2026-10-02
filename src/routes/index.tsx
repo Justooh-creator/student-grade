@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ClassPicker } from "@/components/ClassPicker";
-import { EXAM_MAX, GRADE_BANDS, SBA_MAX, getClassLevel, ordinal } from "@/lib/ges";
+import { CAT_PARTS, EXAM_MAX, GRADE_BANDS, SBA_MAX, getClassLevel, ordinal, usesCat } from "@/lib/ges";
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
@@ -23,11 +23,12 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { school, students, setScore, setRawScore } = useAppData();
+  const { school, students, setScore, setRawScore, setCatScore } = useAppData();
   const search = Route.useSearch();
   const navigate = useNavigate();
   const classId = search.class ?? "b4";
   const level = getClassLevel(classId);
+  const cat = usesCat(classId);
   const classStudents = useMemo(() => students.filter((s) => s.classId === classId), [students, classId]);
   const ranking = useMemo(() => classRanking(students, classId), [students, classId]);
   const selected = classStudents.find((s) => s.id === search.student) ?? classStudents[0] ?? null;
@@ -84,6 +85,53 @@ function Index() {
                 </div>
               </div>
 
+              {cat ? (
+              <div className="mt-4 overflow-x-auto rounded-lg border border-border">
+                <table className="w-full min-w-[820px] text-sm">
+                  <thead>
+                    <tr className="bg-muted/60 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                      <th className="px-3 py-2 text-left font-bold">Subject</th>
+                      {CAT_PARTS.map((p) => (<th key={p.key} className="px-1 py-2 text-center font-bold">{p.short} /{p.max}</th>))}
+                      <th className="px-1 py-2 text-center font-bold">SBA raw /100</th>
+                      <th className="px-1 py-2 text-center font-bold">SBA /50</th>
+                      <th className="px-1 py-2 text-center font-bold">Exam raw /100</th>
+                      <th className="px-1 py-2 text-center font-bold">Exam /50</th>
+                      <th className="px-1 py-2 text-center font-bold">Total /100</th>
+                      <th className="px-1 py-2 text-center font-bold">Grade</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {result.subjects.map((row) => {
+                      const e = selected.scores[row.subject];
+                      return (
+                      <tr key={row.subject} className="border-t border-border">
+                        <td className="px-3 py-1.5 font-medium">{row.subject}</td>
+                        {CAT_PARTS.map((p) => (
+                          <td key={p.key} className="px-1 py-1.5 text-center"><ScoreInput max={p.max} value={e?.[p.key] ?? null} onChange={(v) => setCatScore(selected.id, row.subject, p.key, v)} /></td>
+                        ))}
+                        <td className="num px-1 py-1.5 text-center text-muted-foreground">{row.sbaRaw ?? "—"}</td>
+                        <td className="num px-1 py-1.5 text-center">{row.sba ?? "—"}</td>
+                        <td className="px-1 py-1.5 text-center"><ScoreInput max={100} value={e?.examRaw ?? null} onChange={(v) => setCatScore(selected.id, row.subject, "examRaw", v)} /></td>
+                        <td className="num px-1 py-1.5 text-center">{row.exam ?? "—"}</td>
+                        <td className="num px-1 py-1.5 text-center font-semibold">{row.total ?? "—"}</td>
+                        <td className="px-2 py-1.5 text-center">
+                          {row.grade ? (
+                            <span className={row.grade <= 3 ? "num inline-block min-w-6 rounded bg-primary px-1.5 py-0.5 text-xs font-semibold text-primary-foreground" : row.grade <= 6 ? "num inline-block min-w-6 rounded bg-accent px-1.5 py-0.5 text-xs font-semibold text-accent-foreground" : "num inline-block min-w-6 rounded bg-destructive px-1.5 py-0.5 text-xs font-semibold text-destructive-foreground"}>{row.grade}</span>
+                          ) : (<span className="text-muted-foreground">—</span>)}
+                        </td>
+                      </tr>
+                    );})}
+                  </tbody>
+                  <tfoot>
+                    <tr className="border-t border-border bg-primary/5 text-sm font-semibold">
+                      <td className="px-3 py-2" colSpan={9}>Total marks{result.bestSix ? <> · Best Six aggregate <span className="num text-accent">{result.bestSix.subjects.length === 6 ? result.bestSix.aggregate : "—"}</span></> : null}</td>
+                      <td className="num px-1 py-2 text-center">{result.totalMarks}</td>
+                      <td />
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              ) : (
               <div className="mt-4 overflow-x-auto rounded-lg border border-border">
                 <table className="w-full min-w-[560px] text-sm">
                   <thead>
@@ -122,6 +170,7 @@ function Index() {
                   </tfoot>
                 </table>
               </div>
+              )}
 
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 <Link to="/students" search={{ class: classId }} className="flex h-11 items-center justify-center rounded-md border border-border text-sm font-semibold hover:bg-muted">Edit student details</Link>
