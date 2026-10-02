@@ -22,7 +22,7 @@ export interface Student {
   classId: ClassId;
   attendance: string;
   /** subject name -> { sba, exam } */
-  scores: Record<string, { sba: number | null; exam: number | null; sbaRaw?: number | null; examRaw?: number | null }>;
+  scores: Record<string, { sba: number | null; exam: number | null; sbaRaw?: number | null; examRaw?: number | null; test1?: number | null; test2?: number | null; project?: number | null; group?: number | null }>;
   conduct: string;
   interest: string;
   remark: string;
@@ -212,6 +212,27 @@ export function useAppData() {
     [],
   );
 
+  /** Basic 1–9: Test1/Test2/Project/Group raw → SBA 50%; exam raw /100 → 50%. */
+  const setCatScore = useCallback(
+    (id: string, subject: string, field: "test1" | "test2" | "project" | "group" | "examRaw", value: number | null) => {
+      updateData((current) => ({
+        ...current,
+        students: current.students.map((s) => {
+          if (s.id !== id) return s;
+          const e = { ...(s.scores[subject] ?? { sba: null, exam: null }), [field]: value };
+          const parts = [e.test1, e.test2, e.project, e.group];
+          const any = parts.some((v) => v !== null && v !== undefined);
+          const raw = parts.reduce<number>((a, v) => a + (v ?? 0), 0);
+          e.sbaRaw = any ? raw : null;
+          e.sba = any ? Math.round(raw * 0.5 * 10) / 10 : null;
+          e.exam = e.examRaw === null || e.examRaw === undefined ? null : Math.round(e.examRaw * 0.5 * 10) / 10;
+          return { ...s, scores: { ...s.scores, [subject]: e } };
+        }),
+      }));
+    },
+    [],
+  );
+
   const importStudents = useCallback((incoming: Student[]) => {
     updateData((current) => {
       const map = new Map(current.students.map((s) => [s.id, s]));
@@ -230,5 +251,6 @@ export function useAppData() {
     removeStudent,
     setScore,
     setRawScore,
+    setCatScore,
   };
 }

@@ -171,3 +171,20 @@ export const INTEREST_PRESETS = [
   "Science and experiments", "Computing / ICT", "Mathematics puzzles", "Debating",
   "Cultural dance", "Volleyball", "Handwork and crafts", "Gardening",
 ];
+
+/** Basic 1–9 use the CAT structure: 4 SBA parts (raw /100 → 50%) + exam (raw /100 → 50%). KG keeps SBA 30 + Exam 70. */
+export const CAT_PARTS = [
+  { key: "test1", label: "Class Test 1", short: "Test 1", max: 20 },
+  { key: "test2", label: "Class Test 2", short: "Test 2", max: 20 },
+  { key: "project", label: "Project Work", short: "Project", max: 30 },
+  { key: "group", label: "Group Work", short: "Group", max: 30 },
+] as const;
+export type CatPart = (typeof CAT_PARTS)[number]["key"];
+export const CAT_SBA_MAX = 50;
+export const CAT_EXAM_MAX = 50;
+export function usesCat(id: ClassId): boolean {
+  return id !== "kg1" && id !== "kg2";
+}
+export function isJhs(id: ClassId): boolean {
+  return id === "b7" || id === "b8" || id === "b9";
+}
