@@ -41,7 +41,7 @@ function StudentsPage() {
         <ClassPicker value={classId} onChange={(c) => navigate({ to: "/students", search: { class: c } })} />
 
         <section className="mt-5 rounded-xl border border-border bg-card p-4">
-          <h1 className="text-sm font-semibold">Add learner to {level.name}</h1>
+          <h1 className="text-sm font-bold">Add learner to {level.name}</h1>
           <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
             <TextField label="Learner name" value={name} onChange={setName} placeholder="Full name" />
             <TextField label="Admission no." value={adm} onChange={setAdm} placeholder="Optional" />

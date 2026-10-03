@@ -204,7 +204,7 @@ function Index() {
         </section>
 
         <section className="mt-6 rounded-xl border border-border bg-card p-4">
-          <h2 className="text-sm font-semibold">GES grading system</h2>
+          <h2 className="text-sm font-bold">GES grading system</h2>
           <p className="mt-1 text-xs text-muted-foreground">Grade 1 is the highest, grade 9 the lowest.</p>
           <div className="mt-3 grid grid-cols-3 gap-1.5 sm:grid-cols-5 lg:grid-cols-9">
             {GRADE_BANDS.map((b) => (

@@ -91,7 +91,7 @@ function SetupPage() {
       <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={search.class} />
       <main className="mx-auto max-w-3xl px-4">
         <section className="mt-6 rounded-xl border border-border bg-card p-4 sm:p-6">
-          <h1 className="text-lg font-semibold">School and term details</h1>
+          <h1 className="text-lg font-bold">School and term details</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Saved on this device and printed on every report card.
           </p>
