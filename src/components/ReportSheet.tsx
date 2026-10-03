@@ -43,11 +43,11 @@ export function ReportSheet({ student, students, school }: { student: Student; s
           <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 text-[10pt]">
             <p>
               <span className="font-bold text-[#1b1a16]/70">Name: </span>
-              <span className="font-semibold">{student.name}</span>
+              <span className="font-bold">{student.name}</span>
             </p>
             <p>
               <span className="font-bold text-[#1b1a16]/70">Class: </span>
-              <span className="font-semibold">{level.name}</span>
+              <span className="font-bold">{level.name}</span>
             </p>
             <p>
               <span className="font-bold text-[#1b1a16]/70">Admission No.: </span>
@@ -55,7 +55,7 @@ export function ReportSheet({ student, students, school }: { student: Student; s
             </p>
             <p>
               <span className="font-bold text-[#1b1a16]/70">Position in class: </span>
-              <span className="num font-semibold">
+              <span className="num font-bold">
                 {ordinal(position)} of {ranking.classSize}
               </span>
             </p>
@@ -68,32 +68,32 @@ export function ReportSheet({ student, students, school }: { student: Student; s
             {school.term === "Term 3" ? (
               <p>
                 <span className="font-bold text-[#1b1a16]/70">Promotion: </span>
-                <span className="font-semibold">
+                <span className="font-bold">
                   {student.promotion === "promoted" ? `Promoted to ${nextClassName(student.classId)}` : student.promotion === "retained" ? `Retained in ${level.name}` : "To be decided"}
                 </span>
               </p>
             ) : <p />}
             <p>
               <span className="font-bold text-[#1b1a16]/70">Reopening date: </span>
-              <span className="font-semibold">{school.reopeningDate || "—"}</span>
+              <span className="font-bold">{school.reopeningDate || "—"}</span>
             </p>
           </div>
 
           <table className="mt-4 w-full border-collapse text-[9.5pt]">
             <thead>
               <tr className="bg-[#1b1a16] text-white">
-                <th className="border border-[#1b1a16] px-2 py-1 text-left font-semibold">Subject</th>
-                {cat && <th className="border border-[#1b1a16] px-1 py-1 text-center font-semibold">SBA Raw (100)</th>}
-                <th className="border border-[#1b1a16] px-1 py-1 text-center font-semibold">
+                <th className="border border-[#1b1a16] px-2 py-1 text-left font-bold">Subject</th>
+                {cat && <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">SBA Raw (100)</th>}
+                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">
                   SBA ({cat ? 50 : SBA_MAX})
                 </th>
-                {cat && <th className="border border-[#1b1a16] px-1 py-1 text-center font-semibold">Exam Raw (100)</th>}
-                <th className="border border-[#1b1a16] px-1 py-1 text-center font-semibold">
+                {cat && <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">Exam Raw (100)</th>}
+                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">
                   Exam ({cat ? 50 : EXAM_MAX})
                 </th>
-                <th className="border border-[#1b1a16] px-1 py-1 text-center font-semibold">Total (100)</th>
-                <th className="border border-[#1b1a16] px-1 py-1 text-center font-semibold">Grade</th>
-                <th className="border border-[#1b1a16] px-2 py-1 text-left font-semibold">Remark</th>
+                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">Total (100)</th>
+                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">Grade</th>
+                <th className="border border-[#1b1a16] px-2 py-1 text-left font-bold">Remark</th>
               </tr>
             </thead>
             <tbody>
@@ -104,16 +104,16 @@ export function ReportSheet({ student, students, school }: { student: Student; s
                   <td className="num border border-rule px-1 py-[3px] text-center">{row.sba ?? "—"}</td>
                   {cat && <td className="num border border-rule px-1 py-[3px] text-center">{row.examRaw ?? "—"}</td>}
                   <td className="num border border-rule px-1 py-[3px] text-center">{row.exam ?? "—"}</td>
-                  <td className="num border border-rule px-1 py-[3px] text-center font-semibold">
+                  <td className="num border border-rule px-1 py-[3px] text-center font-bold">
                     {row.total ?? "—"}
                   </td>
-                  <td className="num border border-rule px-1 py-[3px] text-center font-semibold">
+                  <td className="num border border-rule px-1 py-[3px] text-center font-bold">
                     {row.grade ?? "—"}
                   </td>
                   <td className="border border-rule px-2 py-[3px]">{row.remark}</td>
                 </tr>
               ))}
-              <tr className="bg-[#1b1a16]/[0.06] font-semibold">
+              <tr className="bg-[#1b1a16]/[0.06] font-bold">
                 <td className="border border-rule px-2 py-1">Total / Aggregate</td>
                 {cat && <td className="border border-rule" />}
                 <td className="num border border-rule px-1 py-1 text-center">
@@ -147,15 +147,15 @@ export function ReportSheet({ student, students, school }: { student: Student; s
           <div className="mt-3 grid grid-cols-3 gap-2 text-[9pt]">
             <div className="border border-rule px-2 py-1.5 text-center">
               <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]/70">Subjects marked</p>
-              <p className="num text-[12pt] font-semibold">{result.gradedCount}</p>
+              <p className="num text-[12pt] font-bold">{result.gradedCount}</p>
             </div>
             <div className="border border-rule px-2 py-1.5 text-center">
               <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]/70">Class average</p>
-              <p className="num text-[12pt] font-semibold">{ranking.classAverage.toFixed(1)}</p>
+              <p className="num text-[12pt] font-bold">{ranking.classAverage.toFixed(1)}</p>
             </div>
             <div className="border border-rule px-2 py-1.5 text-center">
               <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]/70">Learner average</p>
-              <p className="num text-[12pt] font-semibold">{result.average.toFixed(1)}</p>
+              <p className="num text-[12pt] font-bold">{result.average.toFixed(1)}</p>
             </div>
           </div>
 
