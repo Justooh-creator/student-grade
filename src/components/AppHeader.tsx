@@ -54,7 +54,7 @@ export function AppHeader({
 
   return (
     <header className="no-print border-b border-border bg-primary text-primary-foreground">
-      <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 pt-4">
+      <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 pt-[calc(env(safe-area-inset-top)+2rem)]">
         <button
           onClick={() => setOpen(true)}
           aria-label="Open quick navigation"

@@ -13,6 +13,7 @@ export interface School {
   region: string;
   district: string;
   logo: string;
+  signature?: string;
 }
 
 export interface Student {
@@ -26,6 +27,8 @@ export interface Student {
   conduct: string;
   interest: string;
   remark: string;
+  photo?: string;
+  promotion?: "promoted" | "retained" | "tbd";
 }
 
 export interface AppData {
