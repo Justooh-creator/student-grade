@@ -11,6 +11,12 @@ export function ClassTransfer({ classId, className }: { classId: string; classNa
     const json = JSON.stringify({ type: "sba-class", classId, students: list }, null, 2);
     const name = `${className.replace(/\s+/g, "-")}-records.json`;
     const file = new File([json], name, { type: "application/json" });
+    const w = window as unknown as Record<string, { shareText?: (t: string, c: string) => void } | undefined>;
+    const bridge = w.AndroidBridge?.shareText ? w.AndroidBridge : w.AndroidPrint?.shareText ? w.AndroidPrint : undefined;
+    if (bridge?.shareText) {
+      bridge.shareText(`${className} SBA records`, json);
+      return;
+    }
     const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
     try {
       if (nav.share && nav.canShare?.({ files: [file] })) {
