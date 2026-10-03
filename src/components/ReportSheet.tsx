@@ -65,18 +65,18 @@ export function ReportSheet({ student, students, school }: { student: Student; s
                 {student.attendance || "—"} / {school.totalAttendance || "—"} days
               </span>
             </p>
-            <p>
-              <span className="font-bold text-[#1b1a16]/70">Reopening date: </span>
-              <span className="font-semibold">{school.reopeningDate || "—"}</span>
-            </p>
-            {school.term === "Term 3" && (
+            {school.term === "Term 3" ? (
               <p>
                 <span className="font-bold text-[#1b1a16]/70">Promotion: </span>
                 <span className="font-semibold">
                   {student.promotion === "promoted" ? `Promoted to ${nextClassName(student.classId)}` : student.promotion === "retained" ? `Retained in ${level.name}` : "To be decided"}
                 </span>
               </p>
-            )}
+            ) : <p />}
+            <p>
+              <span className="font-bold text-[#1b1a16]/70">Reopening date: </span>
+              <span className="font-semibold">{school.reopeningDate || "—"}</span>
+            </p>
           </div>
 
           <table className="mt-4 w-full border-collapse text-[9.5pt]">
