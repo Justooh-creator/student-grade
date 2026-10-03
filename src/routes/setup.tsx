@@ -7,6 +7,7 @@ import { format, parse, isValid } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { extractSignature } from "@/lib/images";
 import { GHANA_REGIONS, REGION_NAMES } from "@/lib/ghana";
 
 function shrinkImage(file: File): Promise<string> {
@@ -63,7 +64,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+      <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
         {label}
       </span>
       <input
@@ -90,7 +91,7 @@ function SetupPage() {
       <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={search.class} />
       <main className="mx-auto max-w-3xl px-4">
         <section className="mt-6 rounded-xl border border-border bg-card p-4 sm:p-6">
-          <h1 className="text-lg font-semibold">School and term details</h1>
+          <h1 className="text-lg font-bold">School and term details</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Saved on this device and printed on every report card.
           </p>
@@ -108,7 +109,7 @@ function SetupPage() {
               placeholder="P.O. Box 12, Koforidua"
             />
             <label className="block">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                 Region
               </span>
               <select
@@ -123,7 +124,7 @@ function SetupPage() {
               </select>
             </label>
             <label className="block">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                 District
               </span>
               <select
@@ -139,7 +140,7 @@ function SetupPage() {
               </select>
             </label>
             <div className="sm:col-span-2">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                 School logo
               </span>
               <div className="mt-1 flex items-center gap-3">
@@ -169,8 +170,28 @@ function SetupPage() {
                 )}
               </div>
             </div>
+            <div className="sm:col-span-2">
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                Head teacher signature
+              </span>
+              <p className="text-[11px] text-muted-foreground">Sign on plain white paper with a dark pen, then take a photo. Only the pen marks are kept.</p>
+              <div className="mt-1 flex flex-wrap items-center gap-3">
+                <div className="flex h-16 w-40 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-background">
+                  {school.signature ? <img src={school.signature} alt="Head teacher signature" className="max-h-full max-w-full object-contain" /> : <span className="text-[10px] text-muted-foreground">No signature</span>}
+                </div>
+                <label className="cursor-pointer rounded-md bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:opacity-90">
+                  Snap with camera
+                  <input type="file" accept="image/*" capture="environment" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setSchool({ signature: await extractSignature(f) }); }} />
+                </label>
+                <label className="cursor-pointer rounded-md border border-border px-3 py-2 text-xs font-bold hover:bg-muted">
+                  Upload image
+                  <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setSchool({ signature: await extractSignature(f) }); }} />
+                </label>
+                {school.signature && <button onClick={() => setSchool({ signature: "" })} className="text-xs text-muted-foreground hover:text-destructive">Remove</button>}
+              </div>
+            </div>
             <label className="block">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                 Term
               </span>
               <select
@@ -187,7 +208,7 @@ function SetupPage() {
               </select>
             </label>
             <label className="block">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                 Academic year
               </span>
               <select
@@ -216,7 +237,7 @@ function SetupPage() {
               placeholder="Name of head teacher"
             />
             <div className="block">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                 Day school reopens
               </span>
               <ReopenPicker value={school.reopeningDate} onChange={(v) => setSchool({ reopeningDate: v })} />

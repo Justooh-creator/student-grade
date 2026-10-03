@@ -67,7 +67,7 @@ function AuthPage() {
           </div>
         ) : (
           <form onSubmit={submit} className="space-y-3 rounded-lg border border-border bg-card p-6">
-            <h1 className="font-display text-xl font-semibold">{mode === "in" ? "Teacher sign in" : "Create teacher account"}</h1>
+            <h1 className="font-display text-xl font-bold">{mode === "in" ? "Teacher sign in" : "Create teacher account"}</h1>
             <p className="text-xs text-muted-foreground">Needed to send Basic 7–9 records to another teacher.</p>
             {mode === "up" && (
               <input required placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} className={input} />

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ClassPicker } from "@/components/ClassPicker";
 import { CAT_PARTS, EXAM_MAX, GRADE_BANDS, SBA_MAX, getClassLevel, ordinal, usesCat } from "@/lib/ges";
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { school, students, setScore, setRawScore, setCatScore } = useAppData();
+  const { school, students, setScore, setRawScore, setCatScore, updateStudent } = useAppData();
   const search = Route.useSearch();
   const navigate = useNavigate();
   const classId = search.class ?? "b4";
@@ -34,6 +34,14 @@ function Index() {
   const selected = classStudents.find((s) => s.id === search.student) ?? classStudents[0] ?? null;
   const result = selected ? computeStudentResult(selected) : null;
   const idx = selected ? classStudents.indexOf(selected) : -1;
+  useEffect(() => {
+    if (search.class || search.student) return;
+    try {
+      if (sessionStorage.getItem("edureport-opened")) return;
+      sessionStorage.setItem("edureport-opened", "1");
+    } catch { return; }
+    navigate({ to: "/setup", replace: true });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const go = (id: string) => navigate({ to: "/", search: { class: classId, student: id } });
 
   return (
@@ -172,6 +180,21 @@ function Index() {
               </div>
               )}
 
+              {school.term === "Term 3" && (
+                <label className="mt-4 flex flex-wrap items-center gap-3 rounded-lg border border-border p-3">
+                  <span className="text-xs font-bold uppercase tracking-[0.12em]">Promotion (Term 3)</span>
+                  <select
+                    value={selected.promotion ?? "tbd"}
+                    onChange={(e) => updateStudent(selected.id, { promotion: e.target.value as "promoted" | "retained" | "tbd" })}
+                    className="h-10 rounded-md border border-border bg-background px-3 text-sm font-semibold"
+                  >
+                    <option value="promoted">Promoted</option>
+                    <option value="retained">Retained</option>
+                    <option value="tbd">To be decided</option>
+                  </select>
+                </label>
+              )}
+
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 <Link to="/students" search={{ class: classId }} className="flex h-11 items-center justify-center rounded-md border border-border text-sm font-semibold hover:bg-muted">Edit student details</Link>
                 <Link to="/class-report/$classId" params={{ classId }} className="flex h-11 items-center justify-center rounded-md bg-primary text-sm font-semibold text-primary-foreground hover:opacity-90">View {level.name} report cards</Link>
@@ -181,7 +204,7 @@ function Index() {
         </section>
 
         <section className="mt-6 rounded-xl border border-border bg-card p-4">
-          <h2 className="text-sm font-semibold">GES grading system</h2>
+          <h2 className="text-sm font-bold">GES grading system</h2>
           <p className="mt-1 text-xs text-muted-foreground">Grade 1 is the highest, grade 9 the lowest.</p>
           <div className="mt-3 grid grid-cols-3 gap-1.5 sm:grid-cols-5 lg:grid-cols-9">
             {GRADE_BANDS.map((b) => (

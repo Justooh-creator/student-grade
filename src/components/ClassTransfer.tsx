@@ -30,7 +30,11 @@ export function ClassTransfer({ classId, className }: { classId: string; classNa
 
   async function importFile(f: File) {
     try {
-      const parsed = JSON.parse(await f.text()) as { students?: Student[] };
+      const text = (await f.text()).replace(/^\uFEFF/, "");
+      const start = text.indexOf("{");
+      const end = text.lastIndexOf("}");
+      if (start < 0 || end < start) throw new Error("no data");
+      const parsed = JSON.parse(text.slice(start, end + 1)) as { students?: Student[] };
       const inc = (parsed.students ?? []).filter((s) => s.classId === classId);
       if (!inc.length) { toast.error(`No ${className} learners found in that file.`); return; }
       const ids = new Set(list.map((s) => s.id));
@@ -51,7 +55,7 @@ export function ClassTransfer({ classId, className }: { classId: string; classNa
       <button onClick={exportFile} disabled={!list.length} className={`${btn} disabled:opacity-50`}>Export</button>
       <label className={btn}>
         Import
-        <input type="file" accept="application/json,.json" className="hidden"
+        <input type="file" accept="application/json,.json,text/plain,.txt,*/*" className="hidden"
           onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) importFile(f); }} />
       </label>
     </div>

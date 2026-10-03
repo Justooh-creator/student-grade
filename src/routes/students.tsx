@@ -6,6 +6,7 @@ import { PresetField } from "@/components/PresetField";
 import { CONDUCT_PRESETS, INTEREST_PRESETS, MAX_STUDENTS_PER_CLASS, REMARK_PRESETS, getClassLevel } from "@/lib/ges";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData, type Student } from "@/lib/store";
+import { passportPhoto } from "@/lib/images";
 
 export const Route = createFileRoute("/students")({
   validateSearch: validateClassSearch,
@@ -40,7 +41,7 @@ function StudentsPage() {
         <ClassPicker value={classId} onChange={(c) => navigate({ to: "/students", search: { class: c } })} />
 
         <section className="mt-5 rounded-xl border border-border bg-card p-4">
-          <h1 className="text-sm font-semibold">Add learner to {level.name}</h1>
+          <h1 className="text-sm font-bold">Add learner to {level.name}</h1>
           <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
             <TextField label="Learner name" value={name} onChange={setName} placeholder="Full name" />
             <TextField label="Admission no." value={adm} onChange={setAdm} placeholder="Optional" />
@@ -68,7 +69,16 @@ function StudentsPage() {
           {list.map((s, i) => (
             <div key={s.id} className="rounded-xl border border-border bg-card p-4">
               <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-semibold"><span className="num text-muted-foreground">{i + 1}.</span> {s.name}</p>
+                <div className="flex items-center gap-3">
+                  <label className="flex h-14 w-12 cursor-pointer items-center justify-center overflow-hidden rounded border border-dashed border-border bg-background text-[9px] font-bold text-muted-foreground" title="Add passport photo">
+                    {s.photo ? <img src={s.photo} alt={`${s.name} passport`} className="h-full w-full object-cover" /> : "+ Photo"}
+                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) updateStudent(s.id, { photo: await passportPhoto(f) }); }} />
+                  </label>
+                  <div>
+                    <p className="text-sm font-bold"><span className="num text-muted-foreground">{i + 1}.</span> {s.name}</p>
+                    {s.photo && <button onClick={() => updateStudent(s.id, { photo: "" })} className="text-[10px] text-muted-foreground hover:text-destructive">Remove photo</button>}
+                  </div>
+                </div>
                 <div className="flex gap-2">
                   <Link to="/" search={{ class: classId, student: s.id }} className="rounded border border-border px-2 py-1 text-[11px] font-semibold text-primary hover:bg-primary/5">Enter SBA</Link>
                   <button onClick={() => removeStudent(s.id)} className="rounded px-2 py-1 text-[11px] text-muted-foreground hover:text-destructive" aria-label={`Remove ${s.name}`}>✕</button>
