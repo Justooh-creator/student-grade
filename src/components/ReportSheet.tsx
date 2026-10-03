@@ -17,6 +17,14 @@ export function ReportSheet({ student, students, school }: { student: Student; s
             {school.logo && (
               <img src={school.logo} alt="School logo" className="absolute left-0 top-0 h-[22mm] w-[22mm] object-contain" />
             )}
+            <div className="absolute right-0 top-0 flex h-[30mm] w-[25mm] items-center justify-center overflow-hidden border border-[#1b1a16]">
+              {student.photo ? (
+                <img src={student.photo} alt="Learner passport" className="h-full w-full object-cover" />
+              ) : (
+                <span className="px-1 text-[7pt] font-bold uppercase leading-tight text-[#1b1a16]/45">Affix passport photo</span>
+              )}
+            </div>
+            <div className="mx-[28mm] min-h-[30mm]">
             <h1 className="font-display text-[18pt] font-bold uppercase tracking-[0.08em]">
               {school.name || "School Name"}
             </h1>
@@ -29,37 +37,46 @@ export function ReportSheet({ student, students, school }: { student: Student; s
             <p className="num mt-1 text-[9pt] font-semibold uppercase tracking-[0.18em]">
               Terminal Report — {school.term} · {school.academicYear}
             </p>
+            </div>
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 text-[10pt]">
             <p>
-              <span className="text-[#1b1a16]/55">Name: </span>
+              <span className="font-bold text-[#1b1a16]/70">Name: </span>
               <span className="font-semibold">{student.name}</span>
             </p>
             <p>
-              <span className="text-[#1b1a16]/55">Class: </span>
+              <span className="font-bold text-[#1b1a16]/70">Class: </span>
               <span className="font-semibold">{level.name}</span>
             </p>
             <p>
-              <span className="text-[#1b1a16]/55">Admission No.: </span>
+              <span className="font-bold text-[#1b1a16]/70">Admission No.: </span>
               <span className="num">{student.admissionNo || "—"}</span>
             </p>
             <p>
-              <span className="text-[#1b1a16]/55">Position in class: </span>
+              <span className="font-bold text-[#1b1a16]/70">Position in class: </span>
               <span className="num font-semibold">
                 {ordinal(position)} of {ranking.classSize}
               </span>
             </p>
             <p>
-              <span className="text-[#1b1a16]/55">Attendance: </span>
+              <span className="font-bold text-[#1b1a16]/70">Attendance: </span>
               <span className="num">
                 {student.attendance || "—"} / {school.totalAttendance || "—"} days
               </span>
             </p>
             <p>
-              <span className="text-[#1b1a16]/55">Promoted to: </span>
-              <span className="font-semibold">{nextClassName(student.classId)}</span>
+              <span className="font-bold text-[#1b1a16]/70">Reopening date: </span>
+              <span className="font-semibold">{school.reopeningDate || "—"}</span>
             </p>
+            {school.term === "Term 3" && (
+              <p>
+                <span className="font-bold text-[#1b1a16]/70">Promotion: </span>
+                <span className="font-semibold">
+                  {student.promotion === "promoted" ? `Promoted to ${nextClassName(student.classId)}` : student.promotion === "retained" ? `Retained in ${level.name}` : "To be decided"}
+                </span>
+              </p>
+            )}
           </div>
 
           <table className="mt-4 w-full border-collapse text-[9.5pt]">
@@ -123,50 +140,48 @@ export function ReportSheet({ student, students, school }: { student: Student; s
               <p className="mt-0.5">
                 {result.bestSix.subjects.map((b) => `${b.subject} (${b.grade})`).join(" · ") || "—"}
               </p>
-              <p className="mt-0.5 text-[7.5pt] text-[#1b1a16]/55">School-computed aggregate: English, Mathematics, better of Science/Social Studies + 3 best other subjects.</p>
+              <p className="mt-0.5 text-[7.5pt] font-bold text-[#1b1a16]/70">School-computed aggregate: English, Mathematics, better of Science/Social Studies + 3 best other subjects.</p>
             </div>
           )}
 
           <div className="mt-3 grid grid-cols-3 gap-2 text-[9pt]">
             <div className="border border-rule px-2 py-1.5 text-center">
-              <p className="text-[7.5pt] uppercase tracking-[0.12em] text-[#1b1a16]/55">Subjects marked</p>
+              <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]/70">Subjects marked</p>
               <p className="num text-[12pt] font-semibold">{result.gradedCount}</p>
             </div>
             <div className="border border-rule px-2 py-1.5 text-center">
-              <p className="text-[7.5pt] uppercase tracking-[0.12em] text-[#1b1a16]/55">Class average</p>
+              <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]/70">Class average</p>
               <p className="num text-[12pt] font-semibold">{ranking.classAverage.toFixed(1)}</p>
             </div>
             <div className="border border-rule px-2 py-1.5 text-center">
-              <p className="text-[7.5pt] uppercase tracking-[0.12em] text-[#1b1a16]/55">Learner average</p>
+              <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]/70">Learner average</p>
               <p className="num text-[12pt] font-semibold">{result.average.toFixed(1)}</p>
             </div>
           </div>
 
           <div className="mt-3 space-y-1.5 text-[9.5pt]">
             <p>
-              <span className="text-[#1b1a16]/55">Attitude / Conduct: </span>
+              <span className="font-bold text-[#1b1a16]/70">Attitude / Conduct: </span>
               {student.conduct || "—"}
             </p>
             <p>
-              <span className="text-[#1b1a16]/55">Interest: </span>
+              <span className="font-bold text-[#1b1a16]/70">Interest: </span>
               {student.interest || "—"}
             </p>
             <p>
-              <span className="text-[#1b1a16]/55">Class teacher's remark: </span>
+              <span className="font-bold text-[#1b1a16]/70">Class teacher's remark: </span>
               {remark}
-            </p>
-            <p>
-              <span className="text-[#1b1a16]/55">School reopens: </span>
-              {school.reopeningDate || "—"}
             </p>
           </div>
 
-          <div className="mt-8 flex items-end justify-between text-[8.5pt]">
-            <div className="w-[60mm] border-t border-[#1b1a16] pt-1 text-center">
-              Class Teacher{school.classTeacher ? ` — ${school.classTeacher}` : ""}
-            </div>
-            <div className="w-[60mm] border-t border-[#1b1a16] pt-1 text-center">
-              Head Teacher{school.headTeacher ? ` — ${school.headTeacher}` : ""}
+          <div className="mt-6 flex items-end justify-end text-[8.5pt]">
+            <div className="w-[60mm] text-center">
+              <div className="flex h-[16mm] items-end justify-center">
+                {school.signature && <img src={school.signature} alt="Head teacher signature" className="max-h-[16mm] max-w-[55mm] object-contain" />}
+              </div>
+              <div className="border-t border-[#1b1a16] pt-1 font-bold">
+                Head Teacher{school.headTeacher ? ` — ${school.headTeacher}` : ""}
+              </div>
             </div>
           </div>
 
