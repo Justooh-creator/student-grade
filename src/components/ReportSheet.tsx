@@ -173,6 +173,10 @@ export function ReportSheet({ student, students, school }: { student: Student; s
               <span className="font-bold text-[#1b1a16]/70">Class teacher's remark: </span>
               {remark}
             </p>
+            <p>
+              <span className="font-bold text-[#1b1a16]/70">Headteacher's remark: </span>
+              {student.headRemark?.trim() || "—"}
+            </p>
           </div>
 
           <div className="mt-6 flex items-end justify-end text-[8.5pt]">

@@ -94,11 +94,11 @@ export function AppHeader({
               </div>
               <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Pages</p>
               <div className="mt-1 grid gap-1" onClick={() => setOpen(false)}>
+                <Link to="/school-cloud" className="rounded px-2 py-1.5 text-sm font-semibold hover:bg-muted">School Cloud</Link>
                 <Link to="/setup" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">School Details</Link>
                 <Link to="/students" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">Student Details</Link>
                 <Link to="/" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">SBA Details</Link>
                 <Link to="/class-report/$classId" params={{ classId: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">Report</Link>
-                <Link to="/school-cloud" className="rounded px-2 py-1.5 text-sm font-semibold hover:bg-muted">School Cloud</Link>
                 <Link to="/auth" className="rounded px-2 py-1.5 text-sm hover:bg-muted">{user ? "Account" : "Sign in"}</Link>
               </div>
               <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Classes</p>
