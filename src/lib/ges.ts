@@ -188,3 +188,18 @@ export function usesCat(id: ClassId): boolean {
 export function isJhs(id: ClassId): boolean {
   return id === "b7" || id === "b8" || id === "b9";
 }
+export function isKg(id: ClassId): boolean {
+  return id === "kg1" || id === "kg2";
+}
+
+/** KG 1–2 authentic assessment: performance levels instead of numeric grades. */
+export const KG_LEVELS = [
+  { level: "Gold", min: 80, max: 100, descriptor: "Exceeding expectation" },
+  { level: "Silver", min: 50, max: 79, descriptor: "Meeting expectation" },
+  { level: "Bronze", min: 0, max: 49, descriptor: "Approaching expectation" },
+] as const;
+export type KgLevel = (typeof KG_LEVELS)[number];
+export function kgLevelFor(total: number): KgLevel {
+  const r = Math.round(total);
+  return KG_LEVELS.find((l) => r >= l.min) ?? KG_LEVELS[2];
+}

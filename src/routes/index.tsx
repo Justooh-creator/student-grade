@@ -149,7 +149,7 @@ function Index() {
                       <th className="px-2 py-2 text-center font-semibold">Exam raw /100</th>
                       <th className="px-2 py-2 text-center font-semibold">Exam {EXAM_MAX}%</th>
                       <th className="px-2 py-2 text-center font-semibold">Total /100</th>
-                      <th className="px-2 py-2 text-center font-semibold">Grade</th>
+                      <th className="px-2 py-2 text-center font-semibold">Level</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -161,8 +161,8 @@ function Index() {
                         <td className="num px-2 py-1.5 text-center text-muted-foreground">{row.exam ?? "—"}</td>
                         <td className="num px-2 py-1.5 text-center font-semibold">{row.total ?? "—"}</td>
                         <td className="px-2 py-1.5 text-center">
-                          {row.grade ? (
-                            <span className={row.grade <= 3 ? "num inline-block min-w-6 rounded bg-primary px-1.5 py-0.5 text-xs font-semibold text-primary-foreground" : row.grade <= 6 ? "num inline-block min-w-6 rounded bg-accent px-1.5 py-0.5 text-xs font-semibold text-accent-foreground" : "num inline-block min-w-6 rounded bg-destructive px-1.5 py-0.5 text-xs font-semibold text-destructive-foreground"}>{row.grade}</span>
+                          {row.level ? (
+                            <span className={row.level === "Gold" ? "inline-block rounded bg-primary px-1.5 py-0.5 text-xs font-semibold text-primary-foreground" : row.level === "Silver" ? "inline-block rounded bg-accent px-1.5 py-0.5 text-xs font-semibold text-accent-foreground" : "inline-block rounded bg-muted px-1.5 py-0.5 text-xs font-semibold text-foreground"}>{row.level}</span>
                           ) : (<span className="text-muted-foreground">—</span>)}
                         </td>
                       </tr>
@@ -170,7 +170,7 @@ function Index() {
                   </tbody>
                   <tfoot>
                     <tr className="border-t border-border bg-primary/5 text-sm font-semibold">
-                      <td className="px-3 py-2">Total marks · aggregate <span className="num text-accent">{result.aggregate}</span></td>
+                      <td className="px-3 py-2">Total marks</td>
                       <td colSpan={3} />
                       <td className="num px-2 py-2 text-center">{result.totalMarks}</td>
                       <td />
@@ -203,6 +203,21 @@ function Index() {
           )}
         </section>
 
+        {isKg(classId) ? (
+        <section className="mt-6 rounded-xl border border-border bg-card p-4">
+          <h2 className="text-sm font-bold">KG performance levels</h2>
+          <p className="mt-1 text-xs text-muted-foreground">KG 1–2 use performance levels, not grades 1–9.</p>
+          <div className="mt-3 grid grid-cols-3 gap-1.5">
+            {KG_LEVELS.map((l) => (
+              <div key={l.level} className="rounded-md border border-border px-2 py-2 text-center">
+                <p className="text-base font-bold text-primary">{l.level}</p>
+                <p className="num text-[10px] text-muted-foreground">{l.min}–{l.max}</p>
+                <p className="mt-0.5 text-[10px] leading-tight">{l.descriptor}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+        ) : (
         <section className="mt-6 rounded-xl border border-border bg-card p-4">
           <h2 className="text-sm font-bold">GES grading system</h2>
           <p className="mt-1 text-xs text-muted-foreground">Grade 1 is the highest, grade 9 the lowest.</p>
@@ -216,6 +231,7 @@ function Index() {
             ))}
           </div>
         </section>
+        )}
       </main>
     </div>
   );
