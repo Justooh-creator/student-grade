@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ClassPicker } from "@/components/ClassPicker";
-import { CAT_PARTS, EXAM_MAX, GRADE_BANDS, SBA_MAX, getClassLevel, ordinal, usesCat } from "@/lib/ges";
+import { CAT_PARTS, EXAM_MAX, GRADE_BANDS, KG_LEVELS, SBA_MAX, getClassLevel, isKg, ordinal, usesCat } from "@/lib/ges";
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
