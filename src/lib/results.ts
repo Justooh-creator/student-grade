@@ -1,4 +1,4 @@
-import { getClassLevel, gradeFor, isJhs, type ClassId } from "./ges";
+import { getClassLevel, gradeFor, isJhs, isKg, kgLevelFor, type ClassId } from "./ges";
 import type { Student } from "./store";
 
 export interface SubjectResult {
@@ -9,6 +9,8 @@ export interface SubjectResult {
   examRaw: number | null;
   total: number | null;
   grade: number | null;
+  /** KG only: Gold / Silver / Bronze */
+  level?: string;
   remark: string;
 }
 
@@ -24,6 +26,7 @@ export interface StudentResult {
 
 export function computeStudentResult(student: Student): StudentResult {
   const level = getClassLevel(student.classId);
+  const kg = isKg(student.classId);
   const subjects: SubjectResult[] = level.subjects.map((subject) => {
     const entry = student.scores[subject];
     const sba = entry?.sba ?? null;
@@ -34,6 +37,10 @@ export function computeStudentResult(student: Student): StudentResult {
       return { subject, sba, exam, sbaRaw, examRaw, total: null, grade: null, remark: "—" };
     }
     const total = Math.round(((sba ?? 0) + (exam ?? 0)) * 10) / 10;
+    if (kg) {
+      const l = kgLevelFor(total);
+      return { subject, sba, exam, sbaRaw, examRaw, total, grade: null, level: l.level, remark: l.descriptor };
+    }
     const band = gradeFor(total);
     return { subject, sba, exam, sbaRaw, examRaw, total, grade: band.grade, remark: band.remark };
   });
@@ -41,7 +48,7 @@ export function computeStudentResult(student: Student): StudentResult {
   const graded = subjects.filter((s) => s.total !== null);
   const totalMarks0 = graded.reduce((sum, s) => sum + (s.total ?? 0), 0);
   const totalMarks = Math.round(totalMarks0 * 10) / 10;
-  const aggregate = graded.reduce((sum, s) => sum + (s.grade ?? 0), 0);
+  const aggregate = kg ? 0 : graded.reduce((sum, s) => sum + (s.grade ?? 0), 0);
 
   let bestSix: StudentResult["bestSix"] = null;
   if (isJhs(student.classId)) {
