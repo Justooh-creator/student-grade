@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ClassPicker, TextField } from "@/components/ClassPicker";
 import { PresetField } from "@/components/PresetField";
-import { CONDUCT_PRESETS, INTEREST_PRESETS, MAX_STUDENTS_PER_CLASS, REMARK_PRESETS, getClassLevel } from "@/lib/ges";
+import { CONDUCT_PRESETS, HEAD_REMARK_PRESETS, INTEREST_PRESETS, MAX_STUDENTS_PER_CLASS, REMARK_PRESETS, getClassLevel } from "@/lib/ges";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData, type Student } from "@/lib/store";
 import { passportPhoto } from "@/lib/images";
@@ -91,6 +91,7 @@ function StudentsPage() {
                 <PresetField label="Attitude / conduct" value={s.conduct} presets={CONDUCT_PRESETS} onChange={(v) => updateStudent(s.id, { conduct: v })} placeholder="Select conduct" />
                 <PresetField label="Interest / hobby" value={s.interest} presets={INTEREST_PRESETS} onChange={(v) => updateStudent(s.id, { interest: v })} placeholder="Select interest" />
                 <PresetField label="Class teacher's remark" value={s.remark ?? ""} presets={REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { remark: v })} placeholder="Auto remark from average" />
+                <PresetField label="Headteacher's remark" value={s.headRemark ?? ""} presets={HEAD_REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { headRemark: v })} placeholder="Select headteacher's remark" />
               </div>
             </div>
           ))}

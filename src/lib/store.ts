@@ -27,6 +27,7 @@ export interface Student {
   conduct: string;
   interest: string;
   remark: string;
+  headRemark?: string;
   photo?: string;
   promotion?: "promoted" | "retained" | "tbd";
 }

@@ -166,6 +166,17 @@ export const REMARK_PRESETS = [
 
 export const MAX_STUDENTS_PER_CLASS = 35;
 
+export const HEAD_REMARK_PRESETS = [
+  "Excellent results. Keep it up!",
+  "Very good performance. Well done.",
+  "Good work. Aim higher next term.",
+  "Satisfactory. Put in more effort.",
+  "Can do better with more seriousness.",
+  "Weak performance. Needs extra support at home.",
+  "Promoted. Keep working hard.",
+  "Has shown great improvement this term.",
+];
+
 export const INTEREST_PRESETS = [
   "Football", "Reading", "Drawing and art", "Music and singing", "Drama", "Athletics",
   "Science and experiments", "Computing / ICT", "Mathematics puzzles", "Debating",
