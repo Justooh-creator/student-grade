@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import { CLASS_LEVELS, type ClassId } from "@/lib/ges";
 import { useAppData } from "@/lib/store";
@@ -39,6 +39,7 @@ export function AppHeader({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   const { students } = useAppData();
   const { user } = useUser();
   const cloud = useCloud();
@@ -87,12 +88,12 @@ export function AppHeader({
             onClick={(e) => e.stopPropagation()}
             className="relative flex h-full w-72 flex-col bg-card text-foreground shadow-xl"
           >
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-y-auto p-4 pt-[calc(env(safe-area-inset-top)+2.5rem)]">
               <div className="flex items-center justify-between">
-                <p className="font-display text-sm font-semibold">Quick navigation</p>
+                <p className="font-display text-sm font-bold">Quick navigation</p>
                 <button onClick={() => setOpen(false)} aria-label="Close" className="text-muted-foreground">✕</button>
               </div>
-              <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Pages</p>
+              <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Pages</p>
               <div className="mt-1 grid gap-1" onClick={() => setOpen(false)}>
                 <Link to="/school-cloud" className="rounded px-2 py-1.5 text-sm font-semibold hover:bg-muted">School Cloud</Link>
                 <Link to="/setup" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">School Details</Link>
@@ -101,20 +102,20 @@ export function AppHeader({
                 <Link to="/class-report/$classId" params={{ classId: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">Report</Link>
                 <Link to="/auth" className="rounded px-2 py-1.5 text-sm hover:bg-muted">{user ? "Account" : "Sign in"}</Link>
               </div>
-              <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Classes</p>
-              <div className="mt-1 grid grid-cols-3 gap-1">
+              <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Classes</p>
+              <select
+                aria-label="Choose class"
+                value={navClass}
+                onChange={(e) => {
+                  setOpen(false);
+                  navigate({ to: "/", search: { class: e.target.value as ClassId } });
+                }}
+                className="mt-1 h-10 w-full rounded-md border border-border bg-card px-2 text-sm font-semibold outline-none focus:border-primary"
+              >
                 {CLASS_LEVELS.map((c) => (
-                  <Link
-                    key={c.id}
-                    to="/"
-                    search={{ class: c.id }}
-                    onClick={() => setOpen(false)}
-                    className={c.id === navClass ? "rounded bg-primary px-1 py-1.5 text-center text-xs font-semibold text-primary-foreground" : "rounded border border-border px-1 py-1.5 text-center text-xs hover:bg-muted"}
-                  >
-                    {c.name}
-                  </Link>
+                  <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
-              </div>
+              </select>
               <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                 Learners · {CLASS_LEVELS.find((c) => c.id === navClass)?.name}
               </p>
@@ -127,7 +128,8 @@ export function AppHeader({
                 ))}
               </div>
             </div>
-            <div className="flex items-center justify-center gap-3 border-t border-border p-3">
+            <p className="border-t border-border pt-3 text-center text-xs font-bold">Contacts</p>
+            <div className="flex items-center justify-center gap-3 p-3 pt-2 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
               <a href="https://wa.me/233249931038" target="_blank" rel="noreferrer" aria-label="WhatsApp" className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground hover:opacity-90">
                 <WhatsAppIcon />
               </a>

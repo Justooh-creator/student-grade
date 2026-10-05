@@ -261,10 +261,10 @@ function SetupPage() {
               {students.length} learner{students.length === 1 ? "" : "s"} recorded
             </p>
             <Link
-              to="/"
-              className="flex h-11 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground hover:opacity-90"
+              to="/students"
+              className="flex h-11 items-center justify-center rounded-md bg-primary px-5 text-sm font-bold text-primary-foreground hover:opacity-90"
             >
-              Go to score entry
+              Go to Student Details
             </Link>
           </div>
         </section>
