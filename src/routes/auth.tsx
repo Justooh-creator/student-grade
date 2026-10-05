@@ -81,6 +81,21 @@ function AuthPage() {
             <button type="button" onClick={() => { setMode(mode === "in" ? "up" : "in"); setMsg(""); }} className="w-full text-xs text-primary underline">
               {mode === "in" ? "New teacher? Create an account" : "Already have an account? Sign in"}
             </button>
+            {mode === "in" && (
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!email.trim()) { setMsg("Type your email above first, then tap Forgot password."); return; }
+                  setBusy(true);
+                  const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/reset-password` });
+                  setMsg(error ? error.message : "Check your email for a link to set a new password.");
+                  setBusy(false);
+                }}
+                className="w-full text-xs font-semibold text-muted-foreground underline"
+              >
+                Forgot password?
+              </button>
+            )}
           </form>
         )}
       </main>
