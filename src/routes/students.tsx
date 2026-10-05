@@ -24,7 +24,7 @@ export const Route = createFileRoute("/students")({
 });
 
 function StudentsPage() {
-  const { school, students, addStudent, updateStudent, removeStudent } = useAppData();
+  const { school, students, addStudent, updateStudent, removeStudent, setSchool } = useAppData();
   const search = Route.useSearch();
   const navigate = useNavigate();
   const classId = search.class ?? "b4";
@@ -39,6 +39,15 @@ function StudentsPage() {
       <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={classId} />
       <main className="mx-auto max-w-5xl px-4">
         <ClassPicker value={classId} onChange={(c) => navigate({ to: "/students", search: { class: c } })} />
+
+        <section className="mt-5 rounded-xl border border-border bg-card p-4">
+          <TextField
+            label={`${level.name} class teacher`}
+            value={school.classTeachers?.[classId] ?? ""}
+            onChange={(v) => setSchool({ classTeachers: { ...(school.classTeachers ?? {}), [classId]: v } })}
+            placeholder="Name of class teacher (shown on report cards)"
+          />
+        </section>
 
         <section className="mt-5 rounded-xl border border-border bg-card p-4">
           <h1 className="text-sm font-bold">Add learner to {level.name}</h1>
