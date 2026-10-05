@@ -108,6 +108,18 @@ function SetupPage() {
               onChange={(v) => setSchool({ address: v })}
               placeholder="P.O. Box 12, Koforidua"
             />
+            <Field
+              label="School motto"
+              value={school.motto ?? ""}
+              onChange={(v) => setSchool({ motto: v })}
+              placeholder="e.g. Knowledge and Discipline"
+            />
+            <Field
+              label="EMIS code"
+              value={school.emisCode ?? ""}
+              onChange={(v) => setSchool({ emisCode: v })}
+              placeholder="School EMIS code"
+            />
             <label className="block">
               <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                 Region
@@ -224,12 +236,6 @@ function SetupPage() {
                 ))}
               </select>
             </label>
-            <Field
-              label="Class teacher"
-              value={school.classTeacher}
-              onChange={(v) => setSchool({ classTeacher: v })}
-              placeholder="Name of class teacher"
-            />
             <Field
               label="Head teacher"
               value={school.headTeacher}

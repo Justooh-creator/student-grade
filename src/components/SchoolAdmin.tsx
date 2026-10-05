@@ -2,12 +2,15 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { setCloud } from "@/lib/cloud";
+import { useAppData } from "@/lib/store";
+import { CLASS_LEVELS } from "@/lib/ges";
 
 interface Member { id: string; user_id: string; role: string; name: string; email: string }
 
 export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { schoolId: string; schoolName: string; joinCode: string; userId: string }) {
   const [members, setMembers] = useState<Member[]>([]);
   const [busy, setBusy] = useState(false);
+  const { school, setSchool } = useAppData();
 
   const load = useCallback(async () => {
     const { data: ms } = await supabase.from("school_members").select("id, user_id, role").eq("school_id", schoolId);
@@ -48,6 +51,35 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
 
   return (
     <>
+      <div className={card}>
+        <p className="font-bold">School registration details</p>
+        <label className="mt-3 block">
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">EMIS code</span>
+          <input value={school.emisCode ?? ""} onChange={(e) => setSchool({ emisCode: e.target.value })} placeholder="School EMIS code"
+            className="mt-1 h-10 w-full rounded-md border border-border bg-card px-3 text-sm outline-none focus:border-primary" />
+        </label>
+      </div>
+      <div className={card}>
+        <p className="font-bold">Class teachers</p>
+        <p className="mt-1 text-sm text-muted-foreground">Pick a teacher for each class. The name shows on Student Details and report cards.</p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          {CLASS_LEVELS.map((c) => {
+            const cur = school.classTeachers?.[c.id] ?? "";
+            const names = members.map((m) => m.name);
+            return (
+              <label key={c.id} className="flex items-center gap-2">
+                <span className="w-16 shrink-0 text-sm font-bold">{c.name}</span>
+                <select value={cur} onChange={(e) => setSchool({ classTeachers: { ...(school.classTeachers ?? {}), [c.id]: e.target.value } })}
+                  className="h-9 min-w-0 flex-1 rounded-md border border-border bg-card px-2 text-sm">
+                  <option value="">Not assigned</option>
+                  {cur && !names.includes(cur) && <option value={cur}>{cur}</option>}
+                  {names.map((n) => <option key={n} value={n}>{n}</option>)}
+                </select>
+              </label>
+            );
+          })}
+        </div>
+      </div>
       <div className={card}>
         <p className="font-bold">Invite teachers</p>
         <p className="mt-1 text-sm text-muted-foreground">Send the School Code so teachers can join.</p>

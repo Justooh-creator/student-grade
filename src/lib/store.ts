@@ -14,6 +14,10 @@ export interface School {
   district: string;
   logo: string;
   signature?: string;
+  motto?: string;
+  emisCode?: string;
+  /** class id -> class teacher name(s) */
+  classTeachers?: Record<string, string>;
 }
 
 export interface Student {

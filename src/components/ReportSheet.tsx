@@ -29,6 +29,7 @@ export function ReportSheet({ student, students, school }: { student: Student; s
             <h1 className="font-display text-[18pt] font-bold uppercase tracking-[0.08em]">
               {school.name || "School Name"}
             </h1>
+            {school.motto?.trim() && <p className="text-[9pt] font-bold italic">“{school.motto.trim()}”</p>}
             <p className="text-[9pt]">{school.address || "School address"}</p>
             {(school.district || school.region) && (
               <p className="text-[9pt]">
@@ -168,6 +169,10 @@ export function ReportSheet({ student, students, school }: { student: Student; s
             <p>
               <span className="font-bold text-[#1b1a16]/70">Interest: </span>
               {student.interest || "—"}
+            </p>
+            <p>
+              <span className="font-bold text-[#1b1a16]/70">Class teacher: </span>
+              {school.classTeachers?.[student.classId]?.trim() || school.classTeacher || "—"}
             </p>
             <p>
               <span className="font-bold text-[#1b1a16]/70">Class teacher's remark: </span>
