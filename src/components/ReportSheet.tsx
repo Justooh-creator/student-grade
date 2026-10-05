@@ -171,10 +171,6 @@ export function ReportSheet({ student, students, school }: { student: Student; s
               {student.interest || "—"}
             </p>
             <p>
-              <span className="font-bold text-[#1b1a16]/70">Class teacher: </span>
-              {school.classTeachers?.[student.classId]?.trim() || school.classTeacher || "—"}
-            </p>
-            <p>
               <span className="font-bold text-[#1b1a16]/70">Class teacher's remark: </span>
               {remark}
             </p>
@@ -184,7 +180,12 @@ export function ReportSheet({ student, students, school }: { student: Student; s
             </p>
           </div>
 
-          <div className="mt-6 flex items-end justify-end text-[8.5pt]">
+          <div className="mt-6 flex items-end justify-between gap-4 text-[8.5pt]">
+            <div className="w-[60mm] text-left">
+              <div className="border-t border-[#1b1a16] pt-1 font-bold">
+                Class Teacher — {school.classTeachers?.[student.classId]?.trim() || school.classTeacher || "—"}
+              </div>
+            </div>
             <div className="w-[60mm] text-center">
               <div className="flex h-[16mm] items-end justify-center">
                 {school.signature && <img src={school.signature} alt="Head teacher signature" className="max-h-[16mm] max-w-[55mm] object-contain" />}
