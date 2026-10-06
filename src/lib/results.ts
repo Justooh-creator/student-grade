@@ -10,7 +10,7 @@ export interface SubjectResult {
   total: number | null;
   grade: number | null;
   /** KG only: Gold / Silver / Bronze */
-  level?: string;
+  level?: string | undefined;
   remark: string;
 }
 
