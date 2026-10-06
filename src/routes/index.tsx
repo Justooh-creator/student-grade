@@ -34,15 +34,23 @@ function Index() {
   const selected = classStudents.find((s) => s.id === search.student) ?? classStudents[0] ?? null;
   const result = selected ? computeStudentResult(selected) : null;
   const idx = selected ? classStudents.indexOf(selected) : -1;
+  // Plain "/" (app launch) waits for the first-open check so the scores page never flashes before School Details.
+  const [ready, setReady] = useState(!!(search.class || search.student));
   useEffect(() => {
     if (search.class || search.student) return;
+    let first = false;
     try {
-      if (sessionStorage.getItem("edureport-opened")) return;
-      sessionStorage.setItem("edureport-opened", "1");
-    } catch { return; }
-    navigate({ to: "/setup", replace: true });
+      if (!sessionStorage.getItem("edureport-opened")) {
+        sessionStorage.setItem("edureport-opened", "1");
+        first = true;
+      }
+    } catch { /* storage unavailable */ }
+    if (first) navigate({ to: "/setup", replace: true });
+    else setReady(true);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const go = (id: string) => navigate({ to: "/", search: { class: classId, student: id } });
+
+  if (!ready) return <div className="min-h-screen bg-background" />;
 
   return (
     <div className="min-h-screen bg-background pb-16">
