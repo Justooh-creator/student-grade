@@ -74,7 +74,7 @@ function Index() {
             <>
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <label className="block min-w-0 flex-1">
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Select learner</span>
+                  <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Select learner</span>
                   <div className="mt-1 flex gap-1.5">
                     <button disabled={idx <= 0} onClick={() => go(classStudents[idx - 1]!.id)} aria-label="Previous learner" className="h-10 w-10 rounded-md border border-border disabled:opacity-40">‹</button>
                     <select
@@ -121,7 +121,7 @@ function Index() {
                       const e = selected.scores[row.subject];
                       return (
                       <tr key={row.subject} className="border-t border-border">
-                        <td className="px-3 py-1.5 font-medium">{row.subject}</td>
+                        <td className="px-3 py-1.5 font-bold">{row.subject}</td>
                         {CAT_PARTS.map((p) => (
                           <td key={p.key} className="px-1 py-1.5 text-center"><ScoreInput max={p.max} value={e?.[p.key] ?? null} onChange={(v) => setCatScore(selected.id, row.subject, p.key, v)} /></td>
                         ))}
@@ -160,7 +160,7 @@ function Index() {
                   <tbody>
                     {result.subjects.map((row) => (
                       <tr key={row.subject} className="border-t border-border">
-                        <td className="px-3 py-1.5 font-medium">{row.subject}</td>
+                        <td className="px-3 py-1.5 font-bold">{row.subject}</td>
                         <td className="px-2 py-1.5 text-center">
                           <select
                             aria-label={`${row.subject} level`}
