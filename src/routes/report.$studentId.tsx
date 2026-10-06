@@ -2,8 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import {
-  EXAM_MAX,
-  SBA_MAX,
   getClassLevel,
   nextClassName,
   ordinal,
@@ -24,7 +22,7 @@ export const Route = createFileRoute("/report/$studentId")({
       { property: "og:title", content: "Report Card — SBA Report Cards" },
       {
         property: "og:description",
-        content: "A4 GES terminal report card with SBA 30, exam 70, totals and grades 1 to 9.",
+        content: "A4 GES terminal report card with KG performance levels and Basic 1–9 SBA, exam, totals and grades.",
       },
       { name: "robots", content: "noindex" },
     ],

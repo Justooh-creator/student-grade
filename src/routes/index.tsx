@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ClassPicker } from "@/components/ClassPicker";
-import { CAT_PARTS, EXAM_MAX, GRADE_BANDS, KG_LEVELS, SBA_MAX, getClassLevel, isKg, ordinal, usesCat } from "@/lib/ges";
+import { CAT_PARTS, GRADE_BANDS, KG_LEVELS, getClassLevel, isKg, ordinal, usesCat } from "@/lib/ges";
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "SBA Details — GES Score Entry" },
-      { name: "description", content: "Enter SBA (30) and exam (70) marks for KG 1 to Basic 9 using GES curriculum subjects." },
+      { name: "description", content: "Enter KG performance levels and Basic 1–9 SBA and exam marks using GES curriculum subjects." },
       { property: "og:title", content: "SBA Details — GES Score Entry" },
       { property: "og:description", content: "GES subjects roll out automatically by class. Grades 1 to 9, printable A4 report cards." },
       { property: "og:type", content: "website" },
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { school, students, setScore, setRawScore, setCatScore, updateStudent } = useAppData();
+  const { school, students, setCatScore, setKgLevel, updateStudent } = useAppData();
   const search = Route.useSearch();
   const navigate = useNavigate();
   const classId = search.class ?? "b4";
@@ -141,41 +141,33 @@ function Index() {
               </div>
               ) : (
               <div className="mt-4 overflow-x-auto rounded-lg border border-border">
-                <table className="w-full min-w-[560px] text-sm">
+                <table className="w-full min-w-[480px] text-sm">
                   <thead>
                     <tr className="bg-muted/60 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
-                      <th className="px-3 py-2 text-left font-semibold">Subject</th>
-                      <th className="px-2 py-2 text-center font-semibold">SBA /{SBA_MAX}</th>
-                      <th className="px-2 py-2 text-center font-semibold">Exam raw /100</th>
-                      <th className="px-2 py-2 text-center font-semibold">Exam {EXAM_MAX}%</th>
-                      <th className="px-2 py-2 text-center font-semibold">Total /100</th>
-                      <th className="px-2 py-2 text-center font-semibold">Level</th>
+                      <th className="px-3 py-2 text-left font-bold">Learning area</th>
+                      <th className="px-2 py-2 text-center font-bold">Level</th>
+                      <th className="px-2 py-2 text-left font-bold">Descriptor</th>
                     </tr>
                   </thead>
                   <tbody>
                     {result.subjects.map((row) => (
                       <tr key={row.subject} className="border-t border-border">
                         <td className="px-3 py-1.5 font-medium">{row.subject}</td>
-                        <td className="px-2 py-1.5 text-center"><ScoreInput max={SBA_MAX} value={row.sba} onChange={(v) => setScore(selected.id, row.subject, "sba", v)} /></td>
-                        <td className="px-2 py-1.5 text-center"><ScoreInput max={100} value={selected.scores[row.subject]?.examRaw ?? null} onChange={(v) => setRawScore(selected.id, row.subject, "exam", v)} /></td>
-                        <td className="num px-2 py-1.5 text-center text-muted-foreground">{row.exam ?? "—"}</td>
-                        <td className="num px-2 py-1.5 text-center font-semibold">{row.total ?? "—"}</td>
                         <td className="px-2 py-1.5 text-center">
-                          {row.level ? (
-                            <span className={row.level === "Gold" ? "inline-block rounded bg-primary px-1.5 py-0.5 text-xs font-semibold text-primary-foreground" : row.level === "Silver" ? "inline-block rounded bg-accent px-1.5 py-0.5 text-xs font-semibold text-accent-foreground" : "inline-block rounded bg-muted px-1.5 py-0.5 text-xs font-semibold text-foreground"}>{row.level}</span>
-                          ) : (<span className="text-muted-foreground">—</span>)}
+                          <select
+                            aria-label={`${row.subject} level`}
+                            value={row.level ?? ""}
+                            onChange={(e) => setKgLevel(selected.id, row.subject, e.target.value || null)}
+                            className="h-9 rounded-md border border-border bg-background px-2 text-sm font-semibold"
+                          >
+                            <option value="">—</option>
+                            {KG_LEVELS.map((l) => (<option key={l.level} value={l.level}>{l.level} ({l.code})</option>))}
+                          </select>
                         </td>
+                        <td className="px-2 py-1.5 text-xs text-muted-foreground">{row.remark}</td>
                       </tr>
                     ))}
                   </tbody>
-                  <tfoot>
-                    <tr className="border-t border-border bg-primary/5 text-sm font-semibold">
-                      <td className="px-3 py-2">Total marks</td>
-                      <td colSpan={3} />
-                      <td className="num px-2 py-2 text-center">{result.totalMarks}</td>
-                      <td />
-                    </tr>
-                  </tfoot>
                 </table>
               </div>
               )}
@@ -206,12 +198,12 @@ function Index() {
         {isKg(classId) ? (
         <section className="mt-6 rounded-xl border border-border bg-card p-4">
           <h2 className="text-sm font-bold">KG performance levels</h2>
-          <p className="mt-1 text-xs text-muted-foreground">KG 1–2 use performance levels, not grades 1–9.</p>
+          <p className="mt-1 text-xs text-muted-foreground">KG 1–2 use continuous assessment (observation, portfolio, oral and practical activities). No SBA/Exam marks, grades 1–9 or aggregate.</p>
           <div className="mt-3 grid grid-cols-3 gap-1.5">
             {KG_LEVELS.map((l) => (
               <div key={l.level} className="rounded-md border border-border px-2 py-2 text-center">
                 <p className="text-base font-bold text-primary">{l.level}</p>
-                <p className="num text-[10px] text-muted-foreground">{l.min}–{l.max}</p>
+                <p className="text-[10px] text-muted-foreground">({l.code})</p>
                 <p className="mt-0.5 text-[10px] leading-tight">{l.descriptor}</p>
               </div>
             ))}

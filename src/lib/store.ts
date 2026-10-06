@@ -27,7 +27,7 @@ export interface Student {
   classId: ClassId;
   attendance: string;
   /** subject name -> { sba, exam } */
-  scores: Record<string, { sba: number | null; exam: number | null; sbaRaw?: number | null; examRaw?: number | null; test1?: number | null; test2?: number | null; project?: number | null; group?: number | null }>;
+  scores: Record<string, { sba: number | null; exam: number | null; sbaRaw?: number | null; examRaw?: number | null; test1?: number | null; test2?: number | null; project?: number | null; group?: number | null; level?: string | null }>;
   conduct: string;
   interest: string;
   remark: string;
@@ -241,6 +241,18 @@ export function useAppData() {
     [],
   );
 
+  /** KG 1–2: teacher selects Gold / Silver / Bronze per learning area. Existing marks are kept untouched. */
+  const setKgLevel = useCallback((id: string, subject: string, level: string | null) => {
+    updateData((current) => ({
+      ...current,
+      students: current.students.map((s) => {
+        if (s.id !== id) return s;
+        const prev = s.scores[subject] ?? { sba: null, exam: null };
+        return { ...s, scores: { ...s.scores, [subject]: { ...prev, level } } };
+      }),
+    }));
+  }, []);
+
   const importStudents = useCallback((incoming: Student[]) => {
     updateData((current) => {
       const map = new Map(current.students.map((s) => [s.id, s]));
@@ -260,5 +272,6 @@ export function useAppData() {
     setScore,
     setRawScore,
     setCatScore,
+    setKgLevel,
   };
 }

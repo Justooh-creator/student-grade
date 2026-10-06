@@ -183,7 +183,7 @@ export const INTEREST_PRESETS = [
   "Cultural dance", "Volleyball", "Handwork and crafts", "Gardening",
 ];
 
-/** Basic 1–9 use the CAT structure: 4 SBA parts (raw /100 → 50%) + exam (raw /100 → 50%). KG keeps SBA 30 + Exam 70. */
+/** Basic 1–9 use the CAT structure: 4 SBA parts (raw /100 → 50%) + exam (raw /100 → 50%). KG uses performance levels only. */
 export const CAT_PARTS = [
   { key: "test1", label: "Class Test 1", short: "Test 1", max: 20 },
   { key: "test2", label: "Class Test 2", short: "Test 2", max: 20 },
@@ -203,14 +203,14 @@ export function isKg(id: ClassId): boolean {
   return id === "kg1" || id === "kg2";
 }
 
-/** KG 1–2 authentic assessment: performance levels instead of numeric grades. */
+/** KG 1–2 authentic continuous assessment (NaCCA): teacher selects a level per learning area. No SBA/Exam formula, no numeric grade or aggregate. */
 export const KG_LEVELS = [
-  { level: "Gold", min: 80, max: 100, descriptor: "Exceeding expectation" },
-  { level: "Silver", min: 50, max: 79, descriptor: "Meeting expectation" },
-  { level: "Bronze", min: 0, max: 49, descriptor: "Approaching expectation" },
+  { level: "Gold", code: "G", descriptor: "High level of proficiency; transfers learning confidently and flexibly" },
+  { level: "Silver", code: "S", descriptor: "Sufficient fundamental knowledge and skills; transfers learning independently" },
+  { level: "Bronze", code: "B", descriptor: "Approaching proficiency; may need guidance or support" },
 ] as const;
 export type KgLevel = (typeof KG_LEVELS)[number];
-export function kgLevelFor(total: number): KgLevel {
-  const r = Math.round(total);
-  return KG_LEVELS.find((l) => r >= l.min) ?? KG_LEVELS[2];
+export type KgLevelName = KgLevel["level"];
+export function kgLevelByName(name: string | null | undefined): KgLevel | null {
+  return KG_LEVELS.find((l) => l.level === name) ?? null;
 }

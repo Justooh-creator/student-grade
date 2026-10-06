@@ -1,5 +1,5 @@
 import {
-  EXAM_MAX, SBA_MAX, getClassLevel, usesCat, nextClassName, ordinal, teacherRemarkFor,
+  KG_LEVELS, getClassLevel, usesCat, nextClassName, ordinal, teacherRemarkFor,
 } from "@/lib/ges";
 import { classRanking, computeStudentResult } from "@/lib/results";
 import type { School, Student } from "@/lib/store";
@@ -11,7 +11,7 @@ export function ReportSheet({ student, students, school }: { student: Student; s
   const position = ranking.positions.get(student.id) ?? 1;
   const cat = usesCat(student.classId);
   const kg = !cat;
-  const remark = student.remark?.trim() || teacherRemarkFor(result.average);
+  const remark = student.remark?.trim() || (kg ? "—" : teacherRemarkFor(result.average));
   return (
         <div style={{ breakAfter: "page", pageBreakAfter: "always" }} className="print-sheet sheet-a4 mx-auto mb-6 border border-rule px-[14mm] py-[12mm] text-[#1b1a16] shadow-[0_20px_50px_-30px_rgba(0,0,0,0.5)]">
           <div className="relative border-b-2 border-[#1b1a16] pb-2 text-center">
@@ -58,7 +58,7 @@ export function ReportSheet({ student, students, school }: { student: Student; s
             <p>
               <span className="font-bold text-[#1b1a16]/70">Position in class: </span>
               <span className="num font-bold">
-                {ordinal(position)} of {ranking.classSize}
+                {kg ? "—" : `${ordinal(position)} of ${ranking.classSize}`}
               </span>
             </p>
             <p>
@@ -81,20 +81,12 @@ export function ReportSheet({ student, students, school }: { student: Student; s
             </p>
           </div>
 
+          {kg ? (
           <table className="mt-4 w-full border-collapse text-[9.5pt]">
             <thead>
               <tr className="bg-[#1b1a16] text-white">
-                <th className="border border-[#1b1a16] px-2 py-1 text-left font-bold">Subject</th>
-                {cat && <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">SBA Raw (100)</th>}
-                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">
-                  SBA ({cat ? 50 : SBA_MAX})
-                </th>
-                {cat && <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">Exam Raw (100)</th>}
-                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">
-                  Exam ({cat ? 50 : EXAM_MAX})
-                </th>
-                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">Total (100)</th>
-                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">{kg ? "Level" : "Grade"}</th>
+                <th className="border border-[#1b1a16] px-2 py-1 text-left font-bold">Learning area</th>
+                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">Level</th>
                 <th className="border border-[#1b1a16] px-2 py-1 text-left font-bold">Remark</th>
               </tr>
             </thead>
@@ -102,37 +94,56 @@ export function ReportSheet({ student, students, school }: { student: Student; s
               {result.subjects.map((row) => (
                 <tr key={row.subject}>
                   <td className="border border-rule px-2 py-[3px]">{row.subject}</td>
-                  {cat && <td className="num border border-rule px-1 py-[3px] text-center">{row.sbaRaw ?? "—"}</td>}
+                  <td className="border border-rule px-1 py-[3px] text-center font-bold">{row.level ?? "—"}</td>
+                  <td className="border border-rule px-2 py-[3px]">{row.remark}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          ) : (
+          <table className="mt-4 w-full border-collapse text-[9.5pt]">
+            <thead>
+              <tr className="bg-[#1b1a16] text-white">
+                <th className="border border-[#1b1a16] px-2 py-1 text-left font-bold">Subject</th>
+                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">SBA Raw (100)</th>
+                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">SBA (50)</th>
+                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">Exam Raw (100)</th>
+                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">Exam (50)</th>
+                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">Total (100)</th>
+                <th className="border border-[#1b1a16] px-1 py-1 text-center font-bold">Grade</th>
+                <th className="border border-[#1b1a16] px-2 py-1 text-left font-bold">Remark</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.subjects.map((row) => (
+                <tr key={row.subject}>
+                  <td className="border border-rule px-2 py-[3px]">{row.subject}</td>
+                  <td className="num border border-rule px-1 py-[3px] text-center">{row.sbaRaw ?? "—"}</td>
                   <td className="num border border-rule px-1 py-[3px] text-center">{row.sba ?? "—"}</td>
-                  {cat && <td className="num border border-rule px-1 py-[3px] text-center">{row.examRaw ?? "—"}</td>}
+                  <td className="num border border-rule px-1 py-[3px] text-center">{row.examRaw ?? "—"}</td>
                   <td className="num border border-rule px-1 py-[3px] text-center">{row.exam ?? "—"}</td>
-                  <td className="num border border-rule px-1 py-[3px] text-center font-bold">
-                    {row.total ?? "—"}
-                  </td>
-                  <td className="num border border-rule px-1 py-[3px] text-center font-bold">
-                    {kg ? row.level ?? "—" : row.grade ?? "—"}
-                  </td>
+                  <td className="num border border-rule px-1 py-[3px] text-center font-bold">{row.total ?? "—"}</td>
+                  <td className="num border border-rule px-1 py-[3px] text-center font-bold">{row.grade ?? "—"}</td>
                   <td className="border border-rule px-2 py-[3px]">{row.remark}</td>
                 </tr>
               ))}
               <tr className="bg-[#1b1a16]/[0.06] font-bold">
-                <td className="border border-rule px-2 py-1">{kg ? "Total" : "Total / Aggregate"}</td>
-                {cat && <td className="border border-rule" />}
+                <td className="border border-rule px-2 py-1">Total / Aggregate</td>
+                <td className="border border-rule" />
                 <td className="num border border-rule px-1 py-1 text-center">
                   {Math.round(result.subjects.reduce((sum, r) => sum + (r.sba ?? 0), 0) * 10) / 10}
                 </td>
-                {cat && <td className="border border-rule" />}
+                <td className="border border-rule" />
                 <td className="num border border-rule px-1 py-1 text-center">
                   {Math.round(result.subjects.reduce((sum, r) => sum + (r.exam ?? 0), 0) * 10) / 10}
                 </td>
                 <td className="num border border-rule px-1 py-1 text-center">{result.totalMarks}</td>
-                <td className="num border border-rule px-1 py-1 text-center">{kg ? "" : result.aggregate}</td>
-                <td className="num border border-rule px-2 py-1">
-                  Average {result.average.toFixed(1)}
-                </td>
+                <td className="num border border-rule px-1 py-1 text-center">{result.aggregate}</td>
+                <td className="num border border-rule px-2 py-1">Average {result.average.toFixed(1)}</td>
               </tr>
             </tbody>
           </table>
+          )}
 
           {result.bestSix && (
             <div className="mt-3 border border-[#1b1a16] px-2 py-1.5 text-[9pt]">
@@ -146,7 +157,7 @@ export function ReportSheet({ student, students, school }: { student: Student; s
             </div>
           )}
 
-          <div className="mt-3 grid grid-cols-3 gap-2 text-[9pt]">
+          {!kg && <div className="mt-3 grid grid-cols-3 gap-2 text-[9pt]">
             <div className="border border-rule px-2 py-1.5 text-center">
               <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]/70">Subjects marked</p>
               <p className="num text-[12pt] font-bold">{result.gradedCount}</p>
@@ -159,7 +170,7 @@ export function ReportSheet({ student, students, school }: { student: Student; s
               <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]/70">Learner average</p>
               <p className="num text-[12pt] font-bold">{result.average.toFixed(1)}</p>
             </div>
-          </div>
+          </div>}
 
           <div className="mt-3 space-y-1.5 text-[9.5pt]">
             <p>
@@ -198,8 +209,8 @@ export function ReportSheet({ student, students, school }: { student: Student; s
 
           <p className="num mt-4 text-center text-[7.5pt] uppercase tracking-[0.16em] text-[#1b1a16]/45">
             {kg
-              ? "Performance levels: Gold (80–100) Exceeding · Silver (50–79) Meeting · Bronze (0–49) Approaching expectation · SBA 30 + Exam 70 = 100"
-              : `Grading: 1 (80–100) highest · 9 (0–39) lowest · ${cat ? "SBA 50 + Exam 50 = 100" : "SBA 30 + Exam 70 = 100"}`}
+              ? `KG continuous assessment · ${KG_LEVELS.map((l) => `${l.level} (${l.code})`).join(" · ")} · No numerical grade or aggregate`
+              : `Grading: 1 (80–100) highest · 9 (0–39) lowest · SBA 50 + Exam 50 = 100`}
           </p>
         </div>
   );
