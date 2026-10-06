@@ -190,6 +190,7 @@ export type Database = {
         Args: { _member: string; _role: string }
         Returns: undefined
       }
+      shares_school_with: { Args: { _other: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
