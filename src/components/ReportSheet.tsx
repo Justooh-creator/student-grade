@@ -30,13 +30,13 @@ export function ReportSheet({ student, students, school }: { student: Student; s
               {school.name || "School Name"}
             </h1>
             {school.motto?.trim() && <p className="text-[9pt] font-bold italic">“{school.motto.trim()}”</p>}
-            <p className="text-[9pt]">{school.address || "School address"}</p>
+            <p className="text-[9pt] font-bold">{school.address || "School address"}</p>
             {(school.district || school.region) && (
-              <p className="text-[9pt]">
+              <p className="text-[9pt] font-bold">
                 {[school.district && `${school.district} District`, school.region && `${school.region} Region`].filter(Boolean).join(" · ")}
               </p>
             )}
-            <p className="num mt-1 text-[9pt] font-semibold uppercase tracking-[0.18em]">
+            <p className="num mt-1 text-[9pt] font-bold uppercase tracking-[0.18em]">
               Terminal Report — {school.term} · {school.academicYear}
             </p>
             </div>
@@ -93,7 +93,7 @@ export function ReportSheet({ student, students, school }: { student: Student; s
             <tbody>
               {result.subjects.map((row) => (
                 <tr key={row.subject}>
-                  <td className="border border-rule px-2 py-[3px]">{row.subject}</td>
+                  <td className="border border-rule px-2 py-[3px] font-bold">{row.subject}</td>
                   <td className="border border-rule px-1 py-[3px] text-center font-bold">{row.level ?? "—"}</td>
                   <td className="border border-rule px-2 py-[3px]">{row.remark}</td>
                 </tr>
@@ -117,7 +117,7 @@ export function ReportSheet({ student, students, school }: { student: Student; s
             <tbody>
               {result.subjects.map((row) => (
                 <tr key={row.subject}>
-                  <td className="border border-rule px-2 py-[3px]">{row.subject}</td>
+                  <td className="border border-rule px-2 py-[3px] font-bold">{row.subject}</td>
                   <td className="num border border-rule px-1 py-[3px] text-center">{row.sbaRaw ?? "—"}</td>
                   <td className="num border border-rule px-1 py-[3px] text-center">{row.sba ?? "—"}</td>
                   <td className="num border border-rule px-1 py-[3px] text-center">{row.examRaw ?? "—"}</td>

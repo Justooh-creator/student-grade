@@ -116,7 +116,7 @@ export function AppHeader({
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
-              <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
                 Learners · {CLASS_LEVELS.find((c) => c.id === navClass)?.name}
               </p>
               <div className="mt-1 grid gap-0.5">
