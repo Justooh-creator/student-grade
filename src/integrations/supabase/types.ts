@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      gift_codes: {
+        Row: {
+          code: string
+          created_at: string
+          days: number
+          id: string
+          kind: string
+          redeemed_at: string | null
+          redeemed_by: string | null
+          redeemed_school: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          days?: number
+          id?: string
+          kind?: string
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+          redeemed_school?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          days?: number
+          id?: string
+          kind?: string
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+          redeemed_school?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -138,6 +171,8 @@ export type Database = {
           details: Json
           id: string
           join_code: string
+          license_expires_at: string | null
+          license_permanent: boolean
           name: string
           updated_at: string
         }
@@ -146,6 +181,8 @@ export type Database = {
           details?: Json
           id?: string
           join_code: string
+          license_expires_at?: string | null
+          license_permanent?: boolean
           name?: string
           updated_at?: string
         }
@@ -154,8 +191,31 @@ export type Database = {
           details?: Json
           id?: string
           join_code?: string
+          license_expires_at?: string | null
+          license_permanent?: boolean
           name?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      user_licenses: {
+        Row: {
+          expires_at: string | null
+          permanent: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          expires_at?: string | null
+          permanent?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          expires_at?: string | null
+          permanent?: boolean
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -171,6 +231,8 @@ export type Database = {
           details: Json
           id: string
           join_code: string
+          license_expires_at: string | null
+          license_permanent: boolean
           name: string
           updated_at: string
         }
@@ -181,9 +243,11 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      get_my_license: { Args: never; Returns: Json }
       is_school_admin: { Args: { _school: string }; Returns: boolean }
       is_school_member: { Args: { _school: string }; Returns: boolean }
       join_school: { Args: { _code: string }; Returns: string }
+      redeem_code: { Args: { _code: string }; Returns: Json }
       regenerate_join_code: { Args: { _school: string }; Returns: string }
       remove_member: { Args: { _member: string }; Returns: undefined }
       set_member_role: {
