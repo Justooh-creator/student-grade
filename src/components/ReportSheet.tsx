@@ -193,6 +193,11 @@ export function ReportSheet({ student, students, school }: { student: Student; s
 
           <div className="mt-6 flex items-end justify-between gap-4 text-[8.5pt]">
             <div className="w-[60mm] text-left">
+              <div className="flex h-[16mm] items-end justify-center">
+                {school.classTeacherSignatures?.[student.classId] && (
+                  <img src={school.classTeacherSignatures[student.classId]} alt="Class teacher signature" className="max-h-[16mm] max-w-[55mm] object-contain" />
+                )}
+              </div>
               <div className="border-t border-[#1b1a16] pt-1 font-bold">
                 Class Teacher — {school.classTeachers?.[student.classId]?.trim() || school.classTeacher || "—"}
               </div>
