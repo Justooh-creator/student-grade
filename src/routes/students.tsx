@@ -116,7 +116,7 @@ function StudentsPage() {
                 <div className="flex items-center gap-3">
                   <label className="flex h-14 w-12 cursor-pointer items-center justify-center overflow-hidden rounded border border-dashed border-border bg-background text-[9px] font-bold text-muted-foreground" title="Add passport photo">
                     {s.photo ? <img src={s.photo} alt={`${s.name} passport`} className="h-full w-full object-cover" /> : "+ Photo"}
-                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) updateStudent(s.id, { photo: await passportPhoto(f) }); }} />
+                    <input type="file" accept="image/*" capture="environment" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) updateStudent(s.id, { photo: await passportPhoto(f) }); }} />
                   </label>
                   <div>
                     <p className="text-sm font-bold"><span className="num text-muted-foreground">{i + 1}.</span> {s.name}</p>
