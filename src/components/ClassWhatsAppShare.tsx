@@ -52,8 +52,8 @@ export function ClassWhatsAppShare({ classId, className }: { classId: string; cl
 
   return (
     <div ref={boxRef} className="relative">
-      <button onClick={toggle} aria-expanded={open} className={`${btn} ${ready.length ? "text-primary" : "text-muted-foreground"}`}>
-        WhatsApp
+      <button onClick={toggle} aria-expanded={open} title={locked ? "WhatsApp sharing needs an active license. Tap to activate." : undefined} className={`${btn} ${locked || !ready.length ? "text-muted-foreground" : "text-primary"}`}>
+        {locked ? "🔒 WhatsApp" : "WhatsApp"}
       </button>
       {open && (
         <div className="absolute right-0 z-30 mt-2 max-h-72 w-64 overflow-y-auto rounded-lg border border-border bg-card p-2 shadow-lg">
