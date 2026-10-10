@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { normalizeGhanaPhone, whatsAppLink } from "@/lib/whatsapp";
+import { normalizeGhanaPhone, openWhatsApp, whatsAppLink } from "@/lib/whatsapp";
 import { useAppData } from "@/lib/store";
 
 /** Free WhatsApp sharing of a learner's terminal summary, sent from the teacher's own WhatsApp. */
@@ -52,9 +52,11 @@ export function ClassWhatsAppShare({ classId, className }: { classId: string; cl
               <a
                 key={s.id}
                 href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setOpen(false)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setOpen(false);
+                  openWhatsApp(href);
+                }}
                 className="block rounded-md px-2 py-1.5 text-xs font-bold hover:bg-muted"
               >
                 {s.name}
