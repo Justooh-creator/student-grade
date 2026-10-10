@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/lib/auth";
-import { applyRemote, onLocalChange, DEFAULT_SCHOOL, type Student, type School } from "@/lib/store";
+import { applyRemote, onLocalChange, DEFAULT_SCHOOL, stripSchoolImages, stripStudentImages, keepLocalSchoolImages, keepLocalStudentPhoto, type Student, type School } from "@/lib/store";
 import { loadSchool, setCloud, useCloud, getCloud } from "@/lib/cloud";
 
 /** Centralized school cloud: pushes every local edit and pulls live edits from other teachers. */
@@ -32,7 +32,7 @@ export function SyncListener() {
       try {
         if (ups.length) {
           const { error } = await supabase.from("school_students").upsert(
-            ups.map(([, s]) => ({ id: s.id, school_id: schoolId, class_id: s.classId, data: s as never, updated_by: user.id, updated_at: new Date().toISOString() })),
+            ups.map(([, s]) => ({ id: s.id, school_id: schoolId, class_id: s.classId, data: stripStudentImages(s) as never, updated_by: user.id, updated_at: new Date().toISOString() })),
           );
           if (error) throw error;
         }
@@ -41,7 +41,7 @@ export function SyncListener() {
           if (error) throw error;
         }
         if (sch) {
-          const { error } = await supabase.from("schools").update({ name: sch.name, details: sch as never, updated_at: new Date().toISOString() }).eq("id", schoolId);
+          const { error } = await supabase.from("schools").update({ name: sch.name, details: stripSchoolImages(sch) as never, updated_at: new Date().toISOString() }).eq("id", schoolId);
           if (error) throw error;
         }
         setCloud({ status: "synced", ...(sch?.name ? { schoolName: sch.name } : {}) });
@@ -74,14 +74,15 @@ export function SyncListener() {
         const row = p.new as { id: string; data: Student; updated_by: string | null };
         if (row.updated_by === user.id || pending.has(row.id)) return;
         applyRemote((cur) => {
-          const exists = cur.students.some((s) => s.id === row.id);
-          return { ...cur, students: exists ? cur.students.map((s) => (s.id === row.id ? row.data : s)) : [...cur.students, row.data] };
+          const local = cur.students.find((s) => s.id === row.id);
+          const merged = keepLocalStudentPhoto(local, row.data);
+          return { ...cur, students: local ? cur.students.map((s) => (s.id === row.id ? merged : s)) : [...cur.students, merged] };
         });
       })
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "schools", filter: `id=eq.${schoolId}` }, (p) => {
         if (schoolPending) return;
         const row = p.new as { name: string; details: Partial<School> };
-        applyRemote((cur) => ({ ...cur, school: { ...DEFAULT_SCHOOL, ...row.details, name: row.details?.name || row.name } }));
+        applyRemote((cur) => ({ ...cur, school: keepLocalSchoolImages(cur.school, { ...DEFAULT_SCHOOL, ...row.details, name: row.details?.name || row.name }) }));
         if (getCloud().schoolName !== row.name) setCloud({ schoolName: row.name });
       })
       .subscribe();
