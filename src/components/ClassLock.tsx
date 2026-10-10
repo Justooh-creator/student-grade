@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useCloud } from "@/lib/cloud";
 import { useAppData } from "@/lib/store";
-import { canEditClass } from "@/lib/classAccess";
+import { canEditClass, canEditSubject } from "@/lib/classAccess";
 
 export function useCanEditClass(classId: string) {
   const cloud = useCloud();
@@ -11,8 +11,25 @@ export function useCanEditClass(classId: string) {
     role: cloud.role,
     userId: cloud.userId,
     assignments: school.classAssignments,
+    subjectAssignments: school.subjectAssignments,
     classId,
   });
+}
+
+/** Basic 7–9: whether the signed-in teacher may enter marks for one subject. */
+export function useCanEditSubject(classId: string) {
+  const cloud = useCloud();
+  const { school } = useAppData();
+  return (subject: string) =>
+    canEditSubject({
+      inSchool: !!cloud.schoolId,
+      role: cloud.role,
+      userId: cloud.userId,
+      assignments: school.classAssignments,
+      subjectAssignments: school.subjectAssignments,
+      classId,
+      subject,
+    });
 }
 
 /** Disables every field inside when the teacher is not assigned to this class. */

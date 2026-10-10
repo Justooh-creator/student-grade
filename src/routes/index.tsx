@@ -6,7 +6,7 @@ import { CAT_PARTS, GRADE_BANDS, KG_LEVELS, getClassLevel, isKg, ordinal, usesCa
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
-import { ClassLock } from "@/components/ClassLock";
+import { ClassLock, useCanEditSubject } from "@/components/ClassLock";
 
 export const Route = createFileRoute("/")({
   validateSearch: validateClassSearch,
