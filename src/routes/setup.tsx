@@ -202,6 +202,26 @@ function SetupPage() {
                 {school.signature && <button onClick={() => setSchool({ signature: "" })} className="text-xs text-muted-foreground hover:text-destructive">Remove</button>}
               </div>
             </div>
+            <div className="sm:col-span-2">
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                School stamp
+              </span>
+              <p className="text-[11px] text-muted-foreground">Photograph the school stamp on white paper. Only the ink is kept — it prints between the two signatures.</p>
+              <div className="mt-1 flex flex-wrap items-center gap-3">
+                <div className="flex h-16 w-24 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-background">
+                  {school.stamp ? <img src={school.stamp} alt="School stamp" className="max-h-full max-w-full object-contain" /> : <span className="text-[10px] text-muted-foreground">No stamp</span>}
+                </div>
+                <label className="cursor-pointer rounded-md bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:opacity-90">
+                  Snap with camera
+                  <input type="file" accept="image/*" capture="environment" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setSchool({ stamp: await extractSignature(f) }); }} />
+                </label>
+                <label className="cursor-pointer rounded-md border border-border px-3 py-2 text-xs font-bold hover:bg-muted">
+                  Upload image
+                  <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setSchool({ stamp: await extractSignature(f) }); }} />
+                </label>
+                {school.stamp && <button onClick={() => setSchool({ stamp: "" })} className="text-xs text-muted-foreground hover:text-destructive">Remove</button>}
+              </div>
+            </div>
             <label className="block">
               <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                 Term
