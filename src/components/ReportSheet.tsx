@@ -191,6 +191,38 @@ export function ReportSheet({ student, students, school }: { student: Student; s
             </p>
           </div>
 
+          {(() => {
+            const f = student.fees;
+            if (!f) return null;
+            const num = (v?: string) => {
+              const n = parseFloat((v ?? "").replace(/[^\d.]/g, ""));
+              return Number.isFinite(n) ? n : null;
+            };
+            const parts = [num(f.arrears), num(f.levies), num(f.nextTerm)];
+            if (!parts.some((p) => p !== null)) return null;
+            const total = parts.reduce<number>((a, p) => a + (p ?? 0), 0);
+            const cell = (label: string, value?: string) => (
+              <div className="border border-rule px-2 py-1">
+                <p className="text-[7.5pt] font-bold uppercase tracking-[0.1em] text-[#1b1a16]/70">{label}</p>
+                <p className="num font-bold">GH₵ {value?.trim() || "—"}</p>
+              </div>
+            );
+            return (
+              <div className="mt-3 border border-[#1b1a16] text-[9pt]">
+                <p className="border-b border-[#1b1a16] bg-[#1b1a16] px-2 py-1 text-[8pt] font-bold uppercase tracking-[0.14em] text-white">Fees / Accounts</p>
+                <div className="grid grid-cols-4">
+                  {cell("Fees owed", f.arrears)}
+                  {cell("Levies", f.levies)}
+                  {cell("Next-term fees", f.nextTerm)}
+                  <div className="border border-rule px-2 py-1">
+                    <p className="text-[7.5pt] font-bold uppercase tracking-[0.1em] text-[#1b1a16]/70">Total</p>
+                    <p className="num font-bold">GH₵ {total.toFixed(2).replace(/\.00$/, "")}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
           <div className="mt-6 flex items-end justify-between gap-4 text-[8.5pt]">
             <div className="w-[60mm] text-left">
               <div className="flex h-[16mm] items-end justify-center">
