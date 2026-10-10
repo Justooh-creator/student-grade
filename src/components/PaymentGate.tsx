@@ -1,3 +1,7 @@
+import { useNavigate } from "@tanstack/react-router";
+import { useUser } from "@/lib/auth";
+import { useLicense } from "@/lib/license";
+
 type PrintBridge = { print?: () => void };
 
 function printReports() {
@@ -16,10 +20,29 @@ function printReports() {
 }
 
 export function PrintButton({ label = "Print / Save whole class as PDF (A4)" }: { label?: string }) {
+  const { user, ready } = useUser();
+  const lic = useLicense(user?.id);
+  const navigate = useNavigate();
+
+  const locked = ready && !lic.loading && !lic.canPrint;
+
+  if (locked) {
+    return (
+      <button
+        onClick={() => navigate({ to: "/school-cloud" })}
+        title="Printing needs an active license. Tap to activate."
+        className="h-10 cursor-not-allowed rounded-md border border-border bg-muted px-5 text-sm font-semibold text-muted-foreground"
+      >
+        🔒 Print locked — activate license
+      </button>
+    );
+  }
+
   return (
     <button
       onClick={printReports}
-      className="h-10 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground hover:opacity-90"
+      disabled={!ready || lic.loading}
+      className="h-10 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
     >
       {label}
     </button>
