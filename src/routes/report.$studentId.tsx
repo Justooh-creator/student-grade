@@ -84,7 +84,7 @@ function ReportPage() {
             placeholder="Interest / hobby"
             className="h-10 w-48 rounded-md border border-border bg-card px-3 text-sm outline-none focus:border-primary"
           />
-          {wa ? <a href={wa} onClick={(e) => { e.preventDefault(); openWhatsApp(wa); }} className="inline-flex h-10 items-center rounded-md border border-border bg-card px-4 text-sm font-semibold text-primary">Send via WhatsApp</a> : <span className="text-xs text-muted-foreground">Add parent phone in Student Details to send via WhatsApp</span>}
+          {wa ? (() => { const waLocked = authReady && !lic.loading && !lic.canPrint; return <a href={wa} onClick={(e) => { e.preventDefault(); if (waLocked) { toast.error("WhatsApp sharing needs an active license. Tap to activate."); navigate({ to: "/school-cloud" }); return; } openWhatsApp(wa); }} title={waLocked ? "WhatsApp sharing needs an active license. Tap to activate." : undefined} className={`inline-flex h-10 items-center rounded-md border border-border bg-card px-4 text-sm font-semibold ${waLocked ? "text-muted-foreground" : "text-primary"}`}>{waLocked ? "🔒 WhatsApp locked" : "Send via WhatsApp"}</a>; })() : <span className="text-xs text-muted-foreground">Add parent phone in Student Details to send via WhatsApp</span>}
           <Link to="/class-report/$classId" params={{ classId: student.classId }} className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">Print whole class</Link>
         </div>
       </div>
