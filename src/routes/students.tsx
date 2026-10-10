@@ -7,7 +7,7 @@ import { CONDUCT_PRESETS, HEAD_REMARK_PRESETS, INTEREST_PRESETS, MAX_STUDENTS_PE
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData, type Student } from "@/lib/store";
 import { passportPhoto, extractSignature } from "@/lib/images";
-import { whatsAppLink } from "@/lib/whatsapp";
+import { openWhatsApp, whatsAppLink } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/students")({
   validateSearch: validateClassSearch,
@@ -117,7 +117,7 @@ function StudentsPage() {
                 </div>
                 <div className="flex gap-2">
                   <Link to="/" search={{ class: classId, student: s.id }} className="rounded border border-border px-2 py-1 text-[11px] font-semibold text-primary hover:bg-primary/5">Enter SBA</Link>
-                  {(() => { const wa = whatsAppLink(s, students, school); return wa ? <a href={wa} target="_blank" rel="noopener noreferrer" className="rounded border border-border px-2 py-1 text-[11px] font-semibold text-primary hover:bg-primary/5">WhatsApp report</a> : null; })()}
+                  {(() => { const wa = whatsAppLink(s, students, school); return wa ? <a href={wa} onClick={(e) => { e.preventDefault(); openWhatsApp(wa); }} className="rounded border border-border px-2 py-1 text-[11px] font-semibold text-primary hover:bg-primary/5">WhatsApp report</a> : null; })()}
                   <button onClick={() => removeStudent(s.id)} className="rounded px-2 py-1 text-[11px] text-muted-foreground hover:text-destructive" aria-label={`Remove ${s.name}`}>✕</button>
                 </div>
               </div>

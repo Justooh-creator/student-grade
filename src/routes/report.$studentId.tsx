@@ -10,7 +10,7 @@ import {
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { useAppData } from "@/lib/store";
 import { ReportSheet } from "@/components/ReportSheet";
-import { whatsAppLink } from "@/lib/whatsapp";
+import { openWhatsApp, whatsAppLink } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/report/$studentId")({
   head: () => ({
@@ -78,7 +78,7 @@ function ReportPage() {
             placeholder="Interest / hobby"
             className="h-10 w-48 rounded-md border border-border bg-card px-3 text-sm outline-none focus:border-primary"
           />
-          {wa ? <a href={wa} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 items-center rounded-md border border-border bg-card px-4 text-sm font-semibold text-primary">Send via WhatsApp</a> : <span className="text-xs text-muted-foreground">Add parent phone in Student Details to send via WhatsApp</span>}
+          {wa ? <a href={wa} onClick={(e) => { e.preventDefault(); openWhatsApp(wa); }} className="inline-flex h-10 items-center rounded-md border border-border bg-card px-4 text-sm font-semibold text-primary">Send via WhatsApp</a> : <span className="text-xs text-muted-foreground">Add parent phone in Student Details to send via WhatsApp</span>}
           <Link to="/class-report/$classId" params={{ classId: student.classId }} className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">Print whole class</Link>
         </div>
       </div>
