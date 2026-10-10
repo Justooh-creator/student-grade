@@ -43,8 +43,8 @@ export interface Student {
   photo?: string;
   parentPhone?: string;
   promotion?: "promoted" | "retained" | "tbd";
-  /** Optional fees box (GH₵). Total is computed on the report card. */
-  fees?: { arrears?: string; levies?: string; nextTerm?: string };
+  /** Optional fees box (GH₵). Total is computed on the report card. `items` holds extra school-defined fees (PTA, class fees, exam fees, …). */
+  fees?: { arrears?: string; levies?: string; nextTerm?: string; items?: { label: string; amount: string }[] };
 }
 
 export interface AppData {

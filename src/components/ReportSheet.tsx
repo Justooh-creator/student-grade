@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import {
   KG_LEVELS, getClassLevel, usesCat, nextClassName, ordinal, teacherRemarkFor,
 } from "@/lib/ges";
@@ -198,22 +199,27 @@ export function ReportSheet({ student, students, school }: { student: Student; s
               const n = parseFloat((v ?? "").replace(/[^\d.]/g, ""));
               return Number.isFinite(n) ? n : null;
             };
-            const parts = [num(f.arrears), num(f.levies), num(f.nextTerm)];
-            if (!parts.some((p) => p !== null)) return null;
-            const total = parts.reduce<number>((a, p) => a + (p ?? 0), 0);
-            const cell = (label: string, value?: string) => (
+            // Only filled items print — empty fee fields never appear on the report card.
+            const filled: { label: string; value: string; n: number | null }[] = [];
+            if (f.arrears?.trim()) filled.push({ label: "Fees owed", value: f.arrears, n: num(f.arrears) });
+            if (f.levies?.trim()) filled.push({ label: "Levies", value: f.levies, n: num(f.levies) });
+            if (f.nextTerm?.trim()) filled.push({ label: "Next-term fees", value: f.nextTerm, n: num(f.nextTerm) });
+            for (const it of f.items ?? []) {
+              if (it.label.trim() && it.amount.trim()) filled.push({ label: it.label.trim(), value: it.amount, n: num(it.amount) });
+            }
+            if (!filled.length) return null;
+            const total = filled.reduce<number>((a, p) => a + (p.n ?? 0), 0);
+            const cell = (label: string, value: string) => (
               <div className="border border-rule px-2 py-1">
                 <p className="text-[7.5pt] font-bold uppercase tracking-[0.1em] text-[#1b1a16]/70">{label}</p>
-                <p className="num font-bold">GH₵ {value?.trim() || "—"}</p>
+                <p className="num font-bold">GH₵ {value.trim()}</p>
               </div>
             );
             return (
               <div className="mt-3 border border-[#1b1a16] text-[9pt]">
                 <p className="border-b border-[#1b1a16] bg-[#1b1a16] px-2 py-1 text-[8pt] font-bold uppercase tracking-[0.14em] text-white">Fees / Accounts</p>
                 <div className="grid grid-cols-4">
-                  {cell("Fees owed", f.arrears)}
-                  {cell("Levies", f.levies)}
-                  {cell("Next-term fees", f.nextTerm)}
+                  {filled.map((p, i) => <Fragment key={i}>{cell(p.label, p.value)}</Fragment>)}
                   <div className="border border-rule px-2 py-1">
                     <p className="text-[7.5pt] font-bold uppercase tracking-[0.1em] text-[#1b1a16]/70">Total</p>
                     <p className="num font-bold">GH₵ {total.toFixed(2).replace(/\.00$/, "")}</p>
