@@ -33,6 +33,7 @@ export interface Student {
   remark: string;
   headRemark?: string;
   photo?: string;
+  parentPhone?: string;
   promotion?: "promoted" | "retained" | "tbd";
 }
 
