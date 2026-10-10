@@ -36,6 +36,11 @@ export function ClassWhatsAppShare({ classId, className }: { classId: string; cl
   }, [open]);
 
   function toggle() {
+    if (locked) {
+      toast.error("WhatsApp sharing needs an active license. Tap to activate.");
+      navigate({ to: "/school-cloud" });
+      return;
+    }
     if (!ready.length) {
       toast.error(`Add a parent phone in Student Details before sharing ${className} on WhatsApp.`);
       return;
