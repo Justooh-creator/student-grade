@@ -40,9 +40,9 @@ function ClassReportPage() {
         </Link>
         <p className="text-sm font-semibold">{level?.name} · {list.length} report card(s)</p>
         <div className="flex flex-wrap items-center gap-2">
-          <ClassWhatsAppShare classId={classId} className={level.name} />
           <ClassTransfer classId={classId} className={level.name} />
           {list.length > 0 && <PrintButton />}
+          <ClassWhatsAppShare classId={classId} className={level.name} />
         </div>
       </div>
       <div className="overflow-x-auto px-4 pb-10">
