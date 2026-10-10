@@ -9,6 +9,9 @@ import { useAppData, type Student } from "@/lib/store";
 import { passportPhoto, extractSignature } from "@/lib/images";
 import { ClassLock } from "@/components/ClassLock";
 import { openWhatsApp, whatsAppLink } from "@/lib/whatsapp";
+import { useUser } from "@/lib/auth";
+import { useLicense } from "@/lib/license";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/students")({
   validateSearch: validateClassSearch,
@@ -29,6 +32,9 @@ function StudentsPage() {
   const { school, students, addStudent, updateStudent, removeStudent, setSchool } = useAppData();
   const search = Route.useSearch();
   const navigate = useNavigate();
+  const { user, ready: authReady } = useUser();
+  const lic = useLicense(user?.id);
+  const waLocked = authReady && !lic.loading && !lic.canPrint;
   const classId = search.class ?? "b4";
   const level = getClassLevel(classId);
   const list = useMemo(() => students.filter((s) => s.classId === classId), [students, classId]);
@@ -119,7 +125,7 @@ function StudentsPage() {
                 </div>
                 <div className="flex gap-2">
                   <Link to="/" search={{ class: classId, student: s.id }} className="rounded border border-border px-2 py-1 text-[11px] font-semibold text-primary hover:bg-primary/5">Enter SBA</Link>
-                  {(() => { const wa = whatsAppLink(s, students, school); return wa ? <a href={wa} onClick={(e) => { e.preventDefault(); openWhatsApp(wa); }} className="rounded border border-border px-2 py-1 text-[11px] font-semibold text-primary hover:bg-primary/5">WhatsApp report</a> : null; })()}
+                  {(() => { const wa = whatsAppLink(s, students, school); return wa ? <a href={wa} onClick={(e) => { e.preventDefault(); if (waLocked) { toast.error("WhatsApp sharing needs an active license. Tap to activate."); navigate({ to: "/school-cloud" }); return; } openWhatsApp(wa); }} title={waLocked ? "WhatsApp sharing needs an active license. Tap to activate." : undefined} className={`rounded border border-border px-2 py-1 text-[11px] font-semibold hover:bg-primary/5 ${waLocked ? "text-muted-foreground" : "text-primary"}`}>{waLocked ? "🔒 WhatsApp" : "WhatsApp report"}</a> : null; })()}
                   <button onClick={() => removeStudent(s.id)} className="rounded px-2 py-1 text-[11px] text-muted-foreground hover:text-destructive" aria-label={`Remove ${s.name}`}>✕</button>
                 </div>
               </div>

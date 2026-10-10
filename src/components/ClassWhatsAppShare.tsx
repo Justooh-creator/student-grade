@@ -1,16 +1,23 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { normalizeGhanaPhone, openWhatsApp, whatsAppLink } from "@/lib/whatsapp";
 import { useAppData } from "@/lib/store";
+import { useUser } from "@/lib/auth";
+import { useLicense } from "@/lib/license";
 
-/** Free WhatsApp sharing of a learner's terminal summary, sent from the teacher's own WhatsApp. */
+/** Free WhatsApp sharing of a learner's terminal summary, sent from the teacher's own WhatsApp. Requires an active license. */
 export function ClassWhatsAppShare({ classId, className }: { classId: string; className: string }) {
   const { school, students } = useAppData();
+  const { user, ready: authReady } = useUser();
+  const lic = useLicense(user?.id);
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
   const list = students.filter((s) => s.classId === classId);
   const ready = list.filter((s) => normalizeGhanaPhone(s.parentPhone));
+  const locked = authReady && !lic.loading && !lic.canPrint;
 
   useEffect(() => {
     if (!open) return;
@@ -29,6 +36,11 @@ export function ClassWhatsAppShare({ classId, className }: { classId: string; cl
   }, [open]);
 
   function toggle() {
+    if (locked) {
+      toast.error("WhatsApp sharing needs an active license. Tap to activate.");
+      navigate({ to: "/school-cloud" });
+      return;
+    }
     if (!ready.length) {
       toast.error(`Add a parent phone in Student Details before sharing ${className} on WhatsApp.`);
       return;
@@ -40,8 +52,8 @@ export function ClassWhatsAppShare({ classId, className }: { classId: string; cl
 
   return (
     <div ref={boxRef} className="relative">
-      <button onClick={toggle} aria-expanded={open} className={`${btn} ${ready.length ? "text-primary" : "text-muted-foreground"}`}>
-        WhatsApp
+      <button onClick={toggle} aria-expanded={open} title={locked ? "WhatsApp sharing needs an active license. Tap to activate." : undefined} className={`${btn} ${locked || !ready.length ? "text-muted-foreground" : "text-primary"}`}>
+        {locked ? "🔒 WhatsApp" : "WhatsApp"}
       </button>
       {open && (
         <div className="absolute right-0 z-30 mt-2 max-h-72 w-64 overflow-y-auto rounded-lg border border-border bg-card p-2 shadow-lg">
