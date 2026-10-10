@@ -1,0 +1,69 @@
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { normalizeGhanaPhone, whatsAppLink } from "@/lib/whatsapp";
+import { useAppData } from "@/lib/store";
+
+/** Free WhatsApp sharing of a learner's terminal summary, sent from the teacher's own WhatsApp. */
+export function ClassWhatsAppShare({ classId, className }: { classId: string; className: string }) {
+  const { school, students } = useAppData();
+  const [open, setOpen] = useState(false);
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  const list = students.filter((s) => s.classId === classId);
+  const ready = list.filter((s) => normalizeGhanaPhone(s.parentPhone));
+
+  useEffect(() => {
+    if (!open) return;
+    function onDown(e: MouseEvent) {
+      if (boxRef.current && !boxRef.current.contains(e.target as Node)) setOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  function toggle() {
+    if (!ready.length) {
+      toast.error(`Add a parent phone in Student Details before sharing ${className} on WhatsApp.`);
+      return;
+    }
+    setOpen((v) => !v);
+  }
+
+  const btn = "flex h-9 cursor-pointer items-center justify-center rounded-md border border-border px-4 text-xs font-bold hover:bg-muted";
+
+  return (
+    <div ref={boxRef} className="relative">
+      <button onClick={toggle} aria-expanded={open} className={`${btn} ${ready.length ? "text-primary" : "text-muted-foreground"}`}>
+        WhatsApp
+      </button>
+      {open && (
+        <div className="absolute right-0 z-30 mt-2 max-h-72 w-64 overflow-y-auto rounded-lg border border-border bg-card p-2 shadow-lg">
+          <p className="px-1 pb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{className} · send summary</p>
+          {ready.map((s) => {
+            const href = whatsAppLink(s, students, school);
+            return href ? (
+              <a
+                key={s.id}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setOpen(false)}
+                className="block rounded-md px-2 py-1.5 text-xs font-bold hover:bg-muted"
+              >
+                {s.name}
+                <span className="num block text-[10px] font-normal text-muted-foreground">{s.parentPhone}</span>
+              </a>
+            ) : null;
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
