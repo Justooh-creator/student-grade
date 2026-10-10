@@ -6,6 +6,7 @@ import { CAT_PARTS, GRADE_BANDS, KG_LEVELS, getClassLevel, isKg, ordinal, usesCa
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
+import { ClassLock } from "@/components/ClassLock";
 
 export const Route = createFileRoute("/")({
   validateSearch: validateClassSearch,
@@ -101,6 +102,7 @@ function Index() {
                 </div>
               </div>
 
+              <ClassLock classId={classId}>
               {cat ? (
               <div className="mt-4 overflow-x-auto rounded-lg border border-border">
                 <table className="w-full min-w-[820px] text-sm">
@@ -194,6 +196,7 @@ function Index() {
                   </select>
                 </label>
               )}
+              </ClassLock>
 
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 <Link to="/students" search={{ class: classId }} className="flex h-11 items-center justify-center rounded-md border border-border text-sm font-semibold hover:bg-muted">Edit student details</Link>
