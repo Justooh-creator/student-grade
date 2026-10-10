@@ -1,5 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { AppHeader } from "@/components/AppHeader";
 import {
   getClassLevel,
@@ -9,6 +10,8 @@ import {
 } from "@/lib/ges";
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { useAppData } from "@/lib/store";
+import { useUser } from "@/lib/auth";
+import { useLicense } from "@/lib/license";
 import { ReportSheet } from "@/components/ReportSheet";
 import { openWhatsApp, whatsAppLink } from "@/lib/whatsapp";
 
@@ -34,6 +37,9 @@ export const Route = createFileRoute("/report/$studentId")({
 function ReportPage() {
   const { studentId } = Route.useParams();
   const { school, students, updateStudent } = useAppData();
+  const { user, ready: authReady } = useUser();
+  const lic = useLicense(user?.id);
+  const navigate = useNavigate();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
