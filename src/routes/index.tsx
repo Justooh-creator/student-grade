@@ -6,7 +6,7 @@ import { CAT_PARTS, GRADE_BANDS, KG_LEVELS, getClassLevel, isKg, ordinal, usesCa
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
-import { ClassLock } from "@/components/ClassLock";
+import { ClassLock, useCanEditSubject } from "@/components/ClassLock";
 
 export const Route = createFileRoute("/")({
   validateSearch: validateClassSearch,
@@ -33,6 +33,7 @@ function Index() {
   const classStudents = useMemo(() => students.filter((s) => s.classId === classId), [students, classId]);
   const ranking = useMemo(() => classRanking(students, classId), [students, classId]);
   const selected = classStudents.find((s) => s.id === search.student) ?? classStudents[0] ?? null;
+  const canSubject = useCanEditSubject(classId);
   const result = selected ? computeStudentResult(selected) : null;
   const idx = selected ? classStudents.indexOf(selected) : -1;
   // Plain "/" (app launch) waits for the first-open check so the scores page never flashes before School Details.
@@ -122,14 +123,16 @@ function Index() {
                     {result.subjects.map((row) => {
                       const e = selected.scores[row.subject];
                       return (
-                      <tr key={row.subject} className="border-t border-border">
-                        <td className="px-3 py-1.5 font-bold">{row.subject}</td>
-                        {CAT_PARTS.map((p) => (
-                          <td key={p.key} className="px-1 py-1.5 text-center"><ScoreInput max={p.max} value={e?.[p.key] ?? null} onChange={(v) => setCatScore(selected.id, row.subject, p.key, v)} /></td>
-                        ))}
-                        <td className="num px-1 py-1.5 text-center text-muted-foreground">{row.sbaRaw ?? "—"}</td>
-                        <td className="num px-1 py-1.5 text-center">{row.sba ?? "—"}</td>
-                        <td className="px-1 py-1.5 text-center"><ScoreInput max={100} value={e?.examRaw ?? null} onChange={(v) => setCatScore(selected.id, row.subject, "examRaw", v)} /></td>
+                       <tr key={row.subject} className="border-t border-border">
+                         <td className="px-3 py-1.5 font-bold">{row.subject}{!canSubject(row.subject) && <span className="ml-1 text-[10px] font-normal text-muted-foreground">(view only)</span>}</td>
+                         <fieldset disabled={!canSubject(row.subject)} className="contents">
+                         {CAT_PARTS.map((p) => (
+                           <td key={p.key} className="px-1 py-1.5 text-center"><ScoreInput max={p.max} value={e?.[p.key] ?? null} onChange={(v) => setCatScore(selected.id, row.subject, p.key, v)} /></td>
+                         ))}
+                         </fieldset>
+                         <td className="num px-1 py-1.5 text-center text-muted-foreground">{row.sbaRaw ?? "—"}</td>
+                         <td className="num px-1 py-1.5 text-center">{row.sba ?? "—"}</td>
+                         <td className="px-1 py-1.5 text-center"><fieldset disabled={!canSubject(row.subject)} className="contents"><ScoreInput max={100} value={e?.examRaw ?? null} onChange={(v) => setCatScore(selected.id, row.subject, "examRaw", v)} /></fieldset></td>
                         <td className="num px-1 py-1.5 text-center">{row.exam ?? "—"}</td>
                         <td className="num px-1 py-1.5 text-center font-semibold">{row.total ?? "—"}</td>
                         <td className="px-2 py-1.5 text-center">

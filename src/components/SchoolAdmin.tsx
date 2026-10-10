@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { setCloud } from "@/lib/cloud";
 import { useAppData } from "@/lib/store";
-import { CLASS_LEVELS } from "@/lib/ges";
+import { CLASS_LEVELS, isJhs } from "@/lib/ges";
 
 interface Member { id: string; user_id: string; role: string; name: string; email: string }
 
@@ -82,15 +82,39 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
       </div>
       <div className={card}>
         <p className="font-bold">Who can edit each class</p>
-        <p className="mt-1 text-sm text-muted-foreground">Tick the teachers allowed to enter marks for a class. Other teachers can only view it. A class with nobody ticked stays open to all. Headteachers can edit every class.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Tick the teachers allowed to enter marks. Other teachers can only view. A class with nobody ticked stays open to all. Headteachers can edit every class. Basic 7–9 are assigned by subject — each subject teacher enters marks for their own subject only.</p>
         <div className="mt-3 space-y-3">
           {CLASS_LEVELS.map((c) => {
             const list = school.classAssignments?.[c.id] ?? [];
             const teachers = members.filter((m) => m.role !== "headteacher");
+            const jhs = isJhs(c.id);
+            const subMap = school.subjectAssignments?.[c.id] ?? {};
+            const anySubject = Object.values(subMap).some((l) => l.length > 0);
             return (
               <div key={c.id} className="rounded-md border border-border p-2">
-                <p className="text-sm font-bold">{c.name}{list.length === 0 && <span className="ml-2 text-xs font-normal text-muted-foreground">(open to all)</span>}</p>
-                {teachers.length === 0 ? <p className="text-xs text-muted-foreground">No teachers have joined yet.</p> : (
+                <p className="text-sm font-bold">{c.name}{!jhs && list.length === 0 && <span className="ml-2 text-xs font-normal text-muted-foreground">(open to all)</span>}{jhs && !anySubject && <span className="ml-2 text-xs font-normal text-muted-foreground">(open to all)</span>}</p>
+                {teachers.length === 0 ? <p className="text-xs text-muted-foreground">No teachers have joined yet.</p> : jhs ? (
+                  <div className="mt-2 space-y-2">
+                    {c.subjects.map((sub) => {
+                      const subList = subMap[sub] ?? [];
+                      return (
+                        <div key={sub} className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                          <span className="w-40 shrink-0 text-xs font-bold">{sub}</span>
+                          {teachers.map((m) => (
+                            <label key={m.user_id} className="flex items-center gap-1.5 text-sm">
+                              <input type="checkbox" checked={subList.includes(m.user_id)}
+                                onChange={(e) => {
+                                  const next = e.target.checked ? [...subList, m.user_id] : subList.filter((x) => x !== m.user_id);
+                                  setSchool({ subjectAssignments: { ...(school.subjectAssignments ?? {}), [c.id]: { ...subMap, [sub]: next } } });
+                                }} />
+                              {m.name}
+                            </label>
+                          ))}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
                   <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
                     {teachers.map((m) => (
                       <label key={m.user_id} className="flex items-center gap-1.5 text-sm">
