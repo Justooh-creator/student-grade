@@ -7,6 +7,8 @@ import { useAppData } from "@/lib/store";
 import { AppHeader } from "@/components/AppHeader";
 import { useCloud, loadSchool, hasLocalBackup, uploadLocalBackup } from "@/lib/cloud";
 import { SchoolAdmin } from "@/components/SchoolAdmin";
+import { LicenseCard } from "@/components/LicenseCard";
+import { useLicense } from "@/lib/license";
 
 export const Route = createFileRoute("/school-cloud")({
   head: () => ({
@@ -24,6 +26,7 @@ function SchoolCloudPage() {
   const { school } = useAppData();
   const { user, ready } = useUser();
   const cloud = useCloud();
+  const lic = useLicense(user?.id);
   const [name, setName] = useState(school.name);
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
