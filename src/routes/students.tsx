@@ -131,6 +131,14 @@ function StudentsPage() {
                 <PresetField label="Class teacher's remark" value={s.remark ?? ""} presets={REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { remark: v })} placeholder="Auto remark from average" />
                 <PresetField label="Headteacher's remark" value={s.headRemark ?? ""} presets={HEAD_REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { headRemark: v })} placeholder="Select headteacher's remark" />
               </div>
+              <details className="mt-2 rounded-lg border border-border bg-background/50 px-3 py-2">
+                <summary className="cursor-pointer text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Fees / accounts (optional — prints on report card when filled)</summary>
+                <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                  <TextField label="Fees owed (arrears)" value={s.fees?.arrears ?? ""} onChange={(v) => updateStudent(s.id, { fees: { ...(s.fees ?? {}), arrears: v } })} placeholder="e.g. 120" />
+                  <TextField label="Levies" value={s.fees?.levies ?? ""} onChange={(v) => updateStudent(s.id, { fees: { ...(s.fees ?? {}), levies: v } })} placeholder="e.g. 30" />
+                  <TextField label="Next-term fees" value={s.fees?.nextTerm ?? ""} onChange={(v) => updateStudent(s.id, { fees: { ...(s.fees ?? {}), nextTerm: v } })} placeholder="e.g. 150" />
+                </div>
+              </details>
             </div>
           ))}
         </section>
