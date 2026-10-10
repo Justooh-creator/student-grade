@@ -47,6 +47,51 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_transactions: {
+        Row: {
+          amount_pesewas: number
+          created_at: string
+          currency: string
+          id: string
+          plan: string
+          reference: string
+          school_id: string | null
+          scope: string
+          status: string
+          terms: number
+          user_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          amount_pesewas: number
+          created_at?: string
+          currency?: string
+          id?: string
+          plan: string
+          reference: string
+          school_id?: string | null
+          scope: string
+          status?: string
+          terms: number
+          user_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          amount_pesewas?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          plan?: string
+          reference?: string
+          school_id?: string | null
+          scope?: string
+          status?: string
+          terms?: number
+          user_id?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
