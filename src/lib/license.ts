@@ -22,10 +22,10 @@ export function useLicense(userId: string | undefined) {
     const d = data as Record<string, unknown>;
     setLic({
       loading: false,
-      canPrint: d.can_print === true,
-      status: (d.status as LicenseState["status"]) ?? "unpaid",
-      source: (d.source as LicenseState["source"]) ?? "none",
-      expiresAt: (d.expires_at as string) ?? null,
+      canPrint: d['can_print'] === true,
+      status: (d['status'] as LicenseState["status"]) ?? "unpaid",
+      source: (d['source'] as LicenseState["source"]) ?? "none",
+      expiresAt: (d['expires_at'] as string) ?? null,
     });
   }, [userId]);
 
@@ -41,10 +41,10 @@ export async function redeemCode(code: string): Promise<LicenseState> {
   const d = data as Record<string, unknown>;
   return {
     loading: false,
-    canPrint: d.can_print === true,
-    status: (d.status as LicenseState["status"]) ?? "unpaid",
-    source: (d.source as LicenseState["source"]) ?? "none",
-    expiresAt: (d.expires_at as string) ?? null,
+    canPrint: d['can_print'] === true,
+    status: (d['status'] as LicenseState["status"]) ?? "unpaid",
+    source: (d['source'] as LicenseState["source"]) ?? "none",
+    expiresAt: (d['expires_at'] as string) ?? null,
   };
 }
 
