@@ -132,6 +132,7 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <SyncListener />
+      <InstallBanner />
       <Toaster position="bottom-center" offset={24} />
     </QueryClientProvider>
   );
