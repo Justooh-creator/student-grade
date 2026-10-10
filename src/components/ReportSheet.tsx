@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import {
   KG_LEVELS, getClassLevel, usesCat, nextClassName, ordinal, teacherRemarkFor,
 } from "@/lib/ges";
