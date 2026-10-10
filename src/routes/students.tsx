@@ -6,7 +6,7 @@ import { PresetField } from "@/components/PresetField";
 import { CONDUCT_PRESETS, HEAD_REMARK_PRESETS, INTEREST_PRESETS, MAX_STUDENTS_PER_CLASS, REMARK_PRESETS, getClassLevel } from "@/lib/ges";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData, type Student } from "@/lib/store";
-import { passportPhoto } from "@/lib/images";
+import { passportPhoto, extractSignature } from "@/lib/images";
 import { whatsAppLink } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/students")({
@@ -42,12 +42,38 @@ function StudentsPage() {
         <ClassPicker value={classId} onChange={(c) => navigate({ to: "/students", search: { class: c } })} />
 
         <section className="mt-5 rounded-xl border border-border bg-card p-4">
-          <TextField
-            label={`${level.name} class teacher`}
-            value={school.classTeachers?.[classId] ?? ""}
-            onChange={(v) => setSchool({ classTeachers: { ...(school.classTeachers ?? {}), [classId]: v } })}
-            placeholder="Name of class teacher (shown on report cards)"
-          />
+          <div className="flex flex-wrap items-start gap-4">
+            <div className="min-w-[220px] flex-1">
+              <TextField
+                label={`${level.name} class teacher`}
+                value={school.classTeachers?.[classId] ?? ""}
+                onChange={(v) => setSchool({ classTeachers: { ...(school.classTeachers ?? {}), [classId]: v } })}
+                placeholder="Name of class teacher (shown on report cards)"
+              />
+            </div>
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{level.name} teacher's signature</span>
+              <p className="text-[11px] text-muted-foreground">Photo of the signature on white paper — only the ink is kept.</p>
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                <div className="flex h-12 w-32 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-background">
+                  {school.classTeacherSignatures?.[classId]
+                    ? <img src={school.classTeacherSignatures[classId]} alt={`${level.name} teacher signature`} className="max-h-full max-w-full object-contain" />
+                    : <span className="text-[10px] text-muted-foreground">No signature</span>}
+                </div>
+                <label className="cursor-pointer rounded-md bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:opacity-90">
+                  Camera
+                  <input type="file" accept="image/*" capture="environment" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setSchool({ classTeacherSignatures: { ...(school.classTeacherSignatures ?? {}), [classId]: await extractSignature(f) } }); }} />
+                </label>
+                <label className="cursor-pointer rounded-md border border-border px-3 py-2 text-xs font-bold hover:bg-muted">
+                  Upload
+                  <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setSchool({ classTeacherSignatures: { ...(school.classTeacherSignatures ?? {}), [classId]: await extractSignature(f) } }); }} />
+                </label>
+                {school.classTeacherSignatures?.[classId] && (
+                  <button onClick={() => setSchool({ classTeacherSignatures: { ...(school.classTeacherSignatures ?? {}), [classId]: "" } })} className="text-xs text-muted-foreground hover:text-destructive">Remove</button>
+                )}
+              </div>
+            </div>
+          </div>
         </section>
 
         <section className="mt-5 rounded-xl border border-border bg-card p-4">
