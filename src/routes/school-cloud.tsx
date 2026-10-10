@@ -77,6 +77,7 @@ function SchoolCloudPage() {
           </div>
         ) : cloud.schoolId ? (
           <>
+            <LicenseCard lic={lic} onActivated={() => lic.refresh()} />
             <div className={card}>
               <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Connected school</p>
               <p className="mt-1 text-lg font-bold">{cloud.schoolName || "Unnamed school"}</p>
@@ -103,6 +104,7 @@ function SchoolCloudPage() {
           </>
         ) : (
           <>
+            <LicenseCard lic={lic} onActivated={() => lic.refresh()} />
             <div className={card}>
               <p className="font-bold">Register a new school</p>
               <p className="text-sm text-muted-foreground">For the headteacher. You get a School Code to give teachers.</p>
