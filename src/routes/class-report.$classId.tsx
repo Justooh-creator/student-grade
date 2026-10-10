@@ -4,6 +4,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { ReportSheet } from "@/components/ReportSheet";
 import { PrintButton } from "@/components/PaymentGate";
 import { ClassTransfer } from "@/components/ClassTransfer";
+import { ClassWhatsAppShare } from "@/components/ClassWhatsAppShare";
 import { getClassLevel, type ClassId } from "@/lib/ges";
 import { useAppData } from "@/lib/store";
 
@@ -39,6 +40,7 @@ function ClassReportPage() {
         </Link>
         <p className="text-sm font-semibold">{level?.name} · {list.length} report card(s)</p>
         <div className="flex flex-wrap items-center gap-2">
+          <ClassWhatsAppShare classId={classId} className={level.name} />
           <ClassTransfer classId={classId} className={level.name} />
           {list.length > 0 && <PrintButton />}
         </div>
