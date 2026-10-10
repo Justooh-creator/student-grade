@@ -218,7 +218,7 @@ export function ReportSheet({ student, students, school }: { student: Student; s
               <div className="mt-3 border border-[#1b1a16] text-[9pt]">
                 <p className="border-b border-[#1b1a16] bg-[#1b1a16] px-2 py-1 text-[8pt] font-bold uppercase tracking-[0.14em] text-white">Fees / Accounts</p>
                 <div className="grid grid-cols-4">
-                  {filled.map((p, i) => <div key={i} className="contents">{cell(p.label, p.value)}</div>)}
+                  {filled.map((p, i) => <Fragment key={i}>{cell(p.label, p.value)}</Fragment>)}
                   <div className="border border-rule px-2 py-1">
                     <p className="text-[7.5pt] font-bold uppercase tracking-[0.1em] text-[#1b1a16]/70">Total</p>
                     <p className="num font-bold">GH₵ {total.toFixed(2).replace(/\.00$/, "")}</p>
