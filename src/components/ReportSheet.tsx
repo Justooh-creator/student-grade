@@ -234,6 +234,9 @@ export function ReportSheet({ student, students, school }: { student: Student; s
                 Class Teacher — {school.classTeachers?.[student.classId]?.trim() || school.classTeacher || "—"}
               </div>
             </div>
+            <div className="flex flex-1 items-end justify-center">
+              {school.stamp && <img src={school.stamp} alt="School stamp" className="max-h-[20mm] max-w-[38mm] object-contain" />}
+            </div>
             <div className="w-[60mm] text-center">
               <div className="flex h-[16mm] items-end justify-center">
                 {school.signature && <img src={school.signature} alt="Head teacher signature" className="max-h-[16mm] max-w-[55mm] object-contain" />}
