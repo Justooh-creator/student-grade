@@ -10,7 +10,7 @@ export function LicenseCard({ lic, onActivated }: { lic: LicenseState; onActivat
   const { user } = useUser();
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
-  const [planId, setPlanId] = useState(PAYSTACK_PLANS[0].id);
+  const [planId, setPlanId] = useState(PAYSTACK_PLANS[0]!.id);
   const [paying, setPaying] = useState(false);
 
   async function activate() {

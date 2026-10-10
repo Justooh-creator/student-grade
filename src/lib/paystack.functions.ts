@@ -15,7 +15,7 @@ export const verifyPaystackPayment = createServerFn({ method: "POST" })
     const { reference, planId } = data;
     const plan = PAYSTACK_PLANS.find((p) => p.id === planId);
     if (!plan) throw new Error("Unknown plan");
-    const secret = process.env.PAYSTACK_SECRET_KEY;
+    const secret = process.env["PAYSTACK_SECRET_KEY"];
     if (!secret) throw new Error("Payments are not fully set up yet. Please contact support with your reference: " + reference);
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
