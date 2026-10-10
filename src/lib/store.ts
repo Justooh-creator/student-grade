@@ -14,10 +14,14 @@ export interface School {
   district: string;
   logo: string;
   signature?: string;
+  /** School stamp — photo with ink extracted, printed between the signatures. */
+  stamp?: string;
   motto?: string;
   emisCode?: string;
   /** class id -> class teacher name(s) */
   classTeachers?: Record<string, string>;
+  /** class id -> class teacher signature image */
+  classTeacherSignatures?: Record<string, string>;
 }
 
 export interface Student {
@@ -35,6 +39,8 @@ export interface Student {
   photo?: string;
   parentPhone?: string;
   promotion?: "promoted" | "retained" | "tbd";
+  /** Optional fees box (GH₵). Total is computed on the report card. */
+  fees?: { arrears?: string; levies?: string; nextTerm?: string };
 }
 
 export interface AppData {
