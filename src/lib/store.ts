@@ -24,6 +24,8 @@ export interface School {
   classTeacherSignatures?: Record<string, string>;
   /** class id -> cloud user ids allowed to edit that class */
   classAssignments?: Record<string, string[]>;
+  /** JHS (Basic 7–9): class id -> subject -> cloud user ids allowed to enter marks for that subject */
+  subjectAssignments?: Record<string, Record<string, string[]>>;
 }
 
 export interface Student {
