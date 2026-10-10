@@ -2,9 +2,9 @@ import type { School } from "./store";
 
 export interface AccessInput {
   inSchool: boolean;
-  role?: string;
-  userId?: string;
-  assignments?: School["classAssignments"];
+  role?: string | undefined;
+  userId?: string | undefined;
+  assignments?: School["classAssignments"] | undefined;
   classId: string;
 }
 
