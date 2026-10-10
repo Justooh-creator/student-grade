@@ -82,13 +82,11 @@ export function stripStudentImages(s: Student): Student {
 
 /** Remote school data carries no images — keep whatever is on this device. */
 export function keepLocalSchoolImages(local: School, remote: School): School {
-  return {
-    ...remote,
-    logo: local.logo,
-    signature: local.signature,
-    stamp: local.stamp,
-    classTeacherSignatures: local.classTeacherSignatures,
-  };
+  const merged: School = { ...remote, logo: local.logo };
+  if (local.signature) merged.signature = local.signature;
+  if (local.stamp) merged.stamp = local.stamp;
+  if (local.classTeacherSignatures) merged.classTeacherSignatures = local.classTeacherSignatures;
+  return merged;
 }
 
 /** Remote student rows carry no photo — keep this device's copy. */
