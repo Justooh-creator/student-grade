@@ -8,6 +8,7 @@ export interface CloudState {
   schoolName?: string;
   joinCode?: string;
   role?: string;
+  userId?: string;
 }
 
 let state: CloudState = { status: "signed-out" };
@@ -49,7 +50,7 @@ export async function loadSchool(userId: string) {
     school: { ...DEFAULT_SCHOOL, ...details, name: details.name || school.name },
     students: (rows ?? []).map((r) => r.data as unknown as Student),
   }));
-  setCloud({ status: "synced", schoolId: school.id, schoolName: school.name, joinCode: school.join_code, role: m.role }, true);
+  setCloud({ status: "synced", schoolId: school.id, schoolName: school.name, joinCode: school.join_code, role: m.role, userId }, true);
   return school.id;
 }
 

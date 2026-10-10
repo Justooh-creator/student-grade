@@ -22,6 +22,8 @@ export interface School {
   classTeachers?: Record<string, string>;
   /** class id -> class teacher signature image */
   classTeacherSignatures?: Record<string, string>;
+  /** class id -> cloud user ids allowed to edit that class */
+  classAssignments?: Record<string, string[]>;
 }
 
 export interface Student {

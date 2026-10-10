@@ -81,6 +81,35 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
         </div>
       </div>
       <div className={card}>
+        <p className="font-bold">Who can edit each class</p>
+        <p className="mt-1 text-sm text-muted-foreground">Tick the teachers allowed to enter marks for a class. Other teachers can only view it. A class with nobody ticked stays open to all. Headteachers can edit every class.</p>
+        <div className="mt-3 space-y-3">
+          {CLASS_LEVELS.map((c) => {
+            const list = school.classAssignments?.[c.id] ?? [];
+            const teachers = members.filter((m) => m.role !== "headteacher");
+            return (
+              <div key={c.id} className="rounded-md border border-border p-2">
+                <p className="text-sm font-bold">{c.name}{list.length === 0 && <span className="ml-2 text-xs font-normal text-muted-foreground">(open to all)</span>}</p>
+                {teachers.length === 0 ? <p className="text-xs text-muted-foreground">No teachers have joined yet.</p> : (
+                  <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
+                    {teachers.map((m) => (
+                      <label key={m.user_id} className="flex items-center gap-1.5 text-sm">
+                        <input type="checkbox" checked={list.includes(m.user_id)}
+                          onChange={(e) => {
+                            const next = e.target.checked ? [...list, m.user_id] : list.filter((x) => x !== m.user_id);
+                            setSchool({ classAssignments: { ...(school.classAssignments ?? {}), [c.id]: next } });
+                          }} />
+                        {m.name}
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div className={card}>
         <p className="font-bold">Invite teachers</p>
         <p className="mt-1 text-sm text-muted-foreground">Send the School Code so teachers can join.</p>
         <div className="mt-3 flex flex-wrap gap-2">

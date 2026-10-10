@@ -7,6 +7,7 @@ import { CONDUCT_PRESETS, HEAD_REMARK_PRESETS, INTEREST_PRESETS, MAX_STUDENTS_PE
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData, type Student } from "@/lib/store";
 import { passportPhoto, extractSignature } from "@/lib/images";
+import { ClassLock } from "@/components/ClassLock";
 import { openWhatsApp, whatsAppLink } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/students")({
@@ -40,6 +41,7 @@ function StudentsPage() {
       <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={classId} />
       <main className="mx-auto max-w-5xl px-4">
         <ClassPicker value={classId} onChange={(c) => navigate({ to: "/students", search: { class: c } })} />
+        <ClassLock classId={classId}>
 
         <section className="mt-5 rounded-xl border border-border bg-card p-4">
           <div className="flex flex-wrap items-start gap-4">
@@ -142,6 +144,7 @@ function StudentsPage() {
             </div>
           ))}
         </section>
+        </ClassLock>
       </main>
     </div>
   );
