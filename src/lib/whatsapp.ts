@@ -55,3 +55,18 @@ export function whatsAppLink(student: Student, students: Student[], school: Scho
   if (!phone) return null;
   return `https://wa.me/${phone}?text=${encodeURIComponent(buildWhatsAppSummary(student, students, school))}`;
 }
+
+/**
+ * Open a wa.me link reliably. In the Android WebView, target="_blank" opens a
+ * blank white window, so there we navigate the same tab and let Android hand
+ * the link to the WhatsApp app. In normal browsers we open a new tab.
+ */
+export function openWhatsApp(href: string) {
+  const ua = navigator.userAgent || "";
+  const isAndroidWebView = /Android/.test(ua) && (/; wv\)/.test(ua) || typeof (window as unknown as { AndroidBridge?: unknown }).AndroidBridge !== "undefined");
+  if (isAndroidWebView) {
+    window.location.href = href;
+  } else {
+    window.open(href, "_blank", "noopener,noreferrer");
+  }
+}
