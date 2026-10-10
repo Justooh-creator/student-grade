@@ -140,12 +140,24 @@ function StudentsPage() {
                 <PresetField label="Headteacher's remark" value={s.headRemark ?? ""} presets={HEAD_REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { headRemark: v })} placeholder="Select headteacher's remark" />
               </div>
               <details className="mt-2 rounded-lg border border-border bg-background/50 px-3 py-2">
-                <summary className="cursor-pointer text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Fees / accounts (optional — prints on report card when filled)</summary>
+                <summary className="cursor-pointer text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Fees / accounts (optional — only filled items print on the report card)</summary>
                 <div className="mt-2 grid gap-2 sm:grid-cols-3">
                   <TextField label="Fees owed (arrears)" value={s.fees?.arrears ?? ""} onChange={(v) => updateStudent(s.id, { fees: { ...(s.fees ?? {}), arrears: v } })} placeholder="e.g. 120" />
                   <TextField label="Levies" value={s.fees?.levies ?? ""} onChange={(v) => updateStudent(s.id, { fees: { ...(s.fees ?? {}), levies: v } })} placeholder="e.g. 30" />
                   <TextField label="Next-term fees" value={s.fees?.nextTerm ?? ""} onChange={(v) => updateStudent(s.id, { fees: { ...(s.fees ?? {}), nextTerm: v } })} placeholder="e.g. 150" />
                 </div>
+                {(s.fees?.items ?? []).map((item, idx) => (
+                  <div key={idx} className="mt-2 flex items-end gap-2">
+                    <div className="flex-1">
+                      <TextField label="Item name" value={item.label} onChange={(v) => updateStudent(s.id, { fees: { ...(s.fees ?? {}), items: (s.fees?.items ?? []).map((it, i) => i === idx ? { ...it, label: v } : it) } })} placeholder="e.g. PTA dues" />
+                    </div>
+                    <div className="w-28">
+                      <TextField label="Amount" value={item.amount} onChange={(v) => updateStudent(s.id, { fees: { ...(s.fees ?? {}), items: (s.fees?.items ?? []).map((it, i) => i === idx ? { ...it, amount: v } : it) } })} placeholder="e.g. 25" />
+                    </div>
+                    <button onClick={() => updateStudent(s.id, { fees: { ...(s.fees ?? {}), items: (s.fees?.items ?? []).filter((_, i) => i !== idx) } })} className="mb-1 rounded px-2 py-1 text-[11px] text-muted-foreground hover:text-destructive" aria-label={`Remove fee item ${item.label || idx + 1}`}>✕</button>
+                  </div>
+                ))}
+                <button onClick={() => updateStudent(s.id, { fees: { ...(s.fees ?? {}), items: [...(s.fees?.items ?? []), { label: "", amount: "" }] } })} className="mt-2 rounded border border-dashed border-border px-3 py-1.5 text-[11px] font-bold text-primary hover:bg-primary/5">+ Add another fee (PTA, class fees, exam fees…)</button>
               </details>
             </div>
           ))}
