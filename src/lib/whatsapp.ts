@@ -38,7 +38,7 @@ export function buildWhatsAppSummary(student: Student, students: Student[], scho
     }
     lines.push("");
     lines.push(`Average: ${result.average.toFixed(1)}`);
-    if (pos) lines.push(`Position: ${ordinal(pos)} of ${ranking.size ?? students.filter((x) => x.classId === student.classId).length}`);
+    if (pos) lines.push(`Position: ${ordinal(pos)} of ${ranking.classSize}`);
     if (result.bestSix) lines.push(`Best Six aggregate: ${result.bestSix.aggregate}`);
   }
   lines.push("");

@@ -7,6 +7,7 @@ import { CONDUCT_PRESETS, HEAD_REMARK_PRESETS, INTEREST_PRESETS, MAX_STUDENTS_PE
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData, type Student } from "@/lib/store";
 import { passportPhoto } from "@/lib/images";
+import { whatsAppLink } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/students")({
   validateSearch: validateClassSearch,
@@ -90,6 +91,7 @@ function StudentsPage() {
                 </div>
                 <div className="flex gap-2">
                   <Link to="/" search={{ class: classId, student: s.id }} className="rounded border border-border px-2 py-1 text-[11px] font-semibold text-primary hover:bg-primary/5">Enter SBA</Link>
+                  {(() => { const wa = whatsAppLink(s, students, school); return wa ? <a href={wa} target="_blank" rel="noopener noreferrer" className="rounded border border-border px-2 py-1 text-[11px] font-semibold text-primary hover:bg-primary/5">WhatsApp report</a> : null; })()}
                   <button onClick={() => removeStudent(s.id)} className="rounded px-2 py-1 text-[11px] text-muted-foreground hover:text-destructive" aria-label={`Remove ${s.name}`}>✕</button>
                 </div>
               </div>
@@ -97,6 +99,7 @@ function StudentsPage() {
                 <TextField label="Name" value={s.name} onChange={(v) => updateStudent(s.id, { name: v })} />
                 <TextField label="Admission no." value={s.admissionNo} onChange={(v) => updateStudent(s.id, { admissionNo: v })} />
                 <TextField label="Days present" value={s.attendance} onChange={(v) => updateStudent(s.id, { attendance: v })} placeholder={`out of ${school.totalAttendance || "—"}`} />
+                <TextField label="Parent / guardian phone" value={s.parentPhone ?? ""} onChange={(v) => updateStudent(s.id, { parentPhone: v })} placeholder="e.g. 0241234567" />
                 <PresetField label="Attitude / conduct" value={s.conduct} presets={CONDUCT_PRESETS} onChange={(v) => updateStudent(s.id, { conduct: v })} placeholder="Select conduct" />
                 <PresetField label="Interest / hobby" value={s.interest} presets={INTEREST_PRESETS} onChange={(v) => updateStudent(s.id, { interest: v })} placeholder="Select interest" />
                 <PresetField label="Class teacher's remark" value={s.remark ?? ""} presets={REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { remark: v })} placeholder="Auto remark from average" />
