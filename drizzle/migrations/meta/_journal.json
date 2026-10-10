@@ -29,6 +29,13 @@
       "when": 1791331635576,
       "tag": "0003_licensing",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791673264067,
+      "tag": "0004_seed_activation_codes",
+      "breakpoints": true
     }
   ]
 }
