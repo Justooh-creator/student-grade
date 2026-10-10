@@ -1,16 +1,23 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { normalizeGhanaPhone, openWhatsApp, whatsAppLink } from "@/lib/whatsapp";
 import { useAppData } from "@/lib/store";
+import { useUser } from "@/lib/auth";
+import { useLicense } from "@/lib/license";
 
-/** Free WhatsApp sharing of a learner's terminal summary, sent from the teacher's own WhatsApp. */
+/** Free WhatsApp sharing of a learner's terminal summary, sent from the teacher's own WhatsApp. Requires an active license. */
 export function ClassWhatsAppShare({ classId, className }: { classId: string; className: string }) {
   const { school, students } = useAppData();
+  const { user, ready: authReady } = useUser();
+  const lic = useLicense(user?.id);
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
   const list = students.filter((s) => s.classId === classId);
   const ready = list.filter((s) => normalizeGhanaPhone(s.parentPhone));
+  const locked = authReady && !lic.loading && !lic.canPrint;
 
   useEffect(() => {
     if (!open) return;
