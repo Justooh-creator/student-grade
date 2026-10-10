@@ -68,6 +68,32 @@ export const DEFAULT_SCHOOL: School = {
   logo: "",
 };
 
+/**
+ * Images never leave the device — the school cloud stores text records only.
+ * Strip them before uploading; merge local copies back over remote data.
+ */
+export function stripSchoolImages(s: School): School {
+  return { ...s, logo: "", signature: "", stamp: "", classTeacherSignatures: {} };
+}
+
+export function stripStudentImages(s: Student): Student {
+  return s.photo ? { ...s, photo: "" } : s;
+}
+
+/** Remote school data carries no images — keep whatever is on this device. */
+export function keepLocalSchoolImages(local: School, remote: School): School {
+  const merged: School = { ...remote, logo: local.logo };
+  if (local.signature) merged.signature = local.signature;
+  if (local.stamp) merged.stamp = local.stamp;
+  if (local.classTeacherSignatures) merged.classTeacherSignatures = local.classTeacherSignatures;
+  return merged;
+}
+
+/** Remote student rows carry no photo — keep this device's copy. */
+export function keepLocalStudentPhoto(local: Student | undefined, remote: Student): Student {
+  return local?.photo ? { ...remote, photo: local.photo } : remote;
+}
+
 const initialData: AppData = { school: DEFAULT_SCHOOL, students: [] };
 
 let data: AppData = initialData;
