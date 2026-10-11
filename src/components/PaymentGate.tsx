@@ -35,7 +35,7 @@ export function PrintButton({ label = "Print / Save whole class as PDF (A4)" }: 
         title="Printing needs an active license. Tap to activate."
         className="h-10 cursor-not-allowed rounded-md border border-border bg-muted px-5 text-sm font-semibold text-muted-foreground"
       >
-        🔒 Print locked — activate license
+        🔒 Save Pdf/print locked - Activate licence
       </button>
     );
   }
