@@ -67,7 +67,7 @@ export function useDutyRosters() {
   useEffect(() => {
     load();
     if (!cloud.schoolId) return;
-    const ch = supabase.channel(`duty-${cloud.schoolId}`)
+    const ch = supabase.channel(`duty-${cloud.schoolId}-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "duty_rosters", filter: `school_id=eq.${cloud.schoolId}` }, () => load())
       .subscribe();
     return () => { supabase.removeChannel(ch); };
