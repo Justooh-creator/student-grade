@@ -25,14 +25,97 @@ function SectionLabel({ children }: { children: ReactNode }) {
   );
 }
 
-function RowCell({ icon, title, desc, note }: { icon: string; title: string; desc: string; note?: string | undefined }) {
+function Svg({ children }: { children: ReactNode }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      {children}
+    </svg>
+  );
+}
+
+const ICON = {
+  cloud: (
+    <Svg>
+      <path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97A6 6 0 0 0 6.3 11.2 3.9 3.9 0 0 0 7 19h10.5Z" />
+    </Svg>
+  ),
+  school: (
+    <Svg>
+      <path d="M4 10.5 12 5l8 5.5V20H4Z" />
+      <path d="M9.5 20v-5h5v5" />
+    </Svg>
+  ),
+  cap: (
+    <Svg>
+      <path d="M12 4 2 9l10 5 10-5-10-5Z" />
+      <path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5" />
+    </Svg>
+  ),
+  pencil: (
+    <Svg>
+      <path d="M4 20h4L18 10l-4-4L4 16v4Z" />
+      <path d="m13.5 6.5 4 4" />
+    </Svg>
+  ),
+  file: (
+    <Svg>
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" />
+      <path d="M14 3v5h5" />
+      <path d="M9 13h6" />
+      <path d="M9 17h5" />
+    </Svg>
+  ),
+  chat: (
+    <Svg>
+      <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.2A8 8 0 1 1 21 12Z" />
+    </Svg>
+  ),
+  megaphone: (
+    <Svg>
+      <path d="M4 9v6h3l8 4V5L7 9H4Z" />
+      <path d="M18 10a3 3 0 0 1 0 4" />
+    </Svg>
+  ),
+  people: (
+    <Svg>
+      <circle cx="9" cy="8" r="3" />
+      <path d="M3 20a6 6 0 0 1 12 0" />
+      <path d="M16 5.5a3 3 0 0 1 0 5.8" />
+      <path d="M17.5 14.2A6 6 0 0 1 21 20" />
+    </Svg>
+  ),
+  bulb: (
+    <Svg>
+      <path d="M9.5 18h5" />
+      <path d="M10.5 21h3" />
+      <path d="M12 3a6 6 0 0 0-3.4 10.9c.6.5.9 1.2.9 1.9V16h5v-.2c0-.7.3-1.4.9-1.9A6 6 0 0 0 12 3Z" />
+    </Svg>
+  ),
+  user: (
+    <Svg>
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M5 20a7 7 0 0 1 14 0" />
+    </Svg>
+  ),
+};
+
+function RowCell({ icon, title, desc, note }: { icon: ReactNode; title: string; desc: string; note?: string | undefined }) {
   return (
     <>
       <span
         aria-hidden
         className="h-2 w-2 shrink-0 rotate-45 border border-accent/70 transition-all duration-200 group-hover:rotate-[135deg] group-hover:bg-accent/40"
       />
-      <span aria-hidden className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-base">
+      <span aria-hidden className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-primary">
         {icon}
       </span>
       <span className="min-w-0 flex-1">
