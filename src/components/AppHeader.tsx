@@ -4,6 +4,7 @@ import { CLASS_LEVELS, type ClassId } from "@/lib/ges";
 import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
 import { useCloud } from "@/lib/cloud";
+import { useStaffNotices } from "@/lib/staffNotices";
 
 function WhatsAppIcon() {
   return (
@@ -43,6 +44,7 @@ export function AppHeader({
   const { students } = useAppData();
   const { user } = useUser();
   const cloud = useCloud();
+  const { unread } = useStaffNotices();
   const navClass = activeClass ?? "b4";
   const classStudents = students.filter((s) => s.classId === navClass);
 
@@ -71,6 +73,11 @@ export function AppHeader({
           {cloud.status === "synced" ? "● Cloud saved" : cloud.status === "saving" ? "○ Saving…" : cloud.status === "offline" ? "! Not saved" : cloud.status === "no-school" ? "Join school cloud" : cloud.status === "loading" ? "…" : "Offline mode"}
         </Link>
       </div>
+      {unread.length > 0 && !pathname.startsWith("/staff-meeting") && (
+        <Link to="/staff-meeting" className="mx-auto mt-2 flex max-w-5xl items-center gap-2 rounded-md bg-accent px-3 py-2 text-xs font-bold text-accent-foreground">
+          📣 {unread.length} new staff meeting notice{unread.length > 1 ? "s" : ""}: {unread[0].title} — tap to view
+        </Link>
+      )}
       <nav className="mx-auto mt-2 flex max-w-5xl overflow-x-auto px-2">
         {tabs.map((t) => {
           const cls = t.active ? tabActive : tabIdle;
@@ -102,6 +109,7 @@ export function AppHeader({
                 <Link to="/class-report/$classId" params={{ classId: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">Report</Link>
                 <Link to="/midterm-progress" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm font-semibold text-primary hover:bg-muted">💬 Mid-Term WhatsApp</Link>
                 <Link to="/pta-announcement" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm font-semibold text-primary hover:bg-muted">📢 PTA Meeting Notice</Link>
+                <Link to="/staff-meeting" className="rounded px-2 py-1.5 text-sm font-semibold text-primary hover:bg-muted">📣 Staff Meeting{unread.length > 0 ? ` (${unread.length} new)` : ""}</Link>
                 <Link to="/auth" className="rounded px-2 py-1.5 text-sm hover:bg-muted">{user ? "Account" : "Sign in"}</Link>
               </div>
               <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Classes</p>

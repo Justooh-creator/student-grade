@@ -24,7 +24,7 @@ export const Route = createFileRoute("/staff-meeting")({
 const input = "h-10 w-full rounded-md border border-border bg-card px-3 text-sm outline-none focus:border-primary";
 
 function StaffMeetingPage() {
-  const { school, term, year } = useAppData() as unknown as { school: { name: string; headteacher?: string }; term: string; year: string };
+  const { school } = useAppData();
   const { notices, reads, acknowledge, reload, cloud } = useStaffNotices();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -32,7 +32,7 @@ function StaffMeetingPage() {
   const [f, setF] = useState({ title: "", meeting_date: "", meeting_time: "", venue: "", agenda: "", notes: "" });
   const [busy, setBusy] = useState(false);
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
-  const senderName = school?.headteacher ? `${school.headteacher} (Headteacher)` : "Headteacher";
+  const senderName = school.headTeacher ? `${school.headTeacher} (Headteacher)` : "Headteacher";
   const draftText = buildStaffNoticeText({ ...f, sender_name: senderName }, school?.name);
 
   const send = async () => {
@@ -55,7 +55,7 @@ function StaffMeetingPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader schoolName={school?.name ?? ""} term={term} year={year} />
+      <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} />
       <main className="mx-auto max-w-3xl p-4">
         <h1 className="font-display text-xl font-bold">📣 Staff Meeting Notice</h1>
         {mounted && !cloud.schoolId && (
