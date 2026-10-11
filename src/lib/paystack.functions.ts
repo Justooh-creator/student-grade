@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { PAYSTACK_PLANS } from "@/lib/paystack";
+import { PAYSTACK_PLANS, PAYSTACK_TEST_PLAN } from "@/lib/paystack";
 
 const TERM_DAYS = 100;
 
@@ -13,8 +13,13 @@ export const verifyPaystackPayment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const { reference, planId } = data;
-    const plan = PAYSTACK_PLANS.find((p) => p.id === planId);
+    const isTest = planId === PAYSTACK_TEST_PLAN.id;
+    const plan = isTest ? PAYSTACK_TEST_PLAN : PAYSTACK_PLANS.find((p) => p.id === planId);
     if (!plan) throw new Error("Unknown plan");
+    if (isTest) {
+      const { data: me } = await context.supabase.rpc("get_my_license");
+      if ((me as Record<string, unknown> | null)?.["source"] !== "developer") throw new Error("Test payments are for the developer account only.");
+    }
     const secret = process.env["PAYSTACK_SECRET_KEY"];
     if (!secret) throw new Error("Payments are not fully set up yet. Please contact support with your reference: " + reference);
 
@@ -43,6 +48,14 @@ export const verifyPaystackPayment = createServerFn({ method: "POST" })
         amount_pesewas: Math.round(plan.amount * 100), status: "failed",
       });
       throw new Error("Payment could not be verified. If money was taken, contact support with reference: " + reference);
+    }
+
+    if (isTest) {
+      await supabaseAdmin.from("payment_transactions").upsert({
+        reference, user_id: userId, plan: plan.id, scope: plan.scope, terms: 0,
+        amount_pesewas: 100, status: "success", verified_at: new Date().toISOString(),
+      });
+      return { ok: true, test: true };
     }
 
     // Grant the license.
