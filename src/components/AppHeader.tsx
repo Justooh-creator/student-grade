@@ -1,5 +1,5 @@
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState, type ReactNode } from "react";
 import { CLASS_LEVELS, type ClassId } from "@/lib/ges";
 import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
@@ -10,6 +10,43 @@ import { useStaffNotices } from "@/lib/staffNotices";
 const tabBase = "whitespace-nowrap border-b-2 px-3 py-2.5 text-xs font-semibold sm:text-sm";
 const tabIdle = `${tabBase} border-transparent text-primary-foreground/70 hover:text-primary-foreground`;
 const tabActive = `${tabBase} border-accent text-primary-foreground`;
+
+const rowCls = (active: boolean) =>
+  `group flex items-center gap-3 rounded-lg border px-2.5 py-2 text-left transition-colors ${
+    active ? "border-accent/40 bg-accent/10" : "border-transparent hover:border-border hover:bg-muted"
+  }`;
+
+function SectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <p className="mt-5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+      <span aria-hidden className="h-px w-4 bg-accent" />
+      {children}
+    </p>
+  );
+}
+
+function RowCell({ icon, title, desc, note }: { icon: string; title: string; desc: string; note?: string }) {
+  return (
+    <>
+      <span
+        aria-hidden
+        className="h-2 w-2 shrink-0 rotate-45 border border-accent/70 transition-all duration-200 group-hover:rotate-[135deg] group-hover:bg-accent/40"
+      />
+      <span aria-hidden className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-base">
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm font-bold leading-tight">{title}</span>
+        <span className="mt-0.5 block truncate text-[11px] leading-snug text-muted-foreground">{desc}</span>
+      </span>
+      {note ? (
+        <span className="shrink-0 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-accent-foreground">
+          {note}
+        </span>
+      ) : null}
+    </>
+  );
+}
 
 export function AppHeader({
   schoolName,
@@ -24,7 +61,6 @@ export function AppHeader({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
   const { students } = useAppData();
   const { user } = useUser();
   const cloud = useCloud();
