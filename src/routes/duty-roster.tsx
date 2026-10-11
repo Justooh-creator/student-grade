@@ -5,7 +5,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppData } from "@/lib/store";
 import { openSms, openWhatsApp } from "@/lib/whatsapp";
-import { DUTY_DAYS, DUTY_PRESETS, buildRosterText, mondayOf, useDutyRosters, weekLabel, type DutyEntry } from "@/lib/dutyRoster";
+import { DUTY_PRESETS, buildRosterText, mondayOf, useDutyRosters, weekLabel, type DutyEntry } from "@/lib/dutyRoster";
 
 export const Route = createFileRoute("/duty-roster")({
   head: () => ({
@@ -132,8 +132,8 @@ function DutyRosterPage() {
             <textarea className={`${input} h-16 py-2`} placeholder="Note to staff (optional)" value={notes} onChange={(e) => setNotes(e.target.value)} />
             <div className="flex flex-wrap gap-2">
               <button disabled={busy} onClick={save} className="h-10 rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground disabled:opacity-60">{busy ? "Publishing…" : "Publish & remind teachers"}</button>
-              <button onClick={() => openWhatsApp(`https://wa.me/?text=${encodeURIComponent(draftText)}`)} className="h-10 rounded-md border border-border px-4 text-sm font-bold hover:bg-muted">WhatsApp group</button>
-              <button onClick={() => openSms(`sms:?body=${encodeURIComponent(draftText)}`)} className="h-10 rounded-md border border-border px-4 text-sm font-bold hover:bg-muted">SMS</button>
+              <button onClick={() => openWhatsApp(`https://wa.me/?text=${encodeURIComponent(shareText)}`)} className="h-10 rounded-md border border-border px-4 text-sm font-bold hover:bg-muted">WhatsApp group</button>
+              <button onClick={() => openSms(`sms:?body=${encodeURIComponent(shareText)}`)} className="h-10 rounded-md border border-border px-4 text-sm font-bold hover:bg-muted">SMS</button>
             </div>
           </section>
         )}
@@ -155,7 +155,7 @@ function DutyRosterPage() {
                     {mineAssigned && acked && <span className="font-bold text-primary">✓ Acknowledged</span>}
                     {isAdmin && (
                       <>
-                        <button onClick={() => setWeek(r.week_start)} className="h-8 rounded-md border border-border px-3 font-bold">Edit</button>
+                        <button onClick={() => { setWeek1(r.week_start); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="h-8 rounded-md border border-border px-3 font-bold">Edit</button>
                         <button onClick={() => openWhatsApp(`https://wa.me/?text=${encodeURIComponent(buildRosterText(r, school?.name))}`)} className="h-8 rounded-md border border-border px-3 font-bold">WhatsApp</button>
                         <button onClick={() => remove(r.id)} className="h-8 rounded-md border border-border px-3 font-bold text-destructive">Delete</button>
                       </>
