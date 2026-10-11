@@ -25,7 +25,7 @@ function SectionLabel({ children }: { children: ReactNode }) {
   );
 }
 
-function RowCell({ icon, title, desc, note }: { icon: string; title: string; desc: string; note?: string }) {
+function RowCell({ icon, title, desc, note }: { icon: string; title: string; desc: string; note?: string | undefined }) {
   return (
     <>
       <span
