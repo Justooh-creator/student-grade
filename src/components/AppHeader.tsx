@@ -144,46 +144,46 @@ export function AppHeader({
               <SectionLabel>Pages</SectionLabel>
               <nav className="mt-2 grid gap-1" onClick={() => setOpen(false)}>
                 <Link to="/school-cloud" className={rowCls(pathname.startsWith("/school-cloud"))}>
-                  <RowCell icon="☁️" title="School Cloud" desc="Join your school, sync records, assign teachers" />
+                  <RowCell icon={ICON.cloud} title="School Cloud" desc="Join your school and sync records" />
                 </Link>
                 <Link to="/setup" search={{ class: navClass }} className={rowCls(pathname.startsWith("/setup"))}>
-                  <RowCell icon="🏫" title="School Details" desc="Name, motto, EMIS code, logo, school dates" />
+                  <RowCell icon={ICON.school} title="School Details" desc="Name, motto, EMIS code, logo" />
                 </Link>
                 <Link to="/students" search={{ class: navClass }} className={rowCls(pathname.startsWith("/students"))}>
-                  <RowCell icon="🎓" title="Student Details" desc="Add learners, photos, parents and phone numbers" />
+                  <RowCell icon={ICON.cap} title="Student Details" desc="Learners, photos, parent numbers" />
                 </Link>
                 <Link to="/" search={{ class: navClass }} className={rowCls(pathname === "/")}>
-                  <RowCell icon="📝" title="SBA Details" desc="Class tests, project, group work and exam marks" />
+                  <RowCell icon={ICON.pencil} title="SBA Details" desc="Tests, project, group, exam marks" />
                 </Link>
                 <Link
                   to="/class-report/$classId"
                   params={{ classId: navClass }}
                   className={rowCls(pathname.startsWith("/class-report") || pathname.startsWith("/report"))}
                 >
-                  <RowCell icon="📄" title="Report" desc="Preview, save PDF or print the whole class" />
+                  <RowCell icon={ICON.file} title="Report" desc="Preview, save PDF, print class" />
                 </Link>
                 <Link to="/midterm-progress" search={{ class: navClass }} className={rowCls(pathname.startsWith("/midterm-progress"))}>
-                  <RowCell icon="💬" title="Mid-Term WhatsApp" desc="Send parents a mid-term progress check-in" />
+                  <RowCell icon={ICON.chat} title="Mid-Term WhatsApp" desc="Progress check-in to parents" />
                 </Link>
                 <Link to="/pta-announcement" search={{ class: navClass }} className={rowCls(pathname.startsWith("/pta-announcement"))}>
-                  <RowCell icon="📢" title="PTA Meeting Notice" desc="Invite parents to the meeting, class by class" />
+                  <RowCell icon={ICON.megaphone} title="PTA Meeting Notice" desc="Invite parents, class by class" />
                 </Link>
                 <Link to="/staff-meeting" className={rowCls(pathname.startsWith("/staff-meeting"))}>
                   <RowCell
-                    icon="📣"
+                    icon={ICON.people}
                     title="Staff Meeting"
-                    desc="Notices to every teacher, with read receipts"
+                    desc="Notices to all teachers"
                     note={unread.length > 0 ? `${unread.length} new` : undefined}
                   />
                 </Link>
                 <Link to="/feedback" className={rowCls(pathname.startsWith("/feedback"))}>
-                  <RowCell icon="💡" title="Help & Feedback" desc="Suggestions, bug reports and WhatsApp support" />
+                  <RowCell icon={ICON.bulb} title="Help & Feedback" desc="Suggestions and bug reports" />
                 </Link>
                 <Link to="/auth" className={rowCls(pathname.startsWith("/auth"))}>
                   <RowCell
-                    icon="👤"
+                    icon={ICON.user}
                     title={user ? "Account" : "Sign in"}
-                    desc={user ? "License, subscription and password recovery" : "Sign in to sync and activate EduReport"}
+                    desc={user ? "License, plan, password recovery" : "Sign in to sync and activate"}
                   />
                 </Link>
               </nav>
