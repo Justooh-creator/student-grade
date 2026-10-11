@@ -243,6 +243,82 @@ export type Database = {
         }
         Relationships: []
       }
+      staff_notice_reads: {
+        Row: {
+          notice_id: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          notice_id: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          notice_id?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_notice_reads_notice_id_fkey"
+            columns: ["notice_id"]
+            isOneToOne: false
+            referencedRelation: "staff_notices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff_notices: {
+        Row: {
+          agenda: string
+          created_at: string
+          created_by: string
+          id: string
+          meeting_date: string
+          meeting_time: string
+          notes: string
+          school_id: string
+          sender_name: string
+          title: string
+          venue: string
+        }
+        Insert: {
+          agenda?: string
+          created_at?: string
+          created_by: string
+          id?: string
+          meeting_date?: string
+          meeting_time?: string
+          notes?: string
+          school_id: string
+          sender_name?: string
+          title?: string
+          venue?: string
+        }
+        Update: {
+          agenda?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          meeting_date?: string
+          meeting_time?: string
+          notes?: string
+          school_id?: string
+          sender_name?: string
+          title?: string
+          venue?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_notices_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_licenses: {
         Row: {
           expires_at: string | null

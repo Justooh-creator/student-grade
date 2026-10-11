@@ -43,6 +43,13 @@
       "when": 1791676095070,
       "tag": "0005_paystack_payment_transactions",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791681305451,
+      "tag": "0006_staff_notices",
+      "breakpoints": true
     }
   ]
 }
