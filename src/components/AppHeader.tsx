@@ -17,7 +17,7 @@ const rowCls = (active: boolean) =>
 
 function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <p className="mt-5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+    <p className="mt-5 flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
       <span aria-hidden className="h-px w-4 bg-accent" />
       {children}
     </p>
@@ -119,10 +119,10 @@ function RowCell({ icon, title, desc, note }: { icon: ReactNode; title: string; 
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-bold leading-tight">{title}</span>
-        <span className="mt-0.5 block truncate text-[11px] leading-snug text-muted-foreground">{desc}</span>
+        <span className="mt-0.5 block truncate text-[13px] leading-snug text-muted-foreground">{desc}</span>
       </span>
       {note ? (
-        <span className="shrink-0 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-accent-foreground">
+        <span className="shrink-0 rounded-full bg-accent px-2 py-0.5 text-[12px] font-bold text-accent-foreground">
           {note}
         </span>
       ) : null}
@@ -175,9 +175,9 @@ export function AppHeader({
         </button>
         <div className="flex-1">
           <p className="font-display text-base font-bold leading-tight sm:text-lg">{schoolName || "SBA Report Cards"}</p>
-          <p className="num text-[10px] uppercase tracking-[0.18em] text-primary-foreground/60">GES · {term} · {year}</p>
+          <p className="num text-[12px] uppercase tracking-[0.18em] text-primary-foreground/60">GES · {term} · {year}</p>
         </div>
-        <Link to="/school-cloud" className="rounded-full border border-primary-foreground/25 px-2.5 py-1 text-[11px] font-bold">
+        <Link to="/school-cloud" className="rounded-full border border-primary-foreground/25 px-2.5 py-1 text-[13px] font-bold">
           {cloud.status === "synced" ? "● Cloud saved" : cloud.status === "saving" ? "○ Saving…" : cloud.status === "offline" ? "! Not saved" : cloud.status === "no-school" ? "Join school cloud" : cloud.status === "loading" ? "…" : "Offline mode"}
         </Link>
       </div>

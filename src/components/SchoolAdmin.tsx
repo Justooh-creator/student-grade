@@ -54,7 +54,7 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
       <div className={card}>
         <p className="font-bold">School registration details</p>
         <label className="mt-3 block">
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">EMIS code</span>
+          <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">EMIS code</span>
           <input value={school.emisCode ?? ""} onChange={(e) => setSchool({ emisCode: e.target.value })} placeholder="School EMIS code"
             className="mt-1 h-10 w-full rounded-md border border-border bg-card px-3 text-sm outline-none focus:border-primary" />
         </label>

@@ -4,7 +4,7 @@ export function ClassPicker({ value, onChange }: { value: ClassId; onChange: (c:
   const level = getClassLevel(value);
   return (
     <section className="mt-5">
-      <h2 className="text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Class</h2>
+      <h2 className="text-[13px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Class</h2>
       <div className="mt-2 grid grid-cols-3 gap-1.5 sm:grid-cols-6 lg:grid-cols-11">
         {CLASS_LEVELS.map((c) => (
           <button
@@ -40,7 +40,7 @@ export function TextField({
 }) {
   return (
     <label className="block">
-      <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">{label}</span>
+      <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">{label}</span>
       <input
         value={value}
         placeholder={placeholder}

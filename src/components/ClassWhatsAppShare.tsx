@@ -57,8 +57,8 @@ export function ClassWhatsAppShare({ classId, className }: { classId: string; cl
       </button>
       {open && (
         <div className="absolute right-0 z-30 mt-2 max-h-72 w-64 overflow-y-auto rounded-lg border border-border bg-card p-2 shadow-lg">
-          <p className="px-1 pb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-foreground">{className} · send summary</p>
-          <p className="px-1 pb-1 text-[10px] text-muted-foreground">Number not on WhatsApp? Use SMS — same message.</p>
+          <p className="px-1 pb-1 text-[13px] font-bold uppercase tracking-[0.12em] text-foreground">{className} · send summary</p>
+          <p className="px-1 pb-1 text-[12px] text-muted-foreground">Number not on WhatsApp? Use SMS — same message.</p>
           {ready.map((s) => {
             const href = whatsAppLink(s, students, school);
             const sms = smsLink(s, students, school);
@@ -74,7 +74,7 @@ export function ClassWhatsAppShare({ classId, className }: { classId: string; cl
                   className="min-w-0 flex-1 text-xs font-bold"
                 >
                   {s.name}
-                  <span className="num block text-[10px] font-normal text-muted-foreground">{s.parentPhone}</span>
+                  <span className="num block text-[12px] font-normal text-muted-foreground">{s.parentPhone}</span>
                 </a>
                 {sms && (
                   <button
@@ -83,7 +83,7 @@ export function ClassWhatsAppShare({ classId, className }: { classId: string; cl
                       openSms(sms);
                     }}
                     title="Send the same message as a text message"
-                    className="rounded border border-border px-2 py-1 text-[10px] font-bold hover:bg-background"
+                    className="rounded border border-border px-2 py-1 text-[12px] font-bold hover:bg-background"
                   >
                     SMS
                   </button>
