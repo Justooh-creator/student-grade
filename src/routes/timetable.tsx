@@ -96,7 +96,7 @@ function TimetablePage() {
         {view === "daily" && (
           <div className="no-print flex gap-1 overflow-x-auto">
             {TT_DAYS.map((d) => (
-              <button key={d} onClick={() => setDay(d)} className={`rounded-md px-3 py-2 font-bold ${day === d ? "bg-primary text-primary-foreground" : "bg-card border border-border"}`}>{d.slice(0, 3)}</button>
+              <button key={d} onClick={() => setDay(d)} className={`rounded-md px-3 py-2 font-bold ${day === d ? "bg-primary text-primary-foreground" : "bg-card border border-border"}`}>{d}</button>
             ))}
           </div>
         )}
