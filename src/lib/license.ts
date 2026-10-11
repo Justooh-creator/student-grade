@@ -48,6 +48,12 @@ export async function redeemCode(code: string): Promise<LicenseState> {
   };
 }
 
+/** Record the first save/print of this term (starts the 15-day window; reprints never reset it). */
+export async function recordPrint(termKey: string): Promise<void> {
+  await supabase.rpc("record_print", { _term_key: termKey });
+}
+
+
 export function licenseLabel(lic: LicenseState): string {
   if (lic.source === "developer") return "Developer access — permanent";
   if (lic.status === "active") {

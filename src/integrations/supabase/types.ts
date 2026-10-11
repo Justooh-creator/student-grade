@@ -214,31 +214,40 @@ export type Database = {
         Row: {
           created_by: string
           details: Json
+          first_printed_at: string | null
           id: string
           join_code: string
           license_expires_at: string | null
           license_permanent: boolean
+          license_terms: number | null
           name: string
+          print_term_key: string | null
           updated_at: string
         }
         Insert: {
           created_by: string
           details?: Json
+          first_printed_at?: string | null
           id?: string
           join_code: string
           license_expires_at?: string | null
           license_permanent?: boolean
+          license_terms?: number | null
           name?: string
+          print_term_key?: string | null
           updated_at?: string
         }
         Update: {
           created_by?: string
           details?: Json
+          first_printed_at?: string | null
           id?: string
           join_code?: string
           license_expires_at?: string | null
           license_permanent?: boolean
+          license_terms?: number | null
           name?: string
+          print_term_key?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -322,19 +331,28 @@ export type Database = {
       user_licenses: {
         Row: {
           expires_at: string | null
+          first_printed_at: string | null
+          license_terms: number | null
           permanent: boolean
+          print_term_key: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           expires_at?: string | null
+          first_printed_at?: string | null
+          license_terms?: number | null
           permanent?: boolean
+          print_term_key?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           expires_at?: string | null
+          first_printed_at?: string | null
+          license_terms?: number | null
           permanent?: boolean
+          print_term_key?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -350,11 +368,14 @@ export type Database = {
         Returns: {
           created_by: string
           details: Json
+          first_printed_at: string | null
           id: string
           join_code: string
           license_expires_at: string | null
           license_permanent: boolean
+          license_terms: number | null
           name: string
+          print_term_key: string | null
           updated_at: string
         }
         SetofOptions: {
@@ -368,6 +389,11 @@ export type Database = {
       is_school_admin: { Args: { _school: string }; Returns: boolean }
       is_school_member: { Args: { _school: string }; Returns: boolean }
       join_school: { Args: { _code: string }; Returns: string }
+      print_window_closed: {
+        Args: { _first: string; _key: string; _terms: number }
+        Returns: boolean
+      }
+      record_print: { Args: { _term_key: string }; Returns: Json }
       redeem_code: { Args: { _code: string }; Returns: Json }
       regenerate_join_code: { Args: { _school: string }; Returns: string }
       remove_member: { Args: { _member: string }; Returns: undefined }

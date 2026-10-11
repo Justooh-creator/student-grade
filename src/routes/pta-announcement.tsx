@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
+import { ReopenPicker } from "@/components/DatePicker";
 import { ClassPicker } from "@/components/ClassPicker";
 import { getClassLevel } from "@/lib/ges";
 import { validateClassSearch } from "@/lib/classSearch";
@@ -61,7 +62,7 @@ function PtaPage() {
             </label>
             <label className="block text-xs font-bold">
               Date
-              <input value={meeting.date} onChange={set("date")} placeholder="e.g. Friday, 24 October 2026" className={inputCls} />
+              <ReopenPicker placeholder="Pick meeting date" value={meeting.date} onChange={(v) => setMeeting((m) => ({ ...m, date: v }))} />
             </label>
             <label className="block text-xs font-bold">
               Time
