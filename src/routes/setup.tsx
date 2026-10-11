@@ -268,6 +268,12 @@ function SetupPage() {
               </span>
               <ReopenPicker value={school.reopeningDate} onChange={(v) => setSchool({ reopeningDate: v })} />
             </div>
+            <div className="block">
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                Date school vacates
+              </span>
+              <ReopenPicker placeholder="Pick vacation date" value={school.vacationDate ?? ""} onChange={(v) => setSchool({ vacationDate: v })} />
+            </div>
             <Field
               label="Total attendance days"
               value={school.totalAttendance}
@@ -293,7 +299,7 @@ function SetupPage() {
   );
 }
 
-function ReopenPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+export function ReopenPicker({ value, onChange, placeholder = "Pick reopening date" }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
   const parsed = value ? parse(value, "do MMMM yyyy", new Date()) : undefined;
   const date = parsed && isValid(parsed) ? parsed : undefined;
   const [month, setMonth] = useState<Date>(date ?? new Date());
@@ -302,7 +308,7 @@ function ReopenPicker({ value, onChange }: { value: string; onChange: (v: string
       <PopoverTrigger asChild>
         <button type="button" className="mt-1 flex h-10 w-full items-center gap-2 rounded-md border border-border bg-card px-3 text-left text-sm outline-none focus:border-primary">
           <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-          {value ? value : <span className="text-muted-foreground">Pick reopening date</span>}
+          {value ? value : <span className="text-muted-foreground">{placeholder}</span>}
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">

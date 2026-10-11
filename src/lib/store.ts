@@ -7,6 +7,8 @@ export interface School {
   term: string;
   academicYear: string;
   reopeningDate: string;
+  /** Date school vacates (end of term). */
+  vacationDate?: string;
   classTeacher: string;
   headTeacher: string;
   totalAttendance: string;
