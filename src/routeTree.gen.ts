@@ -16,6 +16,7 @@ import { Route as PtaAnnouncementRouteImport } from './routes/pta-announcement'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SchoolCloudRouteImport } from './routes/school-cloud'
 import { Route as SetupRouteImport } from './routes/setup'
+import { Route as StaffMeetingRouteImport } from './routes/staff-meeting'
 import { Route as StudentsRouteImport } from './routes/students'
 import { Route as ClassReportClassIdRouteImport } from './routes/class-report.$classId'
 import { Route as ReportStudentIdRouteImport } from './routes/report.$studentId'
@@ -55,6 +56,11 @@ const SetupRoute = SetupRouteImport.update({
   path: '/setup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StaffMeetingRoute = StaffMeetingRouteImport.update({
+  id: '/staff-meeting',
+  path: '/staff-meeting',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudentsRoute = StudentsRouteImport.update({
   id: '/students',
   path: '/students',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/school-cloud': typeof SchoolCloudRoute
   '/setup': typeof SetupRoute
+  '/staff-meeting': typeof StaffMeetingRoute
   '/students': typeof StudentsRoute
   '/class-report/$classId': typeof ClassReportClassIdRoute
   '/report/$studentId': typeof ReportStudentIdRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/school-cloud': typeof SchoolCloudRoute
   '/setup': typeof SetupRoute
+  '/staff-meeting': typeof StaffMeetingRoute
   '/students': typeof StudentsRoute
   '/class-report/$classId': typeof ClassReportClassIdRoute
   '/report/$studentId': typeof ReportStudentIdRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/school-cloud': typeof SchoolCloudRoute
   '/setup': typeof SetupRoute
+  '/staff-meeting': typeof StaffMeetingRoute
   '/students': typeof StudentsRoute
   '/class-report/$classId': typeof ClassReportClassIdRoute
   '/report/$studentId': typeof ReportStudentIdRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/school-cloud'
     | '/setup'
+    | '/staff-meeting'
     | '/students'
     | '/class-report/$classId'
     | '/report/$studentId'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/school-cloud'
     | '/setup'
+    | '/staff-meeting'
     | '/students'
     | '/class-report/$classId'
     | '/report/$studentId'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/school-cloud'
     | '/setup'
+    | '/staff-meeting'
     | '/students'
     | '/class-report/$classId'
     | '/report/$studentId'
@@ -155,6 +167,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SchoolCloudRoute: typeof SchoolCloudRoute
   SetupRoute: typeof SetupRoute
+  StaffMeetingRoute: typeof StaffMeetingRoute
   StudentsRoute: typeof StudentsRoute
   ClassReportClassIdRoute: typeof ClassReportClassIdRoute
   ReportStudentIdRoute: typeof ReportStudentIdRoute
@@ -211,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SetupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/staff-meeting': {
+      id: '/staff-meeting'
+      path: '/staff-meeting'
+      fullPath: '/staff-meeting'
+      preLoaderRoute: typeof StaffMeetingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/students': {
       id: '/students'
       path: '/students'
@@ -243,6 +263,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SchoolCloudRoute: SchoolCloudRoute,
   SetupRoute: SetupRoute,
+  StaffMeetingRoute: StaffMeetingRoute,
   StudentsRoute: StudentsRoute,
   ClassReportClassIdRoute: ClassReportClassIdRoute,
   ReportStudentIdRoute: ReportStudentIdRoute,
