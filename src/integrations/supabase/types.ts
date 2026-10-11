@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_feedback: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          message: string
+          phone: string
+          school_name: string
+          sender_name: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          message: string
+          phone?: string
+          school_name?: string
+          sender_name?: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          message?: string
+          phone?: string
+          school_name?: string
+          sender_name?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       gift_codes: {
         Row: {
           code: string
@@ -386,6 +422,7 @@ export type Database = {
         }
       }
       get_my_license: { Args: never; Returns: Json }
+      is_developer: { Args: never; Returns: boolean }
       is_school_admin: { Args: { _school: string }; Returns: boolean }
       is_school_member: { Args: { _school: string }; Returns: boolean }
       join_school: { Args: { _code: string }; Returns: string }
