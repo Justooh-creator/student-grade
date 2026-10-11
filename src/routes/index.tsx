@@ -125,14 +125,12 @@ function Index() {
                       return (
                        <tr key={row.subject} className="border-t border-border">
                          <td className="px-3 py-1.5 font-bold">{row.subject}{!canSubject(row.subject) && <span className="ml-1 text-[12px] font-normal text-muted-foreground">(view only)</span>}</td>
-                         <fieldset disabled={!canSubject(row.subject)} className="contents">
                          {CAT_PARTS.map((p) => (
-                           <td key={p.key} className="px-1 py-1.5 text-center"><ScoreInput max={p.max} value={e?.[p.key] ?? null} onChange={(v) => setCatScore(selected.id, row.subject, p.key, v)} /></td>
+                           <td key={p.key} className="px-1 py-1.5 text-center"><ScoreInput disabled={!canSubject(row.subject)} max={p.max} value={e?.[p.key] ?? null} onChange={(v) => setCatScore(selected.id, row.subject, p.key, v)} /></td>
                          ))}
-                         </fieldset>
                          <td className="num px-1 py-1.5 text-center text-muted-foreground">{row.sbaRaw ?? "—"}</td>
                          <td className="num px-1 py-1.5 text-center">{row.sba ?? "—"}</td>
-                         <td className="px-1 py-1.5 text-center"><fieldset disabled={!canSubject(row.subject)} className="contents"><ScoreInput max={100} value={e?.examRaw ?? null} onChange={(v) => setCatScore(selected.id, row.subject, "examRaw", v)} /></fieldset></td>
+                         <td className="px-1 py-1.5 text-center"><ScoreInput disabled={!canSubject(row.subject)} max={100} value={e?.examRaw ?? null} onChange={(v) => setCatScore(selected.id, row.subject, "examRaw", v)} /></td>
                         <td className="num px-1 py-1.5 text-center">{row.exam ?? "—"}</td>
                         <td className="num px-1 py-1.5 text-center font-semibold">{row.total ?? "—"}</td>
                         <td className="px-2 py-1.5 text-center">
