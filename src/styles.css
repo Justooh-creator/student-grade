@@ -142,3 +142,18 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
   --text-base: 1.0625rem;
   --text-base--line-height: 1.55;
 }
+
+/* Mobile readability boost — screen only, never inside the printed report card */
+@theme {
+  --text-xs: 0.95rem;
+  --text-sm: 1.0625rem;
+  --text-base: 1.125rem;
+  --text-lg: 1.25rem;
+}
+@media screen {
+  body { font-size: 1.0625rem; }
+  :is(.text-\[10px\], .text-\[11px\]):not(.print-sheet, .print-sheet *) { font-size: 14px !important; }
+  :is(.text-\[12px\], .text-\[13px\]):not(.print-sheet, .print-sheet *) { font-size: 15.5px !important; }
+  :is(input, select, textarea, button):not(.print-sheet *) { font-size: max(1em, 17px); }
+  :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select):not(.print-sheet *) { min-height: 2.9rem; }
+}
