@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as DutyRosterRouteImport } from './routes/duty-roster'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as MidtermProgressRouteImport } from './routes/midterm-progress'
 import { Route as PtaAnnouncementRouteImport } from './routes/pta-announcement'
@@ -30,6 +31,11 @@ const IndexRoute = IndexRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DutyRosterRoute = DutyRosterRouteImport.update({
+  id: '/duty-roster',
+  path: '/duty-roster',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedbackRoute = FeedbackRouteImport.update({
@@ -86,6 +92,7 @@ const ReportStudentIdRoute = ReportStudentIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/duty-roster': typeof DutyRosterRoute
   '/feedback': typeof FeedbackRoute
   '/midterm-progress': typeof MidtermProgressRoute
   '/pta-announcement': typeof PtaAnnouncementRoute
@@ -100,6 +107,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/duty-roster': typeof DutyRosterRoute
   '/feedback': typeof FeedbackRoute
   '/midterm-progress': typeof MidtermProgressRoute
   '/pta-announcement': typeof PtaAnnouncementRoute
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/duty-roster': typeof DutyRosterRoute
   '/feedback': typeof FeedbackRoute
   '/midterm-progress': typeof MidtermProgressRoute
   '/pta-announcement': typeof PtaAnnouncementRoute
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/duty-roster'
     | '/feedback'
     | '/midterm-progress'
     | '/pta-announcement'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/duty-roster'
     | '/feedback'
     | '/midterm-progress'
     | '/pta-announcement'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
+    | '/duty-roster'
     | '/feedback'
     | '/midterm-progress'
     | '/pta-announcement'
@@ -174,6 +186,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  DutyRosterRoute: typeof DutyRosterRoute
   FeedbackRoute: typeof FeedbackRoute
   MidtermProgressRoute: typeof MidtermProgressRoute
   PtaAnnouncementRoute: typeof PtaAnnouncementRoute
@@ -200,6 +213,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/duty-roster': {
+      id: '/duty-roster'
+      path: '/duty-roster'
+      fullPath: '/duty-roster'
+      preLoaderRoute: typeof DutyRosterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/feedback': {
@@ -278,6 +298,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  DutyRosterRoute: DutyRosterRoute,
   FeedbackRoute: FeedbackRoute,
   MidtermProgressRoute: MidtermProgressRoute,
   PtaAnnouncementRoute: PtaAnnouncementRoute,
