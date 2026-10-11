@@ -5,7 +5,7 @@ import { ClassPicker } from "@/components/ClassPicker";
 import { getClassLevel } from "@/lib/ges";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
-import { buildMidtermSummary, midtermWhatsAppLink, openWhatsApp } from "@/lib/whatsapp";
+import { buildMidtermSummary, midtermSmsLink, midtermWhatsAppLink, openSms, openWhatsApp } from "@/lib/whatsapp";
 import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/midterm-progress")({
@@ -59,6 +59,7 @@ function MidtermPage() {
           {mounted && list.length === 0 && <p className="p-3 text-sm text-muted-foreground">No learners in this class yet.</p>}
           {mounted && list.map((s) => {
             const href = midtermWhatsAppLink(s, school, note);
+            const sms = midtermSmsLink(s, school, note);
             return (
               <div key={s.id} className="border-t border-border px-2 py-2">
                 <div className="flex flex-wrap items-center gap-2">
@@ -70,9 +71,16 @@ function MidtermPage() {
                     {preview === s.id ? "Hide" : "Preview"}
                   </button>
                   {href ? (
-                    <button onClick={() => openWhatsApp(href)} className="h-8 rounded-md bg-primary px-3 text-xs font-bold text-primary-foreground hover:opacity-90">
-                      Send WhatsApp
-                    </button>
+                    <>
+                      <button onClick={() => openWhatsApp(href)} className="h-8 rounded-md bg-primary px-3 text-xs font-bold text-primary-foreground hover:opacity-90">
+                        Send WhatsApp
+                      </button>
+                      {sms && (
+                        <button onClick={() => openSms(sms)} title="If this number is not on WhatsApp, send the same message as a text message instead." className="h-8 rounded-md border border-border px-3 text-xs font-bold hover:bg-muted">
+                          SMS
+                        </button>
+                      )}
+                    </>
                   ) : (
                     <Link to="/students" search={{ class: classId }} className="text-xs font-bold text-primary hover:underline">Add phone</Link>
                   )}
