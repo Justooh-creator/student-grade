@@ -19,7 +19,8 @@ export function setCloud(patch: Partial<CloudState>, replace = false) {
 }
 export function getCloud() { return state; }
 export function useCloud() {
-  const [s, set] = useState(state);
+  // Start from the server-safe default so SSR and first client render match; the effect syncs real state.
+  const [s, set] = useState<CloudState>({ status: "signed-out" });
   useEffect(() => {
     const l = () => set(state);
     listeners.add(l);
