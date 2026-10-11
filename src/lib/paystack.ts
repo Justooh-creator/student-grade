@@ -19,6 +19,9 @@ export const PAYSTACK_PLANS: PaystackPlan[] = [
   { id: "sch-3", label: "School (all teachers) — 3 terms", amount: 350, scope: "school", terms: 3 },
 ];
 
+/** Developer-only GH₵1 live check: verifies MoMo + server verification, grants no license. */
+export const PAYSTACK_TEST_PLAN: PaystackPlan = { id: "test-1", label: "Developer test payment", amount: 1, scope: "individual", terms: 0 };
+
 interface PaystackPop {
   setup(options: {
     key: string;

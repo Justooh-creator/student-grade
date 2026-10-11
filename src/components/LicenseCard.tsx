@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { licenseLabel, redeemCode, type LicenseState } from "@/lib/license";
-import { PAYSTACK_PLANS, payWithPaystack } from "@/lib/paystack";
+import { PAYSTACK_PLANS, PAYSTACK_TEST_PLAN, payWithPaystack } from "@/lib/paystack";
 import { verifyPaystackPayment } from "@/lib/paystack.functions";
 import { useUser } from "@/lib/auth";
 
@@ -55,6 +55,30 @@ export function LicenseCard({ lic, onActivated }: { lic: LicenseState; onActivat
     }
   }
 
+  async function testPay() {
+    if (!user?.email) return;
+    setPaying(true);
+    try {
+      await payWithPaystack({
+        email: user.email,
+        plan: PAYSTACK_TEST_PLAN,
+        onSuccess: async (reference) => {
+          try {
+            await verifyPaystackPayment({ data: { reference, planId: PAYSTACK_TEST_PLAN.id } });
+            toast.success("Test payment verified ✓ — MoMo and confirmation are working.");
+          } catch (e) {
+            toast.error((e as Error).message);
+          }
+          setPaying(false);
+        },
+        onClose: () => setPaying(false),
+      });
+    } catch (e) {
+      toast.error((e as Error).message);
+      setPaying(false);
+    }
+  }
+
   return (
     <div className="rounded-lg border border-border bg-card p-5">
       <p className="font-bold">License &amp; activation</p>
@@ -85,6 +109,15 @@ export function LicenseCard({ lic, onActivated }: { lic: LicenseState; onActivat
         >
           {paying ? "Opening payment…" : lic.canPrint ? "License active" : `Pay GH₵${PAYSTACK_PLANS.find((p) => p.id === planId)!.amount}`}
         </button>
+        {lic.source === "developer" && (
+          <button
+            onClick={testPay}
+            disabled={paying}
+            className="mt-2 w-full rounded-md border border-border px-4 py-2 text-sm font-bold disabled:opacity-50"
+          >
+            🧪 Developer test: pay GH₵1 (checks MoMo prompt, no license)
+          </button>
+        )}
       </div>
 
       <label className="mt-4 block text-sm font-bold">Gift / activation code
