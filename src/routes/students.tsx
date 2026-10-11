@@ -60,13 +60,13 @@ function StudentsPage() {
               />
             </div>
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">{level.name} teacher's signature</span>
-              <p className="text-[11px] text-muted-foreground">Photo of the signature on white paper — only the ink is kept.</p>
+              <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">{level.name} teacher's signature</span>
+              <p className="text-[13px] text-muted-foreground">Photo of the signature on white paper — only the ink is kept.</p>
               <div className="mt-1 flex flex-wrap items-center gap-2">
                 <div className="flex h-12 w-32 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-background">
                   {school.classTeacherSignatures?.[classId]
                     ? <img src={school.classTeacherSignatures[classId]} alt={`${level.name} teacher signature`} className="max-h-full max-w-full object-contain" />
-                    : <span className="text-[10px] text-muted-foreground">No signature</span>}
+                    : <span className="text-[12px] text-muted-foreground">No signature</span>}
                 </div>
                 <label className="cursor-pointer rounded-md bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:opacity-90">
                   Camera
@@ -102,7 +102,7 @@ function StudentsPage() {
               {full ? "Class full (35 max)" : "Add learner"}
             </button>
           </div>
-          <p className="num mt-2 text-[10px] text-muted-foreground">{list.length} / {MAX_STUDENTS_PER_CLASS} learners</p>
+          <p className="num mt-2 text-[12px] text-muted-foreground">{list.length} / {MAX_STUDENTS_PER_CLASS} learners</p>
 
         </section>
 
@@ -114,20 +114,20 @@ function StudentsPage() {
             <div key={s.id} className="rounded-xl border border-border bg-card p-4">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-3">
-                  <label className="flex h-14 w-12 cursor-pointer items-center justify-center overflow-hidden rounded border border-dashed border-border bg-background text-[9px] font-bold text-muted-foreground" title="Add passport photo">
+                  <label className="flex h-14 w-12 cursor-pointer items-center justify-center overflow-hidden rounded border border-dashed border-border bg-background text-[11px] font-bold text-muted-foreground" title="Add passport photo">
                     {s.photo ? <img src={s.photo} alt={`${s.name} passport`} className="h-full w-full object-cover" /> : "+ Photo"}
                     <input type="file" accept="image/*" capture="environment" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) updateStudent(s.id, { photo: await passportPhoto(f) }); }} />
                   </label>
                   <div>
                     <p className="text-sm font-bold"><span className="num text-muted-foreground">{i + 1}.</span> {s.name}</p>
-                    {s.photo && <button onClick={() => updateStudent(s.id, { photo: "" })} className="text-[10px] text-muted-foreground hover:text-destructive">Remove photo</button>}
+                    {s.photo && <button onClick={() => updateStudent(s.id, { photo: "" })} className="text-[12px] text-muted-foreground hover:text-destructive">Remove photo</button>}
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Link to="/" search={{ class: classId, student: s.id }} className="rounded border border-border px-2 py-1 text-[11px] font-semibold text-primary hover:bg-primary/5">Enter SBA</Link>
-                  {(() => { const wa = whatsAppLink(s, students, school); return wa ? <a href={wa} onClick={(e) => { e.preventDefault(); if (waLocked) { toast.error("WhatsApp sharing needs an active license. Tap to activate."); navigate({ to: "/school-cloud" }); return; } openWhatsApp(wa); }} title={waLocked ? "WhatsApp sharing needs an active license. Tap to activate." : undefined} className={`rounded border border-border px-2 py-1 text-[11px] font-semibold hover:bg-primary/5 ${waLocked ? "text-muted-foreground" : "text-primary"}`}>{waLocked ? "🔒 WhatsApp" : "WhatsApp report"}</a> : null; })()}
-                  {(() => { const sms = smsLink(s, students, school); return sms ? <button onClick={() => { if (waLocked) { toast.error("SMS sharing needs an active license. Tap to activate."); navigate({ to: "/school-cloud" }); return; } openSms(sms); }} title={waLocked ? "SMS sharing needs an active license. Tap to activate." : "Number not on WhatsApp? Send the same summary as a text message."} className={`rounded border border-border px-2 py-1 text-[11px] font-semibold hover:bg-primary/5 ${waLocked ? "text-muted-foreground" : "text-primary"}`}>{waLocked ? "🔒 SMS" : "SMS"}</button> : null; })()}
-                  <button onClick={() => removeStudent(s.id)} className="rounded px-2 py-1 text-[11px] text-muted-foreground hover:text-destructive" aria-label={`Remove ${s.name}`}>✕</button>
+                  <Link to="/" search={{ class: classId, student: s.id }} className="rounded border border-border px-2 py-1 text-[13px] font-semibold text-primary hover:bg-primary/5">Enter SBA</Link>
+                  {(() => { const wa = whatsAppLink(s, students, school); return wa ? <a href={wa} onClick={(e) => { e.preventDefault(); if (waLocked) { toast.error("WhatsApp sharing needs an active license. Tap to activate."); navigate({ to: "/school-cloud" }); return; } openWhatsApp(wa); }} title={waLocked ? "WhatsApp sharing needs an active license. Tap to activate." : undefined} className={`rounded border border-border px-2 py-1 text-[13px] font-semibold hover:bg-primary/5 ${waLocked ? "text-muted-foreground" : "text-primary"}`}>{waLocked ? "🔒 WhatsApp" : "WhatsApp report"}</a> : null; })()}
+                  {(() => { const sms = smsLink(s, students, school); return sms ? <button onClick={() => { if (waLocked) { toast.error("SMS sharing needs an active license. Tap to activate."); navigate({ to: "/school-cloud" }); return; } openSms(sms); }} title={waLocked ? "SMS sharing needs an active license. Tap to activate." : "Number not on WhatsApp? Send the same summary as a text message."} className={`rounded border border-border px-2 py-1 text-[13px] font-semibold hover:bg-primary/5 ${waLocked ? "text-muted-foreground" : "text-primary"}`}>{waLocked ? "🔒 SMS" : "SMS"}</button> : null; })()}
+                  <button onClick={() => removeStudent(s.id)} className="rounded px-2 py-1 text-[13px] text-muted-foreground hover:text-destructive" aria-label={`Remove ${s.name}`}>✕</button>
                 </div>
               </div>
               <div className="mt-3 grid gap-2 sm:grid-cols-3">
@@ -141,7 +141,7 @@ function StudentsPage() {
                 <PresetField label="Headteacher's remark" value={s.headRemark ?? ""} presets={HEAD_REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { headRemark: v })} placeholder="Select headteacher's remark" />
               </div>
               <details className="mt-2 rounded-lg border border-border bg-background/50 px-3 py-2">
-                <summary className="cursor-pointer text-[11px] font-bold uppercase tracking-[0.12em] text-foreground">Fees / accounts (optional — only filled items print on the report card)</summary>
+                <summary className="cursor-pointer text-[13px] font-bold uppercase tracking-[0.12em] text-foreground">Fees / accounts (optional — only filled items print on the report card)</summary>
                 <div className="mt-2 grid gap-2 sm:grid-cols-3">
                   <TextField label="Fees owed (arrears)" value={s.fees?.arrears ?? ""} onChange={(v) => updateStudent(s.id, { fees: { ...(s.fees ?? {}), arrears: v } })} placeholder="e.g. 120" />
                   <TextField label="Levies" value={s.fees?.levies ?? ""} onChange={(v) => updateStudent(s.id, { fees: { ...(s.fees ?? {}), levies: v } })} placeholder="e.g. 30" />
@@ -155,10 +155,10 @@ function StudentsPage() {
                     <div className="w-28">
                       <TextField label="Amount" value={item.amount} onChange={(v) => updateStudent(s.id, { fees: { ...(s.fees ?? {}), items: (s.fees?.items ?? []).map((it, i) => i === idx ? { ...it, amount: v } : it) } })} placeholder="e.g. 25" />
                     </div>
-                    <button onClick={() => updateStudent(s.id, { fees: { ...(s.fees ?? {}), items: (s.fees?.items ?? []).filter((_, i) => i !== idx) } })} className="mb-1 rounded px-2 py-1 text-[11px] text-muted-foreground hover:text-destructive" aria-label={`Remove fee item ${item.label || idx + 1}`}>✕</button>
+                    <button onClick={() => updateStudent(s.id, { fees: { ...(s.fees ?? {}), items: (s.fees?.items ?? []).filter((_, i) => i !== idx) } })} className="mb-1 rounded px-2 py-1 text-[13px] text-muted-foreground hover:text-destructive" aria-label={`Remove fee item ${item.label || idx + 1}`}>✕</button>
                   </div>
                 ))}
-                <button onClick={() => updateStudent(s.id, { fees: { ...(s.fees ?? {}), items: [...(s.fees?.items ?? []), { label: "", amount: "" }] } })} className="mt-2 rounded border border-dashed border-border px-3 py-1.5 text-[11px] font-bold text-primary hover:bg-primary/5">+ Add another fee (PTA, class fees, exam fees…)</button>
+                <button onClick={() => updateStudent(s.id, { fees: { ...(s.fees ?? {}), items: [...(s.fees?.items ?? []), { label: "", amount: "" }] } })} className="mt-2 rounded border border-dashed border-border px-3 py-1.5 text-[13px] font-bold text-primary hover:bg-primary/5">+ Add another fee (PTA, class fees, exam fees…)</button>
               </details>
             </div>
           ))}

@@ -65,7 +65,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
+      <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
         {label}
       </span>
       <input
@@ -122,7 +122,7 @@ function SetupPage() {
               placeholder="School EMIS code"
             />
             <label className="block">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
+              <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
                 Region
               </span>
               <select
@@ -137,7 +137,7 @@ function SetupPage() {
               </select>
             </label>
             <label className="block">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
+              <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
                 District
               </span>
               <select
@@ -153,7 +153,7 @@ function SetupPage() {
               </select>
             </label>
             <div className="sm:col-span-2">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
+              <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
                 School logo
               </span>
               <div className="mt-1 flex items-center gap-3">
@@ -161,7 +161,7 @@ function SetupPage() {
                   {school.logo ? (
                     <img src={school.logo} alt="School logo" className="h-full w-full object-contain" />
                   ) : (
-                    <span className="text-[10px] text-muted-foreground">No logo</span>
+                    <span className="text-[12px] text-muted-foreground">No logo</span>
                   )}
                 </div>
                 <label className="cursor-pointer rounded-md border border-border px-3 py-2 text-xs font-semibold hover:bg-muted">
@@ -184,13 +184,13 @@ function SetupPage() {
               </div>
             </div>
             <div className="sm:col-span-2">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
+              <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
                 Head teacher signature
               </span>
-              <p className="text-[11px] text-muted-foreground">Sign on plain white paper with a dark pen, then take a photo. Only the pen marks are kept.</p>
+              <p className="text-[13px] text-muted-foreground">Sign on plain white paper with a dark pen, then take a photo. Only the pen marks are kept.</p>
               <div className="mt-1 flex flex-wrap items-center gap-3">
                 <div className="flex h-16 w-40 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-background">
-                  {school.signature ? <img src={school.signature} alt="Head teacher signature" className="max-h-full max-w-full object-contain" /> : <span className="text-[10px] text-muted-foreground">No signature</span>}
+                  {school.signature ? <img src={school.signature} alt="Head teacher signature" className="max-h-full max-w-full object-contain" /> : <span className="text-[12px] text-muted-foreground">No signature</span>}
                 </div>
                 <label className="cursor-pointer rounded-md bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:opacity-90">
                   Snap with camera
@@ -204,13 +204,13 @@ function SetupPage() {
               </div>
             </div>
             <div className="sm:col-span-2">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
+              <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
                 School stamp
               </span>
-              <p className="text-[11px] text-muted-foreground">Photograph the school stamp on white paper. Only the ink is kept — it prints between the two signatures.</p>
+              <p className="text-[13px] text-muted-foreground">Photograph the school stamp on white paper. Only the ink is kept — it prints between the two signatures.</p>
               <div className="mt-1 flex flex-wrap items-center gap-3">
                 <div className="flex h-16 w-24 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-background">
-                  {school.stamp ? <img src={school.stamp} alt="School stamp" className="max-h-full max-w-full object-contain" /> : <span className="text-[10px] text-muted-foreground">No stamp</span>}
+                  {school.stamp ? <img src={school.stamp} alt="School stamp" className="max-h-full max-w-full object-contain" /> : <span className="text-[12px] text-muted-foreground">No stamp</span>}
                 </div>
                 <label className="cursor-pointer rounded-md bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:opacity-90">
                   Snap with camera
@@ -224,7 +224,7 @@ function SetupPage() {
               </div>
             </div>
             <label className="block">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
+              <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
                 Term
               </span>
               <select
@@ -241,7 +241,7 @@ function SetupPage() {
               </select>
             </label>
             <label className="block">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
+              <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
                 Academic year
               </span>
               <select
@@ -264,13 +264,13 @@ function SetupPage() {
               placeholder="Name of head teacher"
             />
             <div className="block">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
+              <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
                 Day school reopens
               </span>
               <ReopenPicker value={school.reopeningDate} onChange={(v) => setSchool({ reopeningDate: v })} />
             </div>
             <div className="block">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
+              <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
                 Date school vacates
               </span>
               <ReopenPicker placeholder="Pick vacation date" value={school.vacationDate ?? ""} onChange={(v) => setSchool({ vacationDate: v })} />

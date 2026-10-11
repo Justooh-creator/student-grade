@@ -14,7 +14,7 @@ export function PresetField({
   const isPreset = presets.includes(value);
   return (
     <label className="block">
-      <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
+      <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
         {label}
       </span>
       <select
