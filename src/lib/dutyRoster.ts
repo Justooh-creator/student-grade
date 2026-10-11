@@ -55,7 +55,7 @@ export function useDutyRosters() {
   const load = useCallback(async () => {
     if (!cloud.schoolId) { setRosters([]); return; }
     const { data } = await supabase.from("duty_rosters").select("*").eq("school_id", cloud.schoolId)
-      .gte("week_start", mondayOf(new Date(), -4)).order("week_start", { ascending: false });
+      .gte("week_start", mondayOf(new Date(), -20)).order("week_start", { ascending: false });
     const list = (data ?? []) as unknown as DutyRoster[];
     setRosters(list);
     if (list.length) {

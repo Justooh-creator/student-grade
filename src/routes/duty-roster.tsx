@@ -22,7 +22,9 @@ export const Route = createFileRoute("/duty-roster")({
 });
 
 const input = "h-10 w-full rounded-md border border-border bg-card px-3 text-sm outline-none focus:border-primary";
-const blank = (): DutyEntry => ({ day: "Monday", duty: DUTY_PRESETS[1]!, time: "", location: "", teacherId: "", teacherName: "" });
+const WEEKS = 16;
+const blankT = (): DutyEntry => ({ day: "All week", duty: DUTY_PRESETS[0]!, time: "", location: "", teacherId: "", teacherName: "" });
+const addWeeks = (ws: string, n: number) => { const d = new Date(ws + "T00:00:00Z"); d.setUTCDate(d.getUTCDate() + n * 7); return d.toISOString().slice(0, 10); };
 
 function DutyRosterPage() {
   const { school } = useAppData();
@@ -31,10 +33,11 @@ function DutyRosterPage() {
   useEffect(() => setMounted(true), []);
   const isAdmin = cloud.role === "headteacher";
   const [teachers, setTeachers] = useState<{ id: string; name: string }[]>([]);
-  const [week, setWeek] = useState(nextWeek);
-  const [entries, setEntries] = useState<DutyEntry[]>([blank()]);
+  const [week1, setWeek1] = useState(nextWeek);
+  const [plan, setPlan] = useState<Record<string, DutyEntry[]>>({});
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
+  const weeks = Array.from({ length: WEEKS }, (_, i) => addWeeks(week1, i));
 
   useEffect(() => {
     if (!cloud.schoolId) return;
@@ -47,30 +50,36 @@ function DutyRosterPage() {
     })();
   }, [cloud.schoolId]);
 
-  // Load existing roster for the chosen week into the editor.
+  // Fill the 16 weeks from saved rosters (2 blank teachers for empty weeks).
   useEffect(() => {
-    const r = rosters.find((x) => x.week_start === week);
-    setEntries(r ? r.entries : [blank()]);
-    setNotes(r?.notes ?? "");
-  }, [week, rosters]);
+    const next: Record<string, DutyEntry[]> = {};
+    for (const ws of Array.from({ length: WEEKS }, (_, i) => addWeeks(week1, i))) {
+      const r = rosters.find((x) => x.week_start === ws);
+      next[ws] = r?.entries.length ? r.entries : [blankT(), blankT()];
+    }
+    setPlan(next);
+    setNotes(rosters.find((x) => x.week_start === week1)?.notes ?? "");
+  }, [week1, rosters]);
 
-  const upd = (i: number, k: keyof DutyEntry, v: string) => setEntries((es) => es.map((e, j) => {
-    if (j !== i) return e;
-    if (k === "teacherId") return { ...e, teacherId: v, teacherName: teachers.find((t) => t.id === v)?.name ?? e.teacherName };
-    return { ...e, [k]: v };
+  const updT = (ws: string, i: number, k: keyof DutyEntry, v: string) => setPlan((p) => ({
+    ...p,
+    [ws]: (p[ws] ?? []).map((e, j) => {
+      if (j !== i) return e;
+      if (k === "teacherId") return { ...e, teacherId: v, teacherName: teachers.find((t) => t.id === v)?.name ?? e.teacherName };
+      return { ...e, [k]: v };
+    }),
   }));
 
   const save = async () => {
     if (!cloud.schoolId || !cloud.userId) return;
-    const clean = entries.filter((e) => e.teacherName.trim() && e.duty.trim());
-    if (!clean.length) { toast.error("Add at least one teacher and duty"); return; }
+    const rows = weeks.map((ws) => ({ ws, clean: (plan[ws] ?? []).filter((e) => e.teacherName.trim()) })).filter((x) => x.clean.length)
+      .map(({ ws, clean }) => ({ school_id: cloud.schoolId!, created_by: cloud.userId!, week_start: ws, entries: clean, notes, updated_at: new Date().toISOString() }));
+    if (!rows.length) { toast.error("Add at least one teacher"); return; }
     setBusy(true);
-    const { error } = await supabase.from("duty_rosters").upsert(
-      { school_id: cloud.schoolId, created_by: cloud.userId, week_start: week, entries: clean, notes, updated_at: new Date().toISOString() },
-      { onConflict: "school_id,week_start" });
+    const { error } = await supabase.from("duty_rosters").upsert(rows, { onConflict: "school_id,week_start" });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("Roster published — assigned teachers will get a reminder");
+    toast.success(`${rows.length} week(s) published — teachers will get reminders`);
     reload();
   };
 
@@ -80,7 +89,11 @@ function DutyRosterPage() {
     reload();
   };
 
-  const draftText = buildRosterText({ week_start: week, entries, notes }, school?.name);
+  const draftText = weeks.map((ws, i) => {
+    const names = (plan[ws] ?? []).map((e) => e.teacherName.trim()).filter(Boolean);
+    return names.length ? `*Week ${i + 1}* (${weekLabel(ws)})\n• ${names.join("\n• ")}` : "";
+  }).filter(Boolean).join("\n\n");
+  const shareText = `🗓️ *TEACHERS' DUTY ROSTER*${school?.name ? ` — ${school.name}` : ""}\n\n${draftText}${notes ? `\n\n${notes}` : ""}`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -95,29 +108,27 @@ function DutyRosterPage() {
 
         {mounted && cloud.schoolId && isAdmin && (
           <section className="mt-4 grid gap-3 rounded-xl border border-border bg-card p-4">
-            <p className="text-sm font-bold">Plan a week</p>
-            <label className="grid gap-1 text-sm font-bold">Week starting (Monday)
-              <input type="date" className={input} value={week} onChange={(e) => e.target.value && setWeek(mondayOf(new Date(e.target.value + "T12:00:00")))} />
-              <span className="text-xs font-normal text-muted-foreground">{weekLabel(week)}</span>
+            <p className="text-sm font-bold">Term duty plan (16 weeks)</p>
+            <label className="grid gap-1 text-sm font-bold">Week 1 — pick the Monday
+              <input type="date" className={input} value={week1} onChange={(e) => e.target.value && setWeek1(mondayOf(new Date(e.target.value + "T12:00:00")))} />
+              <span className="text-xs font-normal text-muted-foreground">All 16 weeks' Monday–Friday dates fill in automatically.</span>
             </label>
-            {entries.map((e, i) => (
-              <div key={i} className="grid gap-2 rounded-lg border border-border p-2 sm:grid-cols-2">
-                <select className={input} value={e.teacherId} onChange={(ev) => upd(i, "teacherId", ev.target.value)}>
-                  <option value="">Type name below / pick teacher…</option>
-                  {teachers.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
-                </select>
-                <input className={input} placeholder="Teacher name" value={e.teacherName} onChange={(ev) => upd(i, "teacherName", ev.target.value)} />
-                <select className={input} value={e.day} onChange={(ev) => upd(i, "day", ev.target.value)}>
-                  {[...DUTY_DAYS, "All week"].map((d) => <option key={d}>{d}</option>)}
-                </select>
-                <input className={input} list="duty-presets" placeholder="Duty" value={e.duty} onChange={(ev) => upd(i, "duty", ev.target.value)} />
-                <input type="time" className={input} value={e.time} onChange={(ev) => upd(i, "time", ev.target.value)} />
-                <input className={input} placeholder="Location, e.g. Main gate" value={e.location} onChange={(ev) => upd(i, "location", ev.target.value)} />
-                <button onClick={() => setEntries((es) => es.filter((_, j) => j !== i))} className="h-9 rounded-md border border-border text-sm font-bold text-destructive sm:col-span-2">Remove</button>
+            {weeks.map((ws, wi) => (
+              <div key={ws} className="grid gap-2 rounded-lg border border-border p-3">
+                <p className="text-sm font-bold">Week {wi + 1} <span className="font-normal text-muted-foreground">· {weekLabel(ws)}</span></p>
+                {(plan[ws] ?? []).map((e, i) => (
+                  <div key={i} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+                    <select className={input} value={e.teacherId} onChange={(ev) => updT(ws, i, "teacherId", ev.target.value)}>
+                      <option value="">Pick teacher…</option>
+                      {teachers.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
+                    </select>
+                    <input className={input} placeholder={`Teacher ${i + 1} name`} value={e.teacherName} onChange={(ev) => updT(ws, i, "teacherName", ev.target.value)} />
+                    <button onClick={() => setPlan((p) => ({ ...p, [ws]: (p[ws] ?? []).filter((_, j) => j !== i) }))} className="h-10 rounded-md border border-border px-2 text-sm font-bold text-destructive" aria-label="Remove teacher">✕</button>
+                  </div>
+                ))}
+                <button onClick={() => setPlan((p) => ({ ...p, [ws]: [...(p[ws] ?? []), blankT()] }))} className="h-9 rounded-md border border-border text-sm font-bold hover:bg-muted">+ Add teacher</button>
               </div>
             ))}
-            <datalist id="duty-presets">{DUTY_PRESETS.map((d) => <option key={d} value={d} />)}</datalist>
-            <button onClick={() => setEntries((es) => [...es, blank()])} className="h-10 rounded-md border border-border text-sm font-bold hover:bg-muted">+ Add duty</button>
             <textarea className={`${input} h-16 py-2`} placeholder="Note to staff (optional)" value={notes} onChange={(e) => setNotes(e.target.value)} />
             <div className="flex flex-wrap gap-2">
               <button disabled={busy} onClick={save} className="h-10 rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground disabled:opacity-60">{busy ? "Publishing…" : "Publish & remind teachers"}</button>
