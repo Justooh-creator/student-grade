@@ -5,6 +5,8 @@ import { useUser } from "@/lib/auth";
 import { useCloud } from "@/lib/cloud";
 import { useStaffNotices } from "@/lib/staffNotices";
 import { useDutyRosters } from "@/lib/dutyRoster";
+import { useAppData } from "@/lib/store";
+import { fmt12, useLessonAlerts } from "@/lib/timetable";
 
 
 const tabBase = "whitespace-nowrap border-b-2 px-3 py-2.5 text-xs font-semibold sm:text-sm";
@@ -148,6 +150,8 @@ export function AppHeader({
   const cloud = useCloud();
   const { unread } = useStaffNotices();
   const { reminders: dutyReminders, nextWeek } = useDutyRosters();
+  const { school: appSchool } = useAppData();
+  const lessonAlerts = useLessonAlerts(appSchool, cloud.schoolId ? cloud.userId : null);
   const navClass = activeClass ?? "b4";
   const [showFb, setShowFb] = useState(false);
   useEffect(() => {
@@ -188,6 +192,11 @@ export function AppHeader({
           📣 {unread.length} new staff meeting notice{unread.length > 1 ? "s" : ""}: {unread[0]?.title} — tap to view
         </Link>
       )}
+      {lessonAlerts.map((a) => (
+        <Link key={a.classId + a.start} to="/timetable" className="mx-auto mt-2 flex max-w-5xl items-center gap-2 rounded-md bg-accent px-3 py-2 text-xs font-bold text-accent-foreground">
+          🔔 Lesson reminder: {a.className} — {a.subject} begins at {fmt12(a.start)}{a.minutes > 0 ? ` (in ${a.minutes} min)` : " (now)"}
+        </Link>
+      ))}
       {dutyReminders.length > 0 && !pathname.startsWith("/duty-roster") && (
         <Link to="/duty-roster" className="mx-auto mt-2 flex max-w-5xl items-center gap-2 rounded-md bg-accent px-3 py-2 text-xs font-bold text-accent-foreground">
           🗓️ You are on duty {dutyReminders[0]?.week_start === nextWeek ? "next week" : "this week"} — tap to view and acknowledge
@@ -262,6 +271,9 @@ export function AppHeader({
                     desc="Notices to all teachers"
                     note={unread.length > 0 ? `${unread.length} new` : undefined}
                   />
+                </Link>
+                <Link to="/timetable" className={rowCls(pathname.startsWith("/timetable"))}>
+                  <RowCell icon={ICON.file} title="Class Timetable" desc="GES schedule, weekly & daily view" />
                 </Link>
                 <Link to="/duty-roster" className={rowCls(pathname.startsWith("/duty-roster"))}>
                   <RowCell

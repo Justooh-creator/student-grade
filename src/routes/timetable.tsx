@@ -64,7 +64,7 @@ function TimetablePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader schoolName={school.name} term={school.term} year={school.year} />
+      <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} />
       <main className="mx-auto max-w-5xl space-y-4 px-4 py-5">
         <h1 className="text-2xl font-bold">📅 Class Timetable</h1>
         <div className="no-print flex flex-wrap items-center gap-2">
