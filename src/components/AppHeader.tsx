@@ -1,7 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
-import { CLASS_LEVELS, type ClassId } from "@/lib/ges";
-import { useAppData } from "@/lib/store";
+import { type ClassId } from "@/lib/ges";
 import { useUser } from "@/lib/auth";
 import { useCloud } from "@/lib/cloud";
 import { useStaffNotices } from "@/lib/staffNotices";
@@ -144,7 +143,6 @@ export function AppHeader({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
-  const { students } = useAppData();
   const { user } = useUser();
   const cloud = useCloud();
   const { unread } = useStaffNotices();
@@ -157,7 +155,6 @@ export function AppHeader({
     localStorage.setItem("edureport-fb-banner-v1", "dismissed");
     setShowFb(false);
   };
-  const classStudents = students.filter((s) => s.classId === navClass);
 
   const tabs = [
     { key: "setup", label: "School Details", active: pathname.startsWith("/setup") },
@@ -270,23 +267,6 @@ export function AppHeader({
                   />
                 </Link>
               </nav>
-
-              <SectionLabel>Learners · {CLASS_LEVELS.find((c) => c.id === navClass)?.name}</SectionLabel>
-              <div className="mt-2 grid gap-0.5">
-                {classStudents.length === 0 && <p className="px-2 py-1 text-xs text-muted-foreground">No learners yet.</p>}
-                {classStudents.map((s) => (
-                  <Link
-                    key={s.id}
-                    to="/"
-                    search={{ class: navClass, student: s.id }}
-                    onClick={() => setOpen(false)}
-                    className="group flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-muted"
-                  >
-                    <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full border border-primary/60 transition-colors group-hover:bg-primary" />
-                    <span className="truncate text-sm">{s.name}</span>
-                  </Link>
-                ))}
-              </div>
             </div>
           </aside>
         </div>
