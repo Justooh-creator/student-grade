@@ -47,7 +47,7 @@ function loadScript(): Promise<void> {
     const s = document.createElement("script");
     s.src = "https://js.paystack.co/v1/inline.js";
     s.onload = () => resolve();
-    s.onerror = () => reject(new Error("Could not load Paystack. Check your internet."));
+    s.onerror = () => reject(new Error("Could not open the payment page. Check your internet."));
     document.head.appendChild(s);
   });
   return loading;
