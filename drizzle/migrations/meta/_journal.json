@@ -85,6 +85,13 @@
       "when": 1791734897170,
       "tag": "0011_duty_roster",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791755788702,
+      "tag": "0012_text_only_cloud_records",
+      "breakpoints": true
     }
   ]
 }
