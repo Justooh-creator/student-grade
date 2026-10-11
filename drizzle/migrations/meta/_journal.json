@@ -92,6 +92,13 @@
       "when": 1791755788702,
       "tag": "0012_text_only_cloud_records",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1791755813764,
+      "tag": "0013_backfill_strip_existing_images",
+      "breakpoints": true
     }
   ]
 }
