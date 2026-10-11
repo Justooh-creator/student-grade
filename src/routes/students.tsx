@@ -114,13 +114,22 @@ function StudentsPage() {
             <div key={s.id} className="rounded-xl border border-border bg-card p-4">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-3">
-                  <label className="flex h-14 w-12 cursor-pointer items-center justify-center overflow-hidden rounded border border-dashed border-border bg-background text-[11px] font-bold text-muted-foreground" title="Add passport photo">
-                    {s.photo ? <img src={s.photo} alt={`${s.name} passport`} className="h-full w-full object-cover" /> : "+ Photo"}
-                    <input type="file" accept="image/*" capture="environment" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) updateStudent(s.id, { photo: await passportPhoto(f) }); }} />
-                  </label>
+                  <div className="flex h-16 w-14 items-center justify-center overflow-hidden rounded border border-dashed border-border bg-background text-center text-[11px] font-bold text-muted-foreground">
+                    {s.photo ? <img src={s.photo} alt={`${s.name} passport`} className="h-full w-full object-cover" /> : "No photo"}
+                  </div>
                   <div>
                     <p className="text-sm font-bold"><span className="num text-muted-foreground">{i + 1}.</span> {s.name}</p>
-                    {s.photo && <button onClick={() => updateStudent(s.id, { photo: "" })} className="text-[12px] text-muted-foreground hover:text-destructive">Remove photo</button>}
+                    <div className="mt-1 flex flex-wrap items-center gap-2">
+                      <label className="cursor-pointer rounded-md bg-primary px-2 py-1 text-[13px] font-bold text-primary-foreground hover:opacity-90">
+                        📷 Snap photo
+                        <input type="file" accept="image/*" capture="environment" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) { updateStudent(s.id, { photo: await passportPhoto(f) }); toast.success("Photo added to report card"); } }} />
+                      </label>
+                      <label className="cursor-pointer rounded-md border border-border px-2 py-1 text-[13px] font-bold hover:bg-muted">
+                        🖼 Upload photo
+                        <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) { updateStudent(s.id, { photo: await passportPhoto(f) }); toast.success("Photo added to report card"); } }} />
+                      </label>
+                      {s.photo && <button onClick={() => updateStudent(s.id, { photo: "" })} className="text-[13px] text-muted-foreground hover:text-destructive">Remove</button>}
+                    </div>
                   </div>
                 </div>
                 <div className="flex gap-2">
