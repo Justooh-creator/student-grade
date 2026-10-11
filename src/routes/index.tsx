@@ -76,7 +76,7 @@ function Index() {
             <>
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <label className="block min-w-0 flex-1">
-                  <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Select learner</span>
+                  <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">Select learner</span>
                   <div className="mt-1 flex gap-1.5">
                     <button disabled={idx <= 0} onClick={() => go(classStudents[idx - 1]!.id)} aria-label="Previous learner" className="h-10 w-10 rounded-md border border-border disabled:opacity-40">‹</button>
                     <select
@@ -93,11 +93,11 @@ function Index() {
                 </label>
                 <div className="flex gap-4 text-right">
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Average</p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">Average</p>
                     <p className="num text-lg font-semibold text-primary">{result.average.toFixed(1)}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Position</p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">Position</p>
                     <p className="num text-lg font-semibold text-accent">{result.gradedCount ? ordinal(ranking.positions.get(selected.id) ?? 1) : "—"}</p>
                   </div>
                 </div>
@@ -108,7 +108,7 @@ function Index() {
               <div className="mt-4 overflow-x-auto rounded-lg border border-border">
                 <table className="w-full min-w-[820px] text-sm">
                   <thead>
-                    <tr className="bg-muted/60 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                    <tr className="bg-muted text-[11px] uppercase tracking-[0.1em] text-foreground">
                       <th className="px-3 py-2 text-left font-bold">Subject</th>
                       {CAT_PARTS.map((p) => (<th key={p.key} className="px-1 py-2 text-center font-bold">{p.short} /{p.max}</th>))}
                       <th className="px-1 py-2 text-center font-bold">SBA raw /100</th>
@@ -156,7 +156,7 @@ function Index() {
               <div className="mt-4 overflow-x-auto rounded-lg border border-border">
                 <table className="w-full min-w-[480px] text-sm">
                   <thead>
-                    <tr className="bg-muted/60 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                    <tr className="bg-muted text-[11px] uppercase tracking-[0.1em] text-foreground">
                       <th className="px-3 py-2 text-left font-bold">Learning area</th>
                       <th className="px-2 py-2 text-center font-bold">Level</th>
                       <th className="px-2 py-2 text-left font-bold">Descriptor</th>

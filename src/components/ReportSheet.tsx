@@ -45,39 +45,39 @@ export function ReportSheet({ student, students, school }: { student: Student; s
 
           <div className="mt-2 grid grid-cols-2 gap-x-6 gap-y-0.5 text-[9.5pt]">
             <p>
-              <span className="font-bold text-[#1b1a16]/70">Name: </span>
+              <span className="font-bold text-[#1b1a16]">Name: </span>
               <span className="font-bold">{student.name}</span>
             </p>
             <p>
-              <span className="font-bold text-[#1b1a16]/70">Class: </span>
+              <span className="font-bold text-[#1b1a16]">Class: </span>
               <span className="font-bold">{level.name}</span>
             </p>
             <p>
-              <span className="font-bold text-[#1b1a16]/70">Admission No.: </span>
+              <span className="font-bold text-[#1b1a16]">Admission No.: </span>
               <span className="num">{student.admissionNo || "—"}</span>
             </p>
             <p>
-              <span className="font-bold text-[#1b1a16]/70">Position in class: </span>
+              <span className="font-bold text-[#1b1a16]">Position in class: </span>
               <span className="num font-bold">
                 {kg ? "—" : `${ordinal(position)} of ${ranking.classSize}`}
               </span>
             </p>
             <p>
-              <span className="font-bold text-[#1b1a16]/70">Attendance: </span>
+              <span className="font-bold text-[#1b1a16]">Attendance: </span>
               <span className="num">
                 {student.attendance || "—"} / {school.totalAttendance || "—"} days
               </span>
             </p>
             {school.term === "Term 3" ? (
               <p>
-                <span className="font-bold text-[#1b1a16]/70">Promotion: </span>
+                <span className="font-bold text-[#1b1a16]">Promotion: </span>
                 <span className="font-bold">
                   {student.promotion === "promoted" ? `Promoted to ${nextClassName(student.classId)}` : student.promotion === "retained" ? `Retained in ${level.name}` : "To be decided"}
                 </span>
               </p>
             ) : <p />}
             <p>
-              <span className="font-bold text-[#1b1a16]/70">Reopening date: </span>
+              <span className="font-bold text-[#1b1a16]">Reopening date: </span>
               <span className="font-bold">{school.reopeningDate || "—"}</span>
             </p>
           </div>
@@ -154,40 +154,40 @@ export function ReportSheet({ student, students, school }: { student: Student; s
               <p className="mt-0.5">
                 {result.bestSix.subjects.map((b) => `${b.subject} (${b.grade})`).join(" · ") || "—"}
               </p>
-              <p className="mt-0.5 text-[7.5pt] font-bold text-[#1b1a16]/70">School-computed aggregate: English, Mathematics, better of Science/Social Studies + 3 best other subjects.</p>
+              <p className="mt-0.5 text-[7.5pt] font-bold text-[#1b1a16]">School-computed aggregate: English, Mathematics, better of Science/Social Studies + 3 best other subjects.</p>
             </div>
           )}
 
           {!kg && <div className="mt-2 grid grid-cols-3 gap-2 text-[9pt]">
             <div className="border border-rule px-2 py-0.5 text-center">
-              <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]/70">Subjects marked</p>
+              <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]">Subjects marked</p>
               <p className="num text-[11pt] font-bold">{result.gradedCount}</p>
             </div>
             <div className="border border-rule px-2 py-0.5 text-center">
-              <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]/70">Class average</p>
+              <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]">Class average</p>
               <p className="num text-[11pt] font-bold">{ranking.classAverage.toFixed(1)}</p>
             </div>
             <div className="border border-rule px-2 py-0.5 text-center">
-              <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]/70">Learner average</p>
+              <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]">Learner average</p>
               <p className="num text-[11pt] font-bold">{result.average.toFixed(1)}</p>
             </div>
           </div>}
 
           <div className="mt-2 space-y-1 text-[9pt]">
             <p>
-              <span className="font-bold text-[#1b1a16]/70">Attitude / Conduct: </span>
+              <span className="font-bold text-[#1b1a16]">Attitude / Conduct: </span>
               {student.conduct || "—"}
             </p>
             <p>
-              <span className="font-bold text-[#1b1a16]/70">Interest: </span>
+              <span className="font-bold text-[#1b1a16]">Interest: </span>
               {student.interest || "—"}
             </p>
             <p>
-              <span className="font-bold text-[#1b1a16]/70">Class teacher's remark: </span>
+              <span className="font-bold text-[#1b1a16]">Class teacher's remark: </span>
               {remark}
             </p>
             <p>
-              <span className="font-bold text-[#1b1a16]/70">Headteacher's remark: </span>
+              <span className="font-bold text-[#1b1a16]">Headteacher's remark: </span>
               {student.headRemark?.trim() || "—"}
             </p>
           </div>
@@ -211,7 +211,7 @@ export function ReportSheet({ student, students, school }: { student: Student; s
             const total = filled.reduce<number>((a, p) => a + (p.n ?? 0), 0);
             const cell = (label: string, value: string) => (
               <div className="border border-rule px-2 py-0.5">
-                <p className="text-[7.5pt] font-bold uppercase tracking-[0.1em] text-[#1b1a16]/70">{label}</p>
+                <p className="text-[7.5pt] font-bold uppercase tracking-[0.1em] text-[#1b1a16]">{label}</p>
                 <p className="num font-bold">GH₵ {value.trim()}</p>
               </div>
             );
@@ -221,7 +221,7 @@ export function ReportSheet({ student, students, school }: { student: Student; s
                 <div className="grid grid-cols-4">
                   {filled.map((p, i) => <Fragment key={i}>{cell(p.label, p.value)}</Fragment>)}
                   <div className="border border-rule px-2 py-0.5">
-                    <p className="text-[7.5pt] font-bold uppercase tracking-[0.1em] text-[#1b1a16]/70">Total</p>
+                    <p className="text-[7.5pt] font-bold uppercase tracking-[0.1em] text-[#1b1a16]">Total</p>
                     <p className="num font-bold">GH₵ {total.toFixed(2).replace(/\.00$/, "")}</p>
                   </div>
                 </div>

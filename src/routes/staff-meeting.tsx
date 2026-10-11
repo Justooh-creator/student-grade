@@ -91,7 +91,7 @@ function StaffMeetingPage() {
 
         {mounted && cloud.schoolId && (
           <section className="mt-4 grid gap-3">
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">Notices</p>
+            <p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground">Notices</p>
             {notices.length === 0 && <p className="text-sm text-muted-foreground">No staff notices yet.</p>}
             {notices.map((n) => {
               const seen = reads.filter((r) => r.notice_id === n.id);

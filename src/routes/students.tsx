@@ -60,7 +60,7 @@ function StudentsPage() {
               />
             </div>
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{level.name} teacher's signature</span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">{level.name} teacher's signature</span>
               <p className="text-[11px] text-muted-foreground">Photo of the signature on white paper — only the ink is kept.</p>
               <div className="mt-1 flex flex-wrap items-center gap-2">
                 <div className="flex h-12 w-32 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-background">
@@ -141,7 +141,7 @@ function StudentsPage() {
                 <PresetField label="Headteacher's remark" value={s.headRemark ?? ""} presets={HEAD_REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { headRemark: v })} placeholder="Select headteacher's remark" />
               </div>
               <details className="mt-2 rounded-lg border border-border bg-background/50 px-3 py-2">
-                <summary className="cursor-pointer text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Fees / accounts (optional — only filled items print on the report card)</summary>
+                <summary className="cursor-pointer text-[11px] font-bold uppercase tracking-[0.12em] text-foreground">Fees / accounts (optional — only filled items print on the report card)</summary>
                 <div className="mt-2 grid gap-2 sm:grid-cols-3">
                   <TextField label="Fees owed (arrears)" value={s.fees?.arrears ?? ""} onChange={(v) => updateStudent(s.id, { fees: { ...(s.fees ?? {}), arrears: v } })} placeholder="e.g. 120" />
                   <TextField label="Levies" value={s.fees?.levies ?? ""} onChange={(v) => updateStudent(s.id, { fees: { ...(s.fees ?? {}), levies: v } })} placeholder="e.g. 30" />
