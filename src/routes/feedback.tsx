@@ -96,7 +96,7 @@ function FeedbackPage() {
               <button onClick={submit} disabled={busy} className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground disabled:opacity-60">{busy ? "Sending…" : "Submit in app"}</button>
               <a href={waUrl} target="_blank" rel="noreferrer" className="rounded-md bg-accent px-4 py-2 text-sm font-bold text-accent-foreground">Send via WhatsApp</a>
             </div>
-            <p className="text-xs text-muted-foreground">Need to email us? <a href="mailto:jatideku@gmail.com" className="font-bold text-primary">jatideku@gmail.com</a></p>
+            <p className="text-xs text-muted-foreground">Need to email us? <a href="mailto:jatideku@gmail.com" className="font-bold text-primary underline">Click Here</a></p>
           </div>
         </section>
 
