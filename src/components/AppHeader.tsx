@@ -127,48 +127,80 @@ export function AppHeader({
           <div className="absolute inset-0 bg-foreground/40" />
           <aside
             onClick={(e) => e.stopPropagation()}
-            className="relative flex h-full w-72 flex-col bg-card text-foreground shadow-xl"
+            className="relative flex h-full w-[19rem] max-w-[86vw] flex-col bg-card text-foreground shadow-2xl"
           >
             <div className="flex-1 overflow-y-auto p-4 pt-[calc(env(safe-area-inset-top)+2.5rem)]">
               <div className="flex items-center justify-between">
                 <p className="font-display text-sm font-bold">Quick navigation</p>
-                <button onClick={() => setOpen(false)} aria-label="Close" className="text-muted-foreground">✕</button>
+                <button
+                  onClick={() => setOpen(false)}
+                  aria-label="Close"
+                  className="flex h-7 w-7 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted"
+                >
+                  ✕
+                </button>
               </div>
-              <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Pages</p>
-              <div className="mt-1 grid gap-1" onClick={() => setOpen(false)}>
-                <Link to="/school-cloud" className="rounded px-2 py-1.5 text-sm font-semibold hover:bg-muted">School Cloud</Link>
-                <Link to="/setup" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">School Details</Link>
-                <Link to="/students" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">Student Details</Link>
-                <Link to="/" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">SBA Details</Link>
-                <Link to="/class-report/$classId" params={{ classId: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">Report</Link>
-                <Link to="/midterm-progress" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm font-semibold text-primary hover:bg-muted">💬 Mid-Term WhatsApp</Link>
-                <Link to="/pta-announcement" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm font-semibold text-primary hover:bg-muted">📢 PTA Meeting Notice</Link>
-                <Link to="/staff-meeting" className="rounded px-2 py-1.5 text-sm font-semibold text-primary hover:bg-muted">📣 Staff Meeting{unread.length > 0 ? ` (${unread.length} new)` : ""}</Link>
-                <Link to="/feedback" className="rounded px-2 py-1.5 text-sm font-semibold text-primary hover:bg-muted">💡 Help & Feedback</Link>
-                <Link to="/auth" className="rounded px-2 py-1.5 text-sm hover:bg-muted">{user ? "Account" : "Sign in"}</Link>
-              </div>
-              <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Classes</p>
-              <select
-                aria-label="Choose class"
-                value={navClass}
-                onChange={(e) => {
-                  setOpen(false);
-                  navigate({ to: "/", search: { class: e.target.value as ClassId } });
-                }}
-                className="mt-1 h-10 w-full rounded-md border border-border bg-card px-2 text-sm font-semibold outline-none focus:border-primary"
-              >
-                {CLASS_LEVELS.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-              <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                Learners · {CLASS_LEVELS.find((c) => c.id === navClass)?.name}
-              </p>
-              <div className="mt-1 grid gap-0.5">
+
+              <SectionLabel>Pages</SectionLabel>
+              <nav className="mt-2 grid gap-1" onClick={() => setOpen(false)}>
+                <Link to="/school-cloud" className={rowCls(pathname.startsWith("/school-cloud"))}>
+                  <RowCell icon="☁️" title="School Cloud" desc="Join your school, sync records, assign teachers" />
+                </Link>
+                <Link to="/setup" search={{ class: navClass }} className={rowCls(pathname.startsWith("/setup"))}>
+                  <RowCell icon="🏫" title="School Details" desc="Name, motto, EMIS code, logo, school dates" />
+                </Link>
+                <Link to="/students" search={{ class: navClass }} className={rowCls(pathname.startsWith("/students"))}>
+                  <RowCell icon="🎓" title="Student Details" desc="Add learners, photos, parents and phone numbers" />
+                </Link>
+                <Link to="/" search={{ class: navClass }} className={rowCls(pathname === "/")}>
+                  <RowCell icon="📝" title="SBA Details" desc="Class tests, project, group work and exam marks" />
+                </Link>
+                <Link
+                  to="/class-report/$classId"
+                  params={{ classId: navClass }}
+                  className={rowCls(pathname.startsWith("/class-report") || pathname.startsWith("/report"))}
+                >
+                  <RowCell icon="📄" title="Report" desc="Preview, save PDF or print the whole class" />
+                </Link>
+                <Link to="/midterm-progress" search={{ class: navClass }} className={rowCls(pathname.startsWith("/midterm-progress"))}>
+                  <RowCell icon="💬" title="Mid-Term WhatsApp" desc="Send parents a mid-term progress check-in" />
+                </Link>
+                <Link to="/pta-announcement" search={{ class: navClass }} className={rowCls(pathname.startsWith("/pta-announcement"))}>
+                  <RowCell icon="📢" title="PTA Meeting Notice" desc="Invite parents to the meeting, class by class" />
+                </Link>
+                <Link to="/staff-meeting" className={rowCls(pathname.startsWith("/staff-meeting"))}>
+                  <RowCell
+                    icon="📣"
+                    title="Staff Meeting"
+                    desc="Notices to every teacher, with read receipts"
+                    note={unread.length > 0 ? `${unread.length} new` : undefined}
+                  />
+                </Link>
+                <Link to="/feedback" className={rowCls(pathname.startsWith("/feedback"))}>
+                  <RowCell icon="💡" title="Help & Feedback" desc="Suggestions, bug reports and WhatsApp support" />
+                </Link>
+                <Link to="/auth" className={rowCls(pathname.startsWith("/auth"))}>
+                  <RowCell
+                    icon="👤"
+                    title={user ? "Account" : "Sign in"}
+                    desc={user ? "License, subscription and password recovery" : "Sign in to sync and activate EduReport"}
+                  />
+                </Link>
+              </nav>
+
+              <SectionLabel>Learners · {CLASS_LEVELS.find((c) => c.id === navClass)?.name}</SectionLabel>
+              <div className="mt-2 grid gap-0.5">
                 {classStudents.length === 0 && <p className="px-2 py-1 text-xs text-muted-foreground">No learners yet.</p>}
                 {classStudents.map((s) => (
-                  <Link key={s.id} to="/" search={{ class: navClass, student: s.id }} onClick={() => setOpen(false)} className="truncate rounded px-2 py-1.5 text-sm hover:bg-muted">
-                    {s.name}
+                  <Link
+                    key={s.id}
+                    to="/"
+                    search={{ class: navClass, student: s.id }}
+                    onClick={() => setOpen(false)}
+                    className="group flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-muted"
+                  >
+                    <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full border border-primary/60 transition-colors group-hover:bg-primary" />
+                    <span className="truncate text-sm">{s.name}</span>
                   </Link>
                 ))}
               </div>
