@@ -29,7 +29,7 @@ export function buildStaffNoticeText(n: Pick<StaffNotice, "title" | "meeting_dat
     "",
     `— ${n.sender_name || "Headteacher"}`,
   ];
-  return lines.filter((l) => l !== "" && l !== undefined && l !== false).join("\n").replace(/\n(?=📅|\*)/g, "\n");
+  return lines.filter((l) => Boolean(l)).join("\n");
 }
 
 export function useStaffNotices() {
