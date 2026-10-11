@@ -66,7 +66,7 @@ export function LicenseCard({ lic, onActivated }: { lic: LicenseState; onActivat
       </p>
 
       <div className="mt-4 rounded-md border border-border p-3">
-        <p className="text-sm font-bold">Pay with Paystack</p>
+        <p className="text-sm font-bold">Pay MTN Mobile Money</p>
         <label className="mt-2 block text-sm font-bold">Choose a plan
           <select
             value={planId}
@@ -83,7 +83,7 @@ export function LicenseCard({ lic, onActivated }: { lic: LicenseState; onActivat
           disabled={paying || lic.canPrint}
           className="mt-3 w-full rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground disabled:opacity-50"
         >
-          {paying ? "Opening Paystack…" : lic.canPrint ? "License active" : `Pay GH₵${PAYSTACK_PLANS.find((p) => p.id === planId)!.amount}`}
+          {paying ? "Opening payment…" : lic.canPrint ? "License active" : `Pay GH₵${PAYSTACK_PLANS.find((p) => p.id === planId)!.amount}`}
         </button>
       </div>
 
