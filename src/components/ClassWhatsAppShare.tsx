@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { normalizeGhanaPhone, openWhatsApp, whatsAppLink } from "@/lib/whatsapp";
+import { normalizeGhanaPhone, openSms, openWhatsApp, smsLink, whatsAppLink } from "@/lib/whatsapp";
 import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
 import { useLicense } from "@/lib/license";
@@ -58,22 +58,37 @@ export function ClassWhatsAppShare({ classId, className }: { classId: string; cl
       {open && (
         <div className="absolute right-0 z-30 mt-2 max-h-72 w-64 overflow-y-auto rounded-lg border border-border bg-card p-2 shadow-lg">
           <p className="px-1 pb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{className} · send summary</p>
+          <p className="px-1 pb-1 text-[10px] text-muted-foreground">Number not on WhatsApp? Use SMS — same message.</p>
           {ready.map((s) => {
             const href = whatsAppLink(s, students, school);
+            const sms = smsLink(s, students, school);
             return href ? (
-              <a
-                key={s.id}
-                href={href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setOpen(false);
-                  openWhatsApp(href);
-                }}
-                className="block rounded-md px-2 py-1.5 text-xs font-bold hover:bg-muted"
-              >
-                {s.name}
-                <span className="num block text-[10px] font-normal text-muted-foreground">{s.parentPhone}</span>
-              </a>
+              <div key={s.id} className="flex items-center gap-1 rounded-md px-2 py-1.5 hover:bg-muted">
+                <a
+                  href={href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setOpen(false);
+                    openWhatsApp(href);
+                  }}
+                  className="min-w-0 flex-1 text-xs font-bold"
+                >
+                  {s.name}
+                  <span className="num block text-[10px] font-normal text-muted-foreground">{s.parentPhone}</span>
+                </a>
+                {sms && (
+                  <button
+                    onClick={() => {
+                      setOpen(false);
+                      openSms(sms);
+                    }}
+                    title="Send the same message as a text message"
+                    className="rounded border border-border px-2 py-1 text-[10px] font-bold hover:bg-background"
+                  >
+                    SMS
+                  </button>
+                )}
+              </div>
             ) : null;
           })}
         </div>

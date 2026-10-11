@@ -8,7 +8,7 @@ import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData, type Student } from "@/lib/store";
 import { passportPhoto, extractSignature } from "@/lib/images";
 import { ClassLock } from "@/components/ClassLock";
-import { openWhatsApp, whatsAppLink } from "@/lib/whatsapp";
+import { openSms, openWhatsApp, smsLink, whatsAppLink } from "@/lib/whatsapp";
 import { useUser } from "@/lib/auth";
 import { useLicense } from "@/lib/license";
 import { toast } from "sonner";
@@ -126,6 +126,7 @@ function StudentsPage() {
                 <div className="flex gap-2">
                   <Link to="/" search={{ class: classId, student: s.id }} className="rounded border border-border px-2 py-1 text-[11px] font-semibold text-primary hover:bg-primary/5">Enter SBA</Link>
                   {(() => { const wa = whatsAppLink(s, students, school); return wa ? <a href={wa} onClick={(e) => { e.preventDefault(); if (waLocked) { toast.error("WhatsApp sharing needs an active license. Tap to activate."); navigate({ to: "/school-cloud" }); return; } openWhatsApp(wa); }} title={waLocked ? "WhatsApp sharing needs an active license. Tap to activate." : undefined} className={`rounded border border-border px-2 py-1 text-[11px] font-semibold hover:bg-primary/5 ${waLocked ? "text-muted-foreground" : "text-primary"}`}>{waLocked ? "🔒 WhatsApp" : "WhatsApp report"}</a> : null; })()}
+                  {(() => { const sms = smsLink(s, students, school); return sms ? <button onClick={() => { if (waLocked) { toast.error("SMS sharing needs an active license. Tap to activate."); navigate({ to: "/school-cloud" }); return; } openSms(sms); }} title={waLocked ? "SMS sharing needs an active license. Tap to activate." : "Number not on WhatsApp? Send the same summary as a text message."} className={`rounded border border-border px-2 py-1 text-[11px] font-semibold hover:bg-primary/5 ${waLocked ? "text-muted-foreground" : "text-primary"}`}>{waLocked ? "🔒 SMS" : "SMS"}</button> : null; })()}
                   <button onClick={() => removeStudent(s.id)} className="rounded px-2 py-1 text-[11px] text-muted-foreground hover:text-destructive" aria-label={`Remove ${s.name}`}>✕</button>
                 </div>
               </div>

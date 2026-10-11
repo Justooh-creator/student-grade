@@ -13,7 +13,7 @@ import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
 import { useLicense } from "@/lib/license";
 import { ReportSheet } from "@/components/ReportSheet";
-import { openWhatsApp, whatsAppLink } from "@/lib/whatsapp";
+import { openSms, openWhatsApp, smsLink, whatsAppLink } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/report/$studentId")({
   head: () => ({
@@ -85,6 +85,7 @@ function ReportPage() {
             className="h-10 w-48 rounded-md border border-border bg-card px-3 text-sm outline-none focus:border-primary"
           />
           {wa ? (() => { const waLocked = authReady && !lic.loading && !lic.canPrint; return <a href={wa} onClick={(e) => { e.preventDefault(); if (waLocked) { toast.error("WhatsApp sharing needs an active license. Tap to activate."); navigate({ to: "/school-cloud" }); return; } openWhatsApp(wa); }} title={waLocked ? "WhatsApp sharing needs an active license. Tap to activate." : undefined} className={`inline-flex h-10 items-center rounded-md border border-border bg-card px-4 text-sm font-semibold ${waLocked ? "text-muted-foreground" : "text-primary"}`}>{waLocked ? "🔒 WhatsApp locked" : "Send via WhatsApp"}</a>; })() : <span className="text-xs text-muted-foreground">Add parent phone in Student Details to send via WhatsApp</span>}
+          {(() => { const sms = smsLink(student, students, school); if (!sms) return null; const waLocked = authReady && !lic.loading && !lic.canPrint; return <button onClick={() => { if (waLocked) { toast.error("SMS sharing needs an active license. Tap to activate."); navigate({ to: "/school-cloud" }); return; } openSms(sms); }} title={waLocked ? "SMS sharing needs an active license. Tap to activate." : "Number not on WhatsApp? Send the same summary as a text message."} className={`inline-flex h-10 items-center rounded-md border border-border bg-card px-4 text-sm font-semibold ${waLocked ? "text-muted-foreground" : "text-primary"}`}>{waLocked ? "🔒 SMS locked" : "Send via SMS"}</button>; })()}
           <Link to="/class-report/$classId" params={{ classId: student.classId }} className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">Print whole class</Link>
         </div>
       </div>
