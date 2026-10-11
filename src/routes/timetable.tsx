@@ -129,7 +129,16 @@ function TimetablePage() {
             <div className="space-y-2">
               {tt.periods.map((p, i) => (
                 <div key={i} className={`flex items-center gap-3 rounded-md border border-border p-3 ${p.isBreak ? "bg-muted" : "bg-card"}`}>
-                  <div className="w-28 shrink-0 font-bold">{fmt12(p.start)}<br /><span className="text-sm text-muted-foreground">to {fmt12(p.end)}</span></div>
+                  <div className={edit ? "w-32 shrink-0 space-y-1" : "w-28 shrink-0 font-bold"}>
+                    {edit ? (
+                      <>
+                        <input type="time" aria-label="Period start time" className={inp} value={p.start} onChange={(e) => setPer(i, "start", e.target.value)} />
+                        <input type="time" aria-label="Period end time" className={inp} value={p.end} onChange={(e) => setPer(i, "end", e.target.value)} />
+                      </>
+                    ) : (
+                      <>{fmt12(p.start)}<br /><span className="text-sm text-muted-foreground">to {fmt12(p.end)}</span></>
+                    )}
+                  </div>
                   <div className="flex-1 text-lg">{cell(day, i)}</div>
                 </div>
               ))}
