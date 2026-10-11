@@ -245,7 +245,9 @@ function ScoreInput({
   value,
   max,
   onChange,
+  disabled,
 }: {
+  disabled?: boolean;
   value: number | null;
   max: number;
   onChange: (v: number | null) => void;
@@ -254,6 +256,7 @@ function ScoreInput({
   return (
     <input
       inputMode="numeric"
+      disabled={disabled}
       value={value === null ? "" : String(value)}
       onChange={(e) => {
         const raw = e.target.value.replace(/[^0-9]/g, "");
