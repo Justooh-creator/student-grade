@@ -60,14 +60,20 @@ export const verifyPaystackPayment = createServerFn({ method: "POST" })
       const base = school?.license_expires_at && new Date(school.license_expires_at) > new Date()
         ? new Date(school.license_expires_at) : new Date();
       const expires = new Date(base.getTime() + days * 86400000).toISOString();
-      await supabaseAdmin.from("schools").update({ license_expires_at: expires }).eq("id", schoolId);
+      // New purchase opens a fresh print window (15-day lock clock restarts on next first print).
+      await supabaseAdmin.from("schools").update({
+        license_expires_at: expires, license_terms: plan.terms, first_printed_at: null, print_term_key: null,
+      }).eq("id", schoolId);
     } else {
       const { data: lic } = await supabaseAdmin
         .from("user_licenses").select("expires_at").eq("user_id", userId).maybeSingle();
       const base = lic?.expires_at && new Date(lic.expires_at) > new Date()
         ? new Date(lic.expires_at) : new Date();
       const expires = new Date(base.getTime() + days * 86400000).toISOString();
-      await supabaseAdmin.from("user_licenses").upsert({ user_id: userId, expires_at: expires, updated_at: new Date().toISOString() });
+      await supabaseAdmin.from("user_licenses").upsert({
+        user_id: userId, expires_at: expires, license_terms: plan.terms,
+        first_printed_at: null, print_term_key: null, updated_at: new Date().toISOString(),
+      });
     }
 
     await supabaseAdmin.from("payment_transactions").upsert({

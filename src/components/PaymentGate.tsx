@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useUser } from "@/lib/auth";
-import { useLicense } from "@/lib/license";
+import { recordPrint, useLicense } from "@/lib/license";
+import { useAppData } from "@/lib/store";
 
 type PrintBridge = { print?: () => void };
 
@@ -22,6 +23,7 @@ function printReports() {
 export function PrintButton({ label = "Print / Save whole class as PDF (A4)" }: { label?: string }) {
   const { user, ready } = useUser();
   const lic = useLicense(user?.id);
+  const { school } = useAppData();
   const navigate = useNavigate();
 
   const locked = ready && !lic.loading && !lic.canPrint;
@@ -38,9 +40,14 @@ export function PrintButton({ label = "Print / Save whole class as PDF (A4)" }: 
     );
   }
 
+  const onPrint = () => {
+    recordPrint(`${school.academicYear} ${school.term}`).catch(() => { /* offline: print still allowed */ });
+    printReports();
+  };
+
   return (
     <button
-      onClick={printReports}
+      onClick={onPrint}
       disabled={!ready || lic.loading}
       className="h-10 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
     >
