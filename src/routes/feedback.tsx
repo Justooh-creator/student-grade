@@ -42,7 +42,7 @@ function FeedbackPage() {
     setRows((data as Row[]) ?? []);
   };
 
-  useEffect(() => {
+  useEffect((): void => {
     if (!user) return;
     supabase.rpc("is_developer").then(({ data }) => {
       if (data) { setIsDev(true); loadRows(); }
