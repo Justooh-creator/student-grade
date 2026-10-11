@@ -57,6 +57,28 @@ export function whatsAppLink(student: Student, students: Student[], school: Scho
 }
 
 /**
+ * SMS fallback with the same message, for parents whose number is not on
+ * WhatsApp. Opens the phone's messaging app with the text pre-filled.
+ * `sms:number?body=` works on Android and iOS.
+ */
+export function smsLink(student: Student, students: Student[], school: School): string | null {
+  const phone = normalizeGhanaPhone(student.parentPhone);
+  if (!phone) return null;
+  return `sms:${phone}?body=${encodeURIComponent(buildWhatsAppSummary(student, students, school))}`;
+}
+
+export function midtermSmsLink(student: Student, school: School, note?: string): string | null {
+  const phone = normalizeGhanaPhone(student.parentPhone);
+  if (!phone) return null;
+  return `sms:${phone}?body=${encodeURIComponent(buildMidtermSummary(student, school, note))}`;
+}
+
+/** Open an sms: link (same tab — the OS hands it to the messaging app). */
+export function openSms(href: string) {
+  window.location.href = href;
+}
+
+/**
  * Open a wa.me link reliably. In the Android WebView, target="_blank" opens a
  * blank white window, so there we navigate the same tab and let Android hand
  * the link to the WhatsApp app. In normal browsers we open a new tab.
