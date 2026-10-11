@@ -271,6 +271,9 @@ export function AppHeader({
                     note={dutyReminders.length > 0 ? `${dutyReminders.length} new` : undefined}
                   />
                 </Link>
+                <Link to="/school-cloud" className={rowCls(false)}>
+                  <RowCell icon={ICON.file} title="Payment" desc="Plans, Paystack, activation code" />
+                </Link>
                 <Link to="/feedback" className={rowCls(pathname.startsWith("/feedback"))}>
                   <RowCell icon={ICON.bulb} title="Help & Feedback" desc="Suggestions and bug reports" />
                 </Link>
