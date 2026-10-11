@@ -141,3 +141,46 @@ export function midtermWhatsAppLink(student: Student, school: School, note?: str
   if (!phone) return null;
   return `https://wa.me/${phone}?text=${encodeURIComponent(buildMidtermSummary(student, school, note))}`;
 }
+
+export interface PtaMeeting {
+  title: string;
+  date: string;
+  time: string;
+  venue: string;
+  agenda: string;
+}
+
+/** Headteacher's PTA / meeting announcement for one learner's parent. */
+export function buildPtaAnnouncement(student: Student, school: School, meeting: PtaMeeting): string {
+  const level = getClassLevel(student.classId);
+  const lines: string[] = [];
+  lines.push(`*${school.name || "School"}*`);
+  lines.push(`📢 *${meeting.title || "PTA Meeting"}*`);
+  lines.push("");
+  lines.push(`Dear Parent/Guardian of *${student.name}* (${level.name}),`);
+  lines.push("");
+  lines.push("You are warmly invited to attend the above meeting.");
+  lines.push("");
+  if (meeting.date) lines.push(`📅 Date: ${meeting.date}`);
+  if (meeting.time) lines.push(`🕒 Time: ${meeting.time}`);
+  if (meeting.venue) lines.push(`📍 Venue: ${meeting.venue}`);
+  if (meeting.agenda.trim()) {
+    lines.push("");
+    lines.push(`Agenda: ${meeting.agenda.trim()}`);
+  }
+  lines.push("");
+  lines.push("Your presence is very important for your ward's education. Thank you.");
+  return lines.join("\n");
+}
+
+export function ptaWhatsAppLink(student: Student, school: School, meeting: PtaMeeting): string | null {
+  const phone = normalizeGhanaPhone(student.parentPhone);
+  if (!phone) return null;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(buildPtaAnnouncement(student, school, meeting))}`;
+}
+
+export function ptaSmsLink(student: Student, school: School, meeting: PtaMeeting): string | null {
+  const phone = normalizeGhanaPhone(student.parentPhone);
+  if (!phone) return null;
+  return `sms:${phone}?body=${encodeURIComponent(buildPtaAnnouncement(student, school, meeting))}`;
+}
