@@ -28,6 +28,8 @@ export interface School {
   classAssignments?: Record<string, string[]>;
   /** JHS (Basic 7–9): class id -> subject -> cloud user ids allowed to enter marks for that subject */
   subjectAssignments?: Record<string, Record<string, string[]>>;
+  /** class id -> edited weekly timetable (missing = GES default) */
+  timetables?: Record<string, import("./timetable").Timetable>;
 }
 
 export interface Student {
