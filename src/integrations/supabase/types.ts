@@ -50,6 +50,73 @@ export type Database = {
         }
         Relationships: []
       }
+      duty_roster_acks: {
+        Row: {
+          acked_at: string
+          roster_id: string
+          user_id: string
+        }
+        Insert: {
+          acked_at?: string
+          roster_id: string
+          user_id: string
+        }
+        Update: {
+          acked_at?: string
+          roster_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "duty_roster_acks_roster_id_fkey"
+            columns: ["roster_id"]
+            isOneToOne: false
+            referencedRelation: "duty_rosters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      duty_rosters: {
+        Row: {
+          created_at: string
+          created_by: string
+          entries: Json
+          id: string
+          notes: string
+          school_id: string
+          updated_at: string
+          week_start: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          entries?: Json
+          id?: string
+          notes?: string
+          school_id: string
+          updated_at?: string
+          week_start: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          entries?: Json
+          id?: string
+          notes?: string
+          school_id?: string
+          updated_at?: string
+          week_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "duty_rosters_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gift_codes: {
         Row: {
           code: string

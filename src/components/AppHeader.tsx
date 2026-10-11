@@ -4,6 +4,7 @@ import { type ClassId } from "@/lib/ges";
 import { useUser } from "@/lib/auth";
 import { useCloud } from "@/lib/cloud";
 import { useStaffNotices } from "@/lib/staffNotices";
+import { useDutyRosters } from "@/lib/dutyRoster";
 
 
 const tabBase = "whitespace-nowrap border-b-2 px-3 py-2.5 text-xs font-semibold sm:text-sm";
@@ -146,6 +147,7 @@ export function AppHeader({
   const { user } = useUser();
   const cloud = useCloud();
   const { unread } = useStaffNotices();
+  const { reminders: dutyReminders, nextWeek } = useDutyRosters();
   const navClass = activeClass ?? "b4";
   const [showFb, setShowFb] = useState(false);
   useEffect(() => {
@@ -184,6 +186,11 @@ export function AppHeader({
       {unread.length > 0 && !pathname.startsWith("/staff-meeting") && (
         <Link to="/staff-meeting" className="mx-auto mt-2 flex max-w-5xl items-center gap-2 rounded-md bg-accent px-3 py-2 text-xs font-bold text-accent-foreground">
           📣 {unread.length} new staff meeting notice{unread.length > 1 ? "s" : ""}: {unread[0]?.title} — tap to view
+        </Link>
+      )}
+      {dutyReminders.length > 0 && !pathname.startsWith("/duty-roster") && (
+        <Link to="/duty-roster" className="mx-auto mt-2 flex max-w-5xl items-center gap-2 rounded-md bg-accent px-3 py-2 text-xs font-bold text-accent-foreground">
+          🗓️ You are on duty {dutyReminders[0]?.week_start === nextWeek ? "next week" : "this week"} — tap to view and acknowledge
         </Link>
       )}
       {showFb && !pathname.startsWith("/feedback") && (
@@ -254,6 +261,14 @@ export function AppHeader({
                     title="Staff Meeting"
                     desc="Notices to all teachers"
                     note={unread.length > 0 ? `${unread.length} new` : undefined}
+                  />
+                </Link>
+                <Link to="/duty-roster" className={rowCls(pathname.startsWith("/duty-roster"))}>
+                  <RowCell
+                    icon={ICON.people}
+                    title="Duty Roster"
+                    desc="Weekly teachers on duty"
+                    note={dutyReminders.length > 0 ? `${dutyReminders.length} new` : undefined}
                   />
                 </Link>
                 <Link to="/feedback" className={rowCls(pathname.startsWith("/feedback"))}>
