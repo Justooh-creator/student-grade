@@ -53,13 +53,13 @@ function FeedbackPage() {
   const waUrl = `https://wa.me/${SUPPORT_WHATSAPP}?text=${encodeURIComponent(waText)}`;
 
   const submit = async () => {
-    if (message.trim().length < 3) return toast.error("Please type your suggestion first.");
+    if (message.trim().length < 3) { toast.error("Please type your suggestion first."); return; }
     setBusy(true);
     const { error } = await supabase.from("app_feedback").insert({
       user_id: user?.id ?? null, sender_name: name.trim(), school_name: schoolName.trim(), phone: phone.trim(), category, message: message.trim(),
     });
     setBusy(false);
-    if (error) return toast.error("Could not send. Check your internet or use WhatsApp.");
+    if (error) { toast.error("Could not send. Check your internet or use WhatsApp."); return; }
     toast.success("Thank you! Your suggestion has been sent.");
     setMessage("");
     if (isDev) loadRows();
