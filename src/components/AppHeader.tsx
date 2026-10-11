@@ -1,5 +1,5 @@
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState, type ReactNode } from "react";
 import { CLASS_LEVELS, type ClassId } from "@/lib/ges";
 import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
@@ -10,6 +10,126 @@ import { useStaffNotices } from "@/lib/staffNotices";
 const tabBase = "whitespace-nowrap border-b-2 px-3 py-2.5 text-xs font-semibold sm:text-sm";
 const tabIdle = `${tabBase} border-transparent text-primary-foreground/70 hover:text-primary-foreground`;
 const tabActive = `${tabBase} border-accent text-primary-foreground`;
+
+const rowCls = (active: boolean) =>
+  `group flex items-center gap-3 rounded-lg border px-2.5 py-2 text-left transition-colors ${
+    active ? "border-accent/40 bg-accent/10" : "border-transparent hover:border-border hover:bg-muted"
+  }`;
+
+function SectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <p className="mt-5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+      <span aria-hidden className="h-px w-4 bg-accent" />
+      {children}
+    </p>
+  );
+}
+
+function Svg({ children }: { children: ReactNode }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      {children}
+    </svg>
+  );
+}
+
+const ICON = {
+  cloud: (
+    <Svg>
+      <path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97A6 6 0 0 0 6.3 11.2 3.9 3.9 0 0 0 7 19h10.5Z" />
+    </Svg>
+  ),
+  school: (
+    <Svg>
+      <path d="M4 10.5 12 5l8 5.5V20H4Z" />
+      <path d="M9.5 20v-5h5v5" />
+    </Svg>
+  ),
+  cap: (
+    <Svg>
+      <path d="M12 4 2 9l10 5 10-5-10-5Z" />
+      <path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5" />
+    </Svg>
+  ),
+  pencil: (
+    <Svg>
+      <path d="M4 20h4L18 10l-4-4L4 16v4Z" />
+      <path d="m13.5 6.5 4 4" />
+    </Svg>
+  ),
+  file: (
+    <Svg>
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" />
+      <path d="M14 3v5h5" />
+      <path d="M9 13h6" />
+      <path d="M9 17h5" />
+    </Svg>
+  ),
+  chat: (
+    <Svg>
+      <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.2A8 8 0 1 1 21 12Z" />
+    </Svg>
+  ),
+  megaphone: (
+    <Svg>
+      <path d="M4 9v6h3l8 4V5L7 9H4Z" />
+      <path d="M18 10a3 3 0 0 1 0 4" />
+    </Svg>
+  ),
+  people: (
+    <Svg>
+      <circle cx="9" cy="8" r="3" />
+      <path d="M3 20a6 6 0 0 1 12 0" />
+      <path d="M16 5.5a3 3 0 0 1 0 5.8" />
+      <path d="M17.5 14.2A6 6 0 0 1 21 20" />
+    </Svg>
+  ),
+  bulb: (
+    <Svg>
+      <path d="M9.5 18h5" />
+      <path d="M10.5 21h3" />
+      <path d="M12 3a6 6 0 0 0-3.4 10.9c.6.5.9 1.2.9 1.9V16h5v-.2c0-.7.3-1.4.9-1.9A6 6 0 0 0 12 3Z" />
+    </Svg>
+  ),
+  user: (
+    <Svg>
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M5 20a7 7 0 0 1 14 0" />
+    </Svg>
+  ),
+};
+
+function RowCell({ icon, title, desc, note }: { icon: ReactNode; title: string; desc: string; note?: string | undefined }) {
+  return (
+    <>
+      <span
+        aria-hidden
+        className="h-2 w-2 shrink-0 rotate-45 border border-accent/70 transition-all duration-200 group-hover:rotate-[135deg] group-hover:bg-accent/40"
+      />
+      <span aria-hidden className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-primary">
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm font-bold leading-tight">{title}</span>
+        <span className="mt-0.5 block truncate text-[11px] leading-snug text-muted-foreground">{desc}</span>
+      </span>
+      {note ? (
+        <span className="shrink-0 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-accent-foreground">
+          {note}
+        </span>
+      ) : null}
+    </>
+  );
+}
 
 export function AppHeader({
   schoolName,
@@ -24,7 +144,6 @@ export function AppHeader({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
   const { students } = useAppData();
   const { user } = useUser();
   const cloud = useCloud();
@@ -91,48 +210,80 @@ export function AppHeader({
           <div className="absolute inset-0 bg-foreground/40" />
           <aside
             onClick={(e) => e.stopPropagation()}
-            className="relative flex h-full w-72 flex-col bg-card text-foreground shadow-xl"
+            className="relative flex h-full w-[19rem] max-w-[86vw] flex-col bg-card text-foreground shadow-2xl"
           >
             <div className="flex-1 overflow-y-auto p-4 pt-[calc(env(safe-area-inset-top)+2.5rem)]">
               <div className="flex items-center justify-between">
                 <p className="font-display text-sm font-bold">Quick navigation</p>
-                <button onClick={() => setOpen(false)} aria-label="Close" className="text-muted-foreground">✕</button>
+                <button
+                  onClick={() => setOpen(false)}
+                  aria-label="Close"
+                  className="flex h-7 w-7 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted"
+                >
+                  ✕
+                </button>
               </div>
-              <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Pages</p>
-              <div className="mt-1 grid gap-1" onClick={() => setOpen(false)}>
-                <Link to="/school-cloud" className="rounded px-2 py-1.5 text-sm font-semibold hover:bg-muted">School Cloud</Link>
-                <Link to="/setup" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">School Details</Link>
-                <Link to="/students" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">Student Details</Link>
-                <Link to="/" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">SBA Details</Link>
-                <Link to="/class-report/$classId" params={{ classId: navClass }} className="rounded px-2 py-1.5 text-sm hover:bg-muted">Report</Link>
-                <Link to="/midterm-progress" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm font-semibold text-primary hover:bg-muted">💬 Mid-Term WhatsApp</Link>
-                <Link to="/pta-announcement" search={{ class: navClass }} className="rounded px-2 py-1.5 text-sm font-semibold text-primary hover:bg-muted">📢 PTA Meeting Notice</Link>
-                <Link to="/staff-meeting" className="rounded px-2 py-1.5 text-sm font-semibold text-primary hover:bg-muted">📣 Staff Meeting{unread.length > 0 ? ` (${unread.length} new)` : ""}</Link>
-                <Link to="/feedback" className="rounded px-2 py-1.5 text-sm font-semibold text-primary hover:bg-muted">💡 Help & Feedback</Link>
-                <Link to="/auth" className="rounded px-2 py-1.5 text-sm hover:bg-muted">{user ? "Account" : "Sign in"}</Link>
-              </div>
-              <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Classes</p>
-              <select
-                aria-label="Choose class"
-                value={navClass}
-                onChange={(e) => {
-                  setOpen(false);
-                  navigate({ to: "/", search: { class: e.target.value as ClassId } });
-                }}
-                className="mt-1 h-10 w-full rounded-md border border-border bg-card px-2 text-sm font-semibold outline-none focus:border-primary"
-              >
-                {CLASS_LEVELS.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-              <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                Learners · {CLASS_LEVELS.find((c) => c.id === navClass)?.name}
-              </p>
-              <div className="mt-1 grid gap-0.5">
+
+              <SectionLabel>Pages</SectionLabel>
+              <nav className="mt-2 grid gap-1" onClick={() => setOpen(false)}>
+                <Link to="/school-cloud" className={rowCls(pathname.startsWith("/school-cloud"))}>
+                  <RowCell icon={ICON.cloud} title="School Cloud" desc="Join your school and sync records" />
+                </Link>
+                <Link to="/setup" search={{ class: navClass }} className={rowCls(pathname.startsWith("/setup"))}>
+                  <RowCell icon={ICON.school} title="School Details" desc="Name, motto, EMIS code, logo" />
+                </Link>
+                <Link to="/students" search={{ class: navClass }} className={rowCls(pathname.startsWith("/students"))}>
+                  <RowCell icon={ICON.cap} title="Student Details" desc="Learners, photos, parent numbers" />
+                </Link>
+                <Link to="/" search={{ class: navClass }} className={rowCls(pathname === "/")}>
+                  <RowCell icon={ICON.pencil} title="SBA Details" desc="Tests, project, group, exam marks" />
+                </Link>
+                <Link
+                  to="/class-report/$classId"
+                  params={{ classId: navClass }}
+                  className={rowCls(pathname.startsWith("/class-report") || pathname.startsWith("/report"))}
+                >
+                  <RowCell icon={ICON.file} title="Report" desc="Preview, save PDF, print class" />
+                </Link>
+                <Link to="/midterm-progress" search={{ class: navClass }} className={rowCls(pathname.startsWith("/midterm-progress"))}>
+                  <RowCell icon={ICON.chat} title="Mid-Term WhatsApp" desc="Progress check-in to parents" />
+                </Link>
+                <Link to="/pta-announcement" search={{ class: navClass }} className={rowCls(pathname.startsWith("/pta-announcement"))}>
+                  <RowCell icon={ICON.megaphone} title="PTA Meeting Notice" desc="Invite parents, class by class" />
+                </Link>
+                <Link to="/staff-meeting" className={rowCls(pathname.startsWith("/staff-meeting"))}>
+                  <RowCell
+                    icon={ICON.people}
+                    title="Staff Meeting"
+                    desc="Notices to all teachers"
+                    note={unread.length > 0 ? `${unread.length} new` : undefined}
+                  />
+                </Link>
+                <Link to="/feedback" className={rowCls(pathname.startsWith("/feedback"))}>
+                  <RowCell icon={ICON.bulb} title="Help & Feedback" desc="Suggestions and bug reports" />
+                </Link>
+                <Link to="/auth" className={rowCls(pathname.startsWith("/auth"))}>
+                  <RowCell
+                    icon={ICON.user}
+                    title={user ? "Account" : "Sign in"}
+                    desc={user ? "License, plan, password recovery" : "Sign in to sync and activate"}
+                  />
+                </Link>
+              </nav>
+
+              <SectionLabel>Learners · {CLASS_LEVELS.find((c) => c.id === navClass)?.name}</SectionLabel>
+              <div className="mt-2 grid gap-0.5">
                 {classStudents.length === 0 && <p className="px-2 py-1 text-xs text-muted-foreground">No learners yet.</p>}
                 {classStudents.map((s) => (
-                  <Link key={s.id} to="/" search={{ class: navClass, student: s.id }} onClick={() => setOpen(false)} className="truncate rounded px-2 py-1.5 text-sm hover:bg-muted">
-                    {s.name}
+                  <Link
+                    key={s.id}
+                    to="/"
+                    search={{ class: navClass, student: s.id }}
+                    onClick={() => setOpen(false)}
+                    className="group flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-muted"
+                  >
+                    <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full border border-primary/60 transition-colors group-hover:bg-primary" />
+                    <span className="truncate text-sm">{s.name}</span>
                   </Link>
                 ))}
               </div>
