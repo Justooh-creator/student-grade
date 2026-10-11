@@ -57,6 +57,13 @@
       "when": 1791683445088,
       "tag": "0007_print_window_lock",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791683459615,
+      "tag": "0008_redeem_resets_print_window",
+      "breakpoints": true
     }
   ]
 }
