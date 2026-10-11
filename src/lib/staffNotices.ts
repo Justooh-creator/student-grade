@@ -54,7 +54,7 @@ export function useStaffNotices() {
     load();
     if (!cloud.schoolId) return;
     const ch = supabase
-      .channel(`staff-notices-${cloud.schoolId}`)
+      .channel(`staff-notices-${cloud.schoolId}-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "staff_notices", filter: `school_id=eq.${cloud.schoolId}` }, () => load())
       .subscribe();
     return () => { supabase.removeChannel(ch); };
