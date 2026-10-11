@@ -20,6 +20,7 @@ import { Route as SchoolCloudRouteImport } from './routes/school-cloud'
 import { Route as SetupRouteImport } from './routes/setup'
 import { Route as StaffMeetingRouteImport } from './routes/staff-meeting'
 import { Route as StudentsRouteImport } from './routes/students'
+import { Route as TimetableRouteImport } from './routes/timetable'
 import { Route as ClassReportClassIdRouteImport } from './routes/class-report.$classId'
 import { Route as ReportStudentIdRouteImport } from './routes/report.$studentId'
 
@@ -78,6 +79,11 @@ const StudentsRoute = StudentsRouteImport.update({
   path: '/students',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TimetableRoute = TimetableRouteImport.update({
+  id: '/timetable',
+  path: '/timetable',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClassReportClassIdRoute = ClassReportClassIdRouteImport.update({
   id: '/class-report/$classId',
   path: '/class-report/$classId',
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/setup': typeof SetupRoute
   '/staff-meeting': typeof StaffMeetingRoute
   '/students': typeof StudentsRoute
+  '/timetable': typeof TimetableRoute
   '/class-report/$classId': typeof ClassReportClassIdRoute
   '/report/$studentId': typeof ReportStudentIdRoute
 }
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/setup': typeof SetupRoute
   '/staff-meeting': typeof StaffMeetingRoute
   '/students': typeof StudentsRoute
+  '/timetable': typeof TimetableRoute
   '/class-report/$classId': typeof ClassReportClassIdRoute
   '/report/$studentId': typeof ReportStudentIdRoute
 }
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/setup': typeof SetupRoute
   '/staff-meeting': typeof StaffMeetingRoute
   '/students': typeof StudentsRoute
+  '/timetable': typeof TimetableRoute
   '/class-report/$classId': typeof ClassReportClassIdRoute
   '/report/$studentId': typeof ReportStudentIdRoute
 }
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/setup'
     | '/staff-meeting'
     | '/students'
+    | '/timetable'
     | '/class-report/$classId'
     | '/report/$studentId'
   fileRoutesByTo: FileRoutesByTo
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/setup'
     | '/staff-meeting'
     | '/students'
+    | '/timetable'
     | '/class-report/$classId'
     | '/report/$studentId'
   id:
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/setup'
     | '/staff-meeting'
     | '/students'
+    | '/timetable'
     | '/class-report/$classId'
     | '/report/$studentId'
   fileRoutesById: FileRoutesById
@@ -195,6 +207,7 @@ export interface RootRouteChildren {
   SetupRoute: typeof SetupRoute
   StaffMeetingRoute: typeof StaffMeetingRoute
   StudentsRoute: typeof StudentsRoute
+  TimetableRoute: typeof TimetableRoute
   ClassReportClassIdRoute: typeof ClassReportClassIdRoute
   ReportStudentIdRoute: typeof ReportStudentIdRoute
 }
@@ -278,6 +291,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/timetable': {
+      id: '/timetable'
+      path: '/timetable'
+      fullPath: '/timetable'
+      preLoaderRoute: typeof TimetableRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/class-report/$classId': {
       id: '/class-report/$classId'
       path: '/class-report/$classId'
@@ -307,6 +327,7 @@ const rootRouteChildren: RootRouteChildren = {
   SetupRoute: SetupRoute,
   StaffMeetingRoute: StaffMeetingRoute,
   StudentsRoute: StudentsRoute,
+  TimetableRoute: TimetableRoute,
   ClassReportClassIdRoute: ClassReportClassIdRoute,
   ReportStudentIdRoute: ReportStudentIdRoute,
 }
