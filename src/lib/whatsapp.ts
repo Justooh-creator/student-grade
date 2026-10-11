@@ -70,3 +70,52 @@ export function openWhatsApp(href: string) {
     window.open(href, "_blank", "noopener,noreferrer");
   }
 }
+
+/** Mid-term progress check-in (free for everyone). Shows only marks entered so far. */
+export function buildMidtermSummary(student: Student, school: School, note?: string): string {
+  const level = getClassLevel(student.classId);
+  const kg = isKg(student.classId);
+  const lines: string[] = [];
+  lines.push(`*${school.name || "School"}* — Mid-Term Progress Update`);
+  lines.push(`${school.term} · ${school.academicYear}`);
+  lines.push("");
+  lines.push(`Dear Parent/Guardian, here is *${student.name}*'s progress so far in ${level.name}.`);
+  if (student.attendance) lines.push(`Attendance so far: ${student.attendance}`);
+  lines.push("");
+  const rows: string[] = [];
+  for (const [subject, sc] of Object.entries(student.scores ?? {})) {
+    if (kg) {
+      if (sc.level) rows.push(`• ${subject}: ${sc.level}`);
+      continue;
+    }
+    const parts: string[] = [];
+    if (sc.test1 != null) parts.push(`Test 1 ${sc.test1}/20`);
+    if (sc.test2 != null) parts.push(`Test 2 ${sc.test2}/20`);
+    if (sc.group != null) parts.push(`Group work ${sc.group}/30`);
+    if (sc.project != null) parts.push(`Project ${sc.project}/30`);
+    if (parts.length) rows.push(`• ${subject}: ${parts.join(", ")}`);
+  }
+  if (rows.length) {
+    lines.push(kg ? "*Learning areas*" : "*Class assessments so far*");
+    lines.push(...rows);
+  } else {
+    lines.push("Class assessments are still in progress.");
+  }
+  if (student.conduct) {
+    lines.push("");
+    lines.push(`Conduct: ${student.conduct}`);
+  }
+  if (note?.trim()) {
+    lines.push("");
+    lines.push(note.trim());
+  }
+  lines.push("");
+  lines.push("Thank you for supporting your ward's learning. Please keep encouraging them at home.");
+  return lines.join("\n");
+}
+
+export function midtermWhatsAppLink(student: Student, school: School, note?: string): string | null {
+  const phone = normalizeGhanaPhone(student.parentPhone);
+  if (!phone) return null;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(buildMidtermSummary(student, school, note))}`;
+}
