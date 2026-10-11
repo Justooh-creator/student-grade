@@ -55,7 +55,7 @@ function MidtermPage() {
           />
         </section>
         <section className="mt-4 rounded-xl border border-border bg-card p-2">
-          <p className="px-2 py-1 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">{level.name} · {list.length} learner(s)</p>
+          <p className="px-2 py-1 text-xs font-bold uppercase tracking-[0.12em] text-foreground">{level.name} · {list.length} learner(s)</p>
           {mounted && list.length === 0 && <p className="p-3 text-sm text-muted-foreground">No learners in this class yet.</p>}
           {mounted && list.map((s) => {
             const href = midtermWhatsAppLink(s, school, note);

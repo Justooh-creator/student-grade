@@ -57,7 +57,7 @@ export function ClassWhatsAppShare({ classId, className }: { classId: string; cl
       </button>
       {open && (
         <div className="absolute right-0 z-30 mt-2 max-h-72 w-64 overflow-y-auto rounded-lg border border-border bg-card p-2 shadow-lg">
-          <p className="px-1 pb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{className} · send summary</p>
+          <p className="px-1 pb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-foreground">{className} · send summary</p>
           <p className="px-1 pb-1 text-[10px] text-muted-foreground">Number not on WhatsApp? Use SMS — same message.</p>
           {ready.map((s) => {
             const href = whatsAppLink(s, students, school);

@@ -40,7 +40,7 @@ export function TextField({
 }) {
   return (
     <label className="block">
-      <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{label}</span>
+      <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">{label}</span>
       <input
         value={value}
         placeholder={placeholder}
