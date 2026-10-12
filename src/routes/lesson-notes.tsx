@@ -127,14 +127,14 @@ function LessonNotesPage() {
             <section className="no-print space-y-3 rounded-lg border border-border bg-card p-4">
               <div className="grid gap-3 sm:grid-cols-3">
                 <label className="block"><span className="mb-1 block text-sm font-bold">Date</span><input type="date" className={inp} value={note.date} onChange={(e) => set("date", e.target.value)} /></label>
-                <Field label="Duration" k="duration" />
-                <Field label="Class size" k="classSize" />
+                {Field({ label: "Duration", k: "duration" })}
+                {Field({ label: "Class size", k: "classSize" })}
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="Strand" k="strand" /><Field label="Sub-strand" k="subStrand" />
-                <Field label="Content standard" k="contentStandard" /><Field label="Indicator" k="indicator" />
+                {Field({ label: "Strand", k: "strand" })}{Field({ label: "Sub-strand", k: "subStrand" })}
+                {Field({ label: "Content standard", k: "contentStandard" })}{Field({ label: "Indicator", k: "indicator" })}
               </div>
-              <Field label="Performance indicator" k="performanceIndicator" rows={2} />
+              {Field({ label: "Performance indicator", k: "performanceIndicator", rows: 2 })}
               <div>
                 <span className="mb-1 block text-sm font-bold">Core competencies</span>
                 <div className="grid gap-1 sm:grid-cols-2">
@@ -148,12 +148,12 @@ function LessonNotesPage() {
                 </div>
               </div>
               <Field label="Keywords / vocabulary" k="keywords" />
-              <Field label="Teaching & learning resources" k="resources" />
-              <Field label="Phase 1: Starter (10 mins)" k="starter" rows={3} />
+              {Field({ label: "Teaching & learning resources", k: "resources" })}
+              {Field({ label: "Phase 1: Starter (10 mins)", k: "starter", rows: 3 })}
               <Field label="Phase 2: Main / New learning (40 mins)" k="main" rows={5} />
               <Field label="Phase 3: Plenary / Reflection (10 mins)" k="plenary" rows={3} />
-              <Field label="Teacher's reflection (after lesson)" k="reflection" rows={2} />
-              <Field label="Teacher's name" k="teacher" />
+              {Field({ label: "Teacher's reflection (after lesson)", k: "reflection", rows: 2 })}
+              {Field({ label: "Teacher's name", k: "teacher" })}
               <div className="flex flex-wrap gap-2">
                 <button onClick={save} className="rounded-md bg-primary px-4 py-2 font-bold text-primary-foreground">💾 Save</button>
                 <button onClick={() => window.print()} className="rounded-md border border-border px-4 py-2 font-bold">🖨️ Print A4</button>
