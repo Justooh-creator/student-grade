@@ -151,6 +151,7 @@ function LessonNotesPage() {
           </section>
         ) : (
           <>
+            {!previewing ? (
             <section className="no-print space-y-3 rounded-lg border border-border bg-card p-4">
               <div className="grid gap-3 sm:grid-cols-3">
                 <label className="block"><span className="mb-1 block text-sm font-bold">Date</span><input type="date" className={inp} value={note.date} onChange={(e) => set("date", e.target.value)} /></label>
@@ -189,29 +190,7 @@ function LessonNotesPage() {
               </div>
             </section>
 
-            <article className="print-only hidden space-y-2 bg-background p-4 text-sm print:block">
-              <h2 className="text-center text-lg font-bold">{school.name || "School"} — Lesson Note</h2>
-              <table className="w-full border-collapse [&_td]:border [&_td]:border-border [&_td]:p-1">
-                <tbody>
-                  <tr><td><b>Class:</b> {className}</td><td><b>Subject:</b> {subject}</td><td><b>Term/Week:</b> {term} / {week}</td></tr>
-                  <tr><td><b>Date:</b> {note.date}</td><td><b>Duration:</b> {note.duration}</td><td><b>Class size:</b> {note.classSize}</td></tr>
-                  <tr><td colSpan={3}><b>Strand:</b> {note.strand} &nbsp; <b>Sub-strand:</b> {note.subStrand}</td></tr>
-                  <tr><td colSpan={3}><b>Content standard:</b> {note.contentStandard} &nbsp; <b>Indicator:</b> {note.indicator}</td></tr>
-                  <tr><td colSpan={3}><b>Performance indicator:</b> {note.performanceIndicator}</td></tr>
-                  <tr><td colSpan={3}><b>Core competencies:</b> {note.competencies.join("; ")}</td></tr>
-                  <tr><td colSpan={3}><b>Keywords:</b> {note.keywords}</td></tr>
-                  <tr><td colSpan={3}><b>Resources:</b> {note.resources}</td></tr>
-                  <tr><td><b>Phase 1: Starter</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.starter}</td></tr>
-                  <tr><td><b>Phase 2: Main</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.main}</td></tr>
-                  <tr><td><b>Phase 3: Plenary</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.plenary}</td></tr>
-                  <tr><td><b>Reflection</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.reflection}</td></tr>
-                </tbody>
-              </table>
-              <div className="flex justify-between pt-8">
-                <span>Teacher: {note.teacher} ____________</span>
-                <span>Vetted by Headteacher: ____________ Date: ______</span>
-              </div>
-            </article>
+            <div className="print-only hidden print:block">{noteArticle}</div>
           </>
         )}
       </main>
