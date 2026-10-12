@@ -30,7 +30,7 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
     return () => { supabase.removeChannel(ch); };
   }, [load, schoolId]);
 
-  const msg = `Please join ${schoolName || "our school"} on EduReport to enter learners' marks.\n\n1. Open https://student-grade.lovable.app\n2. Sign in (or create an account)\n3. Tap ☰ → School Cloud\n4. Enter School Code: ${joinCode}`;
+  const msg = `Please join ${schoolName || "our school"} on EduReport to enter learners' marks.\n\n1. Open https://www.edureportghana.com\n2. Sign in (or create an account)\n3. Tap ☰ → School Cloud\n4. Enter School Code: ${joinCode}`;
 
   async function run(fn: () => PromiseLike<{ error: { message: string } | null }>, ok: string) {
     setBusy(true);
