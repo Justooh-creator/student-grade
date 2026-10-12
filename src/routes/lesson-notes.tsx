@@ -64,29 +64,42 @@ function LessonNotesPage() {
   };
   const className = getClassLevel(classId).name;
 
+  const L = ({ children }: { children: React.ReactNode }) => <td className="w-[22%] bg-muted font-bold align-top">{children}</td>;
   const noteArticle = (
-    <article className="space-y-2 bg-background p-4 text-sm">
-      <h2 className="text-center text-lg font-bold">{school.name || "School"} — Lesson Note</h2>
-      <table className="w-full border-collapse [&_td]:border [&_td]:border-border [&_td]:p-1">
+    <article className="lesson-a4 mx-auto bg-background p-[10mm] text-[11pt] leading-snug text-foreground">
+      <header className="mb-2 border-b-2 border-foreground pb-1 text-center">
+        <h2 className="text-[14pt] font-bold uppercase">{school.name || "School"}</h2>
+        <p className="font-bold">NaCCA Standard-Based Lesson Note · {school.academicYear}</p>
+      </header>
+      <table className="w-full table-fixed border-collapse [&_td]:border [&_td]:border-foreground [&_td]:p-1.5 [&_th]:border [&_th]:border-foreground [&_th]:p-1.5">
         <tbody>
-          <tr><td><b>Class:</b> {className}</td><td><b>Subject:</b> {subject}</td><td><b>Term/Week:</b> {term} / {week}</td></tr>
-          <tr><td><b>Date:</b> {note.date}</td><td><b>Duration:</b> {note.duration}</td><td><b>Class size:</b> {note.classSize}</td></tr>
-          <tr><td colSpan={3}><b>Strand:</b> {note.strand} &nbsp; <b>Sub-strand:</b> {note.subStrand}</td></tr>
-          <tr><td colSpan={3}><b>Content standard:</b> {note.contentStandard} &nbsp; <b>Indicator:</b> {note.indicator}</td></tr>
-          <tr><td colSpan={3}><b>Performance indicator:</b> {note.performanceIndicator}</td></tr>
-          <tr><td colSpan={3}><b>Core competencies:</b> {note.competencies.join("; ")}</td></tr>
-          <tr><td colSpan={3}><b>Keywords:</b> {note.keywords}</td></tr>
-          <tr><td colSpan={3}><b>Resources:</b> {note.resources}</td></tr>
-          <tr><td><b>Phase 1: Starter</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.starter}</td></tr>
-          <tr><td><b>Phase 2: Main</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.main}</td></tr>
-          <tr><td><b>Phase 3: Plenary</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.plenary}</td></tr>
-          <tr><td><b>Reflection</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.reflection}</td></tr>
+          <tr><L>Class</L><td>{className}</td><L>Subject</L><td>{subject}</td></tr>
+          <tr><L>Term / Week</L><td>Term {term} · Week {week}</td><L>Date</L><td>{note.date}</td></tr>
+          <tr><L>Duration</L><td>{note.duration}</td><L>Class size</L><td>{note.classSize}</td></tr>
+          <tr><L>Strand</L><td>{note.strand}</td><L>Sub-strand</L><td>{note.subStrand}</td></tr>
+          <tr><L>Content standard</L><td colSpan={3}>{note.contentStandard}</td></tr>
+          <tr><L>Indicator</L><td colSpan={3}>{note.indicator}</td></tr>
+          <tr><L>Performance indicator</L><td colSpan={3} className="whitespace-pre-wrap">{note.performanceIndicator}</td></tr>
+          <tr><L>Core competencies</L><td colSpan={3}>{note.competencies.join("; ")}</td></tr>
+          <tr><L>Keywords</L><td colSpan={3}>{note.keywords}</td></tr>
+          <tr><L>T/L resources</L><td colSpan={3}>{note.resources}</td></tr>
         </tbody>
       </table>
-      <div className="flex justify-between pt-8">
-        <span>Teacher: {note.teacher} ____________</span>
-        <span>Vetted by Headteacher: ____________ Date: ______</span>
-      </div>
+      <table className="mt-2 w-full table-fixed border-collapse [&_td]:border [&_td]:border-foreground [&_td]:p-1.5 [&_td]:align-top [&_th]:border [&_th]:border-foreground [&_th]:bg-muted [&_th]:p-1.5 [&_th]:text-left">
+        <thead><tr><th className="w-[22%]">Phase / Duration</th><th>Learners' Activities</th></tr></thead>
+        <tbody>
+          <tr><td className="font-bold">Phase 1: Starter<br /><span className="font-normal">(10 mins)</span></td><td className="whitespace-pre-wrap">{note.starter}</td></tr>
+          <tr><td className="font-bold">Phase 2: New Learning<br /><span className="font-normal">(40 mins)</span></td><td className="whitespace-pre-wrap">{note.main}</td></tr>
+          <tr><td className="font-bold">Phase 3: Reflection<br /><span className="font-normal">(10 mins)</span></td><td className="whitespace-pre-wrap">{note.plenary}</td></tr>
+          <tr><td className="font-bold">Teacher's reflection</td><td className="whitespace-pre-wrap">{note.reflection}</td></tr>
+        </tbody>
+      </table>
+      <table className="mt-3 w-full table-fixed border-collapse [&_td]:border [&_td]:border-foreground [&_td]:p-1.5">
+        <tbody>
+          <tr><td><b>Teacher:</b> {note.teacher}</td><td><b>Signature:</b></td><td><b>Date:</b></td></tr>
+          <tr><td><b>Vetted by (Headteacher):</b></td><td><b>Signature:</b></td><td><b>Date:</b></td></tr>
+        </tbody>
+      </table>
     </article>
   );
 
