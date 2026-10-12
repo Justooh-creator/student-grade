@@ -33,6 +33,7 @@ function LessonNotesPage() {
   const [term, setTerm] = useState(1);
   const [week, setWeek] = useState(1);
   const [tab, setTab] = useState<"note" | "scheme">("note");
+  const [previewing, setPreviewing] = useState(false);
   const [all, setAll] = useState<Record<string, LessonNote>>({});
   const [note, setNote] = useState<LessonNote>(() => newNote("b4", subjects[0]!, 1, 1));
 
