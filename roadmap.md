@@ -1,0 +1,3 @@
+- [ ] Correct lesson-note A4 preview and printing without affecting student reports.
+- [ ] Add working PDF and editable Microsoft Word downloads.
+- [ ] Verify document downloads and A4 dimensions.
