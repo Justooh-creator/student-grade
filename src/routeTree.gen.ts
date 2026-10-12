@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DutyRosterRouteImport } from './routes/duty-roster'
 import { Route as FeedbackRouteImport } from './routes/feedback'
-import { Route as LessonNotesRouteImport } from './routes/lesson-notes'
 import { Route as MidtermProgressRouteImport } from './routes/midterm-progress'
 import { Route as PtaAnnouncementRouteImport } from './routes/pta-announcement'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -43,11 +42,6 @@ const DutyRosterRoute = DutyRosterRouteImport.update({
 const FeedbackRoute = FeedbackRouteImport.update({
   id: '/feedback',
   path: '/feedback',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LessonNotesRoute = LessonNotesRouteImport.update({
-  id: '/lesson-notes',
-  path: '/lesson-notes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MidtermProgressRoute = MidtermProgressRouteImport.update({
@@ -106,7 +100,6 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/duty-roster': typeof DutyRosterRoute
   '/feedback': typeof FeedbackRoute
-  '/lesson-notes': typeof LessonNotesRoute
   '/midterm-progress': typeof MidtermProgressRoute
   '/pta-announcement': typeof PtaAnnouncementRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -123,7 +116,6 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/duty-roster': typeof DutyRosterRoute
   '/feedback': typeof FeedbackRoute
-  '/lesson-notes': typeof LessonNotesRoute
   '/midterm-progress': typeof MidtermProgressRoute
   '/pta-announcement': typeof PtaAnnouncementRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -141,7 +133,6 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/duty-roster': typeof DutyRosterRoute
   '/feedback': typeof FeedbackRoute
-  '/lesson-notes': typeof LessonNotesRoute
   '/midterm-progress': typeof MidtermProgressRoute
   '/pta-announcement': typeof PtaAnnouncementRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -160,7 +151,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/duty-roster'
     | '/feedback'
-    | '/lesson-notes'
     | '/midterm-progress'
     | '/pta-announcement'
     | '/reset-password'
@@ -177,7 +167,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/duty-roster'
     | '/feedback'
-    | '/lesson-notes'
     | '/midterm-progress'
     | '/pta-announcement'
     | '/reset-password'
@@ -194,7 +183,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/duty-roster'
     | '/feedback'
-    | '/lesson-notes'
     | '/midterm-progress'
     | '/pta-announcement'
     | '/reset-password'
@@ -212,7 +200,6 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DutyRosterRoute: typeof DutyRosterRoute
   FeedbackRoute: typeof FeedbackRoute
-  LessonNotesRoute: typeof LessonNotesRoute
   MidtermProgressRoute: typeof MidtermProgressRoute
   PtaAnnouncementRoute: typeof PtaAnnouncementRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -253,13 +240,6 @@ declare module '@tanstack/react-router' {
       path: '/feedback'
       fullPath: '/feedback'
       preLoaderRoute: typeof FeedbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lesson-notes': {
-      id: '/lesson-notes'
-      path: '/lesson-notes'
-      fullPath: '/lesson-notes'
-      preLoaderRoute: typeof LessonNotesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/midterm-progress': {
@@ -340,7 +320,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DutyRosterRoute: DutyRosterRoute,
   FeedbackRoute: FeedbackRoute,
-  LessonNotesRoute: LessonNotesRoute,
   MidtermProgressRoute: MidtermProgressRoute,
   PtaAnnouncementRoute: PtaAnnouncementRoute,
   ResetPasswordRoute: ResetPasswordRoute,
