@@ -275,6 +275,9 @@ export function AppHeader({
                 <Link to="/timetable" className={rowCls(pathname.startsWith("/timetable"))}>
                   <RowCell icon={ICON.file} title="Class Timetable" desc="GES schedule, weekly & daily view" />
                 </Link>
+                <Link to="/lesson-notes" className={rowCls(pathname.startsWith("/lesson-notes"))}>
+                  <RowCell icon={ICON.file} title="Lesson Notes" desc="NaCCA weekly notes & termly scheme" />
+                </Link>
                 <Link to="/duty-roster" className={rowCls(pathname.startsWith("/duty-roster"))}>
                   <RowCell
                     icon={ICON.people}
