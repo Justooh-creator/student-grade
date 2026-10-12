@@ -53,7 +53,7 @@ export async function createLessonPdf(note: LessonNote, school: LessonSchool): P
   const table = (body: string[][], widths: number[], head?: string[][]) => {
     autoTable(pdf, {
       startY: y, margin: { top: 10, right: 10, bottom: 12, left: 10 },
-      theme: "grid", body, head, rowPageBreak: "avoid",
+      theme: "grid", body, ...(head ? { head } : {}), rowPageBreak: "avoid",
       styles: { font: "helvetica", fontSize: 10, cellPadding: 2, textColor: 20, lineColor: 30, lineWidth: 0.2, overflow: "linebreak" },
       headStyles: { fillColor: 235, textColor: 20, fontStyle: "bold" },
       columnStyles: Object.fromEntries(widths.map((width, index) => [index, { cellWidth: width, ...(index % 2 === 0 ? { fontStyle: "bold" as const } : {}) }])),
@@ -75,10 +75,11 @@ export async function createLessonWord(note: LessonNote, school: LessonSchool): 
   const paragraph = (text: string, bold = false) => new Paragraph({ spacing: { after: 60 }, children: [new TextRun({ text, bold })] });
   const table = (rows: string[][], proportions: number[], header = false) => {
     const widths = proportions.map((p) => Math.floor(contentWidth * p));
-    widths[widths.length - 1] += contentWidth - widths.reduce((a, b) => a + b, 0);
+    const last = widths.length - 1;
+    widths[last] = (widths[last] ?? 0) + contentWidth - widths.reduce((a, b) => a + b, 0);
     return new Table({ width: { size: contentWidth, type: WidthType.DXA }, columnWidths: widths,
       rows: rows.map((row, ri) => new TableRow({ cantSplit: true, tableHeader: header && ri === 0,
-        children: row.map((text, ci) => new TableCell({ width: { size: widths[ci], type: WidthType.DXA },
+        children: row.map((text, ci) => new TableCell({ width: { size: widths[ci] ?? contentWidth, type: WidthType.DXA },
           borders: { top: border, bottom: border, left: border, right: border },
           margins: { top: 80, bottom: 80, left: 100, right: 100 },
           ...(header && ri === 0 ? { shading: { fill: "EBEBEB", type: ShadingType.CLEAR } } : {}),
