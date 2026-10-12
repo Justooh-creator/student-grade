@@ -91,6 +91,13 @@ export function LicenseCard({ lic, onActivated }: { lic: LicenseState; onActivat
 
       <div className="mt-4 rounded-md border border-border p-3">
         <p className="text-sm font-bold">Pay MTN Mobile Money</p>
+        <div role="note" className="mt-2 rounded-md border-l-4 border-accent bg-accent/15 p-3 text-sm shadow-sm">
+          <p className="font-bold">💡 Note for Schools &amp; Teachers</p>
+          <ul className="mt-1 list-disc space-y-1 pl-5">
+            <li><b>Headteachers:</b> register your school on School Cloud first, then buy a School plan so it covers your whole school.</li>
+            <li><b>Teachers:</b> once your school is activated, join with the School Code and Save/Print unlocks automatically — no extra payment.</li>
+          </ul>
+        </div>
         <label className="mt-2 block text-sm font-bold">Choose a plan
           <select
             value={planId}
