@@ -133,27 +133,19 @@
 
 h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
 
-/* Larger, easier-to-read screen text (report card uses pt sizes, unaffected) */
+/* Normalised screen type scale (report card uses pt sizes, unaffected) */
 @theme {
   --text-xs: 0.875rem;
-  --text-xs--line-height: 1.35;
-  --text-sm: 1rem;
+  --text-xs--line-height: 1.4;
+  --text-sm: 0.9375rem;
   --text-sm--line-height: 1.5;
-  --text-base: 1.0625rem;
+  --text-base: 1rem;
   --text-base--line-height: 1.55;
-}
-
-/* Mobile readability boost — screen only, never inside the printed report card */
-@theme {
-  --text-xs: 0.95rem;
-  --text-sm: 1.0625rem;
-  --text-base: 1.125rem;
-  --text-lg: 1.25rem;
+  --text-lg: 1.125rem;
 }
 @media screen {
-  body { font-size: 1.0625rem; }
-  :is(.text-\[10px\], .text-\[11px\]):not(.print-sheet, .print-sheet *) { font-size: 14px !important; }
-  :is(.text-\[12px\], .text-\[13px\]):not(.print-sheet, .print-sheet *) { font-size: 15.5px !important; }
-  :is(input, select, textarea, button):not(.print-sheet *) { font-size: max(1em, 17px); }
-  :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select):not(.print-sheet *) { min-height: 2.9rem; }
+  body { font-size: 1rem; }
+  :is(.text-\[10px\], .text-\[11px\], .text-\[12px\], .text-\[13px\]):not(.print-sheet, .print-sheet *) { font-size: 0.875rem !important; }
+  :is(input, select, textarea, button):not(.print-sheet *) { font-size: 1rem; }
+  :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select):not(.print-sheet *) { min-height: 2.75rem; }
 }
