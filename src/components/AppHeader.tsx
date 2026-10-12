@@ -14,8 +14,10 @@ const tabIdle = `${tabBase} border-transparent text-primary-foreground/70 hover:
 const tabActive = `${tabBase} border-accent text-primary-foreground`;
 
 const rowCls = (active: boolean) =>
-  `group flex items-center gap-3 rounded-lg border px-2.5 py-2 text-left transition-colors ${
-    active ? "border-accent/40 bg-accent/10" : "border-transparent hover:border-border hover:bg-muted"
+  `group flex items-center gap-3 rounded-lg border border-l-4 px-2.5 py-2 text-left transition-colors ${
+    active
+      ? "is-active border-primary/50 border-l-primary bg-primary/10 shadow-sm"
+      : "border-transparent hover:border-border hover:bg-muted"
   }`;
 
 function SectionLabel({ children }: { children: ReactNode }) {
@@ -115,14 +117,14 @@ function RowCell({ icon, title, desc, note }: { icon: ReactNode; title: string; 
     <>
       <span
         aria-hidden
-        className="h-2 w-2 shrink-0 rotate-45 border border-accent/70 transition-all duration-200 group-hover:rotate-[135deg] group-hover:bg-accent/40"
+        className="h-2 w-2 shrink-0 rotate-45 border border-accent/70 transition-all duration-200 group-hover:rotate-[135deg] group-hover:bg-accent/40 group-[.is-active]:border-primary group-[.is-active]:bg-primary"
       />
-      <span aria-hidden className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-primary">
+      <span aria-hidden className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-primary group-[.is-active]:border-primary group-[.is-active]:bg-primary group-[.is-active]:text-primary-foreground">
         {icon}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-sm font-bold leading-tight">{title}</span>
-        <span className="mt-0.5 block truncate text-[13px] leading-snug text-muted-foreground">{desc}</span>
+        <span className="block font-display text-[15px] font-semibold leading-tight tracking-tight group-[.is-active]:text-primary">{title}</span>
+        <span className="mt-0.5 block truncate text-[12.5px] leading-snug text-muted-foreground">{desc}</span>
       </span>
       {note ? (
         <span className="shrink-0 rounded-full bg-accent px-2 py-0.5 text-[12px] font-bold text-accent-foreground">
