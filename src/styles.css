@@ -113,6 +113,15 @@
     display: none !important;
   }
 
+  /* Column headings (Subject, SBA Raw, SBA, Exam Raw, Exam, Total, Grade, Remark) and the
+   * Fees band print as white text on an inked bar. Without exact colour adjustment the
+   * browser drops the bar and the headings fade to near-white on paper. */
+  .print-sheet,
+  .print-sheet * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
   .print-sheet {
     box-shadow: none !important;
     margin: 0 !important;
