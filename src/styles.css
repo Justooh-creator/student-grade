@@ -157,21 +157,3 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
   :is(input, select, textarea, button):not(.print-sheet *) { font-size: max(1em, 17px); }
   :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select):not(.print-sheet *) { min-height: 2.9rem; }
 }
-
-.lesson-a4 {
-  width: 210mm;
-  min-height: 297mm;
-  box-sizing: border-box;
-  background: var(--paper);
-  color: var(--foreground);
-  overflow-wrap: anywhere;
-}
-@media print {
-  .lesson-notes-page main { max-width: none; margin: 0; padding: 0; }
-  .lesson-notes-page .print-only { display: block !important; }
-  .lesson-notes-page .lesson-a4 { width: 210mm; max-width: none; min-height: 297mm; padding: 10mm; font-size: 11pt; }
-  .lesson-notes-page:has(.lesson-a4) { background: var(--paper); }
-  .lesson-a4 table { page-break-inside: auto; }
-  .lesson-a4 tr { page-break-inside: avoid; }
-  .lesson-a4 td.bg-muted, .lesson-a4 th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-}
