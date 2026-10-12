@@ -33,6 +33,7 @@ function LessonNotesPage() {
   const [term, setTerm] = useState(1);
   const [week, setWeek] = useState(1);
   const [tab, setTab] = useState<"note" | "scheme">("note");
+  const [previewing, setPreviewing] = useState(false);
   const [all, setAll] = useState<Record<string, LessonNote>>({});
   const [note, setNote] = useState<LessonNote>(() => newNote("b4", subjects[0]!, 1, 1));
 
@@ -62,6 +63,32 @@ function LessonNotesPage() {
     toast("Copied last week's note");
   };
   const className = getClassLevel(classId).name;
+
+  const noteArticle = (
+    <article className="space-y-2 bg-background p-4 text-sm">
+      <h2 className="text-center text-lg font-bold">{school.name || "School"} — Lesson Note</h2>
+      <table className="w-full border-collapse [&_td]:border [&_td]:border-border [&_td]:p-1">
+        <tbody>
+          <tr><td><b>Class:</b> {className}</td><td><b>Subject:</b> {subject}</td><td><b>Term/Week:</b> {term} / {week}</td></tr>
+          <tr><td><b>Date:</b> {note.date}</td><td><b>Duration:</b> {note.duration}</td><td><b>Class size:</b> {note.classSize}</td></tr>
+          <tr><td colSpan={3}><b>Strand:</b> {note.strand} &nbsp; <b>Sub-strand:</b> {note.subStrand}</td></tr>
+          <tr><td colSpan={3}><b>Content standard:</b> {note.contentStandard} &nbsp; <b>Indicator:</b> {note.indicator}</td></tr>
+          <tr><td colSpan={3}><b>Performance indicator:</b> {note.performanceIndicator}</td></tr>
+          <tr><td colSpan={3}><b>Core competencies:</b> {note.competencies.join("; ")}</td></tr>
+          <tr><td colSpan={3}><b>Keywords:</b> {note.keywords}</td></tr>
+          <tr><td colSpan={3}><b>Resources:</b> {note.resources}</td></tr>
+          <tr><td><b>Phase 1: Starter</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.starter}</td></tr>
+          <tr><td><b>Phase 2: Main</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.main}</td></tr>
+          <tr><td><b>Phase 3: Plenary</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.plenary}</td></tr>
+          <tr><td><b>Reflection</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.reflection}</td></tr>
+        </tbody>
+      </table>
+      <div className="flex justify-between pt-8">
+        <span>Teacher: {note.teacher} ____________</span>
+        <span>Vetted by Headteacher: ____________ Date: ______</span>
+      </div>
+    </article>
+  );
 
   const Field = ({ label, k, rows }: { label: string; k: keyof LessonNote; rows?: number }) => (
     <label className="block">
@@ -124,6 +151,7 @@ function LessonNotesPage() {
           </section>
         ) : (
           <>
+            {!previewing ? (
             <section className="no-print space-y-3 rounded-lg border border-border bg-card p-4">
               <div className="grid gap-3 sm:grid-cols-3">
                 <label className="block"><span className="mb-1 block text-sm font-bold">Date</span><input type="date" className={inp} value={note.date} onChange={(e) => set("date", e.target.value)} /></label>
@@ -156,35 +184,28 @@ function LessonNotesPage() {
               {Field({ label: "Teacher's name", k: "teacher" })}
               <div className="flex flex-wrap gap-2">
                 <button onClick={save} className="rounded-md bg-primary px-4 py-2 font-bold text-primary-foreground">💾 Save</button>
+                <button onClick={() => setPreviewing(true)} className="rounded-md border border-border px-4 py-2 font-bold">👁️ Preview</button>
                 <button onClick={() => window.print()} className="rounded-md border border-border px-4 py-2 font-bold">🖨️ Print A4</button>
                 <button onClick={copyLast} disabled={week === 1} className="rounded-md border border-border px-4 py-2 font-bold disabled:opacity-50">Copy last week</button>
                 <button onClick={reload} className="rounded-md border border-border px-4 py-2 font-bold">Reload from scheme</button>
               </div>
             </section>
+            ) : (
+              <section className="no-print space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  <button onClick={() => setPreviewing(false)} className="rounded-md border border-border px-4 py-2 font-bold">✏️ Back to editing</button>
+                  <button onClick={() => window.print()} className="rounded-md bg-primary px-4 py-2 font-bold text-primary-foreground">🖨️ Print / Save PDF</button>
+                </div>
+                <p className="text-sm text-muted-foreground">This is exactly how the printed A4 lesson note will look.</p>
+                <div className="rounded-lg border border-border bg-card p-2 sm:p-4">
+                  <div className="mx-auto w-full max-w-[210mm] rounded-md bg-background shadow-md">
+                    {noteArticle}
+                  </div>
+                </div>
+              </section>
+            )}
 
-            <article className="print-only hidden space-y-2 bg-background p-4 text-sm print:block">
-              <h2 className="text-center text-lg font-bold">{school.name || "School"} — Lesson Note</h2>
-              <table className="w-full border-collapse [&_td]:border [&_td]:border-border [&_td]:p-1">
-                <tbody>
-                  <tr><td><b>Class:</b> {className}</td><td><b>Subject:</b> {subject}</td><td><b>Term/Week:</b> {term} / {week}</td></tr>
-                  <tr><td><b>Date:</b> {note.date}</td><td><b>Duration:</b> {note.duration}</td><td><b>Class size:</b> {note.classSize}</td></tr>
-                  <tr><td colSpan={3}><b>Strand:</b> {note.strand} &nbsp; <b>Sub-strand:</b> {note.subStrand}</td></tr>
-                  <tr><td colSpan={3}><b>Content standard:</b> {note.contentStandard} &nbsp; <b>Indicator:</b> {note.indicator}</td></tr>
-                  <tr><td colSpan={3}><b>Performance indicator:</b> {note.performanceIndicator}</td></tr>
-                  <tr><td colSpan={3}><b>Core competencies:</b> {note.competencies.join("; ")}</td></tr>
-                  <tr><td colSpan={3}><b>Keywords:</b> {note.keywords}</td></tr>
-                  <tr><td colSpan={3}><b>Resources:</b> {note.resources}</td></tr>
-                  <tr><td><b>Phase 1: Starter</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.starter}</td></tr>
-                  <tr><td><b>Phase 2: Main</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.main}</td></tr>
-                  <tr><td><b>Phase 3: Plenary</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.plenary}</td></tr>
-                  <tr><td><b>Reflection</b></td><td colSpan={2} className="whitespace-pre-wrap">{note.reflection}</td></tr>
-                </tbody>
-              </table>
-              <div className="flex justify-between pt-8">
-                <span>Teacher: {note.teacher} ____________</span>
-                <span>Vetted by Headteacher: ____________ Date: ______</span>
-              </div>
-            </article>
+            <div className="print-only hidden print:block">{noteArticle}</div>
           </>
         )}
       </main>
