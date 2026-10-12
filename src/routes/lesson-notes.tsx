@@ -184,11 +184,26 @@ function LessonNotesPage() {
               {Field({ label: "Teacher's name", k: "teacher" })}
               <div className="flex flex-wrap gap-2">
                 <button onClick={save} className="rounded-md bg-primary px-4 py-2 font-bold text-primary-foreground">💾 Save</button>
+                <button onClick={() => setPreviewing(true)} className="rounded-md border border-border px-4 py-2 font-bold">👁️ Preview</button>
                 <button onClick={() => window.print()} className="rounded-md border border-border px-4 py-2 font-bold">🖨️ Print A4</button>
                 <button onClick={copyLast} disabled={week === 1} className="rounded-md border border-border px-4 py-2 font-bold disabled:opacity-50">Copy last week</button>
                 <button onClick={reload} className="rounded-md border border-border px-4 py-2 font-bold">Reload from scheme</button>
               </div>
             </section>
+            ) : (
+              <section className="no-print space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  <button onClick={() => setPreviewing(false)} className="rounded-md border border-border px-4 py-2 font-bold">✏️ Back to editing</button>
+                  <button onClick={() => window.print()} className="rounded-md bg-primary px-4 py-2 font-bold text-primary-foreground">🖨️ Print / Save PDF</button>
+                </div>
+                <p className="text-sm text-muted-foreground">This is exactly how the printed A4 lesson note will look.</p>
+                <div className="rounded-lg border border-border bg-card p-2 sm:p-4">
+                  <div className="mx-auto w-full max-w-[210mm] rounded-md bg-background shadow-md">
+                    {noteArticle}
+                  </div>
+                </div>
+              </section>
+            )}
 
             <div className="print-only hidden print:block">{noteArticle}</div>
           </>
