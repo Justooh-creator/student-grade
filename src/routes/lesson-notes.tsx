@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { AppHeader } from "@/components/AppHeader";
+import { Button } from "@/components/ui/button";
+import { Download, FileText } from "lucide-react";
+import { exportLessonNote } from "@/lib/lessonNoteExport";
 import { useAppData } from "@/lib/store";
 import { CLASS_LEVELS, getClassLevel, type ClassId } from "@/lib/ges";
 import {
@@ -34,6 +37,7 @@ function LessonNotesPage() {
   const [week, setWeek] = useState(1);
   const [tab, setTab] = useState<"note" | "scheme">("note");
   const [previewing, setPreviewing] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [all, setAll] = useState<Record<string, LessonNote>>({});
   const [note, setNote] = useState<LessonNote>(() => newNote("b4", subjects[0]!, 1, 1));
 
@@ -63,10 +67,21 @@ function LessonNotesPage() {
     toast("Copied last week's note");
   };
   const className = getClassLevel(classId).name;
+  const exportFile = async (format: "pdf" | "docx") => {
+    setExporting(true);
+    try { await exportLessonNote(format, note, { name: school.name, academicYear: school.academicYear }); }
+    catch (error) {
+      if (!(error instanceof Error && error.name === "AbortError")) toast.error("Download failed. Please try again.");
+    } finally { setExporting(false); }
+  };
+  const downloadButtons = <>
+    <Button variant="outline" disabled={exporting} onClick={() => exportFile("pdf")}><Download />{exporting ? "Preparing…" : "Download PDF"}</Button>
+    <Button variant="outline" disabled={exporting} onClick={() => exportFile("docx")}><FileText />MS Word</Button>
+  </>;
 
   const L = ({ children }: { children: React.ReactNode }) => <td className="w-[22%] bg-muted font-bold align-top">{children}</td>;
   const noteArticle = (
-    <article className="lesson-a4 mx-auto bg-background p-[10mm] text-[11pt] leading-snug text-foreground">
+    <article className="lesson-a4 mx-auto p-[10mm] text-[11pt] leading-snug">
       <header className="mb-2 border-b-2 border-foreground pb-1 text-center">
         <h2 className="text-[14pt] font-bold uppercase">{school.name || "School"}</h2>
         <p className="font-bold">NaCCA Standard-Based Lesson Note · {school.academicYear}</p>
@@ -115,7 +130,7 @@ function LessonNotesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="lesson-notes-page min-h-screen bg-background">
       <div className="no-print"><AppHeader schoolName={school.name} term={school.term} year={school.academicYear} /></div>
       <main className="mx-auto max-w-4xl space-y-4 px-4 py-5">
         <div className="no-print space-y-3">
@@ -199,6 +214,7 @@ function LessonNotesPage() {
                 <button onClick={save} className="rounded-md bg-primary px-4 py-2 font-bold text-primary-foreground">💾 Save</button>
                 <button onClick={() => setPreviewing(true)} className="rounded-md border border-border px-4 py-2 font-bold">👁️ Preview</button>
                 <button onClick={() => window.print()} className="rounded-md border border-border px-4 py-2 font-bold">🖨️ Print A4</button>
+                 {downloadButtons}
                 <button onClick={copyLast} disabled={week === 1} className="rounded-md border border-border px-4 py-2 font-bold disabled:opacity-50">Copy last week</button>
                 <button onClick={reload} className="rounded-md border border-border px-4 py-2 font-bold">Reload from scheme</button>
               </div>
@@ -207,11 +223,11 @@ function LessonNotesPage() {
               <section className="no-print space-y-3">
                 <div className="flex flex-wrap gap-2">
                   <button onClick={() => setPreviewing(false)} className="rounded-md border border-border px-4 py-2 font-bold">✏️ Back to editing</button>
-                  <button onClick={() => window.print()} className="rounded-md bg-primary px-4 py-2 font-bold text-primary-foreground">🖨️ Print / Save PDF</button>
+                   <Button onClick={() => window.print()}>🖨️ Print A4</Button>
+                   {downloadButtons}
                 </div>
-                <p className="text-sm text-muted-foreground">This is exactly how the printed A4 lesson note will look.</p>
-                <div className="rounded-lg border border-border bg-card p-2 sm:p-4">
-                  <div className="mx-auto w-full max-w-[210mm] rounded-md bg-background shadow-md">
+                 <div className="lesson-preview overflow-x-auto border border-border bg-muted p-2 sm:p-4">
+                   <div className="mx-auto w-[210mm] shadow-md">
                     {noteArticle}
                   </div>
                 </div>
