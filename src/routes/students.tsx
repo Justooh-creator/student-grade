@@ -9,6 +9,7 @@ import { useAppData, type Student } from "@/lib/store";
 import { passportPhoto, extractSignature } from "@/lib/images";
 import { ClassLock } from "@/components/ClassLock";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/students")({
   validateSearch: validateClassSearch,
@@ -106,30 +107,34 @@ function StudentsPage() {
           )}
           {list.map((s, i) => (
             <div key={s.id} className="rounded-xl border border-border bg-card p-4">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-16 w-14 items-center justify-center overflow-hidden rounded border border-dashed border-border bg-background text-center text-[11px] font-bold text-muted-foreground">
+              <div className="flex items-start gap-3">
+                  <div className="flex h-16 w-14 shrink-0 items-center justify-center overflow-hidden rounded border border-dashed border-border bg-background text-center text-[11px] font-bold text-muted-foreground">
                     {s.photo ? <img src={s.photo} alt={`${s.name} passport`} className="h-full w-full object-cover" /> : "No photo"}
                   </div>
-                  <div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-2">
                     <p className="text-sm font-bold"><span className="num text-muted-foreground">{i + 1}.</span> {s.name}</p>
+                    <Button variant="ghost" size="icon" onClick={() => removeStudent(s.id)} className="shrink-0 text-muted-foreground hover:text-destructive" aria-label={`Remove ${s.name}`}>✕</Button>
+                    </div>
                     <div className="mt-1 flex flex-wrap items-center gap-2">
-                      <label className="cursor-pointer rounded-md bg-primary px-2 py-1 text-[13px] font-bold text-primary-foreground hover:opacity-90">
+                      <Button asChild className="px-2 text-[13px] font-bold">
+                      <label>
                         📷 Snap photo
                         <input type="file" accept="image/*" capture="environment" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) { updateStudent(s.id, { photo: await passportPhoto(f) }); toast.success("Photo added to report card"); } }} />
                       </label>
-                      <label className="cursor-pointer rounded-md border border-border px-2 py-1 text-[13px] font-bold hover:bg-muted">
+                      </Button>
+                      <Button asChild variant="outline" className="px-2 text-[13px] font-bold">
+                      <label>
                         🖼 Upload photo
                         <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) { updateStudent(s.id, { photo: await passportPhoto(f) }); toast.success("Photo added to report card"); } }} />
                       </label>
+                      </Button>
+                      <Button asChild variant="outline" className="px-2 text-[13px] font-semibold text-primary">
+                        <Link to="/" search={{ class: classId, student: s.id }}>Enter SBA</Link>
+                      </Button>
                       {s.photo && <button onClick={() => updateStudent(s.id, { photo: "" })} className="text-[13px] text-muted-foreground hover:text-destructive">Remove</button>}
                     </div>
                   </div>
-                </div>
-                <div className="flex gap-2">
-                  <Link to="/" search={{ class: classId, student: s.id }} className="rounded border border-border px-2 py-1 text-[13px] font-semibold text-primary hover:bg-primary/5">Enter SBA</Link>
-                  <button onClick={() => removeStudent(s.id)} className="rounded px-2 py-1 text-[13px] text-muted-foreground hover:text-destructive" aria-label={`Remove ${s.name}`}>✕</button>
-                </div>
               </div>
               <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 <TextField label="Name" value={s.name} onChange={(v) => updateStudent(s.id, { name: v })} />
