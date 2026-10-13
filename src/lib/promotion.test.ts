@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { nextAcademicYear, rolloverStudents, rolloverSummary } from "./promotion";
 import type { Student } from "./store";
 
-const s = (id: string, classId: Student["classId"], promotion: Student["promotion"]): Student => ({
+const s = (id: string, classId: Student["classId"], promotion?: "promoted" | "retained" | "tbd"): Student => ({
   id, name: id, admissionNo: "A1", classId, attendance: "50", conduct: "Good", interest: "Reading", remark: "Nice",
-  scores: { Mathematics: { sba: 40, exam: 40 } }, promotion, parentPhone: "0240000000",
+  scores: { Mathematics: { sba: 40, exam: 40 } }, parentPhone: "0240000000", ...(promotion ? { promotion } : {}),
 });
 
 describe("term 3 rollover", () => {
@@ -29,7 +29,7 @@ describe("term 3 rollover", () => {
   });
   it("blocks when a learner is undecided", () => {
     expect(() => rolloverStudents([s("a", "b1", "tbd")])).toThrow();
-    expect(rolloverSummary([s("a", "b1", undefined)]).undecided).toHaveLength(1);
+    expect(rolloverSummary([s("a", "b1")]).undecided).toHaveLength(1);
   });
   it("academic year advances by one", () => {
     expect(nextAcademicYear("2025/2026")).toBe("2026/2027");
