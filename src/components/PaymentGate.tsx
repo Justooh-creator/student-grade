@@ -1,4 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { useUser } from "@/lib/auth";
 import { recordPrint, useLicense } from "@/lib/license";
 import { useAppData } from "@/lib/store";
@@ -40,8 +41,14 @@ export function PrintButton({ label = "Print / Save whole class as PDF (A4)" }: 
     );
   }
 
-  const onPrint = () => {
-    recordPrint(`${school.academicYear} ${school.term}`).catch(() => { /* offline: print still allowed */ });
+  const onPrint = async () => {
+    try {
+      const r = await recordPrint(`${school.academicYear} ${school.term}`);
+      if (r.blocked) {
+        toast.error(`Your 1-term license is for ${r.lockedTerm}. Buy a new term or a 3-term plan to print ${school.academicYear} ${school.term}.`);
+        return;
+      }
+    } catch { /* offline: print still allowed */ }
     printReports();
   };
 

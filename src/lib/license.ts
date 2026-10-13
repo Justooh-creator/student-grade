@@ -49,8 +49,11 @@ export async function redeemCode(code: string): Promise<LicenseState> {
 }
 
 /** Record the first save/print of this term (starts the 15-day window; reprints never reset it). */
-export async function recordPrint(termKey: string): Promise<void> {
-  await supabase.rpc("record_print", { _term_key: termKey });
+export async function recordPrint(termKey: string): Promise<{ blocked: boolean; lockedTerm?: string | undefined }> {
+  const { data, error } = await supabase.rpc("record_print", { _term_key: termKey });
+  if (error) throw new Error(error.message);
+  const d = (data ?? {}) as Record<string, unknown>;
+  return { blocked: d["term_blocked"] === true, lockedTerm: d["locked_term"] as string | undefined };
 }
 
 

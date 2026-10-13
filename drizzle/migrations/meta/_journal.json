@@ -99,6 +99,13 @@
       "when": 1791755813764,
       "tag": "0013_backfill_strip_existing_images",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1791900867654,
+      "tag": "0014_strict_single_term_lock",
+      "breakpoints": true
     }
   ]
 }
