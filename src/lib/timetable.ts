@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CLASS_LEVELS, getClassLevel, isJhs, isKg, type ClassId } from "./ges";
+import { getClassLevel, isJhs, isKg, schoolClassIds, type ClassId } from "./ges";
 import type { School } from "./store";
 
 export const TT_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"] as const;

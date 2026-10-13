@@ -1,24 +1,38 @@
-import { CLASS_LEVELS, getClassLevel, usesCat, type ClassId } from "@/lib/ges";
+import { CLASS_LEVELS, classShortLabel, getClassLevel, schoolClassIds, usesCat, type ClassId } from "@/lib/ges";
 
-export function ClassPicker({ value, onChange }: { value: ClassId; onChange: (c: ClassId) => void }) {
+export function ClassPicker({
+  value,
+  onChange,
+  classes,
+}: {
+  value: ClassId;
+  onChange: (c: ClassId) => void;
+  /** Classes to show; defaults to the 11 single-stream levels. */
+  classes?: ClassId[];
+}) {
   const level = getClassLevel(value);
+  const list = classes ?? CLASS_LEVELS.map((c) => c.id);
+  const streamed = list.length > CLASS_LEVELS.length;
   return (
     <section className="mt-5">
       <h2 className="text-[13px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Class</h2>
       <div className="mt-2 grid grid-cols-3 gap-1.5 sm:grid-cols-6 lg:grid-cols-11">
-        {CLASS_LEVELS.map((c) => (
-          <button
-            key={c.id}
-            onClick={() => onChange(c.id)}
-            className={
-              c.id === value
-                ? "rounded-md bg-primary px-2 py-2.5 text-sm font-semibold text-primary-foreground"
-                : "rounded-md border border-border bg-card px-2 py-2.5 text-sm font-medium text-foreground hover:border-primary/40"
-            }
-          >
-            {c.name}
-          </button>
-        ))}
+        {list.map((id) => {
+          const c = getClassLevel(id);
+          return (
+            <button
+              key={id}
+              onClick={() => onChange(id)}
+              className={
+                id === value
+                  ? "rounded-md bg-primary px-2 py-2.5 text-sm font-semibold text-primary-foreground"
+                  : "rounded-md border border-border bg-card px-2 py-2.5 text-sm font-medium text-foreground hover:border-primary/40"
+              }
+            >
+              {streamed ? classShortLabel(id) : c.name}
+            </button>
+          );
+        })}
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
         {level.stage} · {level.subjects.length} subjects · {usesCat(value) ? "SBA 50 (Tests, Project, Group) + Exam 50 = 100" : "Performance levels: Gold · Silver · Bronze"}
@@ -50,3 +64,5 @@ export function TextField({
     </label>
   );
 }
+
+export { schoolClassIds };
