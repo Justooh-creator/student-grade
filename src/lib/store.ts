@@ -28,6 +28,8 @@ export interface School {
   classAssignments?: Record<string, string[]>;
   /** JHS (Basic 7–9): class id -> subject -> cloud user ids allowed to enter marks for that subject */
   subjectAssignments?: Record<string, Record<string, string[]>>;
+  /** Number of parallel streams per level: 1 (single), 2 (A & B), 3 (A, B & C). Missing = 1. */
+  streams?: number;
   /** class id -> edited weekly timetable (missing = GES default) */
   timetables?: Record<string, import("./timetable").Timetable>;
 }
