@@ -4,7 +4,7 @@ import type { Student } from "./store";
 
 const s = (id: string, classId: Student["classId"], promotion?: "promoted" | "retained" | "tbd"): Student => ({
   id, name: id, admissionNo: "A1", classId, attendance: "50", conduct: "Good", interest: "Reading", remark: "Nice",
-  scores: { Mathematics: { sba: 40, exam: 40 } }, parentPhone: "0240000000", ...(promotion ? { promotion } : {}),
+  scores: { Mathematics: { sba: 40, exam: 40 } }, parentPhone: "0240000000", ...(promotion ? { promotion: promotion as "promoted" } : {}),
 });
 
 describe("term 3 rollover", () => {
