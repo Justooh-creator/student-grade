@@ -1,4 +1,4 @@
-export type ClassId =
+export type BaseClassId =
   | "kg1"
   | "kg2"
   | "b1"
@@ -10,6 +10,60 @@ export type ClassId =
   | "b7"
   | "b8"
   | "b9";
+
+/** Class ids may carry a stream suffix — "b1a", "b1b", "b1c" — for schools running parallel classes (Basic 1A, Basic 1B, …). */
+export type ClassId = BaseClassId | `${BaseClassId}a` | `${BaseClassId}b` | `${BaseClassId}c`;
+
+export const STREAM_LETTERS = ["a", "b", "c"] as const;
+export type StreamLetter = (typeof STREAM_LETTERS)[number];
+
+const CLASS_ID_RE = /^(kg1|kg2|b[1-9])([abc])?$/;
+
+export function parseClassId(id: string): { base: BaseClassId; stream: StreamLetter | null } | null {
+  const m = CLASS_ID_RE.exec(id.trim());
+  if (!m) return null;
+  return { base: m[1] as BaseClassId, stream: (m[2] as StreamLetter | undefined) ?? null };
+}
+
+export function isValidClassId(id: string): boolean {
+  return CLASS_ID_RE.test(id.trim());
+}
+
+export function baseClassId(id: string): BaseClassId {
+  return parseClassId(id)?.base ?? "kg1";
+}
+
+export function classStream(id: string): StreamLetter | null {
+  return parseClassId(id)?.stream ?? null;
+}
+
+/** All class ids for a stream setting: 11 levels × stream count, in order. */
+export function allClassIds(streams = 1): ClassId[] {
+  const n = Math.min(3, Math.max(1, Math.round(streams || 1)));
+  return CLASS_LEVELS.flatMap((c) =>
+    n === 1 ? [c.id] : STREAM_LETTERS.slice(0, n).map((s) => `${c.id}${s}` as ClassId),
+  );
+}
+
+export function schoolClassIds(school: { streams?: number }): ClassId[] {
+  return allClassIds(school.streams ?? 1);
+}
+
+/** e.g. "b1a" → "Basic 1A". */
+export function classDisplayName(id: string): string {
+  const parsed = parseClassId(id);
+  const base = parsed?.base ?? "kg1";
+  const name = CLASS_LEVELS.find((c) => c.id === base)?.name ?? "KG 1";
+  return parsed?.stream ? `${name}${parsed.stream.toUpperCase()}` : name;
+}
+
+/** Compact picker label: "b1a" → "B1A", "kg2b" → "KG2B", "b4" → "Basic 4". */
+export function classShortLabel(id: string): string {
+  const parsed = parseClassId(id);
+  const base = parsed?.base ?? "kg1";
+  const short = base === "kg1" ? "KG1" : base === "kg2" ? "KG2" : `B${base.slice(1)}`;
+  return parsed?.stream ? `${short}${parsed.stream.toUpperCase()}` : short;
+}
 
 export interface ClassLevel {
   id: ClassId;
