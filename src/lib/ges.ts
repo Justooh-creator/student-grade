@@ -134,13 +134,17 @@ export const CLASS_LEVELS: ClassLevel[] = [
 ];
 
 export function getClassLevel(id: ClassId): ClassLevel {
-  return CLASS_LEVELS.find((c) => c.id === id) ?? CLASS_LEVELS[0]!;
+  const base = CLASS_LEVELS.find((c) => c.id === baseClassId(id)) ?? CLASS_LEVELS[0]!;
+  const valid = isValidClassId(id);
+  return { ...base, id: valid ? id : base.id, name: valid ? classDisplayName(id) : base.name };
 }
 
 export function nextClassName(id: ClassId): string {
-  const index = CLASS_LEVELS.findIndex((c) => c.id === id);
+  const { base, stream } = parseClassId(id) ?? { base: baseClassId(id), stream: null };
+  const index = CLASS_LEVELS.findIndex((c) => c.id === base);
   if (index < 0 || index === CLASS_LEVELS.length - 1) return "Completed Basic 9";
-  return CLASS_LEVELS[index + 1]!.name;
+  const next = CLASS_LEVELS[index + 1]!;
+  return stream ? `${next.name}${stream.toUpperCase()}` : next.name;
 }
 
 export interface GradeBand {
@@ -248,13 +252,16 @@ export type CatPart = (typeof CAT_PARTS)[number]["key"];
 export const CAT_SBA_MAX = 50;
 export const CAT_EXAM_MAX = 50;
 export function usesCat(id: ClassId): boolean {
-  return id !== "kg1" && id !== "kg2";
+  const base = baseClassId(id);
+  return base !== "kg1" && base !== "kg2";
 }
 export function isJhs(id: ClassId): boolean {
-  return id === "b7" || id === "b8" || id === "b9";
+  const base = baseClassId(id);
+  return base === "b7" || base === "b8" || base === "b9";
 }
 export function isKg(id: ClassId): boolean {
-  return id === "kg1" || id === "kg2";
+  const base = baseClassId(id);
+  return base === "kg1" || base === "kg2";
 }
 
 /** KG 1–2 authentic continuous assessment (NaCCA): teacher selects a level per learning area. No SBA/Exam formula, no numeric grade or aggregate. */
