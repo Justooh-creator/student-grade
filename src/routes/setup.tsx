@@ -10,6 +10,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { extractSignature } from "@/lib/images";
 import { GHANA_REGIONS, REGION_NAMES } from "@/lib/ghana";
+import { PromotionRollover } from "@/components/PromotionRollover";
 
 function shrinkImage(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -295,6 +296,7 @@ function SetupPage() {
             </Link>
           </div>
         </section>
+        {school.term === "Term 3" && <PromotionRollover year={school.academicYear} />}
       </main>
     </div>
   );
