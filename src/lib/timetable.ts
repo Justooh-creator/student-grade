@@ -73,16 +73,16 @@ export function upcomingLessons(school: School, userId: string | null | undefine
   if (!day) return [];
   const nowMin = now.getHours() * 60 + now.getMinutes();
   const out: LessonAlert[] = [];
-  for (const c of CLASS_LEVELS) {
-    if (!isJhs(c.id)) continue;
-    const subs = school.subjectAssignments?.[c.id] ?? {};
-    const tt = getTimetable(school, c.id);
+  for (const c of schoolClassIds(school)) {
+    if (!isJhs(c)) continue;
+    const subs = school.subjectAssignments?.[c] ?? {};
+    const tt = getTimetable(school, c);
     tt.periods.forEach((p, i) => {
       const subject = tt.cells[day]?.[i] ?? "";
       if (p.isBreak || !subject || isBreakLabel(subject)) return;
       if (!(subs[subject] ?? []).includes(userId)) return;
       const diff = toMin(p.start) - nowMin;
-      if (diff >= 0 && diff <= within) out.push({ classId: c.id, className: c.name, subject, start: p.start, minutes: diff });
+      if (diff >= 0 && diff <= within) out.push({ classId: c, className: getClassLevel(c).name, subject, start: p.start, minutes: diff });
     });
   }
   return out;
