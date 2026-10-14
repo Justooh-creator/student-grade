@@ -10,9 +10,11 @@ import { SchoolAdmin } from "@/components/SchoolAdmin";
 import { LicenseCard } from "@/components/LicenseCard";
 import { useLicense } from "@/lib/license";
 
-export const Route = createFileRoute("/school-cloud")({
+export const Route = createFileRoute("/_authenticated/school-cloud")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "School Cloud — EduReport" },
       { name: "description", content: "Create or join your school's cloud so every teacher's marks sync live." },
       { property: "og:title", content: "School Cloud — EduReport" },

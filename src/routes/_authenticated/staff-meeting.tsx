@@ -7,7 +7,7 @@ import { useAppData } from "@/lib/store";
 import { openSms, openWhatsApp } from "@/lib/whatsapp";
 import { buildStaffNoticeText, useStaffNotices } from "@/lib/staffNotices";
 
-export const Route = createFileRoute("/staff-meeting")({
+export const Route = createFileRoute("/_authenticated/staff-meeting")({
   head: () => ({
     meta: [
       { title: "Staff Meeting Notice — EduReport" },

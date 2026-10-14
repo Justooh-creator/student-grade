@@ -11,7 +11,7 @@ import { ClassLock } from "@/components/ClassLock";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/students")({
+export const Route = createFileRoute("/_authenticated/students")({
   validateSearch: validateClassSearch,
   head: () => ({
     meta: [

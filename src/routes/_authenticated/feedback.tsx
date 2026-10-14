@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const SUPPORT_WHATSAPP = "233249931038";
 const CATEGORIES = ["Feature Request", "Grading/Report Suggestion", "Problem / Bug Report", "General Feedback"];
 
-export const Route = createFileRoute("/feedback")({
+export const Route = createFileRoute("/_authenticated/feedback")({
   head: () => ({
     meta: [
       { title: "Feedback & Suggestions — EduReport" },

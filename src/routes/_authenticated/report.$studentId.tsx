@@ -15,9 +15,11 @@ import { useLicense } from "@/lib/license";
 import { ReportSheet } from "@/components/ReportSheet";
 import { openSms, openWhatsApp, smsLink, whatsAppLink } from "@/lib/whatsapp";
 
-export const Route = createFileRoute("/report/$studentId")({
+export const Route = createFileRoute("/_authenticated/report/$studentId")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Report Card — SBA Report Cards" },
       {
         name: "description",

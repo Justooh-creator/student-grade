@@ -8,9 +8,11 @@ import { ClassWhatsAppShare } from "@/components/ClassWhatsAppShare";
 import { getClassLevel, type ClassId } from "@/lib/ges";
 import { useAppData } from "@/lib/store";
 
-export const Route = createFileRoute("/class-report/$classId")({
+export const Route = createFileRoute("/_authenticated/class-report/$classId")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Class Report Cards — SBA Report Cards" },
       { name: "description", content: "Print or save every learner's A4 report card in a class at once." },
       { property: "og:title", content: "Class Report Cards — SBA Report Cards" },

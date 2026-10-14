@@ -33,10 +33,12 @@ function shrinkImage(file: File): Promise<string> {
   });
 }
 
-export const Route = createFileRoute("/setup")({
+export const Route = createFileRoute("/_authenticated/setup")({
   validateSearch: validateClassSearch,
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "School Setup — SBA Report Cards" },
       {
         name: "description",
