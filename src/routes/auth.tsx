@@ -1,103 +1,152 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { ArrowRight, LoaderCircle, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { useUser } from "@/lib/auth";
-import { AppHeader } from "@/components/AppHeader";
-import { useAppData } from "@/lib/store";
+import { signupNextStep } from "@/lib/accountAccess";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Teacher sign in — SBA Report Cards" },
-      { name: "description", content: "Sign in so you can send Basic 7–9 records to another teacher instantly." },
-      { property: "og:title", content: "Teacher sign in — SBA Report Cards" },
-      { property: "og:description", content: "Teacher accounts for sharing JHS learner records." },
+      { title: "Sign up or sign in — EduReport Ghana" },
+      { name: "description", content: "Create your EduReport teacher account or sign in to manage school details, learners and GES assessments." },
+      { property: "og:title", content: "Sign up or sign in — EduReport Ghana" },
+      { property: "og:description", content: "Your EduReport account for Ghanaian basic-school assessments and report cards." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AuthPage,
 });
 
 function AuthPage() {
-  const { school } = useAppData();
-  const { user } = useUser();
+  const { user, ready } = useUser();
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"in" | "up">("in");
+  const queryClient = useQueryClient();
+  const [mode, setMode] = useState<"in" | "up">("up");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
+  const [errorMessage, setErrorMessage] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (window.location.hash.includes("type=recovery")) {
+      void navigate({ to: "/reset-password", hash: window.location.hash, replace: true });
+    }
+  }, [navigate]);
+
+  function showMessage(message: string, error = false) {
+    setMsg(message);
+    setErrorMessage(error);
+  }
+
+  async function openApp() {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) {
+      showMessage(error?.message ?? "Please sign in to continue.", true);
+      return;
+    }
+    await navigate({ to: "/setup", replace: true });
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    setMsg("");
-    if (mode === "up") {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { emailRedirectTo: window.location.origin, data: { display_name: name } },
-      });
-      if (error) setMsg(error.message);
-      else if (!data.session) setMsg("Account created. Check your email to confirm, then sign in.");
-      else navigate({ to: "/" });
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setMsg(error.message);
-      else navigate({ to: "/" });
-    }
-    setBusy(false);
+    showMessage("");
+    try {
+      if (mode === "up") {
+        const { data, error } = await supabase.auth.signUp({
+          email: email.trim(), password,
+          options: { emailRedirectTo: `${window.location.origin}/auth`, data: { display_name: name.trim() } },
+        });
+        if (error) showMessage(error.message, true);
+        else if (signupNextStep(data.session) === "confirm-email") {
+          showMessage("Check your email to confirm your account, then sign in.");
+          setMode("in");
+          setPassword("");
+        } else await openApp();
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        if (error) showMessage(error.message, true);
+        else await openApp();
+      }
+    } catch {
+      showMessage("Could not connect. Check your internet and try again.", true);
+    } finally { setBusy(false); }
   }
 
-  const input = "h-10 w-full rounded-md border border-border bg-background px-3 text-sm outline-none focus:border-primary";
+  async function google() {
+    setBusy(true);
+    showMessage("");
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/auth` });
+      if (result.error) showMessage(result.error.message, true);
+      else if (!result.redirected) await openApp();
+    } catch { showMessage("Google sign-in could not start. Please try again.", true); }
+    finally { setBusy(false); }
+  }
+
+  async function forgotPassword() {
+    if (!email.trim()) { showMessage("Enter your email address first.", true); return; }
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/reset-password` });
+      showMessage(error ? error.message : "Check your email for a link to set a new password.", Boolean(error));
+    } catch { showMessage("Could not send the email. Please try again.", true); }
+    finally { setBusy(false); }
+  }
+
+  async function signOut() {
+    setBusy(true);
+    try {
+      await queryClient.cancelQueries();
+      queryClient.clear();
+      const { error } = await supabase.auth.signOut();
+      if (error) { showMessage(error.message, true); return; }
+      await navigate({ to: "/auth", replace: true });
+    } finally { setBusy(false); }
+  }
+
+  const input = "mt-1.5 h-12 w-full rounded-md border border-input bg-card px-3 text-base outline-none focus:border-primary focus:ring-2 focus:ring-primary/20";
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} />
-      <main className="mx-auto max-w-sm px-4 py-10">
-        {user ? (
-          <div className="rounded-lg border border-border bg-card p-6 text-center">
-            <p className="text-sm">Signed in as <strong>{user.email}</strong></p>
-            <button
-              onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/auth", replace: true }); }}
-              className="mt-4 h-10 w-full rounded-md border border-border text-sm font-semibold hover:bg-muted"
-            >
-              Sign out
-            </button>
+      <header className="border-b border-border bg-primary px-6 py-5 text-primary-foreground">
+        <div className="mx-auto flex max-w-5xl items-center gap-3">
+          <img src="/icon-192.png" alt="EduReport logo" className="h-12 w-12 rounded-md object-contain" />
+          <div><p className="font-display text-lg font-bold">EduReport Ghana</p><p className="text-sm text-primary-foreground/80">KG 1 – Basic 9</p></div>
+        </div>
+      </header>
+      <main className="mx-auto w-full max-w-md px-5 py-10 sm:py-14">
+        <h1 className="font-display text-3xl font-bold text-foreground">{user ? "Your account" : mode === "up" ? "Sign up" : "Sign in"}</h1>
+        {!user && <p className="mt-3 text-base text-muted-foreground">Welcome to EduReport Ghana.</p>}
+        {!ready ? <p className="mt-8 flex items-center gap-2 text-muted-foreground" role="status"><LoaderCircle className="h-5 w-5 animate-spin motion-reduce:animate-none" />Checking your account…</p> : user ? (
+          <div className="mt-7 space-y-4">
+            <p className="break-all text-sm text-muted-foreground">Signed in as <strong className="text-foreground">{user.email}</strong></p>
+            <Button className="h-12 w-full" onClick={openApp} disabled={busy}>Continue to EduReport<ArrowRight /></Button>
+            <Button variant="outline" className="h-12 w-full" onClick={signOut} disabled={busy}><LogOut />Sign out</Button>
           </div>
         ) : (
-          <form onSubmit={submit} className="space-y-3 rounded-lg border border-border bg-card p-6">
-            <h1 className="font-display text-xl font-bold">{mode === "in" ? "Teacher sign in" : "Create teacher account"}</h1>
-            <p className="text-xs text-muted-foreground">Needed to send Basic 7–9 records to another teacher.</p>
-            {mode === "up" && (
-              <input required placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} className={input} />
-            )}
-            <input required type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className={input} />
-            <input required type="password" minLength={6} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className={input} />
-            {msg && <p className="text-xs text-destructive">{msg}</p>}
-            <button disabled={busy} className="h-10 w-full rounded-md bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-60">
-              {busy ? "Please wait…" : mode === "in" ? "Sign in" : "Create account"}
-            </button>
-            <button type="button" onClick={() => { setMode(mode === "in" ? "up" : "in"); setMsg(""); }} className="w-full text-xs text-primary underline">
-              {mode === "in" ? "New teacher? Create an account" : "Already have an account? Sign in"}
-            </button>
-            {mode === "in" && (
-              <button
-                type="button"
-                onClick={async () => {
-                  if (!email.trim()) { setMsg("Type your email above first, then tap Forgot password."); return; }
-                  setBusy(true);
-                  const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/reset-password` });
-                  setMsg(error ? error.message : "Check your email for a link to set a new password.");
-                  setBusy(false);
-                }}
-                className="w-full text-xs font-semibold text-muted-foreground underline"
-              >
-                Forgot password?
-              </button>
-            )}
-          </form>
+          <div className="mt-7">
+            <Button variant="outline" className="h-12 w-full bg-card" onClick={google} disabled={busy}><span aria-hidden className="font-display text-lg font-bold text-primary">G</span>Continue with Google</Button>
+            <div className="my-5 flex items-center gap-3 text-sm text-muted-foreground"><span className="h-px flex-1 bg-border" />or<span className="h-px flex-1 bg-border" /></div>
+            <form onSubmit={submit} className="space-y-4">
+              {mode === "up" && <label className="block text-sm font-semibold">Your name<input required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} className={input} /></label>}
+              <label className="block text-sm font-semibold">Email<input required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className={input} /></label>
+              <label className="block text-sm font-semibold">Password<input required type="password" minLength={6} autoComplete={mode === "up" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} className={input} /></label>
+              <Button disabled={busy} className="h-12 w-full">{busy ? <><LoaderCircle className="animate-spin motion-reduce:animate-none" />Please wait…</> : <>{mode === "up" ? "Sign up" : "Sign in"}<ArrowRight /></>}</Button>
+            </form>
+            <Button variant="link" className="mt-3 h-auto w-full whitespace-normal py-2 text-center" disabled={busy} onClick={() => { setMode(mode === "in" ? "up" : "in"); showMessage(""); }}>{mode === "up" ? "Already have an account? Sign in" : "New to EduReport? Sign up"}</Button>
+            {mode === "in" && <Button variant="link" className="h-auto w-full py-2 text-muted-foreground" disabled={busy} onClick={forgotPassword}>Forgot password?</Button>}
+          </div>
         )}
+        {msg && <p role={errorMessage ? "alert" : "status"} className={`mt-4 text-sm ${errorMessage ? "text-destructive" : "text-primary"}`}>{msg}</p>}
+        {!user && <p className="mt-6 border-t border-border pt-5 text-center text-sm text-muted-foreground">No payment required to start.<br />An active license or gift code is required to print or save report PDFs.</p>}
       </main>
     </div>
   );
