@@ -1,31 +1,29 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
-import { ReopenPicker } from "@/components/DatePicker";
 import { ClassPicker } from "@/components/ClassPicker";
 import { getClassLevel } from "@/lib/ges";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
-import { buildPtaAnnouncement, openSms, openWhatsApp, ptaSmsLink, ptaWhatsAppLink, type PtaMeeting } from "@/lib/whatsapp";
+import { buildMidtermSummary, midtermSmsLink, midtermWhatsAppLink, openSms, openWhatsApp } from "@/lib/whatsapp";
+import { useNavigate } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/pta-announcement")({
+export const Route = createFileRoute("/_authenticated/midterm-progress")({
   validateSearch: validateClassSearch,
   head: () => ({
     meta: [
-      { title: "PTA Meeting Notice — EduReport" },
-      { name: "description", content: "Send PTA meeting announcements to all parents in a class on WhatsApp or SMS." },
-      { property: "og:title", content: "PTA Meeting Notice — EduReport" },
-      { property: "og:description", content: "Announce PTA meetings to parents class by class with one tap." },
+      { title: "Mid-Term WhatsApp Check-In — EduReport" },
+      { name: "description", content: "Send free mid-term progress updates to parents on WhatsApp." },
+      { property: "og:title", content: "Mid-Term WhatsApp Check-In — EduReport" },
+      { property: "og:description", content: "Keep parents informed mid-term with a one-tap WhatsApp progress note." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: PtaPage,
+  component: MidtermPage,
 });
 
-const inputCls = "mt-1 w-full rounded-md border border-border bg-background p-2 text-sm outline-none focus:border-primary";
-
-function PtaPage() {
+function MidtermPage() {
   const { school, students } = useAppData();
   const search = Route.useSearch();
   const navigate = useNavigate();
@@ -33,57 +31,35 @@ function PtaPage() {
   const level = getClassLevel(classId);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-  const [meeting, setMeeting] = useState<PtaMeeting>({
-    title: "PTA Meeting",
-    date: "",
-    time: "",
-    venue: school.name ? `${school.name} — School Compound` : "",
-    agenda: "",
-  });
+  const [note, setNote] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
   const list = useMemo(() => students.filter((s) => s.classId === classId), [students, classId]);
-  const set = (k: keyof PtaMeeting) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setMeeting((m) => ({ ...m, [k]: e.target.value }));
 
   return (
     <div className="min-h-screen bg-background pb-16">
       <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={classId} />
       <main className="mx-auto max-w-3xl px-4">
-        <ClassPicker value={classId} onChange={(c) => navigate({ to: "/pta-announcement", search: { class: c } })} />
+        <ClassPicker value={classId} onChange={(c) => navigate({ to: "/midterm-progress", search: { class: c } })} />
         <section className="mt-5 rounded-xl border border-border bg-card p-4">
-          <h1 className="font-display text-lg font-bold">📢 PTA Meeting Notice</h1>
+          <h1 className="font-display text-lg font-bold">💬 Mid-Term WhatsApp Check-In</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Fill in the meeting details once, then send the announcement to every parent in the class on WhatsApp — or SMS if the number is not on WhatsApp.
+            Send each parent a short progress note with the marks entered so far. Free for everyone.
           </p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <label className="block text-xs font-bold sm:col-span-2">
-              Meeting title
-              <input value={meeting.title} onChange={set("title")} className={inputCls} />
-            </label>
-            <label className="block text-xs font-bold">
-              Date
-              <ReopenPicker placeholder="Pick meeting date" value={meeting.date} onChange={(v) => setMeeting((m) => ({ ...m, date: v }))} />
-            </label>
-            <label className="block text-xs font-bold">
-              Time
-              <input value={meeting.time} onChange={set("time")} placeholder="e.g. 10:00 a.m." className={inputCls} />
-            </label>
-            <label className="block text-xs font-bold sm:col-span-2">
-              Venue
-              <input value={meeting.venue} onChange={set("venue")} placeholder="e.g. School Assembly Hall" className={inputCls} />
-            </label>
-            <label className="block text-xs font-bold sm:col-span-2">
-              Agenda (optional)
-              <textarea value={meeting.agenda} onChange={set("agenda")} rows={2} placeholder="e.g. School fees, BECE preparation, new uniforms" className={inputCls} />
-            </label>
-          </div>
+          <label className="mt-3 block text-xs font-bold">Extra note for all parents (optional)</label>
+          <textarea
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            rows={2}
+            placeholder="e.g. Mid-term tests start next week."
+            className="mt-1 w-full rounded-md border border-border bg-background p-2 text-sm outline-none focus:border-primary"
+          />
         </section>
         <section className="mt-4 rounded-xl border border-border bg-card p-2">
           <p className="px-2 py-1 text-xs font-bold uppercase tracking-[0.12em] text-foreground">{level.name} · {list.length} learner(s)</p>
           {mounted && list.length === 0 && <p className="p-3 text-sm text-muted-foreground">No learners in this class yet.</p>}
           {mounted && list.map((s) => {
-            const href = ptaWhatsAppLink(s, school, meeting);
-            const sms = ptaSmsLink(s, school, meeting);
+            const href = midtermWhatsAppLink(s, school, note);
+            const sms = midtermSmsLink(s, school, note);
             return (
               <div key={s.id} className="border-t border-border px-2 py-2">
                 <div className="flex flex-wrap items-center gap-2">
@@ -110,7 +86,7 @@ function PtaPage() {
                   )}
                 </div>
                 {preview === s.id && (
-                  <pre className="mt-2 whitespace-pre-wrap rounded-md bg-muted p-2 text-xs">{buildPtaAnnouncement(s, school, meeting)}</pre>
+                  <pre className="mt-2 whitespace-pre-wrap rounded-md bg-muted p-2 text-xs">{buildMidtermSummary(s, school, note)}</pre>
                 )}
               </div>
             );

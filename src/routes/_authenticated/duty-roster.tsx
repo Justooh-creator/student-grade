@@ -7,7 +7,7 @@ import { useAppData } from "@/lib/store";
 import { openSms, openWhatsApp } from "@/lib/whatsapp";
 import { DUTY_PRESETS, buildRosterText, mondayOf, useDutyRosters, weekLabel, type DutyEntry } from "@/lib/dutyRoster";
 
-export const Route = createFileRoute("/duty-roster")({
+export const Route = createFileRoute("/_authenticated/duty-roster")({
   head: () => ({
     meta: [
       { title: "Teachers' Duty Roster — EduReport" },

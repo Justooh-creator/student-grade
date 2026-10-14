@@ -8,7 +8,7 @@ import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
 import { ClassLock, useCanEditSubject } from "@/components/ClassLock";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   validateSearch: validateClassSearch,
   head: () => ({
     meta: [

@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SyncListener } from "@/components/SyncListener";
 import { InstallBanner } from "@/components/InstallBanner";
 import { Toaster } from "@/components/ui/sonner";
+import { AccountProvider } from "@/lib/auth";
 
 function NotFoundComponent() {
   return (
@@ -130,11 +131,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AccountProvider>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <SyncListener />
       <InstallBanner />
       <Toaster position="bottom-center" offset={24} />
+      </AccountProvider>
     </QueryClientProvider>
   );
 }

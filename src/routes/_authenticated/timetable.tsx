@@ -7,7 +7,7 @@ import { useCloud } from "@/lib/cloud";
 import { CLASS_LEVELS, getClassLevel, type ClassId } from "@/lib/ges";
 import { TT_DAYS, defaultTimetable, fmt12, getTimetable, type Timetable } from "@/lib/timetable";
 
-export const Route = createFileRoute("/timetable")({
+export const Route = createFileRoute("/_authenticated/timetable")({
   head: () => ({
     meta: [
       { title: "Class Timetable — EduReport" },
