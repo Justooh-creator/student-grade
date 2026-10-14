@@ -9,24 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as DutyRosterRouteImport } from './routes/duty-roster'
-import { Route as FeedbackRouteImport } from './routes/feedback'
-import { Route as MidtermProgressRouteImport } from './routes/midterm-progress'
-import { Route as PtaAnnouncementRouteImport } from './routes/pta-announcement'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as SchoolCloudRouteImport } from './routes/school-cloud'
-import { Route as SetupRouteImport } from './routes/setup'
-import { Route as StaffMeetingRouteImport } from './routes/staff-meeting'
-import { Route as StudentsRouteImport } from './routes/students'
-import { Route as TimetableRouteImport } from './routes/timetable'
-import { Route as ClassReportClassIdRouteImport } from './routes/class-report.$classId'
-import { Route as ReportStudentIdRouteImport } from './routes/report.$studentId'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedDutyRosterRouteImport } from './routes/_authenticated/duty-roster'
+import { Route as AuthenticatedFeedbackRouteImport } from './routes/_authenticated/feedback'
+import { Route as AuthenticatedMidtermProgressRouteImport } from './routes/_authenticated/midterm-progress'
+import { Route as AuthenticatedPtaAnnouncementRouteImport } from './routes/_authenticated/pta-announcement'
+import { Route as AuthenticatedSchoolCloudRouteImport } from './routes/_authenticated/school-cloud'
+import { Route as AuthenticatedSetupRouteImport } from './routes/_authenticated/setup'
+import { Route as AuthenticatedStaffMeetingRouteImport } from './routes/_authenticated/staff-meeting'
+import { Route as AuthenticatedStudentsRouteImport } from './routes/_authenticated/students'
+import { Route as AuthenticatedTimetableRouteImport } from './routes/_authenticated/timetable'
+import { Route as AuthenticatedClassReportClassIdRouteImport } from './routes/_authenticated/class-report.$classId'
+import { Route as AuthenticatedReportStudentIdRouteImport } from './routes/_authenticated/report.$studentId'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -34,126 +34,138 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DutyRosterRoute = DutyRosterRouteImport.update({
-  id: '/duty-roster',
-  path: '/duty-roster',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FeedbackRoute = FeedbackRouteImport.update({
-  id: '/feedback',
-  path: '/feedback',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MidtermProgressRoute = MidtermProgressRouteImport.update({
-  id: '/midterm-progress',
-  path: '/midterm-progress',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PtaAnnouncementRoute = PtaAnnouncementRouteImport.update({
-  id: '/pta-announcement',
-  path: '/pta-announcement',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SchoolCloudRoute = SchoolCloudRouteImport.update({
-  id: '/school-cloud',
-  path: '/school-cloud',
-  getParentRoute: () => rootRouteImport,
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const SetupRoute = SetupRouteImport.update({
+const AuthenticatedDutyRosterRoute = AuthenticatedDutyRosterRouteImport.update({
+  id: '/duty-roster',
+  path: '/duty-roster',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFeedbackRoute = AuthenticatedFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMidtermProgressRoute =
+  AuthenticatedMidtermProgressRouteImport.update({
+    id: '/midterm-progress',
+    path: '/midterm-progress',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPtaAnnouncementRoute =
+  AuthenticatedPtaAnnouncementRouteImport.update({
+    id: '/pta-announcement',
+    path: '/pta-announcement',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSchoolCloudRoute =
+  AuthenticatedSchoolCloudRouteImport.update({
+    id: '/school-cloud',
+    path: '/school-cloud',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSetupRoute = AuthenticatedSetupRouteImport.update({
   id: '/setup',
   path: '/setup',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const StaffMeetingRoute = StaffMeetingRouteImport.update({
-  id: '/staff-meeting',
-  path: '/staff-meeting',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StudentsRoute = StudentsRouteImport.update({
+const AuthenticatedStaffMeetingRoute =
+  AuthenticatedStaffMeetingRouteImport.update({
+    id: '/staff-meeting',
+    path: '/staff-meeting',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedStudentsRoute = AuthenticatedStudentsRouteImport.update({
   id: '/students',
   path: '/students',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const TimetableRoute = TimetableRouteImport.update({
+const AuthenticatedTimetableRoute = AuthenticatedTimetableRouteImport.update({
   id: '/timetable',
   path: '/timetable',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ClassReportClassIdRoute = ClassReportClassIdRouteImport.update({
-  id: '/class-report/$classId',
-  path: '/class-report/$classId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReportStudentIdRoute = ReportStudentIdRouteImport.update({
-  id: '/report/$studentId',
-  path: '/report/$studentId',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const AuthenticatedClassReportClassIdRoute =
+  AuthenticatedClassReportClassIdRouteImport.update({
+    id: '/class-report/$classId',
+    path: '/class-report/$classId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReportStudentIdRoute =
+  AuthenticatedReportStudentIdRouteImport.update({
+    id: '/report/$studentId',
+    path: '/report/$studentId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
-  '/duty-roster': typeof DutyRosterRoute
-  '/feedback': typeof FeedbackRoute
-  '/midterm-progress': typeof MidtermProgressRoute
-  '/pta-announcement': typeof PtaAnnouncementRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/school-cloud': typeof SchoolCloudRoute
-  '/setup': typeof SetupRoute
-  '/staff-meeting': typeof StaffMeetingRoute
-  '/students': typeof StudentsRoute
-  '/timetable': typeof TimetableRoute
-  '/class-report/$classId': typeof ClassReportClassIdRoute
-  '/report/$studentId': typeof ReportStudentIdRoute
+  '/duty-roster': typeof AuthenticatedDutyRosterRoute
+  '/feedback': typeof AuthenticatedFeedbackRoute
+  '/midterm-progress': typeof AuthenticatedMidtermProgressRoute
+  '/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
+  '/school-cloud': typeof AuthenticatedSchoolCloudRoute
+  '/setup': typeof AuthenticatedSetupRoute
+  '/staff-meeting': typeof AuthenticatedStaffMeetingRoute
+  '/students': typeof AuthenticatedStudentsRoute
+  '/timetable': typeof AuthenticatedTimetableRoute
+  '/class-report/$classId': typeof AuthenticatedClassReportClassIdRoute
+  '/report/$studentId': typeof AuthenticatedReportStudentIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/duty-roster': typeof DutyRosterRoute
-  '/feedback': typeof FeedbackRoute
-  '/midterm-progress': typeof MidtermProgressRoute
-  '/pta-announcement': typeof PtaAnnouncementRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/school-cloud': typeof SchoolCloudRoute
-  '/setup': typeof SetupRoute
-  '/staff-meeting': typeof StaffMeetingRoute
-  '/students': typeof StudentsRoute
-  '/timetable': typeof TimetableRoute
-  '/class-report/$classId': typeof ClassReportClassIdRoute
-  '/report/$studentId': typeof ReportStudentIdRoute
+  '/duty-roster': typeof AuthenticatedDutyRosterRoute
+  '/feedback': typeof AuthenticatedFeedbackRoute
+  '/midterm-progress': typeof AuthenticatedMidtermProgressRoute
+  '/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
+  '/school-cloud': typeof AuthenticatedSchoolCloudRoute
+  '/setup': typeof AuthenticatedSetupRoute
+  '/staff-meeting': typeof AuthenticatedStaffMeetingRoute
+  '/students': typeof AuthenticatedStudentsRoute
+  '/timetable': typeof AuthenticatedTimetableRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/class-report/$classId': typeof AuthenticatedClassReportClassIdRoute
+  '/report/$studentId': typeof AuthenticatedReportStudentIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/duty-roster': typeof DutyRosterRoute
-  '/feedback': typeof FeedbackRoute
-  '/midterm-progress': typeof MidtermProgressRoute
-  '/pta-announcement': typeof PtaAnnouncementRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/school-cloud': typeof SchoolCloudRoute
-  '/setup': typeof SetupRoute
-  '/staff-meeting': typeof StaffMeetingRoute
-  '/students': typeof StudentsRoute
-  '/timetable': typeof TimetableRoute
-  '/class-report/$classId': typeof ClassReportClassIdRoute
-  '/report/$studentId': typeof ReportStudentIdRoute
+  '/_authenticated/duty-roster': typeof AuthenticatedDutyRosterRoute
+  '/_authenticated/feedback': typeof AuthenticatedFeedbackRoute
+  '/_authenticated/midterm-progress': typeof AuthenticatedMidtermProgressRoute
+  '/_authenticated/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
+  '/_authenticated/school-cloud': typeof AuthenticatedSchoolCloudRoute
+  '/_authenticated/setup': typeof AuthenticatedSetupRoute
+  '/_authenticated/staff-meeting': typeof AuthenticatedStaffMeetingRoute
+  '/_authenticated/students': typeof AuthenticatedStudentsRoute
+  '/_authenticated/timetable': typeof AuthenticatedTimetableRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/class-report/$classId': typeof AuthenticatedClassReportClassIdRoute
+  '/_authenticated/report/$studentId': typeof AuthenticatedReportStudentIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/reset-password'
     | '/duty-roster'
     | '/feedback'
     | '/midterm-progress'
     | '/pta-announcement'
-    | '/reset-password'
     | '/school-cloud'
     | '/setup'
     | '/staff-meeting'
@@ -163,62 +175,52 @@ export interface FileRouteTypes {
     | '/report/$studentId'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/auth'
+    | '/reset-password'
     | '/duty-roster'
     | '/feedback'
     | '/midterm-progress'
     | '/pta-announcement'
-    | '/reset-password'
     | '/school-cloud'
     | '/setup'
     | '/staff-meeting'
     | '/students'
     | '/timetable'
+    | '/'
     | '/class-report/$classId'
     | '/report/$studentId'
   id:
     | '__root__'
-    | '/'
+    | '/_authenticated'
     | '/auth'
-    | '/duty-roster'
-    | '/feedback'
-    | '/midterm-progress'
-    | '/pta-announcement'
     | '/reset-password'
-    | '/school-cloud'
-    | '/setup'
-    | '/staff-meeting'
-    | '/students'
-    | '/timetable'
-    | '/class-report/$classId'
-    | '/report/$studentId'
+    | '/_authenticated/duty-roster'
+    | '/_authenticated/feedback'
+    | '/_authenticated/midterm-progress'
+    | '/_authenticated/pta-announcement'
+    | '/_authenticated/school-cloud'
+    | '/_authenticated/setup'
+    | '/_authenticated/staff-meeting'
+    | '/_authenticated/students'
+    | '/_authenticated/timetable'
+    | '/_authenticated/'
+    | '/_authenticated/class-report/$classId'
+    | '/_authenticated/report/$studentId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
-  DutyRosterRoute: typeof DutyRosterRoute
-  FeedbackRoute: typeof FeedbackRoute
-  MidtermProgressRoute: typeof MidtermProgressRoute
-  PtaAnnouncementRoute: typeof PtaAnnouncementRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  SchoolCloudRoute: typeof SchoolCloudRoute
-  SetupRoute: typeof SetupRoute
-  StaffMeetingRoute: typeof StaffMeetingRoute
-  StudentsRoute: typeof StudentsRoute
-  TimetableRoute: typeof TimetableRoute
-  ClassReportClassIdRoute: typeof ClassReportClassIdRoute
-  ReportStudentIdRoute: typeof ReportStudentIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -228,34 +230,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/duty-roster': {
-      id: '/duty-roster'
-      path: '/duty-roster'
-      fullPath: '/duty-roster'
-      preLoaderRoute: typeof DutyRosterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/feedback': {
-      id: '/feedback'
-      path: '/feedback'
-      fullPath: '/feedback'
-      preLoaderRoute: typeof FeedbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/midterm-progress': {
-      id: '/midterm-progress'
-      path: '/midterm-progress'
-      fullPath: '/midterm-progress'
-      preLoaderRoute: typeof MidtermProgressRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pta-announcement': {
-      id: '/pta-announcement'
-      path: '/pta-announcement'
-      fullPath: '/pta-announcement'
-      preLoaderRoute: typeof PtaAnnouncementRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -263,73 +237,130 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/school-cloud': {
-      id: '/school-cloud'
+    '/_authenticated/': {
+      id: '/_authenticated/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/duty-roster': {
+      id: '/_authenticated/duty-roster'
+      path: '/duty-roster'
+      fullPath: '/duty-roster'
+      preLoaderRoute: typeof AuthenticatedDutyRosterRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/feedback': {
+      id: '/_authenticated/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof AuthenticatedFeedbackRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/midterm-progress': {
+      id: '/_authenticated/midterm-progress'
+      path: '/midterm-progress'
+      fullPath: '/midterm-progress'
+      preLoaderRoute: typeof AuthenticatedMidtermProgressRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/pta-announcement': {
+      id: '/_authenticated/pta-announcement'
+      path: '/pta-announcement'
+      fullPath: '/pta-announcement'
+      preLoaderRoute: typeof AuthenticatedPtaAnnouncementRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/school-cloud': {
+      id: '/_authenticated/school-cloud'
       path: '/school-cloud'
       fullPath: '/school-cloud'
-      preLoaderRoute: typeof SchoolCloudRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedSchoolCloudRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/setup': {
-      id: '/setup'
+    '/_authenticated/setup': {
+      id: '/_authenticated/setup'
       path: '/setup'
       fullPath: '/setup'
-      preLoaderRoute: typeof SetupRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedSetupRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/staff-meeting': {
-      id: '/staff-meeting'
+    '/_authenticated/staff-meeting': {
+      id: '/_authenticated/staff-meeting'
       path: '/staff-meeting'
       fullPath: '/staff-meeting'
-      preLoaderRoute: typeof StaffMeetingRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedStaffMeetingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/students': {
-      id: '/students'
+    '/_authenticated/students': {
+      id: '/_authenticated/students'
       path: '/students'
       fullPath: '/students'
-      preLoaderRoute: typeof StudentsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedStudentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/timetable': {
-      id: '/timetable'
+    '/_authenticated/timetable': {
+      id: '/_authenticated/timetable'
       path: '/timetable'
       fullPath: '/timetable'
-      preLoaderRoute: typeof TimetableRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedTimetableRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/class-report/$classId': {
-      id: '/class-report/$classId'
+    '/_authenticated/class-report/$classId': {
+      id: '/_authenticated/class-report/$classId'
       path: '/class-report/$classId'
       fullPath: '/class-report/$classId'
-      preLoaderRoute: typeof ClassReportClassIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedClassReportClassIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/report/$studentId': {
-      id: '/report/$studentId'
+    '/_authenticated/report/$studentId': {
+      id: '/_authenticated/report/$studentId'
       path: '/report/$studentId'
       fullPath: '/report/$studentId'
-      preLoaderRoute: typeof ReportStudentIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedReportStudentIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDutyRosterRoute: typeof AuthenticatedDutyRosterRoute
+  AuthenticatedFeedbackRoute: typeof AuthenticatedFeedbackRoute
+  AuthenticatedMidtermProgressRoute: typeof AuthenticatedMidtermProgressRoute
+  AuthenticatedPtaAnnouncementRoute: typeof AuthenticatedPtaAnnouncementRoute
+  AuthenticatedSchoolCloudRoute: typeof AuthenticatedSchoolCloudRoute
+  AuthenticatedSetupRoute: typeof AuthenticatedSetupRoute
+  AuthenticatedStaffMeetingRoute: typeof AuthenticatedStaffMeetingRoute
+  AuthenticatedStudentsRoute: typeof AuthenticatedStudentsRoute
+  AuthenticatedTimetableRoute: typeof AuthenticatedTimetableRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedClassReportClassIdRoute: typeof AuthenticatedClassReportClassIdRoute
+  AuthenticatedReportStudentIdRoute: typeof AuthenticatedReportStudentIdRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDutyRosterRoute: AuthenticatedDutyRosterRoute,
+  AuthenticatedFeedbackRoute: AuthenticatedFeedbackRoute,
+  AuthenticatedMidtermProgressRoute: AuthenticatedMidtermProgressRoute,
+  AuthenticatedPtaAnnouncementRoute: AuthenticatedPtaAnnouncementRoute,
+  AuthenticatedSchoolCloudRoute: AuthenticatedSchoolCloudRoute,
+  AuthenticatedSetupRoute: AuthenticatedSetupRoute,
+  AuthenticatedStaffMeetingRoute: AuthenticatedStaffMeetingRoute,
+  AuthenticatedStudentsRoute: AuthenticatedStudentsRoute,
+  AuthenticatedTimetableRoute: AuthenticatedTimetableRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedClassReportClassIdRoute: AuthenticatedClassReportClassIdRoute,
+  AuthenticatedReportStudentIdRoute: AuthenticatedReportStudentIdRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
-  DutyRosterRoute: DutyRosterRoute,
-  FeedbackRoute: FeedbackRoute,
-  MidtermProgressRoute: MidtermProgressRoute,
-  PtaAnnouncementRoute: PtaAnnouncementRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  SchoolCloudRoute: SchoolCloudRoute,
-  SetupRoute: SetupRoute,
-  StaffMeetingRoute: StaffMeetingRoute,
-  StudentsRoute: StudentsRoute,
-  TimetableRoute: TimetableRoute,
-  ClassReportClassIdRoute: ClassReportClassIdRoute,
-  ReportStudentIdRoute: ReportStudentIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
