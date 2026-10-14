@@ -1,2 +1,4 @@
 - [x] Add working PDF and editable Microsoft Word downloads.
 - [x] Verify document downloads and A4 dimensions.
+- [ ] Require sign-up/sign-in before app access; retain existing Print/PDF licensing.
+- [ ] Finish class streams (paused at user's request).
