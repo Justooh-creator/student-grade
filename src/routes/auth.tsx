@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, LoaderCircle, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { useUser } from "@/lib/auth";
 import { signupNextStep } from "@/lib/accountAccess";
 import { Button } from "@/components/ui/button";
@@ -80,17 +79,6 @@ function AuthPage() {
     } finally { setBusy(false); }
   }
 
-  async function google() {
-    setBusy(true);
-    showMessage("");
-    try {
-      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/auth` });
-      if (result.error) showMessage(result.error.message, true);
-      else if (!result.redirected) await openApp();
-    } catch { showMessage("Google sign-in could not start. Please try again.", true); }
-    finally { setBusy(false); }
-  }
-
   async function forgotPassword() {
     if (!email.trim()) { showMessage("Enter your email address first.", true); return; }
     setBusy(true);
@@ -133,8 +121,6 @@ function AuthPage() {
           </div>
         ) : (
           <div className="mt-7">
-            <Button variant="outline" className="h-12 w-full bg-card" onClick={google} disabled={busy}><span aria-hidden className="font-display text-lg font-bold text-primary">G</span>Continue with Google</Button>
-            <div className="my-5 flex items-center gap-3 text-sm text-muted-foreground"><span className="h-px flex-1 bg-border" />or<span className="h-px flex-1 bg-border" /></div>
             <form onSubmit={submit} className="space-y-4">
               {mode === "up" && <label className="block text-sm font-semibold">Your name<input required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} className={input} /></label>}
               <label className="block text-sm font-semibold">Email<input required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className={input} /></label>

@@ -289,7 +289,7 @@ export function AppHeader({
                   <RowCell icon={ICON.file} title="Payment" desc="Plans, MTN Mobile Money, activation code" />
                 </Link>
                 <Link to="/feedback" className={rowCls(pathname.startsWith("/feedback"))}>
-                  <RowCell icon={ICON.bulb} title="Help & Feedback" desc="Suggestions and bug reports" />
+                  <RowCell icon={ICON.bulb} title="Help & About Developer" desc="Suggestions, support and app creator" />
                 </Link>
                 <Link to="/auth" className={rowCls(pathname.startsWith("/auth"))}>
                   <RowCell
