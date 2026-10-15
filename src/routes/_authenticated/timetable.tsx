@@ -32,6 +32,12 @@ function TimetablePage() {
   const [edit, setEdit] = useState(false);
   const [tt, setTt] = useState<Timetable>(() => defaultTimetable("b7"));
   const canEdit = !cloud.schoolId || cloud.role === "headteacher";
+  const classList = schoolClassIds(school);
+  if (!classList.includes(classId)) {
+    const fallback = classList.find((c) => c.startsWith("b7")) ?? classList[0]!;
+    setClassId(fallback);
+    setTt(getTimetable(school, fallback));
+  }
 
   useEffect(() => {
     const d = TT_DAYS[new Date().getDay() - 1];
