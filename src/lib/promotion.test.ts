@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { nextAcademicYear, rolloverStudents, rolloverSummary } from "./promotion";
+import { nextAcademicYear, nextClassId, rolloverStudents, rolloverSummary } from "./promotion";
 import type { Student } from "./store";
 
 const s = (id: string, classId: Student["classId"], promotion?: "promoted" | "retained" | "tbd"): Student => ({
