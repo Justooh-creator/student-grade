@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { nextAcademicYear, rolloverStudents, rolloverSummary } from "./promotion";
+import { nextAcademicYear, nextClassId, rolloverStudents, rolloverSummary } from "./promotion";
 import type { Student } from "./store";
 
 const s = (id: string, classId: Student["classId"], promotion?: "promoted" | "retained" | "tbd"): Student => ({
@@ -33,5 +33,13 @@ describe("term 3 rollover", () => {
   });
   it("academic year advances by one", () => {
     expect(nextAcademicYear("2025/2026")).toBe("2026/2027");
+  });
+});
+
+describe("stream promotion", () => {
+  it("keeps the stream when moving up", () => {
+    expect(nextClassId("b1a")).toBe("b2a");
+    expect(nextClassId("kg2b")).toBe("b1b");
+    expect(nextClassId("b9c")).toBeNull();
   });
 });

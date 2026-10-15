@@ -1,10 +1,13 @@
-import { CLASS_LEVELS, type ClassId } from "./ges";
+import { CLASS_LEVELS, parseClassId, type ClassId } from "./ges";
 import type { Student } from "./store";
 
+/** Next level, keeping the stream: "b1a" → "b2a", "b4" → "b5", Basic 9 → null. */
 export function nextClassId(id: ClassId): ClassId | null {
-  const i = CLASS_LEVELS.findIndex((c) => c.id === id);
+  const p = parseClassId(id);
+  if (!p) return null;
+  const i = CLASS_LEVELS.findIndex((c) => c.id === p.base);
   if (i < 0 || i === CLASS_LEVELS.length - 1) return null;
-  return CLASS_LEVELS[i + 1]!.id;
+  return `${CLASS_LEVELS[i + 1]!.id}${p.stream ?? ""}` as ClassId;
 }
 
 export function nextAcademicYear(year: string): string {

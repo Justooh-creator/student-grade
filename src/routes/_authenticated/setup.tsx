@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { extractSignature } from "@/lib/images";
 import { GHANA_REGIONS, REGION_NAMES } from "@/lib/ghana";
 import { PromotionRollover } from "@/components/PromotionRollover";
+import { baseClassId, classStream, STREAM_LETTERS, type ClassId } from "@/lib/ges";
 
 function shrinkImage(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -87,7 +88,7 @@ const ACADEMIC_YEARS = Array.from({ length: 8 }, (_, i) => {
 });
 
 function SetupPage() {
-  const { school, setSchool, students } = useAppData();
+  const { school, setSchool, students, updateStudent } = useAppData();
   const search = Route.useSearch();
 
   return (
@@ -124,6 +125,45 @@ function SetupPage() {
               onChange={(v) => setSchool({ emisCode: v })}
               placeholder="School EMIS code"
             />
+            <label className="block">
+              <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
+                Class streams
+              </span>
+              <select
+                value={String(school.streams ?? 1)}
+                onChange={(e) => {
+                  const next = Number(e.target.value);
+                  const cur = school.streams ?? 1;
+                  if (next === cur) return;
+                  if (next < cur) {
+                    const extra = students.filter((s) => {
+                      const st = classStream(s.classId);
+                      return st && STREAM_LETTERS.indexOf(st) >= next;
+                    });
+                    if (extra.length) {
+                      alert(`Move or remove the ${extra.length} learner(s) in the streams you are turning off first.`);
+                      return;
+                    }
+                  }
+                  // Re-label existing learners so nobody disappears from their class.
+                  for (const s of students) {
+                    const base = baseClassId(s.classId);
+                    const st = classStream(s.classId);
+                    if (next === 1 && st) updateStudent(s.id, { classId: base });
+                    else if (next > 1 && !st) updateStudent(s.id, { classId: `${base}a` as ClassId });
+                  }
+                  setSchool({ streams: next });
+                }}
+                className="mt-1 h-10 w-full rounded-md border border-border bg-card px-3 text-sm text-foreground outline-none focus:border-primary"
+              >
+                <option value="1">Single class per level</option>
+                <option value="2">2 streams (A &amp; B)</option>
+                <option value="3">3 streams (A, B &amp; C)</option>
+              </select>
+              <span className="mt-1 block text-xs text-muted-foreground">
+                Each stream has its own register (max 35), marks, positions and reports. Existing learners move to stream A.
+              </span>
+            </label>
             <label className="block">
               <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
                 Region
