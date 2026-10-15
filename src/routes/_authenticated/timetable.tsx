@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { AppHeader } from "@/components/AppHeader";
 import { useAppData } from "@/lib/store";
 import { useCloud } from "@/lib/cloud";
-import { CLASS_LEVELS, getClassLevel, type ClassId } from "@/lib/ges";
+import { CLASS_LEVELS, getClassLevel, schoolClassIds, type ClassId } from "@/lib/ges";
 import { TT_DAYS, defaultTimetable, fmt12, getTimetable, type Timetable } from "@/lib/timetable";
 
 export const Route = createFileRoute("/_authenticated/timetable")({
@@ -69,7 +69,7 @@ function TimetablePage() {
         <h1 className="text-2xl font-bold">📅 Class Timetable</h1>
         <div className="no-print flex flex-wrap items-center gap-2">
           <select aria-label="Select class" className="h-11 rounded-md border border-border bg-card px-3 font-bold" value={classId} onChange={(e) => setClassId(e.target.value as ClassId)}>
-            {CLASS_LEVELS.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            {schoolClassIds(school).map(getClassLevel).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
           <div className="flex overflow-hidden rounded-md border border-border">
             {(["weekly", "daily"] as const).map((v) => (

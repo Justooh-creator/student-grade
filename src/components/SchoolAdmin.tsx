@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { setCloud } from "@/lib/cloud";
 import { useAppData } from "@/lib/store";
-import { CLASS_LEVELS, isJhs } from "@/lib/ges";
+import { CLASS_LEVELS, getClassLevel, isJhs, schoolClassIds } from "@/lib/ges";
 
 interface Member { id: string; user_id: string; role: string; name: string; email: string }
 
@@ -63,7 +63,7 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
         <p className="font-bold">Class teachers</p>
         <p className="mt-1 text-sm text-muted-foreground">Pick a teacher for each class. The name shows on Student Details and report cards.</p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
-          {CLASS_LEVELS.map((c) => {
+          {schoolClassIds(school).map(getClassLevel).map((c) => {
             const cur = school.classTeachers?.[c.id] ?? "";
             const names = members.map((m) => m.name);
             return (
@@ -84,7 +84,7 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
         <p className="font-bold">Who can edit each class</p>
         <p className="mt-1 text-sm text-muted-foreground">Tick the teachers allowed to enter marks. Other teachers can only view. A class with nobody ticked stays open to all. Headteachers can edit every class. Basic 7–9 are assigned by subject — each subject teacher enters marks for their own subject only.</p>
         <div className="mt-3 space-y-3">
-          {CLASS_LEVELS.map((c) => {
+          {schoolClassIds(school).map(getClassLevel).map((c) => {
             const list = school.classAssignments?.[c.id] ?? [];
             const teachers = members.filter((m) => m.role !== "headteacher");
             const jhs = isJhs(c.id);

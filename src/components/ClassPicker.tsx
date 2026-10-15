@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { CLASS_LEVELS, classShortLabel, getClassLevel, schoolClassIds, usesCat, type ClassId } from "@/lib/ges";
+import { useAppData } from "@/lib/store";
 
 export function ClassPicker({
   value,
@@ -7,12 +9,18 @@ export function ClassPicker({
 }: {
   value: ClassId;
   onChange: (c: ClassId) => void;
-  /** Classes to show; defaults to the 11 single-stream levels. */
+  /** Classes to show; defaults to the school's classes (with streams when set). */
   classes?: ClassId[];
 }) {
+  const { school } = useAppData();
   const level = getClassLevel(value);
-  const list = classes ?? CLASS_LEVELS.map((c) => c.id);
+  const list = classes ?? schoolClassIds(school);
   const streamed = list.length > CLASS_LEVELS.length;
+  // If the selected class doesn't exist under the current stream setting, jump to the first one.
+  useEffect(() => {
+    if (!list.includes(value) && list[0]) onChange(list[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, list.length]);
   return (
     <section className="mt-5">
       <h2 className="text-[13px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Class</h2>
