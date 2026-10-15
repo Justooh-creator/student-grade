@@ -32,6 +32,18 @@ function AuthPage() {
   const [msg, setMsg] = useState("");
   const [errorMessage, setErrorMessage] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [remember, setRemember] = useState(true);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("edureport:remember-email");
+    if (saved) setEmail(saved);
+    else if (localStorage.getItem("edureport:remember-off")) setRemember(false);
+  }, []);
+
+  function saveRemember() {
+    if (remember) { localStorage.setItem("edureport:remember-email", email.trim()); localStorage.removeItem("edureport:remember-off"); }
+    else { localStorage.removeItem("edureport:remember-email"); localStorage.setItem("edureport:remember-off", "1"); }
+  }
 
   useEffect(() => {
     if (window.location.hash.includes("type=recovery")) {
@@ -57,6 +69,7 @@ function AuthPage() {
     e.preventDefault();
     setBusy(true);
     showMessage("");
+    saveRemember();
     try {
       if (mode === "up") {
         const { data, error } = await supabase.auth.signUp({
@@ -107,12 +120,12 @@ function AuthPage() {
       <header className="border-b border-border bg-primary px-6 py-5 text-primary-foreground">
         <div className="mx-auto flex max-w-5xl items-center gap-3">
           <img src="/icon-192.png" alt="EduReport logo" className="h-12 w-12 rounded-md object-contain" />
-          <div><p className="font-display text-lg font-bold">EduReport Ghana</p><p className="text-sm text-primary-foreground/80">KG 1 – Basic 9</p></div>
+          <div><p className="font-display text-lg font-bold">EduReport Ghana</p><p className="text-sm text-primary-foreground/80">School Management and SBA</p></div>
         </div>
       </header>
       <main className="mx-auto w-full max-w-md px-5 py-10 sm:py-14">
         <h1 className="font-display text-3xl font-bold text-foreground">{user ? "Your account" : mode === "up" ? "Sign up" : "Sign in"}</h1>
-        {!user && <p className="mt-3 text-base text-muted-foreground">Welcome to EduReport Ghana.</p>}
+        {!user && <p className="mt-3 text-base text-muted-foreground">Welcome to EduReport Ghana — School Management and SBA.</p>}
         {!ready ? <p className="mt-8 flex items-center gap-2 text-muted-foreground" role="status"><LoaderCircle className="h-5 w-5 animate-spin motion-reduce:animate-none" />Checking your account…</p> : user ? (
           <div className="mt-7 space-y-4">
             <p className="break-all text-sm text-muted-foreground">Signed in as <strong className="text-foreground">{user.email}</strong></p>
@@ -122,9 +135,10 @@ function AuthPage() {
         ) : (
           <div className="mt-7">
             <form onSubmit={submit} className="space-y-4">
-              {mode === "up" && <label className="block text-sm font-semibold">Your name<input required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} className={input} /></label>}
-              <label className="block text-sm font-semibold">Email<input required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className={input} /></label>
-              <label className="block text-sm font-semibold">Password<input required type="password" minLength={6} autoComplete={mode === "up" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} className={input} /></label>
+              {mode === "up" && <label className="block text-sm font-semibold">👤 Your name<input required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} className={input} /></label>}
+              <label className="block text-sm font-semibold">📧 Email<input required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className={input} /></label>
+              <label className="block text-sm font-semibold">🔒 Password<input required type="password" minLength={6} autoComplete={mode === "up" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} className={input} /></label>
+              <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="h-4 w-4 accent-primary" />Remember me</label>
               <Button disabled={busy} className="h-12 w-full">{busy ? <><LoaderCircle className="animate-spin motion-reduce:animate-none" />Please wait…</> : <>{mode === "up" ? "Sign up" : "Sign in"}<ArrowRight /></>}</Button>
             </form>
             <Button variant="link" className="mt-3 h-auto w-full whitespace-normal py-2 text-center" disabled={busy} onClick={() => { setMode(mode === "in" ? "up" : "in"); showMessage(""); }}>{mode === "up" ? "Already have an account? Sign in" : "New to EduReport? Sign up"}</Button>
