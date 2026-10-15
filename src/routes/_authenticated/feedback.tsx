@@ -6,7 +6,7 @@ import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 
-export const SUPPORT_WHATSAPP = "233249931038";
+export const SUPPORT_WHATSAPP = "233530887628";
 const CATEGORIES = ["Feature Request", "Grading/Report Suggestion", "Problem / Bug Report", "General Feedback"];
 
 export const Route = createFileRoute("/_authenticated/feedback")({
