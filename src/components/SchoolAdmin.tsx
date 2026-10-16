@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { setCloud } from "@/lib/cloud";
 import { useAppData } from "@/lib/store";
-import { CLASS_LEVELS, getClassLevel, isJhs, schoolClassIds } from "@/lib/ges";
+import { CLASS_LEVELS, STREAM_LETTERS, classStream, getClassLevel, isJhs, schoolClassIds } from "@/lib/ges";
 
 interface Member { id: string; user_id: string; role: string; name: string; email: string }
 
@@ -11,6 +11,19 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
   const [members, setMembers] = useState<Member[]>([]);
   const [busy, setBusy] = useState(false);
   const { school, setSchool } = useAppData();
+  const streamCount = school.streams ?? 1;
+  const [streamFilter, setStreamFilter] = useState<string>("all");
+  const visibleClassIds = schoolClassIds(school).filter((id) => streamFilter === "all" || classStream(id) === streamFilter);
+  const streamTabs = streamCount > 1 ? (
+    <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Filter by stream">
+      {["all", ...STREAM_LETTERS.slice(0, streamCount)].map((s) => (
+        <button key={s} type="button" onClick={() => setStreamFilter(s)} aria-pressed={streamFilter === s}
+          className={`rounded-full border px-3 py-1 text-xs font-bold ${streamFilter === s ? "border-primary bg-primary text-primary-foreground" : "border-input"}`}>
+          {s === "all" ? "All streams" : `Stream ${s.toUpperCase()}`}
+        </button>
+      ))}
+    </div>
+  ) : null;
 
   const load = useCallback(async () => {
     const { data: ms } = await supabase.from("school_members").select("id, user_id, role").eq("school_id", schoolId);
@@ -62,8 +75,9 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
       <div className={card}>
         <p className="font-bold">Class teachers</p>
         <p className="mt-1 text-sm text-muted-foreground">Pick a teacher for each class. The name shows on Student Details and report cards.</p>
+        {streamTabs}
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
-          {schoolClassIds(school).map(getClassLevel).map((c) => {
+          {visibleClassIds.map(getClassLevel).map((c) => {
             const cur = school.classTeachers?.[c.id] ?? "";
             const names = members.map((m) => m.name);
             return (
@@ -84,7 +98,7 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
         <p className="font-bold">Who can edit each class</p>
         <p className="mt-1 text-sm text-muted-foreground">Tick the teachers allowed to enter marks. Other teachers can only view. A class with nobody ticked stays open to all. Headteachers can edit every class. Basic 7–9 are assigned by subject — each subject teacher enters marks for their own subject only.</p>
         <div className="mt-3 space-y-3">
-          {schoolClassIds(school).map(getClassLevel).map((c) => {
+          {visibleClassIds.map(getClassLevel).map((c) => {
             const list = school.classAssignments?.[c.id] ?? [];
             const teachers = members.filter((m) => m.role !== "headteacher");
             const jhs = isJhs(c.id);
