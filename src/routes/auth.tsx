@@ -29,6 +29,7 @@ function AuthPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPw, setShowPw] = useState(false);
   const [msg, setMsg] = useState("");
   const [errorMessage, setErrorMessage] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -124,7 +125,7 @@ function AuthPage() {
         </div>
       </header>
       <main className="mx-auto w-full max-w-md px-5 py-10 sm:py-14">
-        <h1 className="font-display text-3xl font-bold text-foreground">{user ? "Your account" : mode === "up" ? "Sign up" : "Sign in"}</h1>
+        <h1 className="font-display text-3xl font-bold text-foreground">{user ? "Your account" : mode === "up" ? "Sign up" : "Welcome back"}</h1>
         {!user && <p className="mt-3 text-base text-muted-foreground">Welcome to EduReport Ghana — School Management and SBA.</p>}
         {!ready ? <p className="mt-8 flex items-center gap-2 text-muted-foreground" role="status"><LoaderCircle className="h-5 w-5 animate-spin motion-reduce:animate-none" />Checking your account…</p> : user ? (
           <div className="mt-7 space-y-4">
@@ -137,7 +138,7 @@ function AuthPage() {
             <form onSubmit={submit} className="space-y-4">
               {mode === "up" && <label className="block text-sm font-semibold">👤 Your name<input required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} className={input} /></label>}
               <label className="block text-sm font-semibold">📧 Email<input required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className={input} /></label>
-              <label className="block text-sm font-semibold">🔒 Password<input required type="password" minLength={6} autoComplete={mode === "up" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} className={input} /></label>
+              <label className="relative block text-sm font-semibold">🔒 Password<button type="button" onClick={() => setShowPw(!showPw)} aria-label={showPw ? "Hide password" : "Show password"} className="absolute bottom-2 right-3 text-xl">{showPw ? "🙈" : "👁️"}</button><input required type={showPw ? "text" : "password"} minLength={6} autoComplete={mode === "up" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} className={input} /></label>
               <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="h-4 w-4 accent-primary" />Remember me</label>
               <Button disabled={busy} className="h-12 w-full">{busy ? <><LoaderCircle className="animate-spin motion-reduce:animate-none" />Please wait…</> : <>{mode === "up" ? "Sign up" : "Sign in"}<ArrowRight /></>}</Button>
             </form>
@@ -147,6 +148,7 @@ function AuthPage() {
         )}
         {msg && <p role={errorMessage ? "alert" : "status"} className={`mt-4 text-sm ${errorMessage ? "text-destructive" : "text-primary"}`}>{msg}</p>}
         {!user && <p className="mt-6 border-t border-border pt-5 text-center text-sm text-muted-foreground">No payment required to start.<br />An active license or gift code is required to print or save report PDFs.</p>}
+        {!user && <footer className="mt-6 text-center text-xs text-muted-foreground"><p>🇬🇭 EduReport Ghana — Engineered by <strong className="text-foreground">Justice Atideku</strong></p><p>Classroom Teacher &amp; Software Developer • South Tongu, Ghana</p><p className="mt-1"><a href="https://wa.me/233530887628" target="_blank" rel="noreferrer" className="font-bold text-primary underline">Chat on WhatsApp</a> • <a href="mailto:jatideku@gmail.com" className="font-bold text-primary underline">Email: Click Here</a></p></footer>}
       </main>
     </div>
   );
