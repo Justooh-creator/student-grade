@@ -1,4 +1,10 @@
 - [x] Add working PDF and editable Microsoft Word downloads.
 - [x] Verify document downloads and A4 dimensions.
-- [ ] Require sign-up/sign-in before app access; retain existing Print/PDF licensing.
+- [x] Require sign-up/sign-in before app access; retain existing Print/PDF licensing.
 - [x] Finish class streams (report headings + School Cloud stream filter).
+- [ ] Polish manifest metadata and home-screen shortcuts; add identical JSON mirror.
+- [ ] Apply agreed developer attribution across public sign-in and profile.
+- [ ] Add public Privacy Policy for Play Store preparation.
+- [ ] Prepare 1024 × 500 Play Store feature graphic with existing logo.
+- [ ] Add previewed Excel/CSV learner import with 35-learner and assignment safeguards.
+- [ ] Add stream-aware class broadsheet preview and licensed landscape print/PDF.
