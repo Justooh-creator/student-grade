@@ -1,0 +1,25 @@
+{
+  "name": "EduReport Ghana — SBA Report Cards",
+  "short_name": "EduReport",
+  "description": "GES SBA and exam scoring with printable A4 report cards for KG 1 to Basic 9.",
+  "id": "/?source=pwa",
+  "lang": "en-GH",
+  "dir": "ltr",
+  "categories": ["education", "productivity"],
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f1e8",
+  "theme_color": "#1d5c41",
+  "shortcuts": [
+    { "name": "Student Details", "short_name": "Learners", "url": "/students", "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "School Details", "short_name": "School", "url": "/setup", "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "School Cloud", "short_name": "Cloud", "url": "/school-cloud", "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }] }
+  ],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
