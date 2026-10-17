@@ -1,0 +1,33 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+
+export const Route = createFileRoute("/privacy")({
+  head: () => ({ meta: [
+    { title: "Privacy Policy — EduReport Ghana" },
+    { name: "description", content: "How EduReport Ghana handles teacher accounts, school records, learner information, local images and payments." },
+    { property: "og:title", content: "Privacy Policy — EduReport Ghana" },
+    { property: "og:description", content: "Privacy information and support for teachers and schools using EduReport." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+    { property: "og:url", content: "https://edureportghana.com/privacy" },
+  ], links: [{ rel: "canonical", href: "https://edureportghana.com/privacy" }] }),
+  component: PrivacyPage,
+});
+
+function PrivacyPage() {
+  return <div className="min-h-screen bg-background">
+    <header className="border-b border-border bg-primary text-primary-foreground"><div className="mx-auto flex max-w-3xl items-center gap-3 px-5 py-5"><img src="/icon-192.png" alt="EduReport logo" width={48} height={48} className="rounded-md" /><p className="font-display text-lg font-bold">EduReport Ghana</p></div></header>
+    <main className="mx-auto max-w-3xl px-5 py-8"><h1 className="text-3xl font-bold">Privacy Policy</h1><p className="mt-2 text-sm text-muted-foreground">Last updated: 17 October 2026</p>
+      <div className="mt-8 space-y-7 text-base leading-relaxed">
+        <section><h2 className="text-lg font-bold">Who operates EduReport</h2><p className="mt-2">EduReport Ghana is operated by Justice Atideku, a teacher and software developer in South Tongu, Ghana. It supports teachers and schools with school management, assessments and report cards for KG 1 to Basic 9.</p></section>
+        <section><h2 className="text-lg font-bold">Information used by the app</h2><p className="mt-2">Teacher accounts use a name, email address and password for sign-in and account recovery. Schools and teachers may enter school details, teacher assignments, learner names, admission numbers, gender, attendance, assessment marks, conduct, remarks, optional guardian phone numbers and optional fee information. The app also keeps license, gift-code redemption and payment-verification information where applicable.</p></section>
+        <section><h2 className="text-lg font-bold">Device storage and School Cloud</h2><p className="mt-2">Working records are stored in your browser on your device. When you create or join a school on School Cloud, school details and learner text records are stored in Lovable Cloud and shared with authorized members of that school. School Cloud is the shared source of records for school members.</p><p className="mt-2">Learner photos, school logos, signatures and stamps are kept on the device and excluded from School Cloud record sync. Manual backups and exported documents may contain these images and other personal information; protect any copies you save or share.</p></section>
+        <section><h2 className="text-lg font-bold">How information is used and shared</h2><p className="mt-2">Information is used to provide accounts, school collaboration, learner assessments, report cards, notices, support and licensing. School members can view their school's shared records; editing follows the school's assignments. Sending reports or messages through WhatsApp, email, SMS or downloaded files is initiated by the user and shares information with the recipients they choose.</p><p className="mt-2">Lovable Cloud supports hosting, authentication and school record storage. Paystack processes payments, including supported mobile-money payments, under its own privacy policy. EduReport verifies payment references to activate licenses; payment authorization is handled by Paystack.</p></section>
+        <section><h2 className="text-lg font-bold">Learner information and school responsibilities</h2><p className="mt-2">EduReport is intended for use by teachers and authorized school staff, not for children to create accounts. Schools and teachers must have the appropriate authority to enter and share learner information, inform parents or guardians where required, and avoid entering unnecessary personal information.</p></section>
+        <section><h2 className="text-lg font-bold">Security and shared devices</h2><p className="mt-2">App records require sign-in, and cloud access is restricted to authorized accounts. No online service or device can guarantee absolute security. Use a strong password, protect your device, sign out on shared devices and handle printed reports and backups carefully. Signing out does not by itself erase all locally saved records or downloaded files.</p></section>
+        <section><h2 className="text-lg font-bold">Retention, corrections and deletion requests</h2><p className="mt-2">Records remain on your device and, for School Cloud users, in your school's cloud records until removed through the available controls or an appropriate support request. There is no automatic deletion period stated here. Teachers can correct records within their assigned access. Contact your headteacher about school records, or email the developer to request account deletion, access to your account information or help with deletion. Requests may require identity and school-authority verification; information needed for legal or payment obligations may need to be retained.</p></section>
+        <section><h2 className="text-lg font-bold">Cookies and local preferences</h2><p className="mt-2">Authentication storage keeps you signed in. Local storage holds working records, saved preferences and the optional remembered email address. Hosting services may process technical information such as request logs and aggregate usage information. Clearing browser data can remove local records and images; keep a secure backup first.</p></section>
+        <section><h2 className="text-lg font-bold">Contact and policy updates</h2><p className="mt-2">For privacy questions or deletion requests, email <a href="mailto:jatideku@gmail.com" className="font-semibold text-primary underline">Justice Atideku: Click Here</a>. This policy may change as the service changes; the date above identifies this version.</p></section>
+      </div><Button asChild variant="outline" className="mt-8"><Link to="/auth">Back to EduReport</Link></Button>
+    </main>
+  </div>;
+}

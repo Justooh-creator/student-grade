@@ -11,4 +11,7 @@
 - School data syncs via school_students/schools tables (one JSON row per learner); store.ts onLocalChange/applyRemote drive SyncListener — cloud is source of truth once a teacher joins a school.
 - All app content lives under the client-only _authenticated layout while auth and password recovery stay public; preserve existing URLs and keep payment checks separate from account access.
 - A single root AccountProvider owns session transitions and cache invalidation; useUser consumes it so page mounts cannot create competing auth listeners.
-- Lesson-note document exports live in a browser-safe, dynamically loaded export module; generate PDF and DOCX directly so downloads do not depend on browser printing.
+- Spreadsheet reader libraries are dynamically loaded from the learner-upload action; imports are append-only and recheck class permissions, duplicates and capacity against current store data before one update.
+- Broadsheets derive results and exact-stream ranking from the existing results module, use named landscape print pages, and reuse the existing PrintButton license gate so report-card grading and print rules remain unchanged.
+- Privacy is a public content route; school records and broadsheets stay under the client-only authenticated layout.
+- Keep both public manifest filenames identical after any metadata update for packaging-tool compatibility.

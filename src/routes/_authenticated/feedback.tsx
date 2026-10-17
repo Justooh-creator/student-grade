@@ -6,6 +6,7 @@ import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import developerPhoto from "@/assets/developer.jpg.asset.json";
+import { Link } from "@tanstack/react-router";
 
 export const SUPPORT_WHATSAPP = "233530887628";
 const CATEGORIES = ["Feature Request", "Grading/Report Suggestion", "Problem / Bug Report", "General Feedback"];
@@ -107,7 +108,7 @@ function FeedbackPage() {
             <img src={developerPhoto.url} alt="Justice Atideku" width={64} height={64} className="h-16 w-16 shrink-0 rounded-full border-2 border-primary/30 object-cover" />
             <div className="min-w-0">
               <p className="font-display text-base font-bold">Justice Atideku</p>
-              <p className="text-sm font-semibold text-primary">Classroom Teacher & Software Developer</p>
+              <p className="text-sm font-semibold text-primary">A Teacher &amp; Software Developer</p>
               <p className="text-xs text-muted-foreground">South Tongu, Volta Region, Ghana</p>
             </div>
           </div>
@@ -141,6 +142,7 @@ function FeedbackPage() {
             </div>
           </section>
         )}
+        <p className="text-center text-sm"><Link to="/privacy" className="text-primary underline">Privacy Policy</Link></p>
       </main>
     </div>
   );

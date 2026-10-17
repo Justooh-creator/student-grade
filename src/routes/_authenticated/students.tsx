@@ -10,6 +10,7 @@ import { passportPhoto, extractSignature } from "@/lib/images";
 import { ClassLock } from "@/components/ClassLock";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { LearnerImport } from "@/components/LearnerImport";
 
 export const Route = createFileRoute("/_authenticated/students")({
   validateSearch: validateClassSearch,
@@ -98,7 +99,7 @@ function StudentsPage() {
             </button>
           </div>
           <p className="num mt-2 text-[12px] text-muted-foreground">{list.length} / {MAX_STUDENTS_PER_CLASS} learners</p>
-
+          <LearnerImport classId={classId} />
         </section>
 
         <section className="mt-5 space-y-3">
@@ -139,6 +140,7 @@ function StudentsPage() {
               <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 <TextField label="Name" value={s.name} onChange={(v) => updateStudent(s.id, { name: v })} />
                 <TextField label="Admission no." value={s.admissionNo} onChange={(v) => updateStudent(s.id, { admissionNo: v })} />
+                <label className="block text-sm font-bold">Gender (optional)<select value={s.gender ?? ""} onChange={(e) => updateStudent(s.id, { gender: e.target.value })} className="mt-1 w-full rounded-md border border-border bg-card px-3 py-2 font-normal"><option value="">Not specified</option><option>Female</option><option>Male</option></select></label>
                 <TextField label="Days present" value={s.attendance} onChange={(v) => updateStudent(s.id, { attendance: v })} placeholder={`out of ${school.totalAttendance || "—"}`} />
                 <TextField label="Parent / guardian phone" value={s.parentPhone ?? ""} onChange={(v) => updateStudent(s.id, { parentPhone: v })} placeholder="e.g. 0241234567" />
                 <PresetField label="Attitude / conduct" value={s.conduct} presets={CONDUCT_PRESETS} onChange={(v) => updateStudent(s.id, { conduct: v })} placeholder="Select conduct" />

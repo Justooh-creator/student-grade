@@ -38,6 +38,7 @@ export interface Student {
   id: string;
   name: string;
   admissionNo: string;
+  gender?: string;
   classId: ClassId;
   attendance: string;
   /** subject name -> { sba, exam } */

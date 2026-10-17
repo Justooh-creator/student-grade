@@ -7,6 +7,7 @@ import { ClassTransfer } from "@/components/ClassTransfer";
 import { ClassWhatsAppShare } from "@/components/ClassWhatsAppShare";
 import { getClassLevel, type ClassId } from "@/lib/ges";
 import { useAppData } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/class-report/$classId")({
   head: () => ({
@@ -43,6 +44,7 @@ function ClassReportPage() {
         <p className="text-sm font-semibold">{level?.name} · {list.length} report card(s)</p>
         <div className="flex flex-wrap items-center gap-2">
           <ClassTransfer classId={classId} className={level.name} />
+          <Button asChild variant="outline"><Link to="/broadsheet" search={{ class: classId as ClassId }}>Class Broadsheet</Link></Button>
           {list.length > 0 && <PrintButton />}
           <ClassWhatsAppShare classId={classId} className={level.name} />
         </div>

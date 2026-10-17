@@ -263,6 +263,9 @@ export function AppHeader({
                 <Link to="/midterm-progress" search={{ class: navClass }} className={rowCls(pathname.startsWith("/midterm-progress"))}>
                   <RowCell icon={ICON.chat} title="Mid-Term WhatsApp" desc="Progress check-in to parents" />
                 </Link>
+                <Link to="/broadsheet" search={{ class: navClass }} className={rowCls(pathname.startsWith("/broadsheet"))}>
+                  <RowCell icon={ICON.file} title="Class Broadsheet" desc="Master marks, grades and positions" />
+                </Link>
                 <Link to="/pta-announcement" search={{ class: navClass }} className={rowCls(pathname.startsWith("/pta-announcement"))}>
                   <RowCell icon={ICON.megaphone} title="PTA Meeting Notice" desc="Invite parents, class by class" />
                 </Link>

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, LoaderCircle, LogOut } from "lucide-react";
@@ -36,7 +36,7 @@ export const Route = createFileRoute("/auth")({
           author: {
             "@type": "Person",
             name: "Justice Atideku",
-            jobTitle: "Classroom Teacher & Software Developer",
+            jobTitle: "A Teacher & Software Developer",
             email: "mailto:jatideku@gmail.com",
             address: { "@type": "PostalAddress", addressLocality: "South Tongu", addressCountry: "GH" },
           },
@@ -174,7 +174,8 @@ function AuthPage() {
         )}
         {msg && <p role={errorMessage ? "alert" : "status"} className={`mt-4 text-sm ${errorMessage ? "text-destructive" : "text-primary"}`}>{msg}</p>}
         {!user && <p className="mt-6 border-t border-border pt-5 text-center text-sm text-muted-foreground">No payment required to start.<br />An active license or gift code is required to print or save report PDFs.</p>}
-        {!user && <footer className="mt-6 text-center text-xs text-muted-foreground"><p>🇬🇭 EduReport Ghana — Engineered by <strong className="text-foreground">Justice Atideku</strong></p><p>Classroom Teacher &amp; Software Developer • South Tongu, Ghana</p><p className="mt-1"><a href="https://wa.me/233530887628" target="_blank" rel="noreferrer" className="font-bold text-primary underline">Chat on WhatsApp</a> • <a href="mailto:jatideku@gmail.com" className="font-bold text-primary underline">Email: Click Here</a></p></footer>}
+        {!user && <footer className="mt-6 text-center text-xs text-muted-foreground"><p>🇬🇭 EduReport Ghana — Engineered by <strong className="text-foreground">Justice Atideku</strong></p><p>A Teacher &amp; Software Developer • South Tongu, Ghana</p><p className="mt-1"><a href="https://wa.me/233530887628" target="_blank" rel="noreferrer" className="font-bold text-primary underline">Chat on WhatsApp</a> • <a href="mailto:jatideku@gmail.com" className="font-bold text-primary underline">Email: Click Here</a></p></footer>}
+        <p className="mt-4 text-center text-sm"><Link to="/privacy" className="text-primary underline">Privacy Policy</Link></p>
       </main>
     </div>
   );
