@@ -158,3 +158,22 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
   :is(input, select, textarea, button):not(.print-sheet *) { font-size: 1rem; }
   :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select):not(.print-sheet *) { min-height: 2.75rem; }
 }
+
+.broadsheet-page { min-width: 1080px; padding: 16px; }
+.broadsheet-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 9px; }
+.broadsheet-table th, .broadsheet-table td { border: 1px solid var(--rule); padding: 3px 2px; text-align: center; overflow-wrap: anywhere; }
+.broadsheet-table thead { background: var(--primary); color: var(--primary-foreground); }
+.broadsheet-table .learner-name { width: 145px; text-align: left; }
+.broadsheet-table th:first-child { width: 25px; }
+@media print {
+  @page broadsheet { size: A4 landscape; margin: 8mm; }
+  body:has(.broadsheet-page) main { max-width: none; padding: 0; }
+  .broadsheet-pages { overflow: visible; }
+  .broadsheet-page { page: broadsheet; width: 281mm; min-width: 0; padding: 0; margin: 0 !important; break-after: page; break-inside: avoid; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .broadsheet-page:last-child { break-after: auto; }
+  .broadsheet-table { font-size: 7pt; }
+  .broadsheet-table th, .broadsheet-table td { padding: 1.5px 1px; }
+  .broadsheet-table tbody tr { height: 4.4mm; }
+  .broadsheet-table .learner-name { width: 34mm; }
+  .broadsheet-table th:first-child { width: 6mm; }
+}
