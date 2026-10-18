@@ -231,20 +231,20 @@ function SetupPage() {
                 Head teacher signature
               </span>
               <p className="text-[13px] text-muted-foreground">Sign on plain white paper with a dark pen, then take a photo. Only the pen marks are kept.</p>
-              <div className="mt-1 flex flex-wrap items-center gap-3">
-                <div className="flex h-16 w-40 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-background">
-                  {school.signature ? <img src={school.signature} alt="Head teacher signature" className="max-h-full max-w-full object-contain" /> : <span className="text-[12px] text-muted-foreground">No signature</span>}
-                </div>
-                <label className="cursor-pointer rounded-md bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:opacity-90">
+              <div className="mt-1 flex h-16 w-full max-w-[240px] items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-background">
+                {school.signature ? <img src={school.signature} alt="Head teacher signature" className="max-h-full max-w-full object-contain" /> : <span className="text-[12px] text-muted-foreground">No signature</span>}
+              </div>
+              <div className="mt-2 grid max-w-[420px] grid-cols-2 gap-2">
+                <label className="cursor-pointer rounded-md bg-primary px-2 py-2 text-center text-xs font-bold text-primary-foreground hover:opacity-90">
                   Snap with camera
                   <input type="file" accept="image/*" capture="environment" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setSchool({ signature: await extractSignature(f) }); }} />
                 </label>
-                <label className="cursor-pointer rounded-md border border-border px-3 py-2 text-xs font-bold hover:bg-muted">
+                <label className="cursor-pointer rounded-md border border-border px-2 py-2 text-center text-xs font-bold hover:bg-muted">
                   Upload image
                   <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setSchool({ signature: await extractSignature(f) }); }} />
                 </label>
-                {school.signature && <button onClick={() => setSchool({ signature: "" })} className="text-xs text-muted-foreground hover:text-destructive">Remove</button>}
               </div>
+              {school.signature && <button onClick={() => setSchool({ signature: "" })} className="mt-1 text-xs text-muted-foreground hover:text-destructive">Remove</button>}
             </div>
             <div className="sm:col-span-2">
               <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
