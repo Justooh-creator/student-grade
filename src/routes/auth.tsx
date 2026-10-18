@@ -146,13 +146,15 @@ function AuthPage() {
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-primary px-6 py-5 text-primary-foreground">
         <div className="mx-auto flex max-w-5xl items-center gap-3">
-          <img src="/icon-192.png" alt="EduReport logo" className="h-12 w-12 rounded-md object-contain" />
-          <div><p className="font-display text-lg font-bold">EduReport Ghana</p><p className="text-sm text-primary-foreground/80">School Management and SBA</p></div>
+          <img src="/icon-192.png" alt="EduReport logo" className="h-14 w-14 rounded-md object-contain" />
+          <div><p className="font-display text-2xl font-black tracking-tight sm:text-3xl">EduReport Ghana</p><p className="text-sm font-medium text-primary-foreground/90">School Management and SBA</p></div>
         </div>
       </header>
       <main className="mx-auto w-full max-w-md px-5 py-10 sm:py-14">
-        <h1 className="font-display text-3xl font-bold text-foreground">{user ? "Your account" : mode === "up" ? "Sign up" : "Welcome back"}</h1>
-        {!user && <p className="mt-3 text-base text-muted-foreground">Welcome to EduReport Ghana — School Management and SBA.</p>}
+        {!user && <p className="font-display text-3xl font-black tracking-tight text-primary sm:text-4xl">EduReport Ghana</p>}
+        <h1 className="mt-1 font-display text-2xl font-bold text-foreground">{user ? "Your account" : mode === "up" ? "Create Free Account" : "Welcome back"}</h1>
+        {!user && <p className="mt-3 text-base text-muted-foreground">{mode === "up" ? "Official GES terminal report cards and SBA for KG 1 to Basic 9." : "Sign in to access your school records, SBA, and report cards."}</p>}
+        {!user && <div className="mt-4 flex flex-wrap gap-2 text-sm font-semibold">{["🇬🇭 GES Standard", "⚡ Works Offline", "📱 Phone & Laptop"].map((b) => <span key={b} className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-primary">{b}</span>)}</div>}
         {!ready ? <p className="mt-8 flex items-center gap-2 text-muted-foreground" role="status"><LoaderCircle className="h-5 w-5 animate-spin motion-reduce:animate-none" />Checking your account…</p> : user ? (
           <div className="mt-7 space-y-4">
             <p className="break-all text-sm text-muted-foreground">Signed in as <strong className="text-foreground">{user.email}</strong></p>
@@ -166,7 +168,7 @@ function AuthPage() {
               <label className="block text-sm font-semibold">📧 Email<input required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className={input} /></label>
               <label className="relative block text-sm font-semibold">🔒 Password<button type="button" onClick={() => setShowPw(!showPw)} aria-label={showPw ? "Hide password" : "Show password"} className="absolute bottom-2 right-3 text-xl">{showPw ? "🙈" : "👁️"}</button><input required type={showPw ? "text" : "password"} minLength={6} autoComplete={mode === "up" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} className={input} /></label>
               <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="h-4 w-4 accent-primary" />Remember me</label>
-              <Button disabled={busy} className="h-12 w-full">{busy ? <><LoaderCircle className="animate-spin motion-reduce:animate-none" />Please wait…</> : <>{mode === "up" ? "Sign up" : "Sign in"}<ArrowRight /></>}</Button>
+              <Button disabled={busy} className="h-12 w-full">{busy ? <><LoaderCircle className="animate-spin motion-reduce:animate-none" />Please wait…</> : <>{mode === "up" ? "Create Free Account" : "Sign in"}<ArrowRight /></>}</Button>
             </form>
             <Button variant="link" className="mt-3 h-auto w-full whitespace-normal py-2 text-center" disabled={busy} onClick={() => { setMode(mode === "in" ? "up" : "in"); showMessage(""); }}>{mode === "up" ? "Already have an account? Sign in" : "New to EduReport? Sign up"}</Button>
             {mode === "in" && <Button variant="link" className="h-auto w-full py-2 text-muted-foreground" disabled={busy} onClick={forgotPassword}>Forgot password?</Button>}

@@ -20,7 +20,7 @@ describe("learner register import", () => {
     const incoming = [{ ...row, name: " learner  1 ", admissionNo: "other" }, { ...row, name: "Other", admissionNo: "1" }, row, row];
     const imported = appendLearnerImport([existing], incoming, "b1a", true);
     expect(imported).toHaveLength(2);
-    expect(imported[0]?.scores.Mathematics).toEqual({ sba: 40, exam: 45 });
+    expect(imported[0]?.scores["Mathematics"]).toEqual({ sba: 40, exam: 45 });
   });
   it("counts capacity and duplicates within the exact stream", () => {
     const otherStream = Array.from({ length: 35 }, (_, i) => learner(i, "b1b"));
