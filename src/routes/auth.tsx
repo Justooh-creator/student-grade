@@ -154,7 +154,7 @@ function AuthPage() {
         {!user && <p className="font-display text-3xl font-black tracking-tight text-primary sm:text-4xl">EduReport Ghana</p>}
         <h1 className="mt-1 font-display text-2xl font-bold text-foreground">{user ? "Your account" : mode === "up" ? "Create Free Account" : "Welcome back"}</h1>
         {!user && <p className="mt-3 text-base text-muted-foreground">{mode === "up" ? "Official GES terminal report cards and SBA for KG 1 to Basic 9." : "Sign in to access your school records, SBA, and report cards."}</p>}
-        {!user && <div className="mt-4 flex flex-wrap gap-2 text-sm font-semibold">{["🇬🇭 GES Standard", "⚡ Works Offline", "📱 Phone & Laptop"].map((b) => <span key={b} className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-primary">{b}</span>)}</div>}
+        {!user && (() => { const pill = "rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-primary whitespace-nowrap"; return <div className="mt-4 space-y-2 text-sm font-semibold"><div className="flex justify-between gap-2"><span className={pill}>🇬🇭 GES Standard</span><span className={pill}>⚡ Works Offline</span></div><div className="flex justify-center"><span className={pill}>📱 Phone &amp; Laptop</span></div></div>; })()}
         {!ready ? <p className="mt-8 flex items-center gap-2 text-muted-foreground" role="status"><LoaderCircle className="h-5 w-5 animate-spin motion-reduce:animate-none" />Checking your account…</p> : user ? (
           <div className="mt-7 space-y-4">
             <p className="break-all text-sm text-muted-foreground">Signed in as <strong className="text-foreground">{user.email}</strong></p>
