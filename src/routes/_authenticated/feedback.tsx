@@ -113,7 +113,7 @@ function FeedbackPage() {
             </div>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
-            EduReport Ghana was built by an active classroom teacher to end manual SBA arithmetic and end-of-term paperwork in Ghanaian basic schools. It works fully offline, keeps learner photos, signatures and stamps on your own device, and syncs securely with your school team when internet is available.
+            EduReport Ghana was built by an active teacher to end manual SBA arithmetic and end-of-term paperwork in Ghanaian basic schools. It works fully offline, keeps learner photos, signatures and stamps on your own device, and syncs securely with your school team when internet is available.
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
             <a href={`https://wa.me/${SUPPORT_WHATSAPP}`} target="_blank" rel="noreferrer" className="rounded-md bg-primary px-3 py-1.5 font-bold text-primary-foreground">Chat on WhatsApp</a>
