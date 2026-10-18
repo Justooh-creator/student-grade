@@ -13,7 +13,7 @@ export async function readLearnerFile(file: File) {
   if (/\.xlsx$/i.test(file.name)) {
     const { default: readXlsxFile } = await import("read-excel-file/browser");
     const rows = await readXlsxFile(file);
-    return parseLearnerRows(rows);
+    return parseLearnerRows(rows as unknown as Parameters<typeof parseLearnerRows>[0]);
   }
   throw new Error("Choose an Excel .xlsx or CSV file. Save older .xls files as .xlsx first.");
 }
