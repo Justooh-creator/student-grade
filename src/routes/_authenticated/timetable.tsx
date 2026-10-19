@@ -50,6 +50,20 @@ function TimetablePage() {
   const setCell = (d: string, i: number, v: string) => setTt((t) => ({ ...t, cells: { ...t.cells, [d]: (t.cells[d] ?? []).map((x, j) => (j === i ? v : x)) } }));
   const setPer = (i: number, k: "start" | "end", v: string) => setTt((t) => ({ ...t, periods: t.periods.map((p, j) => (j === i ? { ...p, [k]: v } : p)) }));
   const save = () => { setSchool({ timetables: { ...(school.timetables ?? {}), [classId]: tt } }); setEdit(false); toast.success("Timetable saved"); };
+  const addSlot = (isBreak: boolean) => setTt((t) => {
+    const last = t.periods[t.periods.length - 1];
+    const start = last?.end ?? "14:00";
+    const [h, m] = start.split(":").map(Number);
+    const endMin = (h ?? 14) * 60 + (m ?? 0) + (isBreak ? 20 : 40);
+    const end = `${String(Math.floor(endMin / 60) % 24).padStart(2, "0")}:${String(endMin % 60).padStart(2, "0")}`;
+    const label = isBreak ? (prompt("Break name", "Third Break") || "Third Break") : `P${t.periods.filter((p) => !p.isBreak).length + 1}`;
+    const cells = Object.fromEntries(TT_DAYS.map((d) => [d, [...(t.cells[d] ?? []), isBreak ? label : "Free / Library"]]));
+    return { periods: [...t.periods, { start, end, label, isBreak }], cells };
+  });
+  const delSlot = (i: number) => setTt((t) => ({
+    periods: t.periods.filter((_, j) => j !== i),
+    cells: Object.fromEntries(TT_DAYS.map((d) => [d, (t.cells[d] ?? []).filter((_, j) => j !== i)])),
+  }));
   const reset = () => { setTt(defaultTimetable(classId)); toast("GES default loaded — tap Save to keep it"); };
   const askNotify = async () => {
     if (typeof Notification === "undefined") { toast("Reminders will show inside the app"); return; }
@@ -88,6 +102,8 @@ function TimetablePage() {
           {canEdit && !edit && <button onClick={() => setEdit(true)} className="rounded-md border border-border bg-card px-3 py-2 font-bold">✏️ Edit</button>}
           {edit && <>
             <button onClick={save} className="rounded-md bg-primary px-3 py-2 font-bold text-primary-foreground">Save</button>
+            <button onClick={() => addSlot(false)} className="rounded-md border border-border bg-card px-3 py-2 font-bold">+ Add period</button>
+            <button onClick={() => addSlot(true)} className="rounded-md border border-border bg-card px-3 py-2 font-bold">+ Add break</button>
             <button onClick={reset} className="rounded-md border border-border bg-card px-3 py-2 font-bold">Load GES default</button>
             <button onClick={() => { setTt(getTimetable(school, classId)); setEdit(false); }} className="px-3 py-2 font-bold">Cancel</button>
           </>}
@@ -122,7 +138,7 @@ function TimetablePage() {
                   {tt.periods.map((p, i) => (
                     <tr key={i} className={p.isBreak ? "bg-muted" : ""}>
                       <td className="whitespace-nowrap border border-border p-2 font-bold">
-                        {edit ? <div className="flex gap-1"><input type="time" className={inp} value={p.start} onChange={(e) => setPer(i, "start", e.target.value)} /><input type="time" className={inp} value={p.end} onChange={(e) => setPer(i, "end", e.target.value)} /></div>
+                        {edit ? <div className="flex gap-1"><input type="time" className={inp} value={p.start} onChange={(e) => setPer(i, "start", e.target.value)} /><input type="time" className={inp} value={p.end} onChange={(e) => setPer(i, "end", e.target.value)} /><button onClick={() => delSlot(i)} aria-label="Delete slot" className="px-1 font-bold text-destructive">✕</button></div>
                           : `${fmt12(p.start)} – ${fmt12(p.end)}`}
                       </td>
                       {TT_DAYS.map((d) => <td key={d} className="border border-border p-2 text-center">{cell(d, i)}</td>)}
@@ -140,6 +156,7 @@ function TimetablePage() {
                       <>
                         <input type="time" aria-label="Period start time" className={inp} value={p.start} onChange={(e) => setPer(i, "start", e.target.value)} />
                         <input type="time" aria-label="Period end time" className={inp} value={p.end} onChange={(e) => setPer(i, "end", e.target.value)} />
+                        <button onClick={() => delSlot(i)} className="text-xs font-bold text-destructive">✕ Delete</button>
                       </>
                     ) : (
                       <>{fmt12(p.start)}<br /><span className="text-sm text-muted-foreground">to {fmt12(p.end)}</span></>

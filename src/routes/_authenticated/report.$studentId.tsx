@@ -93,7 +93,7 @@ function ReportPage() {
       </div>
 
       <div className="overflow-x-auto px-4 pb-10">
-        <ReportSheet student={student} students={students} school={school} />
+        <ReportSheet student={student} students={students} school={school} watermark={!lic.loading && !lic.canPrint} />
       </div>
     </div>
   );

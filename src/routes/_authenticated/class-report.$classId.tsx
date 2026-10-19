@@ -8,6 +8,8 @@ import { ClassWhatsAppShare } from "@/components/ClassWhatsAppShare";
 import { getClassLevel, type ClassId } from "@/lib/ges";
 import { useAppData } from "@/lib/store";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/lib/auth";
+import { useLicense } from "@/lib/license";
 
 export const Route = createFileRoute("/_authenticated/class-report/$classId")({
   head: () => ({
@@ -27,6 +29,8 @@ export const Route = createFileRoute("/_authenticated/class-report/$classId")({
 function ClassReportPage() {
   const { classId } = Route.useParams();
   const { school, students } = useAppData();
+  const { user } = useUser();
+  const lic = useLicense(user?.id);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const level = getClassLevel(classId as ClassId);
@@ -52,7 +56,7 @@ function ClassReportPage() {
       <div className="overflow-x-auto px-4 pb-10">
         {list.length === 0 && <p className="text-center text-sm text-muted-foreground">No learners in this class yet.</p>}
         {list.map((s) => (
-          <ReportSheet key={s.id} student={s} students={students} school={school} />
+          <ReportSheet key={s.id} student={s} students={students} school={school} watermark={!lic.loading && !lic.canPrint} />
         ))}
       </div>
     </div>

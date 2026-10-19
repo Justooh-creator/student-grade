@@ -288,9 +288,6 @@ export function AppHeader({
                     note={dutyReminders.length > 0 ? `${dutyReminders.length} new` : undefined}
                   />
                 </Link>
-                <Link to="/school-cloud" className={rowCls(false)}>
-                  <RowCell icon={ICON.file} title="Payment" desc="Plans, MTN Mobile Money, activation code" />
-                </Link>
                 <Link to="/feedback" className={rowCls(pathname.startsWith("/feedback"))}>
                   <RowCell icon={ICON.bulb} title="Help & About Developer" desc="Suggestions, support and app creator" />
                 </Link>
