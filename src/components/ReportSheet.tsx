@@ -5,7 +5,7 @@ import {
 import { classRanking, computeStudentResult } from "@/lib/results";
 import type { School, Student } from "@/lib/store";
 
-export function ReportSheet({ student, students, school }: { student: Student; students: Student[]; school: School }) {
+export function ReportSheet({ student, students, school, watermark = false }: { student: Student; students: Student[]; school: School; watermark?: boolean }) {
   const level = getClassLevel(student.classId);
   const result = computeStudentResult(student);
   const ranking = classRanking(students, student.classId);
@@ -14,7 +14,14 @@ export function ReportSheet({ student, students, school }: { student: Student; s
   const kg = !cat;
   const remark = student.remark?.trim() || (kg ? "—" : teacherRemarkFor(result.average));
   return (
-        <div style={{ breakAfter: "page", pageBreakAfter: "always" }} className="print-sheet sheet-a4 overflow-hidden mx-auto mb-6 border border-rule px-[11mm] py-[8mm] text-[#1b1a16] shadow-[0_20px_50px_-30px_rgba(0,0,0,0.5)]">
+        <div style={{ breakAfter: "page", pageBreakAfter: "always" }} className="print-sheet sheet-a4 relative overflow-hidden mx-auto mb-6 border border-rule px-[11mm] py-[8mm] text-[#1b1a16] shadow-[0_20px_50px_-30px_rgba(0,0,0,0.5)]">
+          {watermark && (
+            <div aria-hidden className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
+              <span className="-rotate-[35deg] whitespace-nowrap border-4 border-destructive/30 px-6 py-2 text-[20pt] font-black tracking-wider text-destructive/30">
+                UNOFFICIAL PREVIEW • LICENSE REQUIRED TO PRINT
+              </span>
+            </div>
+          )}
           <div className="relative border-b-2 border-[#1b1a16] pb-2 text-center">
             {school.logo && (
               <img src={school.logo} alt="School logo" className="absolute left-0 top-0 h-[19mm] w-[19mm] object-contain" />

@@ -7,4 +7,8 @@
 - [x] Add public Privacy Policy for Play Store preparation.
 - [x] Prepare 1024 × 500 Play Store feature graphic with existing logo.
 - [x] Add previewed Excel/CSV learner import with 35-learner and assignment safeguards.
-- [x] Add stream-aware class broadsheet preview and licensed landscape print/PDF.
+- [x] Add stream-aware class broadsheet preview and licensed landscape print/PDF.- [x] Remove duplicate Payment link from quick navigation.
+- [x] Timetable: add extra periods/breaks (e.g. Third Break) and delete slots.
+- [x] Diagonal "Unofficial preview" watermark on unlicensed report cards (screen only).
+- [x] Senior Student Duty Roster: auto-assign 1 boy + 1 girl from Basic 6 and Basic 9.
+- [ ] Questions & Answers Hub (next).

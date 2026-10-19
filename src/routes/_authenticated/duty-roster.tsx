@@ -27,7 +27,7 @@ const blankT = (): DutyEntry => ({ day: "All week", duty: DUTY_PRESETS[0]!, time
 const addWeeks = (ws: string, n: number) => { const d = new Date(ws + "T00:00:00Z"); d.setUTCDate(d.getUTCDate() + n * 7); return d.toISOString().slice(0, 10); };
 
 function DutyRosterPage() {
-  const { school } = useAppData();
+  const { school, students } = useAppData();
   const { rosters, acks, acknowledge, reload, cloud, nextWeek } = useDutyRosters();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -70,6 +70,31 @@ function DutyRosterPage() {
     }),
   }));
 
+  const STUDENT_DUTY = "Senior Student on Duty";
+  const autoStudents = () => {
+    const pool = (prefix: string) => students.filter((s) => s.classId.startsWith(prefix));
+    const pick = (list: typeof students, g: string, n: number) => {
+      const l = list.filter((s) => (s.gender ?? "").toLowerCase().startsWith(g));
+      return l.length ? l[n % l.length] : undefined;
+    };
+    const groups = [{ p: "b6", tag: "B6" }, { p: "b9", tag: "B9" }].map((g) => ({ ...g, list: pool(g.p) })).filter((g) => g.list.length);
+    if (!groups.length) { toast.error("Add Basic 6 or Basic 9 learners (with gender) first"); return; }
+    setPlan((prev) => {
+      const next = { ...prev };
+      weeks.forEach((ws, wi) => {
+        const kept = (next[ws] ?? []).filter((e) => e.duty !== STUDENT_DUTY);
+        const add: DutyEntry[] = [];
+        for (const g of groups) for (const sex of ["m", "f"]) {
+          const s = pick(g.list, sex, wi);
+          if (s) add.push({ day: "All week", duty: STUDENT_DUTY, time: "", location: "", teacherId: "", teacherName: `${s.name} (${g.tag})` });
+        }
+        next[ws] = [...kept, ...add];
+      });
+      return next;
+    });
+    toast.success("Senior students assigned — 1 boy + 1 girl per class each week");
+  };
+
   const save = async () => {
     if (!cloud.schoolId || !cloud.userId) return;
     const rows = weeks.map((ws) => ({ ws, clean: (plan[ws] ?? []).filter((e) => e.teacherName.trim()) })).filter((x) => x.clean.length)
@@ -90,7 +115,7 @@ function DutyRosterPage() {
   };
 
   const draftText = weeks.map((ws, i) => {
-    const names = (plan[ws] ?? []).map((e) => e.teacherName.trim()).filter(Boolean);
+    const names = (plan[ws] ?? []).map((e) => e.teacherName.trim() ? (e.duty === "Senior Student on Duty" ? `🎓 ${e.teacherName.trim()} (student)` : e.teacherName.trim()) : "").filter(Boolean);
     return names.length ? `*Week ${i + 1}* (${weekLabel(ws)})\n• ${names.join("\n• ")}` : "";
   }).filter(Boolean).join("\n\n");
   const shareText = `🗓️ *TEACHERS' DUTY ROSTER*${school?.name ? ` — ${school.name}` : ""}\n\n${draftText}${notes ? `\n\n${notes}` : ""}`;
@@ -129,6 +154,7 @@ function DutyRosterPage() {
                 <button onClick={() => setPlan((p) => ({ ...p, [ws]: [...(p[ws] ?? []), blankT()] }))} className="h-9 rounded-md border border-border text-sm font-bold hover:bg-muted">+ Add teacher</button>
               </div>
             ))}
+            <button onClick={autoStudents} className="h-10 rounded-md border border-primary text-sm font-bold text-primary hover:bg-muted">🎲 Auto-Assign Senior Students (Basic 6 & 9)</button>
             <textarea className={`${input} h-16 py-2`} placeholder="Note to staff (optional)" value={notes} onChange={(e) => setNotes(e.target.value)} />
             <div className="flex flex-wrap gap-2">
               <button disabled={busy} onClick={save} className="h-10 rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground disabled:opacity-60">{busy ? "Publishing…" : "Publish & remind teachers"}</button>
