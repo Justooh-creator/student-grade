@@ -23,7 +23,7 @@ const L = ["A", "B", "C", "D"];
 
 function QaHub() {
   const { school } = useAppData();
-  const [bank, setBank] = useState<SubjectBank>(BANKS[0]);
+  const [bank, setBank] = useState<SubjectBank>(BANKS[0]!);
   const [mode, setMode] = useState<Mode>("menu");
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [done, setDone] = useState(false);

@@ -6,8 +6,9 @@ describe("question bank", () => {
     expect(BANKS.filter((b) => b.classId === "b9").map((b) => b.subject)).toEqual(["Mathematics", "Integrated Science", "English Language"]);
   });
   it("scores correct answers", () => {
-    const items = BANKS[0].objectives.slice(0, 4);
-    const answers = { [items[0].id]: items[0].answer, [items[1].id]: items[1].answer, [items[2].id]: (items[2].answer + 1) % 4 };
+    const items = BANKS[0]!.objectives.slice(0, 4);
+    const [a, b, c] = [items[0]!, items[1]!, items[2]!];
+    const answers = { [a.id]: a.answer, [b.id]: b.answer, [c.id]: (c.answer + 1) % 4 };
     expect(scoreQuiz(items, answers)).toEqual({ correct: 2, total: 4, percent: 50 });
   });
 });
