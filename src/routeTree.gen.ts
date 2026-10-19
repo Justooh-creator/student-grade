@@ -19,6 +19,7 @@ import { Route as AuthenticatedDutyRosterRouteImport } from './routes/_authentic
 import { Route as AuthenticatedFeedbackRouteImport } from './routes/_authenticated/feedback'
 import { Route as AuthenticatedMidtermProgressRouteImport } from './routes/_authenticated/midterm-progress'
 import { Route as AuthenticatedPtaAnnouncementRouteImport } from './routes/_authenticated/pta-announcement'
+import { Route as AuthenticatedQaHubRouteImport } from './routes/_authenticated/qa-hub'
 import { Route as AuthenticatedSchoolCloudRouteImport } from './routes/_authenticated/school-cloud'
 import { Route as AuthenticatedSetupRouteImport } from './routes/_authenticated/setup'
 import { Route as AuthenticatedStaffMeetingRouteImport } from './routes/_authenticated/staff-meeting'
@@ -78,6 +79,11 @@ const AuthenticatedPtaAnnouncementRoute =
     path: '/pta-announcement',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedQaHubRoute = AuthenticatedQaHubRouteImport.update({
+  id: '/qa-hub',
+  path: '/qa-hub',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSchoolCloudRoute =
   AuthenticatedSchoolCloudRouteImport.update({
     id: '/school-cloud',
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/feedback': typeof AuthenticatedFeedbackRoute
   '/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
+  '/qa-hub': typeof AuthenticatedQaHubRoute
   '/school-cloud': typeof AuthenticatedSchoolCloudRoute
   '/setup': typeof AuthenticatedSetupRoute
   '/staff-meeting': typeof AuthenticatedStaffMeetingRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByTo {
   '/feedback': typeof AuthenticatedFeedbackRoute
   '/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
+  '/qa-hub': typeof AuthenticatedQaHubRoute
   '/school-cloud': typeof AuthenticatedSchoolCloudRoute
   '/setup': typeof AuthenticatedSetupRoute
   '/staff-meeting': typeof AuthenticatedStaffMeetingRoute
@@ -165,6 +173,7 @@ export interface FileRoutesById {
   '/_authenticated/feedback': typeof AuthenticatedFeedbackRoute
   '/_authenticated/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/_authenticated/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
+  '/_authenticated/qa-hub': typeof AuthenticatedQaHubRoute
   '/_authenticated/school-cloud': typeof AuthenticatedSchoolCloudRoute
   '/_authenticated/setup': typeof AuthenticatedSetupRoute
   '/_authenticated/staff-meeting': typeof AuthenticatedStaffMeetingRoute
@@ -186,6 +195,7 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/midterm-progress'
     | '/pta-announcement'
+    | '/qa-hub'
     | '/school-cloud'
     | '/setup'
     | '/staff-meeting'
@@ -203,6 +213,7 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/midterm-progress'
     | '/pta-announcement'
+    | '/qa-hub'
     | '/school-cloud'
     | '/setup'
     | '/staff-meeting'
@@ -222,6 +233,7 @@ export interface FileRouteTypes {
     | '/_authenticated/feedback'
     | '/_authenticated/midterm-progress'
     | '/_authenticated/pta-announcement'
+    | '/_authenticated/qa-hub'
     | '/_authenticated/school-cloud'
     | '/_authenticated/setup'
     | '/_authenticated/staff-meeting'
@@ -311,6 +323,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPtaAnnouncementRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/qa-hub': {
+      id: '/_authenticated/qa-hub'
+      path: '/qa-hub'
+      fullPath: '/qa-hub'
+      preLoaderRoute: typeof AuthenticatedQaHubRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/school-cloud': {
       id: '/_authenticated/school-cloud'
       path: '/school-cloud'
@@ -369,6 +388,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFeedbackRoute: typeof AuthenticatedFeedbackRoute
   AuthenticatedMidtermProgressRoute: typeof AuthenticatedMidtermProgressRoute
   AuthenticatedPtaAnnouncementRoute: typeof AuthenticatedPtaAnnouncementRoute
+  AuthenticatedQaHubRoute: typeof AuthenticatedQaHubRoute
   AuthenticatedSchoolCloudRoute: typeof AuthenticatedSchoolCloudRoute
   AuthenticatedSetupRoute: typeof AuthenticatedSetupRoute
   AuthenticatedStaffMeetingRoute: typeof AuthenticatedStaffMeetingRoute
@@ -385,6 +405,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFeedbackRoute: AuthenticatedFeedbackRoute,
   AuthenticatedMidtermProgressRoute: AuthenticatedMidtermProgressRoute,
   AuthenticatedPtaAnnouncementRoute: AuthenticatedPtaAnnouncementRoute,
+  AuthenticatedQaHubRoute: AuthenticatedQaHubRoute,
   AuthenticatedSchoolCloudRoute: AuthenticatedSchoolCloudRoute,
   AuthenticatedSetupRoute: AuthenticatedSetupRoute,
   AuthenticatedStaffMeetingRoute: AuthenticatedStaffMeetingRoute,
