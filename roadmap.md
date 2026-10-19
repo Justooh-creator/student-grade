@@ -11,4 +11,5 @@
 - [x] Timetable: add extra periods/breaks (e.g. Third Break) and delete slots.
 - [x] Diagonal "Unofficial preview" watermark on unlicensed report cards (screen only).
 - [x] Senior Student Duty Roster: auto-assign 1 boy + 1 girl from Basic 6 and Basic 9.
-- [ ] Questions & Answers Hub (next).
+- [x] Questions & Answers Hub pilot (Basic 9 core: quizzes free, A4 papers licensed).
+- [ ] Q&A Hub: expand to KG 1–Basic 8 and more subjects.
