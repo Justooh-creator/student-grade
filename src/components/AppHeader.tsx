@@ -266,6 +266,9 @@ export function AppHeader({
                 <Link to="/broadsheet" search={{ class: navClass }} className={rowCls(pathname.startsWith("/broadsheet"))}>
                   <RowCell icon={ICON.file} title="Class Broadsheet" desc="Master marks, grades and positions" />
                 </Link>
+                <Link to="/qa-hub" className={rowCls(pathname.startsWith("/qa-hub"))}>
+                  <RowCell icon={ICON.file} title="📚 Q&A Hub" desc="Quizzes, exam papers, marking schemes" />
+                </Link>
                 <Link to="/pta-announcement" search={{ class: navClass }} className={rowCls(pathname.startsWith("/pta-announcement"))}>
                   <RowCell icon={ICON.megaphone} title="PTA Meeting Notice" desc="Invite parents, class by class" />
                 </Link>
