@@ -160,6 +160,13 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
 }
 
 .broadsheet-page { min-width: 1080px; padding: 16px; }
+@media print {
+  @page qa { size: A4 portrait; margin: 12mm; }
+  body:has(.qa-paper) main { max-width: none; padding: 0; }
+  .qa-paper { page: qa; background: var(--paper); border: 0; padding: 0; font-size: 11pt; }
+  .qa-paper li { break-inside: avoid; }
+  .qa-paper h3 { break-after: avoid; }
+}
 .broadsheet-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 9px; }
 .broadsheet-table th, .broadsheet-table td { border: 1px solid var(--rule); padding: 3px 2px; text-align: center; overflow-wrap: anywhere; }
 .broadsheet-table thead { background: var(--primary); color: var(--primary-foreground); }
