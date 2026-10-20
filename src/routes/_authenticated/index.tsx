@@ -47,7 +47,7 @@ function Index() {
         first = true;
       }
     } catch { /* storage unavailable */ }
-    if (first) navigate({ to: "/setup", replace: true });
+    if (first && !school.name) navigate({ to: "/setup", replace: true });
     else setReady(true);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const go = (id: string) => navigate({ to: "/", search: { class: classId, student: id } });
