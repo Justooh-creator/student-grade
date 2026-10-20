@@ -15,3 +15,4 @@
 - Broadsheets derive results and exact-stream ranking from the existing results module, use named landscape print pages, and reuse the existing PrintButton license gate so report-card grading and print rules remain unchanged.
 - Privacy is a public content route; school records and broadsheets stay under the client-only authenticated layout.
 - Keep both public manifest filenames identical after any metadata update for packaging-tool compatibility.
+- Generate Mathematics Q&A packs in a browser-safe seeded module; keep one pack in page state for quiz, exam and scheme so answers and printing never regenerate independently.
