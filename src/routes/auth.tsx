@@ -83,13 +83,15 @@ function AuthPage() {
     setErrorMessage(error);
   }
 
+  const [entering, setEntering] = useState(false);
   async function openApp() {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) {
-      showMessage(error?.message ?? "Please sign in to continue.", true);
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) {
+      showMessage("Please sign in to continue.", true);
       return;
     }
-    await navigate({ to: "/setup", replace: true });
+    setEntering(true);
+    await navigate({ to: "/", replace: true });
   }
 
   async function submit(e: React.FormEvent) {
@@ -155,7 +157,7 @@ function AuthPage() {
         <h1 className="mt-1 font-display text-2xl font-bold text-foreground">{user ? "Your account" : mode === "up" ? "Create Free Account" : "Welcome back"}</h1>
         {!user && <p className="mt-3 text-base text-muted-foreground">{mode === "up" ? "Official GES terminal report cards and SBA for KG 1 to Basic 9." : "Sign in to access your school records, SBA, and report cards."}</p>}
         {!user && (() => { const pill = "rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-primary whitespace-nowrap"; return <div className="mt-4 space-y-2 text-sm font-semibold"><div className="flex justify-between gap-2"><span className={pill}>🇬🇭 GES Standard</span><span className={pill}>⚡ Works Offline</span></div><div className="flex justify-center"><span className={pill}>📱 Phone &amp; Laptop</span></div></div>; })()}
-        {!ready ? <p className="mt-8 flex items-center gap-2 text-muted-foreground" role="status"><LoaderCircle className="h-5 w-5 animate-spin motion-reduce:animate-none" />Checking your account…</p> : user ? (
+        {!ready || entering ? <p className="mt-8 flex items-center gap-2 text-muted-foreground" role="status"><LoaderCircle className="h-5 w-5 animate-spin motion-reduce:animate-none" />{entering ? "Opening EduReport…" : "Checking your account…"}</p> : user ? (
           <div className="mt-7 space-y-4">
             <p className="break-all text-sm text-muted-foreground">Signed in as <strong className="text-foreground">{user.email}</strong></p>
             <Button className="h-12 w-full" onClick={openApp} disabled={busy}>Continue to EduReport<ArrowRight /></Button>
