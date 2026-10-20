@@ -135,7 +135,7 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
   }
 
   const theory: Theory[] = [];
-  const oldTheory = new Set(previous?.theory.map((q) => q.q) ?? []);
+  const oldTheory = new Set(previous?.theory.map((q) => q.q.replace(/ Show your working\.$/, "")) ?? []);
   for (let i = 0; i < 4; i++) {
     const selected = topics[i % topics.length];
     if (!selected) continue;

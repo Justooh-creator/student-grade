@@ -38,7 +38,7 @@ describe("offline dynamic Mathematics", () => {
           if (q.q.startsWith("Calculate")) expected = a + b * c;
           else if (q.q.startsWith("Evaluate")) expected = a ** (b + d);
           else if (q.q.includes("%")) expected = a * b / 100;
-          else if (q.q.startsWith("Find") && q.q.includes("/")) expected = a * c / b;
+          else if (/^Find \d+\/\d+ of/.test(q.q)) expected = a * c / b;
           else if (q.q.startsWith("Solve")) expected = numbers.length === 4 ? (d - b) / (a - c) : (c - b) / a;
           else if (q.q.startsWith("If y")) expected = a * c + b;
           else if (q.q.includes("rectangle") && q.q.includes("area")) expected = a * b;
