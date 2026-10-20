@@ -12,6 +12,6 @@
 - [x] Diagonal "Unofficial preview" watermark on unlicensed report cards (screen only).
 - [x] Senior Student Duty Roster: auto-assign 1 boy + 1 girl from Basic 6 and Basic 9.
 - [x] Questions & Answers Hub pilot (Basic 9 core: quizzes free, A4 papers licensed).
-- [ ] Q&A Batch 1: class selection, offline dynamic Basic 7–9 Mathematics, topic selection, New Questions, and verification.
+- [x] Q&A Batch 1: class selection, offline dynamic Basic 7–9 Mathematics, topic selection, New Questions, and verification.
 - [ ] Q&A Batch 2: expand Mathematics to Basic 4–6 (awaiting next request).
 - [ ] Q&A later expansion: KG 1–Basic 3 and more subjects (awaiting next request).

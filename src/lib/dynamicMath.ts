@@ -143,7 +143,8 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
     let tries = 0;
     while ((seen.has(item.q) || oldTheory.has(item.q)) && tries++ < 200) item = make(selected);
     seen.add(item.q);
-    theory.push({ id: `${classId}-${seed}-t${i}`, topic: selected, q: `${item.q} Show your working.`, marks: 5, scheme: ["Correct formula or method — 1 mark", "Correct substitution or setup — 1 mark", `Correct working — 2 marks: ${item.explain}`, `Correct final answer${item.unit ? ` with ${item.unit}` : ""} — 1 mark`] });
+    const finalAnswer = item.unit === "GH₵" || item.unit === "x =" ? `${item.unit} ${fmt(item.value)}` : `${fmt(item.value)}${item.unit ? ` ${item.unit}` : ""}`;
+    theory.push({ id: `${classId}-${seed}-t${i}`, topic: selected, q: `${item.q} Show your working.`, marks: 5, scheme: ["Correct formula or method — 1 mark", "Correct substitution or setup — 1 mark", `Correct working — 2 marks: ${item.explain}`, `Correct final answer: ${finalAnswer} — 1 mark`] });
   }
   return { id: `${classId}-math`, classId, subject: "Mathematics", seed, topic, objectives: shuffle(objectives), theory };
 }
