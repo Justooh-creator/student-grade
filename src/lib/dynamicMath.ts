@@ -1,6 +1,6 @@
 import type { Objective, SubjectBank, Theory } from "./questionBank";
 
-export const MATH_CLASSES = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"] as const;
+export const MATH_CLASSES = ["kg1", "kg2", "b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"] as const;
 export type MathClass = (typeof MATH_CLASSES)[number];
 export const MATH_TOPICS = ["Number", "Fractions & Percentages", "Algebra", "Geometry & Mensuration", "Statistics & Probability"] as const;
 export type MathTopic = (typeof MATH_TOPICS)[number];
