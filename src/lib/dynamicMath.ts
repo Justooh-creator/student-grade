@@ -87,6 +87,10 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
       case "Geometry & Mensuration": {
         if (grade === 1) {
           const shape = sample([["triangle", 3], ["square", 4], ["rectangle", 4]] as const);
+          if (int(0, 1) === 0) {
+            const n = int(2, shape[1] === 3 ? 6 : 5);
+            return { topic: selected, q: `Yaw drew ${n} ${shape[0]}s. How many sides are there altogether?`, value: n * shape[1], explain: `Each ${shape[0]} has ${shape[1]} sides: ${n} × ${shape[1]} = ${n * shape[1]} sides.` };
+          }
           return { topic: selected, q: `How many sides does a ${shape[0]} have?`, value: shape[1], explain: `A ${shape[0]} has ${shape[1]} straight sides.` };
         }
         const l = int(2, grade === 2 ? 10 : 25), w = int(2, grade === 2 ? 10 : 25);
