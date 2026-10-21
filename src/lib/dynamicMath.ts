@@ -51,9 +51,65 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
   };
 
   type Item = { topic: MathTopic; q: string; value: number; unit?: string; explain: string };
+  // Kindergarten (KG 1–2): NaCCA Early Childhood numeracy — counting, comparing, shapes, patterns.
+  const kg = classId === "kg1" || classId === "kg2" ? (classId === "kg1" ? 1 : 2) : 0;
+  const makeKg = (selected: MathTopic): Item => {
+    const max = kg === 1 ? 10 : 20;
+    switch (selected) {
+      case "Number": {
+        const kind = int(0, 2);
+        if (kind === 0) {
+          const n = int(2, max);
+          return { topic: selected, q: `Count the stars: ${"⭐".repeat(n)}. How many stars are there?`, value: n, explain: `Count one by one: there are ${n} stars.` };
+        }
+        if (kind === 1) {
+          const n = int(1, max - 1);
+          return { topic: selected, q: `What number comes after ${n}?`, value: n + 1, explain: `Count on one more: ${n}, ${n + 1}.` };
+        }
+        const n = int(2, max);
+        return { topic: selected, q: `What number comes before ${n}?`, value: n - 1, explain: `Count back one: ${n - 1}, ${n}.` };
+      }
+      case "Fractions & Percentages": {
+        if (kg === 1) {
+          const a = int(1, 5), b = int(1, 5);
+          return { topic: selected, q: `Ama has ${a} bananas. Kofi gives her ${b} more. How many bananas does she have now?`, value: a + b, explain: `Count them all together: ${a} + ${b} = ${a + b} bananas.` };
+        }
+        const whole = sample([4, 6, 8, 10, 12]);
+        return { topic: selected, q: `Share ${whole} toffees equally between 2 children. How many does each child get?`, value: whole / 2, explain: `Half of ${whole} is ${whole / 2}. Each child gets ${whole / 2} toffees.` };
+      }
+      case "Algebra": {
+        const a = int(1, kg === 1 ? 5 : 9), b = int(1, kg === 1 ? 5 : 9);
+        if (int(0, 1) === 0) {
+          return { topic: selected, q: `Find the missing number: ${a} + ▢ = ${a + b}.`, value: b, explain: `Count on from ${a} to ${a + b}: ▢ = ${b}.` };
+        }
+        const start = int(2, 5), step = int(1, 3);
+        const seq = [start, start + step, start + 2 * step];
+        return { topic: selected, q: `What number comes next in the pattern: ${seq.join(", ")}, …?`, value: start + 3 * step, explain: `The pattern adds ${step} each time: ${start + 2 * step} + ${step} = ${start + 3 * step}.` };
+      }
+      case "Geometry & Mensuration": {
+        const shape = sample([["circle", 0], ["triangle", 3], ["square", 4], ["rectangle", 4]] as const);
+        if (shape[1] === 0) {
+          return { topic: selected, q: "Which shape is round like a ball or the moon?", value: 1, explain: "A circle is round — it has no corners or straight sides." };
+        }
+        if (int(0, 1) === 0) {
+          return { topic: selected, q: `How many sides does a ${shape[0]} have?`, value: shape[1], explain: `A ${shape[0]} has ${shape[1]} straight sides.` };
+        }
+        const n = int(2, kg === 1 ? 3 : 5);
+        return { topic: selected, q: `Yaw drew ${n} ${shape[0]}s. How many sides are there altogether?`, value: n * shape[1], explain: `Each ${shape[0]} has ${shape[1]} sides: ${n} × ${shape[1]} = ${n * shape[1]} sides.` };
+      }
+      case "Statistics & Probability": {
+        if (kg === 1) {
+          const a = int(2, 9), b = int(1, a - 1);
+          return { topic: selected, q: `Which is more: ${a} apples or ${b} apples?`, value: a, explain: `${a} is greater than ${b}, so ${a} apples is more.` };
+        }
+        const cedis = int(1, 5), extra = int(1, 5);
+        return { topic: selected, q: `Esi bought a pencil for GH₵ ${cedis} and an eraser for GH₵ ${extra}. How much did she spend altogether?`, value: cedis + extra, unit: "GH₵", explain: `Add the prices: GH₵ ${cedis} + GH₵ ${extra} = GH₵ ${cedis + extra}.` };
+      }
+    }
+  };
   // Lower Primary (Basic 1–3): NaCCA foundational numeracy with whole-number answers only.
   const grade = Number(classId.slice(1));
-  const lower = grade <= 3;
+  const lower = grade >= 1 && grade <= 3;
   const makeLower = (selected: MathTopic): Item => {
     const max = grade === 1 ? 20 : grade === 2 ? 100 : 1000;
     switch (selected) {
