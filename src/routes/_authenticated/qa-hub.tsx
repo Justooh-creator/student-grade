@@ -13,7 +13,7 @@ import { freshMathSeed, generateMathPack, isMathClass, MATH_TOPICS, type MathTop
 export const Route = createFileRoute("/_authenticated/qa-hub")({
   head: () => ({ meta: [
     { title: "Q&A Hub — EduReport Ghana" },
-    { name: "description", content: "Fresh Basic 4–9 Mathematics quizzes by topic and printable practice papers with worked marking schemes." },
+    { name: "description", content: "Fresh Basic 1–9 Mathematics quizzes by topic and printable practice papers with worked marking schemes." },
     { property: "og:title", content: "Q&A Hub — EduReport Ghana" },
     { property: "og:description", content: "Interactive Mathematics practice and school exam papers for Ghanaian basic schools." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },

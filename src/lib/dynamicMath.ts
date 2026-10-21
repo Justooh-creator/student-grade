@@ -1,6 +1,6 @@
 import type { Objective, SubjectBank, Theory } from "./questionBank";
 
-export const MATH_CLASSES = ["b4", "b5", "b6", "b7", "b8", "b9"] as const;
+export const MATH_CLASSES = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"] as const;
 export type MathClass = (typeof MATH_CLASSES)[number];
 export const MATH_TOPICS = ["Number", "Fractions & Percentages", "Algebra", "Geometry & Mensuration", "Statistics & Probability"] as const;
 export type MathTopic = (typeof MATH_TOPICS)[number];
@@ -51,7 +51,60 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
   };
 
   type Item = { topic: MathTopic; q: string; value: number; unit?: string; explain: string };
+  // Lower Primary (Basic 1–3): NaCCA foundational numeracy with whole-number answers only.
+  const grade = Number(classId.slice(1));
+  const lower = grade <= 3;
+  const makeLower = (selected: MathTopic): Item => {
+    const max = grade === 1 ? 20 : grade === 2 ? 100 : 1000;
+    switch (selected) {
+      case "Number": {
+        const kind = int(0, 2);
+        if (kind === 0) {
+          const x = int(1, max / 2), y = int(1, max / 2);
+          return { topic: selected, q: `Ama has ${x} oranges. Kofi gives her ${y} more. How many oranges does she have now?`, value: x + y, explain: `Add: ${x} + ${y} = ${x + y} oranges.` };
+        }
+        if (kind === 1) {
+          const x = int(Math.ceil(max / 2), max), y = int(1, Math.floor(max / 2));
+          return { topic: selected, q: `Work out ${x} − ${y}.`, value: x - y, explain: `Take away ${y} from ${x}: ${x} − ${y} = ${x - y}.` };
+        }
+        const n = int(1, max - 10);
+        return { topic: selected, q: `What number is 10 more than ${n}?`, value: n + 10, explain: `Add 10: ${n} + 10 = ${n + 10}.` };
+      }
+      case "Fractions & Percentages": {
+        const parts = sample(grade === 1 ? [2] : grade === 2 ? [2, 4] : [2, 3, 4]);
+        const whole = parts * int(1, grade === 1 ? 5 : grade === 2 ? 10 : 20);
+        const name = parts === 2 ? "half" : parts === 3 ? "one-third" : "one-quarter";
+        return { topic: selected, q: `What is ${name} (1/${parts}) of ${whole} sweets?`, value: whole / parts, explain: `Share ${whole} into ${parts} equal groups: ${whole} ÷ ${parts} = ${whole / parts}.` };
+      }
+      case "Algebra": {
+        if (grade === 1) {
+          const x = int(1, 10), y = int(1, 10);
+          return { topic: selected, q: `Find the missing number: ${x} + ▢ = ${x + y}.`, value: y, explain: `Count on from ${x} to ${x + y}: ▢ = ${y}.` };
+        }
+        const times = sample(grade === 2 ? [2, 5, 10] : [2, 3, 4, 5, 10]), groups = int(2, 10);
+        return { topic: selected, q: `There are ${groups} bags with ${times} mangoes in each bag. How many mangoes altogether?`, value: groups * times, explain: `Repeated addition: ${groups} × ${times} = ${groups * times} mangoes.` };
+      }
+      case "Geometry & Mensuration": {
+        if (grade === 1) {
+          const shape = sample([["triangle", 3], ["square", 4], ["rectangle", 4]] as const);
+          if (int(0, 1) === 0) {
+            const n = int(2, shape[1] === 3 ? 6 : 5);
+            return { topic: selected, q: `Yaw drew ${n} ${shape[0]}s. How many sides are there altogether?`, value: n * shape[1], explain: `Each ${shape[0]} has ${shape[1]} sides: ${n} × ${shape[1]} = ${n * shape[1]} sides.` };
+          }
+          return { topic: selected, q: `How many sides does a ${shape[0]} have?`, value: shape[1], explain: `A ${shape[0]} has ${shape[1]} straight sides.` };
+        }
+        const l = int(2, grade === 2 ? 10 : 25), w = int(2, grade === 2 ? 10 : 25);
+        return { topic: selected, q: `A rectangular garden is ${l} m long and ${w} m wide. Find the distance around it (perimeter).`, value: 2 * (l + w), unit: "m", explain: `Add all four sides: ${l} + ${w} + ${l} + ${w} = ${2 * (l + w)} m.` };
+      }
+      case "Statistics & Probability": {
+        const cedis = grade === 1 ? int(1, 5) : grade === 2 ? int(5, 25) : int(20, 200);
+        const extra = grade === 1 ? int(1, 5) : grade === 2 ? int(5, 25) : int(20, 200);
+        return { topic: selected, q: `Esi bought bread for GH₵ ${cedis} and milk for GH₵ ${extra}. How much did she spend altogether?`, value: cedis + extra, unit: "GH₵", explain: `Add the prices: GH₵ ${cedis} + GH₵ ${extra} = GH₵ ${cedis + extra}.` };
+      }
+    }
+  };
   const make = (selected: MathTopic): Item => {
+    if (lower) return makeLower(selected);
     const a = int(2, limit), b = int(2, limit);
     switch (selected) {
       case "Number": {

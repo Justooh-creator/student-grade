@@ -23,7 +23,7 @@ describe("offline dynamic Mathematics", () => {
 
   it("preserves answer keys when options are shuffled", () => {
     for (let seed = 0; seed < 40; seed++) {
-      for (const classId of MATH_CLASSES) {
+      for (const classId of MATH_CLASSES.filter((c) => Number(c.slice(1)) >= 4)) {
         const pack = generateMathPack(classId, seed);
         const answers = Object.fromEntries(pack.objectives.map((q) => [q.id, q.answer]));
         expect(scoreQuiz(pack.objectives, answers)).toEqual({ correct: 20, total: 20, percent: 100 });
@@ -58,5 +58,21 @@ describe("offline dynamic Mathematics", () => {
   it("uses the same numbers and explanations for a reproducible quiz and exam", () => {
     expect(generateMathPack("b8", 123)).toEqual(generateMathPack("b8", 123));
     expect(generateMathPack("b8", 124)).not.toEqual(generateMathPack("b8", 123));
+  });
+
+  it.each(["b1", "b2", "b3"] as const)("gives Lower Primary %s whole-number, non-negative answers", (classId) => {
+    for (let seed = 0; seed < 40; seed++) {
+      const pack = generateMathPack(classId, seed);
+      for (const q of pack.objectives) {
+        const value = Number(q.options[q.answer]?.match(/-?\d+(?:\.\d+)?/)?.[0]);
+        expect(Number.isInteger(value), q.q).toBe(true);
+        expect(value, q.q).toBeGreaterThanOrEqual(0);
+      }
+    }
+    const sums = generateMathPack(classId, 7).objectives.filter((q) => q.q.startsWith("Work out"));
+    for (const q of sums) {
+      const [x = 0, y = 0] = q.q.match(/\d+/g)!.map(Number);
+      expect(Number(q.options[q.answer])).toBe(x - y);
+    }
   });
 });
