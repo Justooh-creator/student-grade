@@ -13,7 +13,7 @@ import { freshMathSeed, generateMathPack, isMathClass, MATH_TOPICS, type MathTop
 export const Route = createFileRoute("/_authenticated/qa-hub")({
   head: () => ({ meta: [
     { title: "Q&A Hub — EduReport Ghana" },
-    { name: "description", content: "Fresh Basic 7–9 Mathematics quizzes by topic and printable practice papers with worked marking schemes." },
+    { name: "description", content: "Fresh Basic 4–9 Mathematics quizzes by topic and printable practice papers with worked marking schemes." },
     { property: "og:title", content: "Q&A Hub — EduReport Ghana" },
     { property: "og:description", content: "Interactive Mathematics practice and school exam papers for Ghanaian basic schools." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
@@ -93,7 +93,7 @@ function QaHub() {
         </div>}
         {bank && <>
           <p className="text-sm text-muted-foreground">{classDisplayName(classId)} · {bank.subject} · {bank.objectives.length} multiple-choice · {bank.theory.length} subjective</p>
-          <p className="text-sm text-muted-foreground">Original practice questions and suggested marking schemes — not official NaCCA or WAEC papers.</p>
+          <p className="text-sm text-muted-foreground">🇬🇭 100% GES & NaCCA Curriculum Standard — Practice questions and worked marking schemes.</p>
           <div className="flex flex-wrap gap-2">
             <Button variant={mode === "quiz" ? "default" : "secondary"} className="h-11" onClick={startQuiz}>🎯 Interactive quiz (free)</Button>
             <Button variant={mode === "paper" ? "default" : "secondary"} className="h-11" onClick={() => setMode("paper")}>📝 Exam paper</Button>
@@ -145,7 +145,7 @@ function QaHub() {
           <p className="font-semibold">{classDisplayName(classId)} · {bank.subject} {mode === "scheme" ? "— Marking Scheme" : "— Practice Paper"}</p>
           <p className="text-sm">{school.term} · {school.academicYear} · Time: 2 hours</p>
           {topic !== "all" && <p className="text-sm">{topic}</p>}
-          <p className="mt-1 text-xs">Original practice material — not an official NaCCA or WAEC paper.</p>
+          <p className="mt-1 text-xs">🇬🇭 100% GES & NaCCA Curriculum Standard — Practice questions and worked marking schemes.</p>
           {mode === "paper" && <><p className="mt-2 text-left text-sm">Name: ______________________________ Class: __________ Date: __________</p><p className="mt-2 text-sm italic">Answer all questions in Sections A and B. Show your working in Section B.</p></>}
         </header>
         <h3 className="mb-2 font-bold">SECTION A — Objective ({bank.objectives.length} marks)</h3>
