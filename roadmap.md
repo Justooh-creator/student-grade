@@ -13,5 +13,9 @@
 - [x] Senior Student Duty Roster: auto-assign 1 boy + 1 girl from Basic 6 and Basic 9.
 - [x] Questions & Answers Hub pilot (Basic 9 core: quizzes free, A4 papers licensed).
 - [x] Q&A Batch 1: class selection, offline dynamic Basic 7–9 Mathematics, topic selection, New Questions, and verification.
-- [ ] Q&A Batch 2: expand Mathematics to Basic 4–6 (awaiting next request).
-- [ ] Q&A later expansion: KG 1–Basic 3 and more subjects (awaiting next request).
+- [x] Expand Mathematics to Basic 1–6.
+- [ ] Finish KG 1–2 generation and verify quizzes/A4 practice papers.
+- [ ] Group quick navigation into expandable sections with visible alerts.
+- [ ] Improve crawlable homepage, public metadata and sitemap without exposing school records.
+- [ ] Add offline lesson notes in the scanned format with A4 PDF and editable Word exports.
+- [ ] Verify all requested updates.
