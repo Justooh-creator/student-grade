@@ -13,13 +13,13 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedBroadsheetRouteImport } from './routes/_authenticated/broadsheet'
 import { Route as AuthenticatedDutyRosterRouteImport } from './routes/_authenticated/duty-roster'
 import { Route as AuthenticatedFeedbackRouteImport } from './routes/_authenticated/feedback'
 import { Route as AuthenticatedMidtermProgressRouteImport } from './routes/_authenticated/midterm-progress'
 import { Route as AuthenticatedPtaAnnouncementRouteImport } from './routes/_authenticated/pta-announcement'
 import { Route as AuthenticatedQaHubRouteImport } from './routes/_authenticated/qa-hub'
+import { Route as AuthenticatedSbaDetailsRouteImport } from './routes/_authenticated/sba-details'
 import { Route as AuthenticatedSchoolCloudRouteImport } from './routes/_authenticated/school-cloud'
 import { Route as AuthenticatedSetupRouteImport } from './routes/_authenticated/setup'
 import { Route as AuthenticatedStaffMeetingRouteImport } from './routes/_authenticated/staff-meeting'
@@ -46,11 +46,6 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedBroadsheetRoute = AuthenticatedBroadsheetRouteImport.update({
   id: '/broadsheet',
@@ -82,6 +77,11 @@ const AuthenticatedPtaAnnouncementRoute =
 const AuthenticatedQaHubRoute = AuthenticatedQaHubRouteImport.update({
   id: '/qa-hub',
   path: '/qa-hub',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSbaDetailsRoute = AuthenticatedSbaDetailsRouteImport.update({
+  id: '/sba-details',
+  path: '/sba-details',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSchoolCloudRoute =
@@ -125,7 +125,7 @@ const AuthenticatedReportStudentIdRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedIndexRoute
+  '/': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -135,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
   '/qa-hub': typeof AuthenticatedQaHubRoute
+  '/sba-details': typeof AuthenticatedSbaDetailsRoute
   '/school-cloud': typeof AuthenticatedSchoolCloudRoute
   '/setup': typeof AuthenticatedSetupRoute
   '/staff-meeting': typeof AuthenticatedStaffMeetingRoute
@@ -144,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/report/$studentId': typeof AuthenticatedReportStudentIdRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -153,12 +155,12 @@ export interface FileRoutesByTo {
   '/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
   '/qa-hub': typeof AuthenticatedQaHubRoute
+  '/sba-details': typeof AuthenticatedSbaDetailsRoute
   '/school-cloud': typeof AuthenticatedSchoolCloudRoute
   '/setup': typeof AuthenticatedSetupRoute
   '/staff-meeting': typeof AuthenticatedStaffMeetingRoute
   '/students': typeof AuthenticatedStudentsRoute
   '/timetable': typeof AuthenticatedTimetableRoute
-  '/': typeof AuthenticatedIndexRoute
   '/class-report/$classId': typeof AuthenticatedClassReportClassIdRoute
   '/report/$studentId': typeof AuthenticatedReportStudentIdRoute
 }
@@ -174,12 +176,12 @@ export interface FileRoutesById {
   '/_authenticated/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/_authenticated/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
   '/_authenticated/qa-hub': typeof AuthenticatedQaHubRoute
+  '/_authenticated/sba-details': typeof AuthenticatedSbaDetailsRoute
   '/_authenticated/school-cloud': typeof AuthenticatedSchoolCloudRoute
   '/_authenticated/setup': typeof AuthenticatedSetupRoute
   '/_authenticated/staff-meeting': typeof AuthenticatedStaffMeetingRoute
   '/_authenticated/students': typeof AuthenticatedStudentsRoute
   '/_authenticated/timetable': typeof AuthenticatedTimetableRoute
-  '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/class-report/$classId': typeof AuthenticatedClassReportClassIdRoute
   '/_authenticated/report/$studentId': typeof AuthenticatedReportStudentIdRoute
 }
@@ -196,6 +198,7 @@ export interface FileRouteTypes {
     | '/midterm-progress'
     | '/pta-announcement'
     | '/qa-hub'
+    | '/sba-details'
     | '/school-cloud'
     | '/setup'
     | '/staff-meeting'
@@ -205,6 +208,7 @@ export interface FileRouteTypes {
     | '/report/$studentId'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/auth'
     | '/privacy'
     | '/reset-password'
@@ -214,12 +218,12 @@ export interface FileRouteTypes {
     | '/midterm-progress'
     | '/pta-announcement'
     | '/qa-hub'
+    | '/sba-details'
     | '/school-cloud'
     | '/setup'
     | '/staff-meeting'
     | '/students'
     | '/timetable'
-    | '/'
     | '/class-report/$classId'
     | '/report/$studentId'
   id:
@@ -234,12 +238,12 @@ export interface FileRouteTypes {
     | '/_authenticated/midterm-progress'
     | '/_authenticated/pta-announcement'
     | '/_authenticated/qa-hub'
+    | '/_authenticated/sba-details'
     | '/_authenticated/school-cloud'
     | '/_authenticated/setup'
     | '/_authenticated/staff-meeting'
     | '/_authenticated/students'
     | '/_authenticated/timetable'
-    | '/_authenticated/'
     | '/_authenticated/class-report/$classId'
     | '/_authenticated/report/$studentId'
   fileRoutesById: FileRoutesById
@@ -281,13 +285,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/': {
-      id: '/_authenticated/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/broadsheet': {
       id: '/_authenticated/broadsheet'
       path: '/broadsheet'
@@ -328,6 +325,13 @@ declare module '@tanstack/react-router' {
       path: '/qa-hub'
       fullPath: '/qa-hub'
       preLoaderRoute: typeof AuthenticatedQaHubRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/sba-details': {
+      id: '/_authenticated/sba-details'
+      path: '/sba-details'
+      fullPath: '/sba-details'
+      preLoaderRoute: typeof AuthenticatedSbaDetailsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/school-cloud': {
@@ -389,12 +393,12 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMidtermProgressRoute: typeof AuthenticatedMidtermProgressRoute
   AuthenticatedPtaAnnouncementRoute: typeof AuthenticatedPtaAnnouncementRoute
   AuthenticatedQaHubRoute: typeof AuthenticatedQaHubRoute
+  AuthenticatedSbaDetailsRoute: typeof AuthenticatedSbaDetailsRoute
   AuthenticatedSchoolCloudRoute: typeof AuthenticatedSchoolCloudRoute
   AuthenticatedSetupRoute: typeof AuthenticatedSetupRoute
   AuthenticatedStaffMeetingRoute: typeof AuthenticatedStaffMeetingRoute
   AuthenticatedStudentsRoute: typeof AuthenticatedStudentsRoute
   AuthenticatedTimetableRoute: typeof AuthenticatedTimetableRoute
-  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedClassReportClassIdRoute: typeof AuthenticatedClassReportClassIdRoute
   AuthenticatedReportStudentIdRoute: typeof AuthenticatedReportStudentIdRoute
 }
@@ -406,12 +410,12 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMidtermProgressRoute: AuthenticatedMidtermProgressRoute,
   AuthenticatedPtaAnnouncementRoute: AuthenticatedPtaAnnouncementRoute,
   AuthenticatedQaHubRoute: AuthenticatedQaHubRoute,
+  AuthenticatedSbaDetailsRoute: AuthenticatedSbaDetailsRoute,
   AuthenticatedSchoolCloudRoute: AuthenticatedSchoolCloudRoute,
   AuthenticatedSetupRoute: AuthenticatedSetupRoute,
   AuthenticatedStaffMeetingRoute: AuthenticatedStaffMeetingRoute,
   AuthenticatedStudentsRoute: AuthenticatedStudentsRoute,
   AuthenticatedTimetableRoute: AuthenticatedTimetableRoute,
-  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedClassReportClassIdRoute: AuthenticatedClassReportClassIdRoute,
   AuthenticatedReportStudentIdRoute: AuthenticatedReportStudentIdRoute,
 }
