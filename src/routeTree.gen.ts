@@ -17,6 +17,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedBroadsheetRouteImport } from './routes/_authenticated/broadsheet'
 import { Route as AuthenticatedDutyRosterRouteImport } from './routes/_authenticated/duty-roster'
 import { Route as AuthenticatedFeedbackRouteImport } from './routes/_authenticated/feedback'
+import { Route as AuthenticatedLessonNotesRouteImport } from './routes/_authenticated/lesson-notes'
 import { Route as AuthenticatedMidtermProgressRouteImport } from './routes/_authenticated/midterm-progress'
 import { Route as AuthenticatedPtaAnnouncementRouteImport } from './routes/_authenticated/pta-announcement'
 import { Route as AuthenticatedQaHubRouteImport } from './routes/_authenticated/qa-hub'
@@ -68,6 +69,12 @@ const AuthenticatedFeedbackRoute = AuthenticatedFeedbackRouteImport.update({
   path: '/feedback',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedLessonNotesRoute =
+  AuthenticatedLessonNotesRouteImport.update({
+    id: '/lesson-notes',
+    path: '/lesson-notes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMidtermProgressRoute =
   AuthenticatedMidtermProgressRouteImport.update({
     id: '/midterm-progress',
@@ -138,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/broadsheet': typeof AuthenticatedBroadsheetRoute
   '/duty-roster': typeof AuthenticatedDutyRosterRoute
   '/feedback': typeof AuthenticatedFeedbackRoute
+  '/lesson-notes': typeof AuthenticatedLessonNotesRoute
   '/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
   '/qa-hub': typeof AuthenticatedQaHubRoute
@@ -158,6 +166,7 @@ export interface FileRoutesByTo {
   '/broadsheet': typeof AuthenticatedBroadsheetRoute
   '/duty-roster': typeof AuthenticatedDutyRosterRoute
   '/feedback': typeof AuthenticatedFeedbackRoute
+  '/lesson-notes': typeof AuthenticatedLessonNotesRoute
   '/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
   '/qa-hub': typeof AuthenticatedQaHubRoute
@@ -180,6 +189,7 @@ export interface FileRoutesById {
   '/_authenticated/broadsheet': typeof AuthenticatedBroadsheetRoute
   '/_authenticated/duty-roster': typeof AuthenticatedDutyRosterRoute
   '/_authenticated/feedback': typeof AuthenticatedFeedbackRoute
+  '/_authenticated/lesson-notes': typeof AuthenticatedLessonNotesRoute
   '/_authenticated/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/_authenticated/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
   '/_authenticated/qa-hub': typeof AuthenticatedQaHubRoute
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/broadsheet'
     | '/duty-roster'
     | '/feedback'
+    | '/lesson-notes'
     | '/midterm-progress'
     | '/pta-announcement'
     | '/qa-hub'
@@ -222,6 +233,7 @@ export interface FileRouteTypes {
     | '/broadsheet'
     | '/duty-roster'
     | '/feedback'
+    | '/lesson-notes'
     | '/midterm-progress'
     | '/pta-announcement'
     | '/qa-hub'
@@ -243,6 +255,7 @@ export interface FileRouteTypes {
     | '/_authenticated/broadsheet'
     | '/_authenticated/duty-roster'
     | '/_authenticated/feedback'
+    | '/_authenticated/lesson-notes'
     | '/_authenticated/midterm-progress'
     | '/_authenticated/pta-announcement'
     | '/_authenticated/qa-hub'
@@ -320,6 +333,13 @@ declare module '@tanstack/react-router' {
       path: '/feedback'
       fullPath: '/feedback'
       preLoaderRoute: typeof AuthenticatedFeedbackRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lesson-notes': {
+      id: '/_authenticated/lesson-notes'
+      path: '/lesson-notes'
+      fullPath: '/lesson-notes'
+      preLoaderRoute: typeof AuthenticatedLessonNotesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/midterm-progress': {
@@ -406,6 +426,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBroadsheetRoute: typeof AuthenticatedBroadsheetRoute
   AuthenticatedDutyRosterRoute: typeof AuthenticatedDutyRosterRoute
   AuthenticatedFeedbackRoute: typeof AuthenticatedFeedbackRoute
+  AuthenticatedLessonNotesRoute: typeof AuthenticatedLessonNotesRoute
   AuthenticatedMidtermProgressRoute: typeof AuthenticatedMidtermProgressRoute
   AuthenticatedPtaAnnouncementRoute: typeof AuthenticatedPtaAnnouncementRoute
   AuthenticatedQaHubRoute: typeof AuthenticatedQaHubRoute
@@ -423,6 +444,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBroadsheetRoute: AuthenticatedBroadsheetRoute,
   AuthenticatedDutyRosterRoute: AuthenticatedDutyRosterRoute,
   AuthenticatedFeedbackRoute: AuthenticatedFeedbackRoute,
+  AuthenticatedLessonNotesRoute: AuthenticatedLessonNotesRoute,
   AuthenticatedMidtermProgressRoute: AuthenticatedMidtermProgressRoute,
   AuthenticatedPtaAnnouncementRoute: AuthenticatedPtaAnnouncementRoute,
   AuthenticatedQaHubRoute: AuthenticatedQaHubRoute,
