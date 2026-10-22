@@ -12,9 +12,9 @@ export const Route = createFileRoute("/_authenticated/sba-details")({
   validateSearch: validateClassSearch,
   head: () => ({
     meta: [
-      { title: "SBA Details — GES Score Entry" },
+      { title: "SBA Details — EduReport Ghana" },
       { name: "description", content: "Enter KG performance levels and Basic 1–9 SBA and exam marks using GES curriculum subjects." },
-      { property: "og:title", content: "SBA Details — GES Score Entry" },
+      { property: "og:title", content: "SBA Details — EduReport Ghana" },
       { property: "og:description", content: "GES subjects roll out automatically by class. Grades 1 to 9, printable A4 report cards." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

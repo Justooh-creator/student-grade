@@ -11,6 +11,7 @@ export const Route = createFileRoute("/reset-password")({
       { property: "og:description", content: "Recover your EduReport school cloud account." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: ResetPasswordPage,
