@@ -5,6 +5,11 @@ export type MathClass = (typeof MATH_CLASSES)[number];
 export const MATH_TOPICS = ["Number", "Fractions & Percentages", "Algebra", "Geometry & Mensuration", "Statistics & Probability"] as const;
 export type MathTopic = (typeof MATH_TOPICS)[number];
 export type MathTopicChoice = MathTopic | "all";
+export function mathTopicLabel(classId: string, topic: string): string {
+  if (classId.startsWith("kg")) return ({ Number: "Counting & Number Order", "Fractions & Percentages": "Combining & Sharing", Algebra: "Patterns & Missing Numbers", "Geometry & Mensuration": "Shapes", "Statistics & Probability": "Comparing Quantities" } as Record<string, string>)[topic] ?? topic;
+  if (["b1", "b2", "b3"].includes(classId)) return ({ Algebra: "Patterns & Multiplication", "Fractions & Percentages": "Simple Fractions", "Geometry & Mensuration": "Shapes & Measurement", "Statistics & Probability": "Money" } as Record<string, string>)[topic] ?? topic;
+  return topic;
+}
 export const isMathClass = (id: string): id is MathClass => MATH_CLASSES.some((c) => c === id);
 
 // Seeded, browser-safe generation makes every pack reproducible for validation.
@@ -82,31 +87,25 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
         if (int(0, 1) === 0) {
           return { topic: selected, q: `Find the missing number: ${a} + ▢ = ${a + b}.`, value: b, explain: `Count on from ${a} to ${a + b}: ▢ = ${b}.` };
         }
-        const start = int(2, 5), step = int(1, 3);
+        const step = int(1, kg === 1 ? 2 : 3), start = int(1, maxForPattern() - 3 * step);
         const seq = [start, start + step, start + 2 * step];
         return { topic: selected, q: `What number comes next in the pattern: ${seq.join(", ")}, …?`, value: start + 3 * step, explain: `The pattern adds ${step} each time: ${start + 2 * step} + ${step} = ${start + 3 * step}.` };
       }
       case "Geometry & Mensuration": {
         const shape = sample([["circle", 0], ["triangle", 3], ["square", 4], ["rectangle", 4]] as const);
-        if (shape[1] === 0) {
-          return { topic: selected, q: "Which shape is round like a ball or the moon?", value: 1, explain: "A circle is round — it has no corners or straight sides." };
-        }
-        if (int(0, 1) === 0) {
-          return { topic: selected, q: `How many sides does a ${shape[0]} have?`, value: shape[1], explain: `A ${shape[0]} has ${shape[1]} straight sides.` };
-        }
-        const n = int(2, kg === 1 ? 3 : 5);
-        return { topic: selected, q: `Yaw drew ${n} ${shape[0]}s. How many sides are there altogether?`, value: n * shape[1], explain: `Each ${shape[0]} has ${shape[1]} sides: ${n} × ${shape[1]} = ${n * shape[1]} sides.` };
+        const n = int(1, max);
+        const symbol = ({ circle: "●", triangle: "▲", square: "■", rectangle: "▰" } as const)[shape[0]];
+        return { topic: selected, q: `Count the ${shape[0]}s: ${symbol.repeat(n)}. How many are there?`, value: n, explain: `Count each shape once. There are ${n} ${shape[0]}s.` };
       }
       case "Statistics & Probability": {
-        if (kg === 1) {
-          const a = int(2, 9), b = int(1, a - 1);
+        {
+          const a = int(2, max), b = int(1, a - 1);
           return { topic: selected, q: `Which is more: ${a} apples or ${b} apples?`, value: a, explain: `${a} is greater than ${b}, so ${a} apples is more.` };
         }
-        const cedis = int(1, 5), extra = int(1, 5);
-        return { topic: selected, q: `Esi bought a pencil for GH₵ ${cedis} and an eraser for GH₵ ${extra}. How much did she spend altogether?`, value: cedis + extra, unit: "GH₵", explain: `Add the prices: GH₵ ${cedis} + GH₵ ${extra} = GH₵ ${cedis + extra}.` };
       }
     }
   };
+  const maxForPattern = () => kg === 1 ? 10 : 20;
   // Lower Primary (Basic 1–3): NaCCA foundational numeracy with whole-number answers only.
   const grade = Number(classId.slice(1));
   const lower = grade >= 1 && grade <= 3;
@@ -160,6 +159,7 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
     }
   };
   const make = (selected: MathTopic): Item => {
+    if (kg) return makeKg(selected);
     if (lower) return makeLower(selected);
     const a = int(2, limit), b = int(2, limit);
     switch (selected) {
@@ -256,7 +256,9 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
     while ((seen.has(item.q) || oldTheory.has(item.q)) && tries++ < 200) item = make(selected);
     seen.add(item.q);
     const finalAnswer = item.unit === "GH₵" || item.unit === "x =" ? `${item.unit} ${fmt(item.value)}` : `${fmt(item.value)}${item.unit ? ` ${item.unit}` : ""}`;
-    theory.push({ id: `${classId}-${seed}-t${i}`, topic: selected, q: `${item.q} Show your working.`, marks: 5, scheme: ["Correct formula or method — 1 mark", "Correct substitution or setup — 1 mark", `Correct working — 2 marks: ${item.explain}`, `Correct final answer: ${finalAnswer} — 1 mark`] });
+    theory.push(kg
+      ? { id: `${classId}-${seed}-t${i}`, topic: selected, q: `${item.q} Use counters, point or say your answer.`, marks: 0, scheme: [`Expected response: ${finalAnswer}. ${item.explain}`, "Gold: completes independently.", "Silver: completes with a verbal prompt.", "Bronze: needs guided practical support."] }
+      : { id: `${classId}-${seed}-t${i}`, topic: selected, q: `${item.q} Show your working.`, marks: 5, scheme: ["Correct formula or method — 1 mark", "Correct substitution or setup — 1 mark", `Correct working — 2 marks: ${item.explain}`, `Correct final answer: ${finalAnswer} — 1 mark`] });
   }
   return { id: `${classId}-math`, classId, subject: "Mathematics", seed, topic, objectives: shuffle(objectives), theory };
 }

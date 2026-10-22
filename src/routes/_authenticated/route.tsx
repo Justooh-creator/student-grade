@@ -4,6 +4,7 @@ import { canOpenApp } from "@/lib/accountAccess";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
+  head: () => ({ meta: [{ name: "robots", content: "noindex, nofollow" }] }),
   beforeLoad: async ({ location }) => {
     if (location.hash.includes("type=recovery")) {
       throw redirect({ to: "/reset-password", hash: location.hash, replace: true });

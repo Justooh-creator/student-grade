@@ -1,3 +1,5 @@
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { type ClassId } from "@/lib/ges";
@@ -167,20 +169,20 @@ export function AppHeader({
   const tabs = [
     { key: "setup", label: "School Details", active: pathname.startsWith("/setup") },
     { key: "students", label: "Student Details", active: pathname.startsWith("/students") },
-    { key: "sba", label: "SBA Details", active: pathname === "/" },
+    { key: "sba", label: "SBA Details", active: (pathname === "/" || pathname === "/sba-details") },
     { key: "report", label: "Report", active: pathname.startsWith("/class-report") || pathname.startsWith("/report") },
   ] as const;
 
   return (
     <header className="no-print border-b border-border bg-primary text-primary-foreground">
       <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 pt-[calc(env(safe-area-inset-top)+2rem)]">
-        <button
+        <Button
           onClick={() => setOpen(true)}
           aria-label="Open quick navigation"
           className="flex h-9 w-9 items-center justify-center rounded-md border border-primary-foreground/25 hover:bg-primary-foreground/10"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M3 12h18M3 18h18" /></svg>
-        </button>
+        </Button>
         <div className="flex-1">
           <p className="font-display text-base font-bold leading-tight sm:text-lg">{schoolName || "SBA Report Cards"}</p>
           <p className="num text-[12px] uppercase tracking-[0.18em] text-primary-foreground/60">GES · {term} · {year}</p>
@@ -207,7 +209,7 @@ export function AppHeader({
       {showFb && !pathname.startsWith("/feedback") && (
         <div className="mx-auto mt-2 flex max-w-5xl items-center gap-2 rounded-md bg-primary-foreground/10 px-3 py-2 text-xs font-bold">
           <Link to="/feedback" className="flex-1">💡 Help shape the next EduReport update! Tap here to share your suggestions.</Link>
-          <button onClick={dismissFb} aria-label="Dismiss feedback banner" className="px-1">✕</button>
+          <Button onClick={dismissFb} aria-label="Dismiss feedback banner" className="px-1">✕</Button>
         </div>
       )}
       <nav className="mx-auto mt-2 flex max-w-5xl overflow-x-auto px-2">
@@ -230,27 +232,32 @@ export function AppHeader({
             <div className="flex-1 overflow-y-auto p-4 pt-[calc(env(safe-area-inset-top)+2.5rem)]">
               <div className="flex items-center justify-between">
                 <p className="font-display text-sm font-bold">Quick navigation</p>
-                <button
+                <Button
                   onClick={() => setOpen(false)}
                   aria-label="Close"
                   className="flex h-7 w-7 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted"
                 >
                   ✕
-                </button>
+                </Button>
               </div>
 
-              <SectionLabel>Pages</SectionLabel>
+              <SectionLabel>Quick links</SectionLabel>
               <nav className="mt-2 grid gap-1" onClick={() => setOpen(false)}>
                 <Link to="/school-cloud" className={rowCls(pathname.startsWith("/school-cloud"))}>
                   <RowCell icon={ICON.cloud} title="School Cloud" desc="Join your school and sync records" />
                 </Link>
+              </nav>
+              <Accordion type="single" collapsible defaultValue={pathname.startsWith("/qa-hub") || pathname.startsWith("/lesson-notes") ? "learning" : ["/staff-meeting", "/timetable", "/duty-roster", "/pta-announcement"].some((p) => pathname.startsWith(p)) ? "staff" : pathname.startsWith("/auth") || pathname.startsWith("/feedback") ? "account" : "records"}>
+                <AccordionItem value="records">
+                  <AccordionTrigger className="font-bold text-primary">Learners & Reports</AccordionTrigger>
+                  <AccordionContent><nav className="grid gap-1" onClick={() => setOpen(false)}>
                 <Link to="/setup" search={{ class: navClass }} className={rowCls(pathname.startsWith("/setup"))}>
                   <RowCell icon={ICON.school} title="School Details" desc="Name, motto, EMIS code, logo" />
                 </Link>
                 <Link to="/students" search={{ class: navClass }} className={rowCls(pathname.startsWith("/students"))}>
                   <RowCell icon={ICON.cap} title="Student Details" desc="Learners, photos, parent numbers" />
                 </Link>
-                <Link to="/" search={{ class: navClass }} className={rowCls(pathname === "/")}>
+                <Link to="/" search={{ class: navClass }} className={rowCls((pathname === "/" || pathname === "/sba-details"))}>
                   <RowCell icon={ICON.pencil} title="SBA Details" desc="Tests, project, group, exam marks" />
                 </Link>
                 <Link
@@ -266,9 +273,22 @@ export function AppHeader({
                 <Link to="/broadsheet" search={{ class: navClass }} className={rowCls(pathname.startsWith("/broadsheet"))}>
                   <RowCell icon={ICON.file} title="Class Broadsheet" desc="Master marks, grades and positions" />
                 </Link>
+                  </nav></AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="learning">
+                  <AccordionTrigger className="font-bold text-primary">Teaching & Learning</AccordionTrigger>
+                  <AccordionContent><nav className="grid gap-1" onClick={() => setOpen(false)}>
                 <Link to="/qa-hub" className={rowCls(pathname.startsWith("/qa-hub"))}>
                   <RowCell icon={ICON.file} title="📚 Q&A Hub" desc="Quizzes, exam papers, marking schemes" />
                 </Link>
+                <Link to="/lesson-notes" className={rowCls(pathname.startsWith("/lesson-notes"))}>
+                  <RowCell icon={ICON.pencil} title="Lesson Notes" desc="Weekly preparation, A4 PDF and Word" />
+                </Link>
+                  </nav></AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="staff">
+                  <AccordionTrigger className="font-bold text-primary">Staff & Communication {unread.length + dutyReminders.length > 0 && <span className="ml-2 rounded-full bg-accent px-2 text-xs text-accent-foreground">{unread.length + dutyReminders.length} new</span>}</AccordionTrigger>
+                  <AccordionContent><nav className="grid gap-1" onClick={() => setOpen(false)}>
                 <Link to="/pta-announcement" search={{ class: navClass }} className={rowCls(pathname.startsWith("/pta-announcement"))}>
                   <RowCell icon={ICON.megaphone} title="PTA Meeting Notice" desc="Invite parents, class by class" />
                 </Link>
@@ -291,6 +311,11 @@ export function AppHeader({
                     note={dutyReminders.length > 0 ? `${dutyReminders.length} new` : undefined}
                   />
                 </Link>
+                  </nav></AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="account">
+                  <AccordionTrigger className="font-bold text-primary">Account & Support</AccordionTrigger>
+                  <AccordionContent><nav className="grid gap-1" onClick={() => setOpen(false)}>
                 <Link to="/feedback" className={rowCls(pathname.startsWith("/feedback"))}>
                   <RowCell icon={ICON.bulb} title="Help & About Developer" desc="Suggestions, support and app creator" />
                 </Link>
@@ -301,7 +326,9 @@ export function AppHeader({
                     desc={user ? "License, plan, password recovery" : "Sign in to sync and activate"}
                   />
                 </Link>
-              </nav>
+                  </nav></AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </div>
           </aside>
         </div>
