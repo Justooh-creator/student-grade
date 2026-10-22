@@ -160,6 +160,25 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
 }
 
 .broadsheet-page { min-width: 1080px; padding: 16px; }
+.lesson-paper { background: var(--paper); color: var(--foreground); padding: 12mm; width: 100%; max-width: 210mm; margin: 0 auto; font-size: 11pt; overflow-wrap: anywhere; }
+.lesson-paper header { text-align: center; margin-bottom: 5mm; }
+.lesson-paper table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.lesson-paper td, .lesson-paper th { border: 1px solid var(--foreground); padding: 2mm; text-align: left; vertical-align: top; white-space: pre-wrap; }
+.lesson-paper h3 { font-size: 11pt; margin-bottom: 3mm; letter-spacing: 0; }
+.lesson-paper p { white-space: pre-wrap; }
+.lesson-paper td h3:not(:first-child) { margin-top: 4mm; }
+.lesson-activities { margin-top: 5mm; }
+.lesson-activity-column { width: 66%; }
+.lesson-paper footer { margin-top: 8mm; line-height: 2; }
+@media print {
+  @page lesson { size: A4 portrait; margin: 12mm; }
+  body:has(.lesson-paper) main { max-width: none; padding: 0; }
+  .lesson-paper { page: lesson; max-width: none; width: 100%; padding: 0; margin: 0; }
+  .lesson-paper thead { display: table-header-group; }
+  .lesson-paper tr { break-inside: auto; }
+  .lesson-paper h3 { break-after: avoid; }
+  .lesson-paper footer { break-inside: avoid; }
+}
 @media print {
   @page qa { size: A4 portrait; margin: 12mm; }
   body:has(.qa-paper) main { max-width: none; padding: 0; }
