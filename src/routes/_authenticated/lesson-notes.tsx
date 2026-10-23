@@ -12,6 +12,7 @@ import { useUser } from "@/lib/auth";
 import { useAppData } from "@/lib/store";
 import { schoolClassIds, classDisplayName, getClassLevel, type ClassId } from "@/lib/ges";
 import { downloadBlob } from "@/lib/download";
+import { applyCatalogEntry, catalogFor, catalogSubjects } from "@/lib/lessonCatalog";
 import { blankLesson, lessonMinutes, lessonStorageKey, parseLessonNotes, saveLessonNote, scannedComputingExample, type LessonNote } from "@/lib/lessonNotes";
 
 export const Route = createFileRoute("/_authenticated/lesson-notes")({
@@ -31,7 +32,8 @@ function LessonNotes() {
   const [note, setNote] = useState<LessonNote>(() => blankLesson());
   const [drafts, setDrafts] = useState<LessonNote[]>([]);
   const [ready, setReady] = useState(false);
-  const [view, setView] = useState<"edit" | "preview">("edit");
+  const [view, setView] = useState<"edit" | "preview">("preview")
+  const [term, setTerm] = useState(1);
   const [busy, setBusy] = useState(false);
   const [dirty, setDirty] = useState(false);
   useEffect(() => {
@@ -82,6 +84,18 @@ function LessonNotes() {
           <Button variant="secondary" onClick={() => switchNote(scannedComputingExample(school.name))}>Your scanned example</Button>
         </div>
       </div>
+      <section className="no-print mt-4 rounded-lg border border-border bg-card p-4" aria-label="Select lesson">
+        <h2 className="text-lg font-bold">Select your lesson — no typing needed</h2>
+        <div className="mt-3 grid gap-3 sm:grid-cols-4">
+          <label className="grid gap-1 text-sm font-semibold">Class<select className="rounded-md border border-input bg-card p-2" value={note.classId} onChange={(e) => { update("classId", e.target.value); update("subject", catalogSubjects(e.target.value)[0] ?? note.subject); }}>{[...new Set([note.classId, ...schoolClassIds(school)])].map((id) => <option key={id} value={id}>{classDisplayName(id)}</option>)}</select></label>
+          <label className="grid gap-1 text-sm font-semibold">Subject<select className="rounded-md border border-input bg-card p-2" value={note.subject} onChange={(e) => update("subject", e.target.value)}>{[...new Set([note.subject, ...catalogSubjects(note.classId)])].map((s) => <option key={s}>{s}</option>)}</select></label>
+          <label className="grid gap-1 text-sm font-semibold">Term<select className="rounded-md border border-input bg-card p-2" value={term} onChange={(e) => setTerm(Number(e.target.value))}>{[1, 2, 3].map((t) => <option key={t} value={t}>Term {t}</option>)}</select></label>
+          <label className="grid gap-1 text-sm font-semibold">Week / topic<select className="rounded-md border border-input bg-card p-2" value="" onChange={(e) => { const entry = catalogFor(note.classId, note.subject, term)[Number(e.target.value)]; if (entry) { setNote(applyCatalogEntry(note, entry)); setDirty(true); setView("preview"); } }}><option value="">Choose week…</option>{catalogFor(note.classId, note.subject, term).map((e, i) => <option key={i} value={i}>Week {e.week} — {e.fill.title}</option>)}</select></label>
+          {field("classSize", "Class size", false, "number")}{field("weekEnding", "Week ending", false, "date")}{field("vettedBy", "Vetted by")}{field("schoolName", "School")}
+        </div>
+        {catalogFor(note.classId, note.subject, term).length === 0 && <p className="mt-2 text-sm text-muted-foreground">No preloaded weeks yet for this class, subject and term. Use “Edit note” to fill it in.</p>}
+        <p className="mt-2 text-xs text-muted-foreground">Preloaded weeks are EduReport drafts. Confirm curriculum codes with your current NaCCA curriculum.</p>
+      </section>
       {view === "edit" && <div className="no-print py-4">
         <Accordion type="multiple" defaultValue={["details", "curriculum"]}>
           <AccordionItem value="details"><AccordionTrigger className="text-base font-bold">Lesson details</AccordionTrigger><AccordionContent><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -101,7 +115,7 @@ function LessonNotes() {
           <AccordionItem value="followup"><AccordionTrigger className="text-base font-bold">Follow-up & vetting</AccordionTrigger><AccordionContent><div className="grid gap-4 sm:grid-cols-2">{field("homework", "Homework / Project Work / Community Engagement", true)}{field("crossCurriculum", "Cross-Curriculum Links / Cross-Cutting Issues", true)}{field("misconceptions", "Potential Misconceptions / Learning Difficulties", true)}{field("vettedBy", "Vetted by")}{field("signature", "Signature / name")}{field("vettedDate", "Vetting date", false, "date")}</div></AccordionContent></AccordionItem>
         </Accordion>
       </div>}
-      <div className={view === "edit" ? "hidden print:block" : "py-6 print:p-0"}><LessonNoteSheet note={note} /></div>
+      <div className={view === "edit" ? "hidden print:block" : "lesson-preview-wrap py-6 print:p-0"}><LessonNoteSheet note={note} /></div>
     </main>
   </div>;
 }

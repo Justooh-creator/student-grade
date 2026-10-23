@@ -160,20 +160,23 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
 }
 
 .broadsheet-page { min-width: 1080px; padding: 16px; }
-.lesson-paper { background: var(--paper); color: var(--foreground); padding: 12mm; width: 100%; max-width: 210mm; margin: 0 auto; font-size: 11pt; overflow-wrap: anywhere; }
-.lesson-paper header { text-align: center; margin-bottom: 5mm; }
+.lesson-preview-wrap { overflow-x: auto; }
+.lesson-paper { background: var(--paper); color: var(--foreground); padding: 10mm; width: 210mm; min-height: 297mm; margin: 0 auto; font-size: 9.5pt; line-height: 1.3; overflow-wrap: anywhere; box-shadow: var(--shadow-lg, 0 4px 20px rgb(0 0 0 / 0.15)); }
+.lesson-paper header { text-align: center; margin-bottom: 3mm; }
+.lesson-paper header h2 { font-size: 13pt; }
 .lesson-paper table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-.lesson-paper td, .lesson-paper th { border: 1px solid var(--foreground); padding: 2mm; text-align: left; vertical-align: top; white-space: pre-wrap; }
-.lesson-paper h3 { font-size: 11pt; margin-bottom: 3mm; letter-spacing: 0; }
+.lesson-paper td, .lesson-paper th { border: 1px solid var(--foreground); padding: 1mm 1.5mm; text-align: left; vertical-align: top; white-space: pre-wrap; }
+.lesson-metadata td { font-size: 8.5pt; line-height: 1.2; }
+.lesson-paper h3 { font-size: 9.5pt; margin-bottom: 1mm; letter-spacing: 0; }
 .lesson-paper p { white-space: pre-wrap; }
-.lesson-paper td h3:not(:first-child) { margin-top: 4mm; }
-.lesson-activities { margin-top: 5mm; }
+.lesson-paper td h3:not(:first-child) { margin-top: 2mm; }
+.lesson-activities { margin-top: 3mm; }
 .lesson-activity-column { width: 66%; }
-.lesson-paper footer { margin-top: 8mm; line-height: 2; }
+.lesson-paper footer { margin-top: 5mm; line-height: 1.8; }
 @media print {
   @page lesson { size: A4 portrait; margin: 12mm; }
   body:has(.lesson-paper) main { max-width: none; padding: 0; }
-  .lesson-paper { page: lesson; max-width: none; width: 100%; padding: 0; margin: 0; }
+  .lesson-paper { page: lesson; max-width: none; width: 100%; min-height: 0; padding: 0; margin: 0; box-shadow: none; }
   .lesson-paper thead { display: table-header-group; }
   .lesson-paper tr { break-inside: auto; }
   .lesson-paper h3 { break-after: avoid; }
