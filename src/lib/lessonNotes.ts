@@ -50,7 +50,7 @@ export function parseLessonNotes(raw: string | null): LessonNote[] {
     const value: unknown = JSON.parse(raw);
     if (!Array.isArray(value)) return [];
     return value.filter((v): v is Record<string, unknown> => v !== null && typeof v === "object" && !Array.isArray(v))
-      .filter((v) => typeof v.id === "string" && v.id.length > 0)
+      .filter((v) => typeof v["id"] === "string" && v["id"].length > 0)
       .map((v) => {
         const defaults = blankLesson();
         return Object.fromEntries(Object.entries(defaults).map(([key, fallback]) => [key, typeof v[key] === "string" ? v[key] : fallback])) as unknown as LessonNote;

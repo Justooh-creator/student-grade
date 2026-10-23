@@ -5,7 +5,7 @@ import { blankLesson } from "@/lib/lessonNotes";
 describe("lesson catalog", () => {
   it("fills curriculum content but keeps the teacher's class size and name", () => {
     const note = { ...blankLesson("My School"), classId: "b5", classSize: "32", vettedBy: "Head" };
-    const entry = catalogFor("b5", "Mathematics", 1)[0];
+    const entry = catalogFor("b5", "Mathematics", 1)[0]!;
     const filled = applyCatalogEntry(note, entry);
     expect(filled.classSize).toBe("32");
     expect(filled.vettedBy).toBe("Head");
