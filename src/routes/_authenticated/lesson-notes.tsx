@@ -12,7 +12,8 @@ import { useUser } from "@/lib/auth";
 import { useAppData } from "@/lib/store";
 import { schoolClassIds, classDisplayName, getClassLevel, type ClassId } from "@/lib/ges";
 import { downloadBlob } from "@/lib/download";
-import { applyCatalogEntry, catalogFor, catalogSubjects } from "@/lib/lessonCatalog";
+import { applyCatalogEntry } from "@/lib/lessonCatalog";
+import { LessonWizard } from "@/components/LessonWizard";
 import { blankLesson, lessonMinutes, lessonStorageKey, parseLessonNotes, saveLessonNote, scannedComputingExample, type LessonNote } from "@/lib/lessonNotes";
 
 export const Route = createFileRoute("/_authenticated/lesson-notes")({
