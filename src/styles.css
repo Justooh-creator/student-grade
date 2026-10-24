@@ -6,7 +6,7 @@
 
 /*
  * SBA Report Card design system.
- * Warm archival paper, ink text, forest-green authority accent, ochre highlight.
+ * Warm archival paper, ink text, royal-blue authority accent, ochre highlight.
  */
 
 @theme inline {
@@ -50,7 +50,7 @@
   --card-foreground: oklch(0.24 0.018 80);
   --popover: oklch(0.985 0.006 85);
   --popover-foreground: oklch(0.24 0.018 80);
-  --primary: oklch(0.38 0.083 155);
+  --primary: oklch(0.42 0.14 250);
   --primary-foreground: oklch(0.975 0.01 90);
   --secondary: oklch(0.925 0.014 88);
   --secondary-foreground: oklch(0.3 0.02 80);
@@ -62,7 +62,7 @@
   --destructive-foreground: oklch(0.98 0.008 90);
   --border: oklch(0.87 0.016 86);
   --input: oklch(0.87 0.016 86);
-  --ring: oklch(0.38 0.083 155);
+  --ring: oklch(0.42 0.14 250);
   --paper: oklch(0.995 0.003 90);
   --rule: oklch(0.84 0.018 86);
 }
