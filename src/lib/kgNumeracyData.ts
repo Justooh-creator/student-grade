@@ -63,17 +63,6 @@ export const kgNumeracyRows: KgRow[] = [
 "All About Me",
 "Eeping My Body Healthy By Eating Good Food And Taking My Vaccination",
 "K1.1.4.1",
-"K1.1.4.1.4",
-"Count and clap the keywords in songs about types of food",
-"In whole class group, model how to sing and clap and count words in a song. Learners follow your example and sing, clap and count number of words in the song about food They can also jump on each word and count and share with their friends the number of the keywords in the song"
-],
-[
-"kg1",
-1,
-7,
-"All About Me",
-"Eeping My Body Healthy By Eating Good Food And Taking My Vaccination",
-"K1.1.4.1",
 "K1.1.4.1.7",
 "Sort and classify different food items under the six food groups and sort the food items that keep the body healthy into shapes",
 "Bring different food items to the class. Explain the food groups to them again. In small groups, let them classify the food items into the six food groups. Have learners sort food items that keep the body healthy into shapes and talk about them. Extend the activity to other non-food items (e.g. tables, chairs, cups, etc.). Have them compare the quantities and work on “less than” and “more than” at the centres"
@@ -81,7 +70,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 1,
-8,
+7,
 "All About Me",
 "My Environment And My Health",
 "K1.1.5.1",
@@ -92,18 +81,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 1,
-9,
-"All About Me",
-"Protecting Ourselves From Home And Road Accidents",
-"K1.1.6.1",
-"K1.1.6.1.4",
-"Clap and count syllables in longer words",
-"Introduce learners to reading longer words such as objects (2 syllables), strangers (2 syllables), electricity (5 syllables) and water (2 syllables), Tr syllables) etc. Let them know that we break words according to the syllables. Practice clapping these words and counting the number of syllables in them. Have learners add the syllables in some selected words e.g. water and understand (2 syllables + 3 syllables = 5 syllables). Extend the activity to include other objects"
-],
-[
-"kg1",
-1,
-10,
+8,
 "All About Me",
 "Protecting Ourselves From Home And Road Accidents",
 "K1.1.6.1",
@@ -114,7 +92,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 1,
-11,
+9,
 "My Family",
 "Types And Members Of My Family",
 "K1.2.1.1",
@@ -125,7 +103,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 1,
-12,
+10,
 "My Family",
 "Origin And History Of My Family",
 "K1.2.2.1",
@@ -135,19 +113,30 @@ export const kgNumeracyRows: KgRow[] = [
 ],
 [
 "kg1",
-2,
 1,
-"Values and Beliefs",
-"Our Family Values",
-"K1.3.1.1",
-"K1.3.1.1.5",
-"Recognize details in shapes and height of the letter for the week and write it legibly and correctly",
-"Learners watch teacher model the pre-writing exercise, learners emulate what the teacher does in a whole class, in groups and individually. Have learners write the letter in the air and on their tables. Talk about the heigh and shape of the letter. Using dots or tracing, have learners practice writin new letter on slates and in their exercise book. Have learners give examples of words that the letter for the week can begin. Have learners use shapes e.g. circle, triangles, rectangles to create simple patterns with 2,3,2, 2,2,3,2, e Have learners clap and stamp their feet with the patterns"
+11,
+"My Family",
+"Family Celebrations And Festivals",
+"K1.2.3.1",
+"K1.2.3.1.5",
+"Use comparative language “more than”,” less than”, or “same as” to show relation between quantities/numbers",
+"Collect a quick data on the months that the learners are born. Represent the numbers with empty cans/tins or any other object. Use this information to compare learners born in different months. Compare the grouping, those born on January, February etc. finding out which group has more members than the other using the comparative language: “more than”,” less than”, or “same as” Use questions like “ Which group has more number of people? “Which groups have the same number of people? etc. to guide learners. “Which group has more members? “"
+],
+[
+"kg1",
+1,
+12,
+"My Family",
+"My School Rules And Regulations",
+"K1.2.4.1",
+"K1.2.4.1.6",
+"Solve story problems using comparative language “more than”, ”less than”, or “same as” to show relation between quantities/numbers",
+"Have learners sing the “week-day birthday” song and collect quick data on the number of people born on different days in the week. Guide learners to solve problems on “Which group has less members than the other? Practice with different numbers and sets of people, money and other objects. Show the sign to learners and have them write it down at the appropriate place in an equation/inequality on Chalkboard"
 ],
 [
 "kg1",
 2,
-2,
+1,
 "Values and Beliefs",
 "My Culturalvalues",
 "K1.3.2.1",
@@ -158,29 +147,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 2,
-3,
-"Values and Beliefs",
-"Our Religious Values",
-"K1.3.3.1",
-"K1.3.3.1.4",
-"stretch and count the number of sounds in a word and blend them together",
-"Teacher holds a rubber band and model how to stretch examples of moral words while pronunciation so as to identify all the sound. List the words on the board or on cut out papers. As learners practice the select words, write the sounds identified on the board. Have learners in pairs play sound blending games where one stretches out the sounding of a word for the other to blend the sound to make out the word. Have learners repeat the activity with different words and introduce the concept of silent letters to learners e.g. love, time, make, etc"
-],
-[
-"kg1",
 2,
-4,
-"Values and Beliefs",
-"Our Religious Values",
-"K1.3.3.1",
-"K1.3.3.1.6",
-"Write numeral 1 to 5 and represent them with different objects in the church, number of letters in a word etc",
-"Write selected words on the board. Have learners count number of letters in words. Have learners make simple sentences with the words in sentences. Using number cards, have learners identify words that have the same letters as the number card shown. Repeat the activity and then have match the words with the appropriate number. Have individual learner identify the numbers on cards and match it with correct numerals on another card. Have learners form patterns with the shapes representing the letters in words SUB STRAND 4: OUR BELIEFS Indicators and Exemplars"
-],
-[
-"kg1",
-2,
-5,
 "My Local Community",
 "Nowing The Special Places In My Local Community",
 "K1.4.1.1",
@@ -191,18 +158,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 2,
-6,
-"My Local Community",
-"Nowing (Who) The Important People / Occupation In My Community",
-"K1.4.2.1",
-"K1.4.2.1.5",
-"Write boldly and legibly the target letter for the week and add a name of a friend to it",
-"Have learners practise exercising the fingers. Refer to the previous writing lesson, and have learners practise in the air, on the other surfaces and on paper. Have learners give examples of words that contain the letter of the week. Have learners form sentences with the selected words and count the words in their sentences. Learners in pairs sum up the number of words in their sentences. K1. 4.2.1.6 Draw themselves in the uniform of their aspired future job, colour it nicely and write the name of the job underneath. Show poster and/or pictures depicting professionals in informs. Learners choose their future jobs and talk to each other about why they made that selection. Learners draw and co"
-],
-[
-"kg1",
-2,
-7,
+3,
 "My Local Community",
 "Nowing (Who) The Important People / Occupation In My Community",
 "K1.4.1.1",
@@ -213,7 +169,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 2,
-8,
+4,
 "My Local Community",
 "Nowing The Special Leaders In My Community",
 "K1.4.1.1",
@@ -228,17 +184,6 @@ export const kgNumeracyRows: KgRow[] = [
 "All Around Us",
 "Living Things – Animals (Domestic And Wild)",
 "K1.6.2.1",
-"K1.6.2.1.3",
-"Tap or clap and count the syllables of the names of animals and identify the initial sound of the animal names",
-"Have learners sing a song or recite a poem about and let them mimic the sound of the various animals in the song. Play a song in the Computer/phone/CD player and ask learners to mention animals and clap the syllabus in their names and also the song. Have learners create patterns with the syllables in selected names of domestic animals using cut out shapes or colours e.g. 1,2,1,2- dog (1), chicken (2), cat (1), puppy (2). Extend this activity with word more syllables"
-],
-[
-"kg1",
-3,
-2,
-"All Around Us",
-"Living Things – Animals (Domestic And Wild)",
-"K1.6.2.1",
 "K1.6.2.1.6",
 "Recognise, sort, classify, describe and extend non- numerical patterns. L",
 "Recap activities on K.1.6.1.1.6 and"
@@ -246,18 +191,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 3,
-3,
-"All Around Us",
-"Plants – 2",
-"K1.6.5.1",
-"K1.6.5.1.2",
-"Have learners colour outline of cut out shapes",
-"Have learners colour outline of cut out shapes"
-],
-[
-"kg1",
-3,
-4,
+2,
 "All Around Us",
 "Plants – 2",
 "K1.6.6.1",
@@ -268,7 +202,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 3,
-5,
+3,
 "All Around Us",
 "Gardening",
 "K1.6.7.1",
@@ -279,7 +213,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 3,
-6,
+4,
 "All Around Us",
 "Light – Day And Night",
 "K1.6.8.1",
@@ -360,17 +294,6 @@ export const kgNumeracyRows: KgRow[] = [
 "My Family",
 "Family Celebrations And Festivals",
 "K2.2.3.1",
-"K2.2.3.1.4",
-"Identify the initial sounds, clap and count the number of syllables in different words related to festivals and celebrations",
-"List the names of various celebrations and festivals, guide learners to identify the number of syllables in the word by clapping. Have the learners identify and write the beginning letter sounds and also clap the syllables again and again. E.g. Christmas begins with the letter sound /c/ and it can be clapped into 2 syllables etc. Indicators and Exemplars"
-],
-[
-"kg2",
-1,
-8,
-"My Family",
-"Family Celebrations And Festivals",
-"K2.2.3.1",
 "K2.2.3.1.7",
 "Prepare a shopping list, use money to shop for ingredients for the festival special meal",
 "Learners apply the concept of addition and subtraction as they use real money to go shopping for some essential ingredients in the classroom store. Count the number of people in the family and buy enough food for them. Solve addition and subtraction word problems during the week. SUB STRAND 4:"
@@ -413,17 +336,6 @@ export const kgNumeracyRows: KgRow[] = [
 2,
 4,
 "My Local Community",
-"Nowing (Who) The Important People / Occupation In My Community",
-"K2.4.2.1",
-"K2.4.2.1.6",
-"Create simple patterns with more than one of shape, colour, size, sounds or movements",
-"Using the coloured rubber counters, or legos, or different bottle tops, guide learners to create patterns with different colours. RAND 3:"
-],
-[
-"kg2",
-2,
-5,
-"My Local Community",
 "Nowing The Special Leaders In Our Community And Country",
 "K2.4.3.1",
 "K2.4.3.1.6",
@@ -433,7 +345,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 2,
-6,
+5,
 "My Nation Ghana",
 "History And Celebrations Of Ghana",
 "K2.5.1.1",
@@ -446,17 +358,6 @@ export const kgNumeracyRows: KgRow[] = [
 3,
 1,
 "All Around Us",
-"Living Things – Domestic And Wild Animals",
-"K2.6.2.1",
-"K2.6.2.1.4",
-"Tap and clap and count the syllables of the names of animals and lines of the song",
-"Let learners mimic the sound of the various animals in the song. Old Macdonald has a farm. Play the song in the Computer or a tape and ask learners to sing along and mention names of animals and clap the syllables in their names. Clap or tap parts of the first line of the song (Old MacDonald) Substitute parts of the song with claps. Count the claps"
-],
-[
-"kg2",
-3,
-2,
-"All Around Us",
 "Water",
 "K2.6.3.1",
 "K2.6.3.1.7",
@@ -466,7 +367,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 3,
-3,
+2,
 "All Around Us",
 "Air",
 "K2.6.4.1",
@@ -477,23 +378,12 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 3,
-4,
+3,
 "All Around Us",
 "Plants -2",
 "K2.6.6.1",
 "K2.6.6.1.7",
 "Classify different types of food items according to categories and count the number of objects in each category up to 20",
 "Provide a variety of fruits, vegetables and seeds. Have the learners sort and classify them into their three categories. Fruits in one group, seeds and vegetables. Count the number of objects in each category up to 20. E.g. guide learners to count the number of food item and pick a numeral card which matches the number quantity. SUB STRAND 7:"
-],
-[
-"kg2",
-3,
-5,
-"All Around Us",
-"Types Of Soil And Gardening",
-"K2.6.7.1",
-"K2.6.7.1.2",
-"Participate actively in the teacher-read-aloud of the big book which relates to the theme, count words in a sentence and answer inferential questions on the text",
-"Take learners through before reading activities to activate pupils’ previous knowledge on the theme. Read aloud the informational text about different types of soil while pointing to words in a sentence. Learners answer factual and inference questions on the text. Let learners find answers to which type of soil we use for farming and why.? L Ask learners to find the many other uses of sand and clay soil? Write some sentences, cut them up and have learners count the words in the cut-up sentences and rearrange them to form sentences"
 ]
 ];
