@@ -10,7 +10,7 @@ export const Route = createFileRoute("/auth")({
       { property: "og:description", content: "Your EduReport account for Ghanaian basic-school assessments and report cards." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "author", content: "Justice Atideku" },
+      { name: "author", content: "JA EduTech Solutions, Justice Atideku" },
       { property: "og:url", content: "https://edureportghana.com/auth" },
     ],
     links: [{ rel: "canonical", href: "https://edureportghana.com/auth" }],

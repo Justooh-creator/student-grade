@@ -8,14 +8,14 @@ export const Route = createFileRoute("/")({
   validateSearch: validateClassSearch,
   head: () => ({ meta: [
     { title: "EduReport Ghana — School Management & GES SBA Report Cards" },
-    { name: "description", content: "EduReport Ghana by Justice Atideku: offline-first school management, GES SBA assessments and A4 terminal report cards for KG 1 to Basic 9." },
+    { name: "description", content: "EduReport Ghana by JA EduTech Solutions (founded by Justice Atideku): offline-first school management, GES SBA assessments and A4 terminal report cards for KG 1 to Basic 9." },
     { property: "og:title", content: "EduReport Ghana — School Management & GES SBA Report Cards" },
-    { property: "og:description", content: "Manage learners, SBA assessments and terminal report cards on your phone or laptop. Built in Ghana by Justice Atideku." },
+    { property: "og:description", content: "Manage learners, SBA assessments and terminal report cards on your phone or laptop. Built in Ghana by JA EduTech Solutions." },
     { property: "og:type", content: "website" },
     { property: "og:url", content: "https://edureportghana.com/" },
     { name: "twitter:card", content: "summary" },
-    { name: "author", content: "Justice Atideku" },
-  ], links: [{ rel: "canonical", href: "https://edureportghana.com/" }], scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "SoftwareApplication", name: "EduReport Ghana", url: "https://edureportghana.com/", applicationCategory: "EducationalApplication", operatingSystem: "Web, Android", author: { "@type": "Person", name: "Justice Atideku" } }) }] }),
+    { name: "author", content: "JA EduTech Solutions, Justice Atideku" },
+  ], links: [{ rel: "canonical", href: "https://edureportghana.com/" }], scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "SoftwareApplication", name: "EduReport Ghana", url: "https://edureportghana.com/", applicationCategory: "EducationalApplication", operatingSystem: "Web, Android", publisher: { "@type": "Organization", name: "JA EduTech Solutions", founder: { "@type": "Person", name: "Justice Atideku" } }, author: { "@type": "Person", name: "Justice Atideku" } }) }] }),
   component: Welcome,
 });
 
