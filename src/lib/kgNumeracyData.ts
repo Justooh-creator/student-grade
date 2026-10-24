@@ -63,17 +63,6 @@ export const kgNumeracyRows: KgRow[] = [
 "All About Me",
 "Eeping My Body Healthy By Eating Good Food And Taking My Vaccination",
 "K1.1.4.1",
-"K1.1.4.1.2",
-"Tell their own short stories about pictures in the Big book to be read",
-"Have learners talk about the pictures in the book and ask them to make connections to the written symbols. Learners retell story read to. Using word of the day, encourage learners to give examples of words that contain the prominent sound in the word of the day e.g. mug: jug, hug, tug, etc"
-],
-[
-"kg1",
-1,
-7,
-"All About Me",
-"Eeping My Body Healthy By Eating Good Food And Taking My Vaccination",
-"K1.1.4.1",
 "K1.1.4.1.4",
 "Count and clap the keywords in songs about types of food",
 "In whole class group, model how to sing and clap and count words in a song. Learners follow your example and sing, clap and count number of words in the song about food They can also jump on each word and count and share with their friends the number of the keywords in the song"
@@ -81,7 +70,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 1,
-8,
+7,
 "All About Me",
 "Eeping My Body Healthy By Eating Good Food And Taking My Vaccination",
 "K1.1.4.1",
@@ -92,18 +81,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 1,
-9,
-"All About Me",
-"My Environment And My Health",
-"K1.1.5.1",
-"K1.1.5.1.1",
-"Talk about how we can keep our environment clean in order to avoid getting sick",
-"Have learners sit in a semi-circle (community circle time) and sing a song related to keeping the environment clean. Show them a conversational poster with people defecating around their homes and at school Teacher and pupils discuss the causes of sickness. Teacher asks the learners how our environment can cause us to be sick. Using think-pair-share, have learners contribute to how we make the environment dirty. E.g. Some ideas can be: when we throw papers/rubbish about, bushy and gutters are choked., Animals walking through rivers, learners walking in the garbage a people washing in the rivers. etc. Create more situations of a dirty village and ask learners to think about how to change the"
-],
-[
-"kg1",
-1,
-10,
+8,
 "All About Me",
 "My Environment And My Health",
 "K1.1.5.1",
@@ -114,7 +92,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 1,
-11,
+9,
 "All About Me",
 "Protecting Ourselves From Home And Road Accidents",
 "K1.1.6.1",
@@ -125,13 +103,35 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 1,
-12,
+10,
 "All About Me",
 "Protecting Ourselves From Home And Road Accidents",
 "K1.1.6.1",
 "K1.1.6.1.6",
 "Describe the attributes of 3-D objects and sort objects into planes and 3-D objects",
 "Revise the description of the attributes of 3-D and call learners to show you show examples of 3-D objects in the classroom. Ask learners to sort the different objects they brought from home into planes and 3D objects and bring other examples. Have each child draw two 3D objects e.g. A Tin and box. Learners review the definition of a 3-D object"
+],
+[
+"kg1",
+1,
+11,
+"My Family",
+"Types And Members Of My Family",
+"K1.2.1.1",
+"K1.2.1.1.6",
+"Introduce the concept “more than” to learners and solve some word puzzles with the concept",
+"Collect a quick data on number of people with different week-day birthday names. Represent the numbers with milk tins. Use this information to solve problems on “Which group has more members than the other(s)? Ask the question: Which group has more members?"
+],
+[
+"kg1",
+1,
+12,
+"My Family",
+"Origin And History Of My Family",
+"K1.2.2.1",
+"K1.2.2.1.6",
+"Use comparative language/phrases “more than”, “less than”, or “same as” to describe relationship between quantities",
+"Through interactive read aloud, introduce the concept “more than”, “less than” or “same as” in comparing objects. Collect a quick data on the different languages groups in the classroom. Represent the numbers with milk tins. Use comparative language “more than”, “less than”, or “same as” to describe the relationship between the milk tins collected for the languages. Ask the question “Which language group has more members? Or: “Which groups have same members?"
 ],
 [
 "kg1",
@@ -149,50 +149,6 @@ export const kgNumeracyRows: KgRow[] = [
 2,
 2,
 "Values and Beliefs",
-"Our Family Values",
-"K1.3.1.1",
-"K1.3.1.1.6",
-"Show the time of the day using clock faces",
-"Using a wooden or plastic clock, tell a short story about time. Talk about the times we greet in the morning and show it shows on the clock face. Have the keywords on cut out papers and use them to explain how we describe time of the day using the long arm and the short arm on the clock face. Have learners practice manipulating clock faces showing different time. Assist learners to locate the a given time on the clock face (e.g 6, 9) 6 O’clock Have learners create their own clock face using arts materials like play dough clay, manila cards, etc"
-],
-[
-"kg1",
-2,
-3,
-"Values and Beliefs",
-"Our Family Values",
-"K1.3.1.1",
-"K1.3.1.1.7",
-"Draw clock faces and write down the given time under it",
-"Discuss the importance of time and why learners need to obey the times for school and classroom activities. Talk about times we greet in the morning and show it on the clock face explaining how we describe time of the day using the long arm and the short arm. With different times written on cut out papers, have learners in pairs draw clock faces showing different times and write the times underneath e.g. 6, 7, 2, etc. E.g. 2 O’clock SUB-STRAND 3: MY CULTURALVALUES Indicators and Exemplars K1. 3.2.1.1 Talk about some important cultural values and good manners that promote respect and politeness In a Community Circle time have learners sit in a semi-circle. Always welcome and greet the learner"
-],
-[
-"kg1",
-2,
-4,
-"Values and Beliefs",
-"My Culturalvalues",
-"K1.3.2.1",
-"K1.3.2.1.2",
-"Recognize the basic components of a book using the Big Book on Showing respect",
-"Using a Big book on showing respect/politeness, have learners talk about the front/cover page, the body, and end page of a book. With the use of picture walk from the cover page illustration and the body/content, have learners predict the content of the text. Discuss the meaning of the keywords before reading the book. Use interactive read aloud to assist learners to make connections with why they need to show respect to each other and their teachers. Have learners use some of the keywords sentences that depicts showing respect. Have learners filling the missing letters in the given polite words e.g. may, respect, please, thank, etc. Have learners count the number of letters they used to fil"
-],
-[
-"kg1",
-2,
-5,
-"Values and Beliefs",
-"My Culturalvalues",
-"K1.3.2.1",
-"K1.3.2.1.3",
-"Use positive words learnt from the teacher-read-aloud of the Big Book to talk about how to show respect to teachers and peers at school. Exemplar: Do a picture walk through the text and let the learners predict what the story will be about looking at the pictures. Learners listen to the Teacher- rea",
-"Use positive words learnt from the teacher-read-aloud of the Big Book to talk about how to show respect to teachers and peers at school. Exemplar: Do a picture walk through the text and let the learners predict what the story will be about looking at the pictures. Learners listen to the Teacher- rea"
-],
-[
-"kg1",
-2,
-6,
-"Values and Beliefs",
 "My Culturalvalues",
 "K1.3.2.1",
 "K1.3.2.1.5",
@@ -202,7 +158,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 2,
-7,
+3,
 "Values and Beliefs",
 "Our Religious Values",
 "K1.3.3.1",
@@ -213,7 +169,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 2,
-8,
+4,
 "Values and Beliefs",
 "Our Religious Values",
 "K1.3.3.1",
@@ -224,7 +180,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 2,
-9,
+5,
 "My Local Community",
 "Nowing The Special Places In My Local Community",
 "K1.4.1.1",
@@ -235,18 +191,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 2,
-10,
-"Values and Beliefs",
-"Nowing (Who) The Important People / Occupation In My Community",
-"K1.3.2.1",
-"K1.3.2.1.1",
-"for the theme introduction. Give learners the opportunity to talk freely with the teacher and their peers about the people in their neighbourhood and the work they do. Learners should first talk about the occupation of their parents. e.g. My parents are both farmers. Ask leading questions and job te",
-"Use the “Be the word” game to demonstrate the concept. Cut up a sentence into individual words. Call a group of learners to rearrange the words to form the sentence. Each child picks a word and be that word when the sentence is being rebuild. Call the learners to rearrange the words to form the sentence. Make sure learners leave a space in between them when rearranging the words to form the sentence. Scaffold them to see how words are separated in print"
-],
-[
-"kg1",
-2,
-11,
+6,
 "My Local Community",
 "Nowing (Who) The Important People / Occupation In My Community",
 "K1.4.2.1",
@@ -257,13 +202,24 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 2,
-12,
+7,
 "My Local Community",
 "Nowing (Who) The Important People / Occupation In My Community",
 "K1.4.1.1",
 "K1.4.1.1.6",
 "Demonstrate their understanding of the concept of subtraction as separating and finding out how many is left",
 "Learners review the concept of addition and concentrate on Subtraction this week. Create a market scene where learners buy and sell different items in the community and use their understanding of the subtraction L concept to buy with money and ask for a change. The buyer asks the seller a question “how much is left”. Create different everyday situations and scaffold learners to subtract numbers. Let learners work in pairs and individually to solve problems in their exercise books. SUB –STRAND 3:"
+],
+[
+"kg1",
+2,
+8,
+"My Local Community",
+"Nowing The Special Leaders In My Community",
+"K1.4.1.1",
+"K1.4.1.1.6",
+"Demonstrate their understanding of the concept of subtraction as separating and finding out how many is left",
+"Learners review the concept of subtraction. Create different scenarios and story problems to help learners practise subtraction in a real-life situation. The chief came to the schools with 7 boxes of books and donate 5 boxes to our school. How many more are left? Repeat this with sharing of school materials, market scene where learners buy and sell different items in the community, etc. STRAND 5:"
 ],
 [
 "kg1",
@@ -292,50 +248,6 @@ export const kgNumeracyRows: KgRow[] = [
 3,
 3,
 "All Around Us",
-"Water",
-"K1.6.3.1",
-"K1.6.3.1.6",
-"Describe the position of objects",
-"Using interactive on position of things, encourage learners to about the sequence of the items read about. Arrange objects and guide learners to say the position of each of the object (1st to 5th). Display a number grid and guide learners describe the position of a given number as was in"
-],
-[
-"kg1",
-3,
-4,
-"All Around Us",
-"Air",
-"K1.6.4.1",
-"K1.6.4.1.3",
-"Recognize the position of the target sounds in words either at the initial, middle or the ending of the words related to the theme",
-"Write the target sound on the chalk board. Using word cards, assist learners identify and discuss the position of the target sound. Guide them clap/stamp the number of the target sound in some selected words. In groups of three, give out word cards and ask learners to identify and clap the number of target sound in the word. E.g. Holding - /o/, nose - /o/. Have learners write and fill in the missing letters of some given words Give learners selected words to tell the position of the target sound. Extend this activity to include cut out coloured shapes, objects, etc"
-],
-[
-"kg1",
-3,
-5,
-"All Around Us",
-"Air",
-"K1.6.4.1",
-"K1.6.4.1.6",
-"Describe the position of objects",
-"Recap lesson on positions of objects/numbers, guide learners to line up pictures of objects that use air and name their position. E.g. the balloon is first. Extend the activity to include different objects/numbers/shapes. SUB STRAND 5: PLANTS -1 Indicators and Exemplars"
-],
-[
-"kg1",
-3,
-6,
-"All Around Us",
-"Plants -1",
-"K1.6.5.1",
-"K1.6.5.1.6",
-"Describing the position and motion of objects in relation to others",
-"Recap lessons of position of objects. Using pictures of different kinds of plants, guide learners to identify and talk about the position of each of the plants. E.g. The flower is the 5th. Ask learners to colour a particular position. Extend the activities to include number/object grid"
-],
-[
-"kg1",
-3,
-7,
-"All Around Us",
 "Plants – 2",
 "K1.6.5.1",
 "K1.6.5.1.2",
@@ -345,7 +257,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 3,
-8,
+4,
 "All Around Us",
 "Plants – 2",
 "K1.6.6.1",
@@ -356,7 +268,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 3,
-9,
+5,
 "All Around Us",
 "Gardening",
 "K1.6.7.1",
@@ -367,7 +279,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg1",
 3,
-10,
+6,
 "All Around Us",
 "Light – Day And Night",
 "K1.6.8.1",
@@ -382,17 +294,6 @@ export const kgNumeracyRows: KgRow[] = [
 "All About Me",
 "I Am A Wonderful And Unique Creation",
 "K2.1.1.1",
-"K2.1.1.1.3",
-"Use positive words learnt from the Shared reading of the Big Book to talk about how wonderful and unique they are",
-"Shared reading of a Big Book and Think pair -share on the theme Do a picture walk through the text. Point to the pictures and let the learners predict what the pictures are saying about the character. Teacher read the text aloud, pause often and show the pictures to the class page by page. Learners interact with each other and share their personal comments freely on the theme. Learners relate the characters in the story (Big Book) to their lives. Learners also use the positive words used in the text to describe themselves. Read the text again and have learners pay attention to the descriptive words used in the text to describe parts of the body. Learners dramatize the story using the vocabul"
-],
-[
-"kg2",
-1,
-2,
-"All About Me",
-"I Am A Wonderful And Unique Creation",
-"K2.1.1.1",
 "K2.1.1.1.7",
 "Create sets of human parts that have same number and represent them with numbers up to 5",
 "numbers and draw them in sets, count them and represent them with numbers. 1-10. E.g. two eyes match with 2 feet. different number of parts together. What will be the total no of eyes? What will the total number of hands of 5 people? Give opportunity to learners to count parts of group members and their parts. ):"
@@ -400,7 +301,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 1,
-3,
+2,
 "All About Me",
 "The Parts Of The Human Body (Both External And Internal) And Their",
 "K2.1.2.1",
@@ -411,7 +312,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 1,
-4,
+3,
 "All About Me",
 "Personal Hygiene And Caring For The Parts Of The Body",
 "K2.1.2.1",
@@ -422,7 +323,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 1,
-5,
+4,
 "All About Me",
 "Eating Good Food And Taking My Vaccinations To Keep My Body Healthy",
 "K2.1.4.1",
@@ -433,7 +334,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 1,
-6,
+5,
 "All About Me",
 "My Environment And My Health That Help Me",
 "K2.1.5.1",
@@ -444,7 +345,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 1,
-7,
+6,
 "All About Me",
 "Protecting Ourselves From Road Accidents And Harmful Strangers",
 "K2.1.6.1",
@@ -455,7 +356,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 1,
-8,
+7,
 "My Family",
 "Family Celebrations And Festivals",
 "K2.2.3.1",
@@ -466,7 +367,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 1,
-9,
+8,
 "My Family",
 "Family Celebrations And Festivals",
 "K2.2.3.1",
@@ -476,63 +377,8 @@ export const kgNumeracyRows: KgRow[] = [
 ],
 [
 "kg2",
-1,
-10,
-"My Family",
-"My School Family",
-"K2.2.4.1",
-"K2.2.4.1.2",
-"Use visual information (illustrations) and title of Big book to make predictions and answer simple “wh” questions about the text",
-"Using a narrative story related to the theme, guide learners to predict what the story will be about using the cover picture and title of the story. E.g. Ask: What do you think is going to happen in the story? Teacher continues to read the story and let learners verify and confirm what they predicted. Have learners listen attentively and answer “wh” questions as in the Herringbone strategy, during and after the reading, (see Appendix 1 and"
-],
-[
-"kg2",
 2,
 1,
-"Values and Beliefs",
-"My Personal Values",
-"K2.3.1.1",
-"K2.3.1.1.2",
-"Use illustrations on the cover page and title of Big book to make predictions and answer simple “wh” questions about the text",
-"Follow the procedure for using the Herringbone strategy as spelt out in K2. 2.4.1.2) as you read a traditional story related to the theme, to learners (The cat’ hat). Guide learners to share what they learnt from the character in the story. Learners pay attention to new words after reading. Show the new words to learners after reading and ask them to act them out. Learners use vocabulary acquired to create meaningful sentences about the main character. Indicators and Exemplars"
-],
-[
-"kg2",
-2,
-2,
-"Values and Beliefs",
-"My Personal Values",
-"K2.3.1.1",
-"K2.3.1.1.6",
-"Compose and decompose numbers up to 10 using concrete materials",
-"1 to 10 (Compose). Ask them to form two groups of the 10 counters given to them (decompose) in any manner they want it. E.g. They can break the 10 counters into 5 and 5 or 4 and 6, or 9 and 1. Ask them to put the piles together and check how many they get altogether. them to identify and count objects/counters to match the number. SUB STRAND 2:"
-],
-[
-"kg2",
-1,
-11,
-"My Family",
-"My Cultural Values",
-"K2.2.2.1",
-"K2.2.2.1.2",
-"Use illustrations on the cover page and title of Big book to make predictions and answer simple story map questions on the text",
-"Have learners predict what the story will be using the cover picture and title of the big book. Read aloud the narrative story related to the theme and use the Story Map strategy (follow procedure as in Appendix 1). Guide the learners as to how to answer the story map questions. E.g. What is the setting of the story? who are the characters? what is the problem in the story? what did the character(s) do to solve the problem? How was the problem solved? Learners should identify their favourite characters and explain why they like that character. Repeat the pronunciation of the new words encountered in the text after teacher. Find the meaning using context and pictures. Use vocabulary a"
-],
-[
-"kg2",
-2,
-3,
-"Values and Beliefs",
-"My National And Civic Values",
-"K2.3.3.1",
-"K2.3.3.1.2",
-"Use illustrations on the cover page and title of Big book to make predictions and answer simple story map questions about the text",
-"Have learners predict what the story will be using the cover picture and title of the big book. Read aloud the narrative story related to the theme (On Kwame Nkrumah) and use the Story Map strategy (follow procedure as in Appendix 1"
-],
-[
-"kg2",
-2,
-4,
 "Values and Beliefs",
 "My National And Civic Values",
 "K2.3.3.1",
@@ -543,40 +389,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 2,
-5,
-"Values and Beliefs",
-"Our Beliefs",
-"K2.3.4.1",
-"K2.3.4.1.2",
-"Use illustrations in a Big book to make predictions and answer simple story map questions about the text",
-"Take learners though a few pages of a big book (picture walk). Have learners predict what the story will be using the pictures in the book. Read aloud the narrative story related to the theme (Little David and Goliath). Use the Story Map strategy (follow procedure as in Appendix 1"
-],
-[
-"kg2",
 2,
-6,
-"Values and Beliefs",
-"Our Beliefs",
-"K2.3.4.1",
-"K2.3.4.1.3",
-"Read level-appropriate sight words from the big book",
-"Display sight words on word cards and guide learners to read Have them look for the sight words from the big book and guide learners to use the words to form short and simple sentences. Copy words in the exercise book. Write level appropriate content vocabulary in their ruled exercised books and read them to each other"
-],
-[
-"kg2",
-2,
-7,
-"Values and Beliefs",
-"Our Beliefs",
-"K2.3.4.1",
-"K2.3.4.1.4",
-"Connect spoken words and sounds to letters in a playful way. Practice letter ladder-game Draw a grid on the floor of the classroom or outside. Write letters the learners have learnt so far in the grid on the floor which looks like this. a s p Divide the class into 2, 3, 4 groups (this depends on the",
-"Connect spoken words and sounds to letters in a playful way. Practice letter ladder-game Draw a grid on the floor of the classroom or outside. Write letters the learners have learnt so far in the grid on the floor which looks like this. a s p Divide the class into 2, 3, 4 groups (this depends on the"
-],
-[
-"kg2",
-2,
-8,
 "Values and Beliefs",
 "Our Beliefs",
 "K2.3.4.1",
@@ -587,18 +400,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 2,
-9,
-"My Local Community",
-"Nowing The Special Places In My Community",
-"K2.4.1.1",
-"K2.4.1.1.3",
-"Read level-appropriate sight words from the big book",
-"Display sight words on word cards and guide learners to read Have them look for the sight words from the big book and guide learners to use the words to form short and simple sentences. Copy words in the exercise book. Write level appropriate content vocabulary in their ruled exercise books and read them to each other"
-],
-[
-"kg2",
-2,
-10,
+3,
 "My Local Community",
 "Nowing The Special Places In My Community",
 "K2.4.1.1",
@@ -609,18 +411,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 2,
-11,
-"My Local Community",
-"Nowing (Who) The Important People / Occupation In My Community",
-"K2.4.2.1",
-"K2.4.2.1.2",
-"Listen attentively to the teacher-read-aloud of the big book which relates to the theme, track words and share lessons learnt on the theme of the week",
-"Teacher follows the steps of the KWL strategy instruction as you read aloud the informational text which relates to the theme to the learners. (See lesson"
-],
-[
-"kg2",
-2,
-12,
+4,
 "My Local Community",
 "Nowing (Who) The Important People / Occupation In My Community",
 "K2.4.2.1",
@@ -630,30 +421,30 @@ export const kgNumeracyRows: KgRow[] = [
 ],
 [
 "kg2",
+2,
+5,
+"My Local Community",
+"Nowing The Special Leaders In Our Community And Country",
+"K2.4.3.1",
+"K2.4.3.1.6",
+"Compare objects based on length and weight of various items and objects",
+"in the picture and use the words “longer than” and “shorter than to compare length of various items measured with non- standardized scales. Let learners also compare the weight of some objects around them and use words, “heavier than” and “lighter than”. Get them scales and rulers to use and compare the length and height of items measured. STRAND 5:"
+],
+[
+"kg2",
+2,
+6,
+"My Nation Ghana",
+"History And Celebrations Of Ghana",
+"K2.5.1.1",
+"K2.5.1.1.7",
+"Identify Ghanaian coins and money by name and use it to buy and sell in the classroom store",
+"Display the various coins currently being used for transaction in Ghana. Have learners touch, feel and say the features of each coin. Play games with the learners asking them to identify the coins and buying things with them in the classroom store. KINDERGARTEN 2 TERM 3 STRAND 6:"
+],
+[
+"kg2",
 3,
 1,
-"All Around Us",
-"Living And Non-Living Things",
-"K2.6.1.1",
-"K2.6.1.1.2",
-"Participate actively in the shared reading of the big book which relates to the theme, and share more lessons learnt on the theme of the week",
-"shared reading session of the informational text which relates to the theme to the learners (See lesson"
-],
-[
-"kg2",
-3,
-2,
-"All Around Us",
-"Living And Non-Living Things",
-"K2.6.1.1",
-"K2.6.1.1.7",
-"Tell the position and motion of objects in space. Using words such as below, to the right, behind etc",
-"Using objects in the class, scaffold learners to describe the various position that objects are at in the classroom. E.g. the teacher’s table, a non-living i at the front. Have learners describe their siting position relative to other learners. Introduce them to vocabularies such as: in front of, behind, on the third row, and other words that show position. e.g. Sesi is behind Neni. Scaffold learners to understand that object as well as humans can change their position any time moving from position to position in space. SUB STRAND 2:"
-],
-[
-"kg2",
-3,
-3,
 "All Around Us",
 "Living Things – Domestic And Wild Animals",
 "K2.6.2.1",
@@ -664,7 +455,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 3,
-4,
+2,
 "All Around Us",
 "Water",
 "K2.6.3.1",
@@ -675,7 +466,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 3,
-5,
+3,
 "All Around Us",
 "Air",
 "K2.6.4.1",
@@ -686,7 +477,7 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 3,
-6,
+4,
 "All Around Us",
 "Plants -2",
 "K2.6.6.1",
@@ -697,45 +488,12 @@ export const kgNumeracyRows: KgRow[] = [
 [
 "kg2",
 3,
-7,
+5,
 "All Around Us",
 "Types Of Soil And Gardening",
 "K2.6.7.1",
 "K2.6.7.1.2",
 "Participate actively in the teacher-read-aloud of the big book which relates to the theme, count words in a sentence and answer inferential questions on the text",
 "Take learners through before reading activities to activate pupils’ previous knowledge on the theme. Read aloud the informational text about different types of soil while pointing to words in a sentence. Learners answer factual and inference questions on the text. Let learners find answers to which type of soil we use for farming and why.? L Ask learners to find the many other uses of sand and clay soil? Write some sentences, cut them up and have learners count the words in the cut-up sentences and rearrange them to form sentences"
-],
-[
-"kg2",
-3,
-8,
-"All Around Us",
-"Natural And Man-Made (Artificial) Sources Of Light",
-"K2.6.8.1",
-"K2.6.8.1.7",
-"Tell the position and motion of objects in space. Using words such as below, to the right, behind etc",
-"Model how to describe the various position that objects are at in the classroom and in space. Introduce them to vocabularies such as: in front of, behind, in the sky, above, on the wall, on the third row, and other words that show position. e.g. Sesi is behind Neni. Scaffold learners to understand that object as well as human being can change their position any time moving from position to position in space. The sun moves from the east to the west so does the moon Let them change position of objects and describe their new positions. SUB STRAND 9:"
-],
-[
-"kg2",
-3,
-9,
-"All Around Us",
-"Changing Weather Conditions",
-"K2.6.9.1",
-"K2.6.9.1.2",
-"Participate actively in the shared reading of the big book which relates to the theme and answer simple questions on the text",
-"Follow the steps of the KWL strategy instruction as you read aloud the informational text on the weather to the learners. Pause often and let learners find answers to their questions. (See lesson"
-],
-[
-"kg2",
-3,
-10,
-"My Global Community",
-"Connecting And Communicating With The Global Community (K2.7.1)",
-"K2.7.1.1",
-"K2.7.1.1.2",
-"Participate actively in the shared reading of the big book which relates to the theme and answer simple questions on the text",
-"Follow the steps of the KWL strategy instruction ("
 ]
 ];
