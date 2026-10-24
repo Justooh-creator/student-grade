@@ -15,3 +15,13 @@ describe("lesson catalog", () => {
     expect(catalogFor("b5", "Mathematics", 1).every((e) => !e.verified)).toBe(true);
   });
 });
+
+describe("KG numeracy catalog", () => {
+  it("covers KG 1 and KG 2 for all three terms with official codes", () => {
+    for (const c of ["kg1", "kg2"]) for (const t of [1, 2, 3]) {
+      const e = catalogFor(c, "Numeracy", t);
+      expect(e.length).toBeGreaterThan(0);
+      expect(e.every((x) => x.verified && /^K[12]\.\d+\.\d+\.\d+\.\d+$/.test(x.fill.indicator ?? ""))).toBe(true);
+    }
+  });
+});
