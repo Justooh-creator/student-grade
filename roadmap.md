@@ -19,4 +19,4 @@
 - [ ] Improve crawlable homepage, public metadata and sitemap without exposing school records.
 - [ ] Add offline lesson notes in the scanned format with A4 PDF and editable Word exports.
 - [ ] Verify all requested updates.
-- [ ] Build daily attendance (once daily, saved history, Crèche/Nursery through Basic 9), school-first-use trial and verify permissions/read-back.
+- [x] Build daily attendance (once daily, saved history, Crèche/Nursery through Basic 9), school-first-use trial and verify permissions/read-back.
