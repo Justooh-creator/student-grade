@@ -18,3 +18,5 @@
 - Generate Mathematics Q&A packs in a browser-safe seeded module; keep one pack in page state for quiz, exam and scheme so answers and printing never regenerate independently.
 - Lesson-note drafts use teacher-scoped local storage; their separate A4 print page and dynamically loaded DOCX exporter must never change report-card print licensing or scoring.
 - Bundle only verified curriculum references as official; teacher-provided scanned examples remain editable and explicitly attributed in their reference field.
+- Attendance has its own early-years roster and class identifiers; reuse existing KG–Basic 9 school learners without expanding report-card class or scoring rules.
+- Save attendance through an authenticated database RPC that validates membership, assignments and first-use trial atomically; never derive attendance licensing or permissions from browser storage.

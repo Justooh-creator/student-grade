@@ -257,6 +257,9 @@ export function AppHeader({
                 <Link to="/students" search={{ class: navClass }} className={rowCls(pathname.startsWith("/students"))}>
                   <RowCell icon={ICON.cap} title="Student Details" desc="Learners, photos, parent numbers" />
                 </Link>
+                <Link to="/attendance" className={rowCls(pathname.startsWith("/attendance"))}>
+                  <RowCell icon={ICON.people} title="Daily Attendance" desc="Daily class register and history" />
+                </Link>
                 <Link to="/" search={{ class: navClass }} className={rowCls((pathname === "/" || pathname === "/sba-details"))}>
                   <RowCell icon={ICON.pencil} title="SBA Details" desc="Tests, project, group, exam marks" />
                 </Link>

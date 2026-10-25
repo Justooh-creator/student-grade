@@ -50,6 +50,102 @@ export type Database = {
         }
         Relationships: []
       }
+      attendance_early_learners: {
+        Row: {
+          admission_no: string
+          class_id: string
+          created_at: string
+          id: string
+          name: string
+          school_id: string
+        }
+        Insert: {
+          admission_no?: string
+          class_id: string
+          created_at?: string
+          id?: string
+          name: string
+          school_id: string
+        }
+        Update: {
+          admission_no?: string
+          class_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          school_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_early_learners_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attendance_trials: {
+        Row: {
+          school_id: string
+          started_at: string
+        }
+        Insert: {
+          school_id: string
+          started_at?: string
+        }
+        Update: {
+          school_id?: string
+          started_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_trials_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: true
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      daily_attendance: {
+        Row: {
+          attendance_date: string
+          class_id: string
+          entries: Json
+          id: string
+          recorded_by: string
+          school_id: string
+          updated_at: string
+        }
+        Insert: {
+          attendance_date: string
+          class_id: string
+          entries?: Json
+          id?: string
+          recorded_by: string
+          school_id: string
+          updated_at?: string
+        }
+        Update: {
+          attendance_date?: string
+          class_id?: string
+          entries?: Json
+          id?: string
+          recorded_by?: string
+          school_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_attendance_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       duty_roster_acks: {
         Row: {
           acked_at: string
@@ -466,6 +562,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      attendance_access: { Args: { _school: string }; Returns: Json }
+      can_edit_attendance: {
+        Args: { _class: string; _school: string }
+        Returns: boolean
+      }
       create_school: {
         Args: { _name: string }
         Returns: {
@@ -501,6 +602,29 @@ export type Database = {
       redeem_code: { Args: { _code: string }; Returns: Json }
       regenerate_join_code: { Args: { _school: string }; Returns: string }
       remove_member: { Args: { _member: string }; Returns: undefined }
+      save_daily_attendance: {
+        Args: {
+          _class: string
+          _date: string
+          _present_ids: string[]
+          _school: string
+        }
+        Returns: {
+          attendance_date: string
+          class_id: string
+          entries: Json
+          id: string
+          recorded_by: string
+          school_id: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "daily_attendance"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       set_member_role: {
         Args: { _member: string; _role: string }
         Returns: undefined
