@@ -213,6 +213,98 @@ export type Database = {
           },
         ]
       }
+      fee_items: {
+        Row: {
+          created_at: string
+          daily_rate: number
+          default_on: boolean
+          id: string
+          name: string
+          school_id: string
+          sort: number
+        }
+        Insert: {
+          created_at?: string
+          daily_rate?: number
+          default_on?: boolean
+          id?: string
+          name: string
+          school_id: string
+          sort?: number
+        }
+        Update: {
+          created_at?: string
+          daily_rate?: number
+          default_on?: boolean
+          id?: string
+          name?: string
+          school_id?: string
+          sort?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fee_items_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fee_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          fee_id: string
+          id: string
+          kind: string
+          learner_id: string
+          method: string
+          paid_on: string
+          recorded_by: string
+          school_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          fee_id: string
+          id?: string
+          kind: string
+          learner_id: string
+          method?: string
+          paid_on?: string
+          recorded_by?: string
+          school_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          fee_id?: string
+          id?: string
+          kind?: string
+          learner_id?: string
+          method?: string
+          paid_on?: string
+          recorded_by?: string
+          school_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fee_payments_fee_id_fkey"
+            columns: ["fee_id"]
+            isOneToOne: false
+            referencedRelation: "fee_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fee_payments_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gift_codes: {
         Row: {
           code: string
@@ -245,6 +337,38 @@ export type Database = {
           redeemed_school?: string | null
         }
         Relationships: []
+      }
+      learner_fee_profiles: {
+        Row: {
+          enrolled: Json
+          learner_id: string
+          parent_phone: string
+          school_id: string
+          updated_at: string
+        }
+        Insert: {
+          enrolled?: Json
+          learner_id: string
+          parent_phone?: string
+          school_id: string
+          updated_at?: string
+        }
+        Update: {
+          enrolled?: Json
+          learner_id?: string
+          parent_phone?: string
+          school_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learner_fee_profiles_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       payment_transactions: {
         Row: {
@@ -341,6 +465,35 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      school_fee_settings: {
+        Row: {
+          momo_name: string
+          momo_network: string
+          momo_number: string
+          school_id: string
+        }
+        Insert: {
+          momo_name?: string
+          momo_network?: string
+          momo_number?: string
+          school_id: string
+        }
+        Update: {
+          momo_name?: string
+          momo_network?: string
+          momo_number?: string
+          school_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_fee_settings_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: true
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       school_members: {
         Row: {
@@ -589,6 +742,8 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      ensure_default_fees: { Args: { _school: string }; Returns: undefined }
+      fee_admin_ok: { Args: { _school: string }; Returns: boolean }
       get_my_license: { Args: never; Returns: Json }
       is_developer: { Args: never; Returns: boolean }
       is_school_admin: { Args: { _school: string }; Returns: boolean }
@@ -608,6 +763,30 @@ export type Database = {
           _date: string
           _present_ids: string[]
           _school: string
+        }
+        Returns: {
+          attendance_date: string
+          class_id: string
+          entries: Json
+          id: string
+          recorded_by: string
+          school_id: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "daily_attendance"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      save_daily_attendance_fees: {
+        Args: {
+          _class: string
+          _date: string
+          _present_ids: string[]
+          _school: string
+          _unpaid_ids: string[]
         }
         Returns: {
           attendance_date: string

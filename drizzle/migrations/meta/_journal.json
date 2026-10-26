@@ -120,6 +120,13 @@
       "when": 1792901310447,
       "tag": "0016_align_attendance_class_assignments",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1792990509184,
+      "tag": "0017_proprietor_fee_register",
+      "breakpoints": true
     }
   ]
 }
