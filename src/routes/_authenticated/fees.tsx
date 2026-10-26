@@ -128,7 +128,7 @@ function LearnerFees({ d, enrolled, phones, balances, sid, schoolName, onDone, f
     }, onSuccess: () => { setPay(null); toast.success("Payment recorded"); onDone(); }, onError: (e) => toast.error(e.message),
   });
   function remind(id: string) {
-    const phone = whatsappPhone(phones[id] ?? ""); if (!phone) return toast.error("Add a valid parent phone first");
+    const phone = whatsappPhone(phones[id] ?? ""); if (!phone) { toast.error("Add a valid parent phone first"); return; }
     const lines = d.fees.map((f) => ({ f, debt: bal(id, f.id)?.debt ?? 0 })).filter((x) => x.debt > 0).map((x) => `• ${x.f.name}: ${ghs(x.debt)}`);
     const total = d.fees.reduce((s, f) => s + (bal(id, f.id)?.debt ?? 0), 0);
     const momo = d.momo?.momo_number ? `\nPay via MoMo (${d.momo.momo_network}) ${d.momo.momo_number}${d.momo.momo_name ? ` — ${d.momo.momo_name}` : ""}.` : "";

@@ -13,7 +13,7 @@ describe("Daily fee register", () => {
   it("records No Money Today as owed, not cash", () => {
     const r = computeFees([feeding], [day("2026-10-26", [{ id: "a", present: true, unpaid: true }])], [], {});
     expect(r.day("2026-10-26")).toMatchObject({ cash: 0, owed: 5 });
-    expect(r.balances[0].debt).toBe(5);
+    expect(r.balances[0]?.debt).toBe(5);
   });
   it("uses advance payment before expecting cash", () => {
     const r = computeFees([feeding], [day("2026-10-26", [{ id: "a", present: true }]), day("2026-10-27", [{ id: "a", present: true }])], [{ learner_id: "a", fee_id: "f", amount: 5, kind: "advance", paid_on: "2026-10-25" }], {});
@@ -22,7 +22,7 @@ describe("Daily fee register", () => {
   });
   it("clears arrears when the parent pays later", () => {
     const r = computeFees([feeding], [day("2026-10-26", [{ id: "a", present: true, unpaid: true }])], [{ learner_id: "a", fee_id: "f", amount: 5, kind: "arrears", paid_on: "2026-10-27" }], {});
-    expect(r.balances[0].debt).toBe(0);
+    expect(r.balances[0]?.debt).toBe(0);
     expect(r.day("2026-10-27").arrearsRecovered).toBe(5);
   });
   it("formats Ghana numbers for WhatsApp", () => { expect(whatsappPhone("0244 123 456")).toBe("233244123456"); });
