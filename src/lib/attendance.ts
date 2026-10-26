@@ -1,6 +1,6 @@
 import { allClassIds, classDisplayName } from "./ges";
 
-export interface AttendanceEntry { id: string; name: string; admissionNo: string; present: boolean }
+export interface AttendanceEntry { id: string; name: string; admissionNo: string; present: boolean; unpaid?: boolean }
 export interface AttendanceAccess { started_at: string | null; expires_at: string | null; allowed: boolean; licensed: boolean }
 export const EARLY_ATTENDANCE_CLASSES = ["creche", "nursery1", "nursery2"] as const;
 export function attendanceClasses(streams = 1): string[] {

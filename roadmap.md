@@ -20,3 +20,4 @@
 - [ ] Add offline lesson notes in the scanned format with A4 PDF and editable Word exports.
 - [ ] Verify all requested updates.
 - [x] Build daily attendance (once daily, saved history, Crèche/Nursery through Basic 9), school-first-use trial and verify permissions/read-back.
+- [x] Owner cash register: fee rates, per-learner toggles, No Money Today, arrears/advance, MoMo WhatsApp reminders.

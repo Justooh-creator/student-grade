@@ -68,7 +68,7 @@ function AttendancePage() {
     mutationFn: async () => {
       const schoolId = cloud.schoolId;
       if (!schoolId) throw new Error("Join School Cloud first");
-      const { error } = await supabase.rpc("save_daily_attendance", { _school: schoolId, _class: classId, _date: date, _present_ids: entries.filter((e) => e.present).map((e) => e.id) });
+      const { error } = await supabase.rpc("save_daily_attendance_fees", { _school: schoolId, _class: classId, _date: date, _present_ids: entries.filter((e) => e.present).map((e) => e.id), _unpaid_ids: entries.filter((e) => e.present && e.unpaid).map((e) => e.id) });
       if (error) throw new Error(error.message);
     },
     onSuccess: async () => { setDirty(false); await queryClient.invalidateQueries({ queryKey }); toast.success("Attendance saved to School Cloud"); },
@@ -99,6 +99,7 @@ function AttendancePage() {
     <main className="mx-auto max-w-5xl px-4 py-6">
       <div className="flex items-center gap-3"><Users className="h-7 w-7 text-primary" /><h1 className="font-display text-2xl font-bold">Daily Attendance</h1></div>
       {!cloud.schoolId ? <div className="mt-6 border-y border-border py-6"><p>{cloud.status === "loading" ? "Loading your school…" : "Join School Cloud to open your school’s attendance register."}</p><Button asChild variant="outline" className="mt-4"><Link to="/school-cloud">School Cloud</Link></Button></div> : <>
+        {cloud.role === "headteacher" && <Button asChild variant="outline" className="mt-4"><Link to="/fees">💰 Owner Cash Register</Link></Button>}
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           <label className="text-sm font-semibold">Class<select className="mt-2 h-11 w-full rounded-md border border-input bg-background px-3" aria-label="Attendance class" value={classId} disabled={busy} onChange={(e) => changeSelection(e.target.value, date)}>{classes.map((id) => <option key={id} value={id}>{attendanceClassName(id)}</option>)}</select></label>
           <label className="text-sm font-semibold">Date<Input aria-label="Attendance date" className="mt-2 h-11" type="date" max={format(new Date(), "yyyy-MM-dd")} value={date} disabled={busy} onChange={(e) => { if (e.target.value) changeSelection(classId, e.target.value); }} /></label>
@@ -125,9 +126,9 @@ function AttendancePage() {
           </div>
           {!entries.length && <div className="border border-dashed border-border py-10 text-center text-muted-foreground">No learners in {attendanceClassName(classId)}.{!isEarlyAttendanceClass(classId) && <p className="mt-3"><Link to="/students" className="text-primary underline">Open Student Details</Link></p>}</div>}
           <div className="divide-y divide-border border-y border-border">{entries.map((entry, i) => <div key={entry.id} className={`flex min-h-16 items-center gap-3 px-2 py-3 ${entry.present ? "bg-primary/5" : "bg-background"}`}>
-            <Checkbox id={`present-${entry.id}`} aria-label={`Present: ${entry.name}`} checked={entry.present} disabled={!editable || !allowed || busy || rosterChanged} onCheckedChange={(checked) => { setEntries(entries.map((e) => e.id === entry.id ? { ...e, present: checked === true } : e)); setDirty(true); }} className="h-6 w-6 shrink-0" />
+            <Checkbox id={`present-${entry.id}`} aria-label={`Present: ${entry.name}`} checked={entry.present} disabled={!editable || !allowed || busy || rosterChanged} onCheckedChange={(checked) => { setEntries(entries.map((e) => e.id === entry.id ? { ...e, present: checked === true, unpaid: checked === true ? e.unpaid : false } : e)); setDirty(true); }} className="h-6 w-6 shrink-0" />
             <label htmlFor={`present-${entry.id}`} className="min-w-0 flex-1 cursor-pointer"><span className="block break-words font-semibold"><span className="mr-2 text-muted-foreground">{i + 1}.</span>{entry.name}</span>{entry.admissionNo && <span className="text-xs text-muted-foreground">{entry.admissionNo}</span>}</label>
-            <span className="text-xs font-semibold text-muted-foreground">{entry.present ? "Present" : "Absent"}</span>
+            {entry.present ? <button type="button" aria-pressed={Boolean(entry.unpaid)} disabled={!editable || !allowed || busy || rosterChanged} onClick={() => { setEntries(entries.map((e) => e.id === entry.id ? { ...e, unpaid: !e.unpaid } : e)); setDirty(true); }} className={`rounded-full border px-3 py-1 text-xs font-semibold ${entry.unpaid ? "border-destructive bg-destructive/10 text-destructive" : "border-border text-muted-foreground"}`}>{entry.unpaid ? "No money today" : "Paid"}</button> : <span className="text-xs font-semibold text-muted-foreground">Absent</span>}
             {isEarlyAttendanceClass(classId) && editable && !saved && <Button size="icon" variant="ghost" aria-label={`Remove ${entry.name}`} disabled={busy || dirty} onClick={() => { if (window.confirm(`Remove ${entry.name} from this class?`)) earlyChange.mutate(entry.id); }}><Trash2 /></Button>}
           </div>)}</div>
           <div className="sticky bottom-0 mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border bg-background py-4"><p className="text-sm text-muted-foreground">{attendanceClassName(classId)} · {summary.present} present</p><Button size="lg" disabled={!editable || !allowed || busy || !entries.length || !dirty || rosterChanged} onClick={() => save.mutate()}><Save />{save.isPending ? "Saving…" : "Save Attendance"}</Button></div>
