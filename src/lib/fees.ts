@@ -1,5 +1,5 @@
 export interface FeeItem { id: string; name: string; daily_rate: number; default_on: boolean }
-export interface FeeDayEntry { id: string; name: string; present: boolean; unpaid?: boolean }
+export interface FeeDayEntry { id: string; name: string; present: boolean; unpaid?: boolean | undefined }
 export interface FeeDay { class_id: string; attendance_date: string; entries: FeeDayEntry[] }
 export interface FeePayment { learner_id: string; fee_id: string; amount: number; kind: "advance" | "arrears"; paid_on: string }
 export type Enrolment = Record<string, Record<string, boolean>>;
@@ -24,8 +24,8 @@ export function computeFees(fees: FeeItem[], days: FeeDay[], payments: FeePaymen
   const perClass = new Map<string, DayTotals>();
   let pi = 0;
   const applyPaymentsUpTo = (date: string) => {
-    while (pi < pays.length && pays[pi].paid_on <= date) {
-      const p = pays[pi++]; const s = get(p.learner_id, p.fee_id); const t = totals(p.paid_on);
+    while (pi < pays.length && pays[pi]!.paid_on <= date) {
+      const p = pays[pi++]!; const s = get(p.learner_id, p.fee_id); const t = totals(p.paid_on);
       if (p.kind === "advance") { s.credit += p.amount; t.advanceReceived += p.amount; }
       else { const used = Math.min(p.amount, s.debt); s.debt -= used; s.credit += p.amount - used; t.arrearsRecovered += p.amount; }
     }
