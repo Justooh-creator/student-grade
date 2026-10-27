@@ -5,7 +5,6 @@ import { AppHeader } from "@/components/AppHeader";
 import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
-import developerPhoto from "@/assets/developer.jpg.asset.json";
 import { Link } from "@tanstack/react-router";
 
 export const SUPPORT_WHATSAPP = "233530887628";
@@ -103,13 +102,13 @@ function FeedbackPage() {
         </section>
 
         <section className="rounded-lg border border-border bg-card p-4">
-          <h2 className="font-display text-base font-bold">👨‍🏫 About the Developer</h2>
+          <h2 className="font-display text-base font-bold">🏢 About Us</h2>
           <div className="mt-3 flex items-start gap-3">
-            <img src={developerPhoto.url} alt="Justice Atideku" width={64} height={64} className="h-16 w-16 shrink-0 rounded-full border-2 border-primary/30 object-cover" />
+            <img src="/icon-192.png" alt="EduReport Ghana logo" width={64} height={64} className="h-16 w-16 shrink-0 rounded-md object-contain" />
             <div className="min-w-0">
-              <p className="font-display text-base font-bold">Justice Atideku</p>
-              <p className="text-sm font-semibold text-primary">A Teacher &amp; Software Developer</p>
-              <p className="text-xs text-muted-foreground">South Tongu, Volta Region, Ghana</p>
+              <p className="font-display text-base font-bold">🇬🇭 EduReport Ghana</p>
+              <p className="text-sm font-semibold text-primary">A Product of JA EduTech Solutions</p>
+              <p className="text-xs text-muted-foreground">Practical digital tools for Ghanaian schools • South Tongu, Ghana</p>
             </div>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
