@@ -9,7 +9,7 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 - School data syncs via school_students/schools tables (one JSON row per learner); store.ts onLocalChange/applyRemote drive SyncListener — cloud is source of truth once a teacher joins a school.
-- Private app screens live under the client-only _authenticated layout; the SSR public index renders the shared account form and sends authenticated users to /sba-details, preserving legacy / links and search parameters; keep payment checks separate from account access.
+- Private app screens live under the client-only _authenticated layout; the SSR public index renders the shared account form and sends authenticated users to the shared accountHome destination (School Details), preserving legacy / links and search parameters; keep payment checks separate from account access.
 - A single root AccountProvider owns session transitions and cache invalidation; useUser consumes it so page mounts cannot create competing auth listeners.
 - Spreadsheet reader libraries are dynamically loaded from the learner-upload action; imports are append-only and recheck class permissions, duplicates and capacity against current store data before one update.
 - Broadsheets derive results and exact-stream ranking from the existing results module, use named landscape print pages, and reuse the existing PrintButton license gate so report-card grading and print rules remain unchanged.
@@ -20,4 +20,4 @@
 - Bundle only verified curriculum references as official; teacher-provided scanned examples remain editable and explicitly attributed in their reference field.
 - Attendance has its own early-years roster and class identifiers; reuse existing KG–Basic 9 school learners without expanding report-card class or scoring rules.
 - Save attendance through an authenticated database RPC that validates membership, assignments and first-use trial atomically; never derive attendance licensing or permissions from browser storage.
-- Daily fee totals are derived in the browser from saved attendance, payments and current rates (src/lib/fees.ts); owner-only access and the trial gate are enforced by fee_admin_ok RLS.
+- Daily fee totals are derived in the browser from saved attendance, payments and current rates (src/lib/fees.ts); learner profile rate_overrides inherit the general fee rate when absent and retain explicit zero; owner-only access and the trial gate are enforced by fee_admin_ok RLS.

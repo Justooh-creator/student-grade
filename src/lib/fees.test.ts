@@ -10,7 +10,7 @@ describe("Daily fee register", () => {
     const r = computeFees([feeding, bus], [day("2026-10-26", [{ id: "a", present: true }, { id: "c", present: false }])], [], { a: { b: true } });
     expect(r.day("2026-10-26").cash).toBe(11);
   });
-  it("records No Money Today as owed, not cash", () => {
+  it("records Unpaid as owed, not cash", () => {
     const r = computeFees([feeding], [day("2026-10-26", [{ id: "a", present: true, unpaid: true }])], [], {});
     expect(r.day("2026-10-26")).toMatchObject({ cash: 0, owed: 5 });
     expect(r.balances[0]?.debt).toBe(5);
@@ -26,4 +26,25 @@ describe("Daily fee register", () => {
     expect(r.day("2026-10-27").arrearsRecovered).toBe(5);
   });
   it("formats Ghana numbers for WhatsApp", () => { expect(whatsappPhone("0244 123 456")).toBe("233244123456"); });
+  it("inherits general Feeding 5 and Bus 6 when unchanged", () => {
+    const r = computeFees([feeding, bus], [day("2026-10-27", [{ id: "a", present: true }])], [], { a: { b: true } }, { a: {} });
+    expect(r.day("2026-10-27").cash).toBe(11);
+  });
+  it("uses each child's changed Feeding and Bus amounts", () => {
+    const r = computeFees([feeding, bus], [day("2026-10-27", [{ id: "a", present: true }, { id: "c", present: true }])], [], { a: { b: true }, c: { b: true } }, { a: { f: 4, b: 8 } });
+    expect(r.day("2026-10-27").cash).toBe(23);
+  });
+  it("keeps an explicit zero custom rate instead of the general price", () => {
+    const r = computeFees([feeding], [day("2026-10-27", [{ id: "a", present: true }])], [], {}, { a: { f: 0 } });
+    expect(r.day("2026-10-27").cash).toBe(0);
+  });
+  it("uses custom rates for itemized arrears and advance coverage", () => {
+    const r = computeFees([feeding, bus], [day("2026-10-27", [{ id: "a", present: true, unpaid: true }])], [{ learner_id: "a", fee_id: "f", amount: 4, kind: "advance", paid_on: "2026-10-26" }], { a: { b: true } }, { a: { f: 4, b: 8 } });
+    expect(r.day("2026-10-27")).toMatchObject({ prepaid: 4, owed: 8, cash: 0 });
+    expect(r.balances.find((b) => b.feeId === "b")?.debt).toBe(8);
+  });
+  it("returns to the current general rate when a custom rate is removed", () => {
+    const r = computeFees([{ ...feeding, daily_rate: 7 }], [day("2026-10-27", [{ id: "a", present: true }])], [], {}, { a: {} });
+    expect(r.day("2026-10-27").cash).toBe(7);
+  });
 });

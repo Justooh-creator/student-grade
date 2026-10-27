@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { canOpenApp, signupNextStep } from "./accountAccess";
+import { accountHome, canOpenApp, signupNextStep } from "./accountAccess";
 
 describe("sign-up-first access", () => {
+  it("opens School Details first after sign-in", () => {
+    expect(accountHome).toBe("/setup");
+  });
   it("blocks visitors without an account session", () => {
     expect(canOpenApp(null, null)).toBe(false);
   });

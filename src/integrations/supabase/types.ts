@@ -343,6 +343,7 @@ export type Database = {
           enrolled: Json
           learner_id: string
           parent_phone: string
+          rate_overrides: Json
           school_id: string
           updated_at: string
         }
@@ -350,6 +351,7 @@ export type Database = {
           enrolled?: Json
           learner_id: string
           parent_phone?: string
+          rate_overrides?: Json
           school_id: string
           updated_at?: string
         }
@@ -357,6 +359,7 @@ export type Database = {
           enrolled?: Json
           learner_id?: string
           parent_phone?: string
+          rate_overrides?: Json
           school_id?: string
           updated_at?: string
         }
@@ -809,6 +812,7 @@ export type Database = {
         Returns: undefined
       }
       shares_school_with: { Args: { _other: string }; Returns: boolean }
+      valid_fee_rate_overrides: { Args: { _rates: Json }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

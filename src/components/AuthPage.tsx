@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, LoaderCircle, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/lib/auth";
-import { signupNextStep } from "@/lib/accountAccess";
+import { accountHome, signupNextStep } from "@/lib/accountAccess";
 import { Button } from "@/components/ui/button";
 
 export function AuthPage() {
@@ -51,7 +51,11 @@ export function AuthPage() {
       return;
     }
     setEntering(true);
-    await navigate({ to: "/", replace: true });
+    try {
+      await navigate({ to: accountHome, replace: true });
+    } finally {
+      setEntering(false);
+    }
   }
 
   async function submit(e: React.FormEvent) {
