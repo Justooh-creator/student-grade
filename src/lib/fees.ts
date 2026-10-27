@@ -3,6 +3,11 @@ export interface FeeDayEntry { id: string; name: string; present: boolean; unpai
 export interface FeeDay { class_id: string; attendance_date: string; entries: FeeDayEntry[] }
 export interface FeePayment { learner_id: string; fee_id: string; amount: number; kind: "advance" | "arrears"; paid_on: string }
 export type Enrolment = Record<string, Record<string, boolean>>;
+export type RateOverrides = Record<string, Record<string, number>>;
+
+export function learnerFeeRate(fee: FeeItem, learnerId: string, overrides: RateOverrides): number {
+  return overrides[learnerId]?.[fee.id] ?? Number(fee.daily_rate);
+}
 
 export function isEnrolled(enrolled: Enrolment, learnerId: string, fee: FeeItem): boolean {
   return enrolled[learnerId]?.[fee.id] ?? fee.default_on;
@@ -12,8 +17,8 @@ export interface DayTotals { cash: number; prepaid: number; owed: number; arrear
 export interface LearnerBalance { learnerId: string; feeId: string; debt: number; credit: number }
 
 /** Replays attendance chronologically per learner and fee. Each present day costs the daily rate:
- * covered by advance credit first ("prepaid"), otherwise owed when marked No Money Today, else collected as cash. */
-export function computeFees(fees: FeeItem[], days: FeeDay[], payments: FeePayment[], enrolled: Enrolment) {
+ * covered by advance credit first ("prepaid"), otherwise owed when marked Unpaid, else collected as cash. */
+export function computeFees(fees: FeeItem[], days: FeeDay[], payments: FeePayment[], enrolled: Enrolment, overrides: RateOverrides = {}) {
   const sorted = [...days].sort((a, b) => a.attendance_date.localeCompare(b.attendance_date));
   const state = new Map<string, LearnerBalance>();
   const key = (l: string, f: string) => l + "|" + f;
@@ -24,8 +29,11 @@ export function computeFees(fees: FeeItem[], days: FeeDay[], payments: FeePaymen
   const perClass = new Map<string, DayTotals>();
   let pi = 0;
   const applyPaymentsUpTo = (date: string) => {
-    while (pi < pays.length && pays[pi]!.paid_on <= date) {
-      const p = pays[pi++]!; const s = get(p.learner_id, p.fee_id); const t = totals(p.paid_on);
+    while (pi < pays.length) {
+      const p = pays[pi];
+      if (!p || p.paid_on > date) break;
+      pi++;
+      const s = get(p.learner_id, p.fee_id); const t = totals(p.paid_on);
       if (p.kind === "advance") { s.credit += p.amount; t.advanceReceived += p.amount; }
       else { const used = Math.min(p.amount, s.debt); s.debt -= used; s.credit += p.amount - used; t.arrearsRecovered += p.amount; }
     }
@@ -38,7 +46,7 @@ export function computeFees(fees: FeeItem[], days: FeeDay[], payments: FeePaymen
     for (const e of day.entries) {
       if (!e.present) continue;
       for (const fee of fees) {
-        const rate = Number(fee.daily_rate);
+        const rate = learnerFeeRate(fee, e.id, overrides);
         if (!rate || !isEnrolled(enrolled, e.id, fee)) continue;
         const s = get(e.id, fee.id);
         if (s.credit >= rate) { s.credit -= rate; t.prepaid += rate; ct.prepaid += rate; }

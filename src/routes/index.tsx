@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { AuthPage } from "@/components/AuthPage";
 import { useUser } from "@/lib/auth";
 import { validateClassSearch } from "@/lib/classSearch";
+import { accountHome } from "@/lib/accountAccess";
 
 export const Route = createFileRoute("/")({
   validateSearch: validateClassSearch,
@@ -23,7 +24,7 @@ function Welcome() {
   const { user } = useUser();
   const search = Route.useSearch();
   const navigate = useNavigate();
-  useEffect(() => { if (user) void navigate({ to: "/sba-details", search, replace: true }); }, [user, navigate, search]);
-  if (user) return <div role="status" className="flex min-h-screen items-center justify-center bg-background text-primary">Opening SBA Details…</div>;
+  useEffect(() => { if (user) void navigate({ to: accountHome, search, replace: true }); }, [user, navigate, search]);
+  if (user) return <div role="status" className="flex min-h-screen items-center justify-center bg-background text-primary">Opening School Details…</div>;
   return <AuthPage />;
 }

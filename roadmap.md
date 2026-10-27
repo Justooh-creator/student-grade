@@ -21,3 +21,5 @@
 - [ ] Verify all requested updates.
 - [x] Build daily attendance (once daily, saved history, Crèche/Nursery through Basic 9), school-first-use trial and verify permissions/read-back.
 - [x] Owner cash register: fee rates, per-learner toggles, No Money Today, arrears/advance, MoMo WhatsApp reminders.
+- [ ] Phases 1–3: Account Office/Unpaid wording, general fee rates with learner overrides, School Details sign-in destination and verification.
+- [ ] Fingerprint authentication (next phase; not part of phases 1–3).
