@@ -320,7 +320,7 @@ export function AppHeader({
                   <AccordionTrigger className="font-bold text-primary">Account & Support</AccordionTrigger>
                   <AccordionContent><nav className="grid gap-1" onClick={() => setOpen(false)}>
                 <Link to="/feedback" className={rowCls(pathname.startsWith("/feedback"))}>
-                  <RowCell icon={ICON.bulb} title="Help & About Developer" desc="Suggestions, support and app creator" />
+                  <RowCell icon={ICON.bulb} title="Help & Support" desc="Suggestions and support from JA EduTech Solutions" />
                 </Link>
                 <Link to="/auth" className={rowCls(pathname.startsWith("/auth"))}>
                   <RowCell
@@ -332,6 +332,12 @@ export function AppHeader({
                   </nav></AccordionContent>
                 </AccordionItem>
               </Accordion>
+              <footer className="mt-6 border-t border-border pt-4 text-center text-xs text-muted-foreground">
+                <p>🇬🇭 EduReport Ghana</p>
+                <p>A Product of <strong className="text-foreground">JA EduTech Solutions</strong></p>
+                <p>Practical digital tools for Ghanaian schools • South Tongu, Ghana</p>
+                <p className="mt-1"><a href="https://wa.me/233530887628" target="_blank" rel="noreferrer" className="font-bold text-primary underline">Chat on WhatsApp</a> • <a href="mailto:jatideku@gmail.com" className="font-bold text-primary underline">Email: Click Here</a></p>
+              </footer>
             </div>
           </aside>
         </div>
