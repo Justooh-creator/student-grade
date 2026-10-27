@@ -84,7 +84,7 @@ function FeesPage() {
   const feeName = new Map(d.fees.map((f) => [f.id, f.name]));
 
   return <Shell school={school}>
-    <div className="mt-4 flex gap-2 border-b border-border">{(["today", "learners", "settings"] as Tab[]).map((t) => <Button variant="ghost" key={t} onClick={() => setTab(t)} className={`px-3 py-2 text-sm font-semibold ${tab === t ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}>{t === "today" ? "Daily Cash" : t === "learners" ? "Learners & Debts" : "Fee Settings"}</Button>)}</div>
+    <div className="mt-4 flex flex-wrap gap-1 border-b border-border">{(["today", "learners", "settings"] as Tab[]).map((t) => <Button variant="ghost" key={t} onClick={() => setTab(t)} className={`px-2 py-2 text-sm font-semibold ${tab === t ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}>{t === "today" ? "Daily Cash" : t === "learners" ? "Learners & Debts" : "Fee Settings"}</Button>)}</div>
 
     {tab === "today" && <>
       <label className="mt-4 block max-w-xs text-sm font-semibold">Date<Input type="date" className="mt-2" value={date} max={format(new Date(), "yyyy-MM-dd")} onChange={(e) => e.target.value && setDate(e.target.value)} /></label>
