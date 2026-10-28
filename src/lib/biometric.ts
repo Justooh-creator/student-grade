@@ -3,7 +3,7 @@
 // check guards opening the app. Fingerprint data never leaves the phone.
 const key = (userId: string) => `edureport:fingerprint:${userId}`;
 
-export const RELOCK_AFTER_MS = 60_000;
+export const RELOCK_AFTER_MS = 120_000;
 
 function toB64(buf: ArrayBuffer) {
   return btoa(String.fromCharCode(...new Uint8Array(buf)));

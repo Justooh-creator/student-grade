@@ -206,12 +206,6 @@ export function AppHeader({
           🗓️ You are on duty {dutyReminders[0]?.week_start === nextWeek ? "next week" : "this week"} — tap to view and acknowledge
         </Link>
       )}
-      {showFb && !pathname.startsWith("/feedback") && (
-        <div className="mx-auto mt-2 flex max-w-5xl items-center gap-2 rounded-md bg-primary-foreground/10 px-3 py-2 text-xs font-bold">
-          <Link to="/feedback" className="flex-1">💡 Help shape the next EduReport update! Tap here to share your suggestions.</Link>
-          <Button onClick={dismissFb} aria-label="Dismiss feedback banner" className="px-1">✕</Button>
-        </div>
-      )}
       <nav className="mx-auto mt-2 flex max-w-5xl overflow-x-auto px-2">
         {tabs.map((t) => {
           const cls = t.active ? tabActive : tabIdle;
