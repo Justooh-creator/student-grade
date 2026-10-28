@@ -131,7 +131,7 @@ function StudentsPage() {
                       </label>
                       </Button>
                       <Button asChild variant="outline" className="px-2 text-[13px] font-semibold text-primary">
-                        <Link to="/" search={{ class: classId, student: s.id }}>Enter SBA</Link>
+                        <Link to="/sba-details" search={{ class: classId, student: s.id }}>Enter SBA</Link>
                       </Button>
                       {s.photo && <button onClick={() => updateStudent(s.id, { photo: "" })} className="text-[13px] text-muted-foreground hover:text-destructive">Remove</button>}
                     </div>

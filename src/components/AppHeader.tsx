@@ -217,7 +217,7 @@ export function AppHeader({
           const cls = t.active ? tabActive : tabIdle;
           if (t.key === "setup") return <Link key={t.key} to="/setup" search={{ class: navClass }} className={cls}>{t.label}</Link>;
           if (t.key === "students") return <Link key={t.key} to="/students" search={{ class: navClass }} className={cls}>{t.label}</Link>;
-          if (t.key === "sba") return <Link key={t.key} to="/" search={{ class: navClass }} className={cls}>{t.label}</Link>;
+          if (t.key === "sba") return <Link key={t.key} to="/sba-details" search={{ class: navClass }} className={cls}>{t.label}</Link>;
           return <Link key={t.key} to="/class-report/$classId" params={{ classId: navClass }} className={cls}>{t.label}</Link>;
         })}
       </nav>
@@ -231,7 +231,7 @@ export function AppHeader({
           >
             <div className="flex-1 overflow-y-auto p-4 pt-[calc(env(safe-area-inset-top)+2.5rem)]">
               <div className="flex items-center justify-between">
-                <p className="font-display text-sm font-bold">Quick navigation</p>
+                <div><p className="font-display text-[11px] font-bold uppercase tracking-wide text-primary">🇬🇭 EduReport Ghana</p><p className="font-display text-sm font-bold">Quick navigation</p></div>
                 <Button
                   onClick={() => setOpen(false)}
                   aria-label="Close"
@@ -260,7 +260,7 @@ export function AppHeader({
                 <Link to="/attendance" className={rowCls(pathname.startsWith("/attendance"))}>
                   <RowCell icon={ICON.people} title="Daily Attendance" desc="Daily class register and history" />
                 </Link>
-                <Link to="/" search={{ class: navClass }} className={rowCls((pathname === "/" || pathname === "/sba-details"))}>
+                <Link to="/sba-details" search={{ class: navClass }} className={rowCls((pathname === "/" || pathname === "/sba-details"))}>
                   <RowCell icon={ICON.pencil} title="SBA Details" desc="Tests, project, group, exam marks" />
                 </Link>
                 <Link
