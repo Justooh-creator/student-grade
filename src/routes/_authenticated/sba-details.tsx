@@ -50,7 +50,7 @@ function Index() {
     if (first && !school.name) navigate({ to: "/setup", replace: true });
     else setReady(true);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const go = (id: string) => navigate({ to: "/", search: { class: classId, student: id } });
+  const go = (id: string) => navigate({ to: "/sba-details", search: { class: classId, student: id } });
 
   if (!ready) return <div className="min-h-screen bg-background" />;
 
@@ -64,7 +64,7 @@ function Index() {
             <Link to="/setup" search={{ class: classId }} className="rounded-md bg-accent px-4 py-2 text-xs font-semibold text-accent-foreground hover:opacity-90">Open School Details</Link>
           </div>
         )}
-        <ClassPicker value={classId} onChange={(c) => navigate({ to: "/", search: { class: c } })} />
+        <ClassPicker value={classId} onChange={(c) => navigate({ to: "/sba-details", search: { class: c } })} />
 
         <section className="mt-5 rounded-xl border border-border bg-card p-4">
           {classStudents.length === 0 || !selected || !result ? (

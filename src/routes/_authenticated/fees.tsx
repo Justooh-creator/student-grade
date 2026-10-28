@@ -146,7 +146,7 @@ function LearnerFees({ d, overrides, enrolled, phones, balances, sid, schoolName
   const rows = d.learners.filter((l) => l.classId === cls);
   return <div className="mt-4">
     <select aria-label="Class" className="h-11 w-full max-w-xs rounded-md border border-input bg-background px-3" value={cls} onChange={(e) => setClassId(e.target.value)}>{classes.map((c) => <option key={c} value={c}>{attendanceClassName(c)}</option>)}</select>
-    <div className="mt-4 divide-y divide-border border-y border-border">{rows.map((l) => { const totalDebt = d.fees.reduce((s, f) => s + (bal(l.id, f.id)?.debt ?? 0), 0); return <div key={l.id} className="space-y-2 py-3">
+    <div className="mt-4 space-y-3">{rows.map((l) => { const totalDebt = d.fees.reduce((s, f) => s + (bal(l.id, f.id)?.debt ?? 0), 0); return <div key={l.id} className="space-y-2 rounded-lg border-2 border-border bg-muted/30 p-3 even:bg-card">
       <div className="flex flex-wrap items-center justify-between gap-2"><span className="font-semibold">{l.name}</span>{totalDebt > 0 ? <span className="text-sm font-bold text-destructive">Owes {ghs(totalDebt)}</span> : <span className="text-sm text-muted-foreground">No debt</span>}</div>
       <div className="flex flex-wrap items-center gap-2">
         {d.fees.map((f) => { const on = isEnrolled(enrolled, l.id, f); const b = bal(l.id, f.id); return <span key={f.id} className="inline-flex items-center gap-1">

@@ -61,7 +61,7 @@ function ReportPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-3 px-4 text-center">
         <p className="text-sm text-muted-foreground">This learner could not be found.</p>
-        <Link to="/" className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
+        <Link to="/sba-details" className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
           Back to score entry
         </Link>
       </div>
@@ -76,7 +76,7 @@ function ReportPage() {
     <div className="min-h-screen bg-background pb-6">
       <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} />
       <div className="no-print mx-auto my-5 flex max-w-4xl flex-wrap items-center justify-between gap-3 px-4">
-        <Link to="/" className="text-sm font-semibold text-primary hover:underline">
+        <Link to="/sba-details" className="text-sm font-semibold text-primary hover:underline">
           ← Back to score entry
         </Link>
         <div className="flex items-center gap-2">

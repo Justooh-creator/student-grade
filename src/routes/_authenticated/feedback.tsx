@@ -1,3 +1,4 @@
+import jaLogo from "@/assets/ja-edutech-logo.png.asset.json";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -104,7 +105,7 @@ function FeedbackPage() {
         <section className="rounded-lg border border-border bg-card p-4">
           <h2 className="font-display text-base font-bold">🏢 About Us</h2>
           <div className="mt-3 flex items-start gap-3">
-            <img src="/icon-192.png" alt="EduReport Ghana logo" width={64} height={64} className="h-16 w-16 shrink-0 rounded-md object-contain" />
+            <img src={jaLogo.url} alt="JA EduTech Solutions logo" width={64} height={64} className="h-16 w-16 shrink-0 rounded-md object-contain" />
             <div className="min-w-0">
               <p className="font-display text-base font-bold">🇬🇭 EduReport Ghana</p>
               <p className="text-sm font-semibold text-primary">A Product of JA EduTech Solutions</p>
