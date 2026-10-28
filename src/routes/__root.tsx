@@ -15,6 +15,7 @@ import { SyncListener } from "@/components/SyncListener";
 import { InstallBanner } from "@/components/InstallBanner";
 import { Toaster } from "@/components/ui/sonner";
 import { AccountProvider } from "@/lib/auth";
+import { FingerprintLock } from "@/components/FingerprintLock";
 
 function NotFoundComponent() {
   return (
@@ -134,6 +135,7 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <SyncListener />
+      <FingerprintLock />
       <InstallBanner />
       <Toaster position="bottom-center" offset={24} />
       </AccountProvider>

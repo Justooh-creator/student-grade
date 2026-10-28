@@ -1,3 +1,4 @@
+import { FingerprintSetting } from "@/components/FingerprintSetting";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -125,6 +126,7 @@ export function AuthPage() {
           <div className="mt-7 space-y-4">
             <p className="break-all text-sm text-muted-foreground">Signed in as <strong className="text-foreground">{user.email}</strong></p>
             <Button className="h-12 w-full" onClick={openApp} disabled={busy}>Continue to EduReport<ArrowRight /></Button>
+            <FingerprintSetting userId={user.id} email={user.email ?? ""} />
             <Button variant="outline" className="h-12 w-full" onClick={signOut} disabled={busy}><LogOut />Sign out</Button>
           </div>
         ) : (

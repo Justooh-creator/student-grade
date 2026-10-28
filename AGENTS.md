@@ -21,3 +21,4 @@
 - Attendance has its own early-years roster and class identifiers; reuse existing KG–Basic 9 school learners without expanding report-card class or scoring rules.
 - Save attendance through an authenticated database RPC that validates membership, assignments and first-use trial atomically; never derive attendance licensing or permissions from browser storage.
 - Daily fee totals are derived in the browser from saved attendance, payments and current rates (src/lib/fees.ts); learner profile rate_overrides inherit the general fee rate when absent and retain explicit zero; owner-only access and the trial gate are enforced by fee_admin_ok RLS.
+- Fingerprint unlock is a device-local WebAuthn lock over the existing session (src/lib/biometric.ts + root FingerprintLock); it never replaces password sign-in or touches licensing.
