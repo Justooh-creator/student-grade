@@ -278,9 +278,6 @@ export function AppHeader({
                 <Link to="/qa-hub" className={rowCls(pathname.startsWith("/qa-hub"))}>
                   <RowCell icon={ICON.file} title="📚 Q&A Hub" desc="Quizzes, exam papers, marking schemes" />
                 </Link>
-                <Link to="/lesson-notes" className={rowCls(pathname.startsWith("/lesson-notes"))}>
-                  <RowCell icon={ICON.pencil} title="Lesson Notes" desc="Weekly preparation, A4 PDF and Word" />
-                </Link>
                   </nav></AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="staff">
