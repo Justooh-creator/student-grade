@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as VerifiedRouteImport } from './routes/verified'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
 import { Route as AuthenticatedBroadsheetRouteImport } from './routes/_authenticated/broadsheet'
 import { Route as AuthenticatedDutyRosterRouteImport } from './routes/_authenticated/duty-roster'
@@ -54,6 +55,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifiedRoute = VerifiedRouteImport.update({
+  id: '/verified',
+  path: '/verified',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/verified': typeof VerifiedRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
   '/broadsheet': typeof AuthenticatedBroadsheetRoute
   '/duty-roster': typeof AuthenticatedDutyRosterRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/verified': typeof VerifiedRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
   '/broadsheet': typeof AuthenticatedBroadsheetRoute
   '/duty-roster': typeof AuthenticatedDutyRosterRoute
@@ -202,6 +210,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/verified': typeof VerifiedRoute
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRoute
   '/_authenticated/broadsheet': typeof AuthenticatedBroadsheetRoute
   '/_authenticated/duty-roster': typeof AuthenticatedDutyRosterRoute
@@ -227,6 +236,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/privacy'
     | '/reset-password'
+    | '/verified'
     | '/attendance'
     | '/broadsheet'
     | '/duty-roster'
@@ -250,6 +260,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/privacy'
     | '/reset-password'
+    | '/verified'
     | '/attendance'
     | '/broadsheet'
     | '/duty-roster'
@@ -274,6 +285,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/privacy'
     | '/reset-password'
+    | '/verified'
     | '/_authenticated/attendance'
     | '/_authenticated/broadsheet'
     | '/_authenticated/duty-roster'
@@ -299,6 +311,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  VerifiedRoute: typeof VerifiedRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -336,6 +349,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verified': {
+      id: '/verified'
+      path: '/verified'
+      fullPath: '/verified'
+      preLoaderRoute: typeof VerifiedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/attendance': {
@@ -509,6 +529,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  VerifiedRoute: VerifiedRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
