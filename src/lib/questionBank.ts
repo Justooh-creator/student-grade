@@ -1,3 +1,4 @@
+import { JHS_BANKS } from "./jhsBank";
 // Pilot Q&A bank: Basic 9 core subjects. Original BECE-style practice items (not official WAEC papers).
 export type Objective = { id: string; topic: string; q: string; options: [string, string, string, string]; answer: 0 | 1 | 2 | 3; explain: string };
 export type Theory = { id: string; topic: string; q: string; marks: number; scheme: string[] };
@@ -58,6 +59,7 @@ export const BANKS: SubjectBank[] = [
     ],
   },
 ];
+BANKS.push(...JHS_BANKS);
 
 export const banksForClass = (classId: string) => BANKS.filter((b) => b.classId === classId);
 

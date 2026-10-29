@@ -3,7 +3,10 @@ import { BANKS, scoreQuiz } from "./questionBank";
 
 describe("question bank", () => {
   it("pilot covers Basic 9 core subjects", () => {
-    expect(BANKS.filter((b) => b.classId === "b9").map((b) => b.subject)).toEqual(["Mathematics", "Integrated Science", "English Language"]);
+    expect(BANKS.filter((b) => b.classId === "b9").map((b) => b.subject)).toEqual(["Mathematics", "Integrated Science", "English Language", "Ghanaian Language (Eʋegbe)", "Social Studies", "Religious and Moral Education", "Computing", "Career Technology"]);
+  });
+  it("Basic 7 and 8 get the JHS subjects including Ewe", () => {
+    for (const c of ["b7", "b8"]) expect(BANKS.some((b) => b.classId === c && b.subject.includes("Eʋegbe"))).toBe(true);
   });
   it("scores correct answers", () => {
     const items = BANKS[0]!.objectives.slice(0, 4);
