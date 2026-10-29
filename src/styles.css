@@ -206,3 +206,10 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
   .broadsheet-table .learner-name { width: 34mm; }
   .broadsheet-table th:first-child { width: 6mm; }
 }
+
+/* Stop stray insertion carets/selection on taps outside editable fields */
+@layer base {
+  body { -webkit-tap-highlight-color: transparent; caret-color: transparent; }
+  button, a, [role="button"], [role="tab"], nav, label, summary { -webkit-user-select: none; user-select: none; }
+  input, textarea, select, [contenteditable="true"] { caret-color: auto; -webkit-user-select: text; user-select: text; }
+}

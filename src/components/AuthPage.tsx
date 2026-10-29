@@ -39,9 +39,21 @@ export function AuthPage() {
     }
   }, [navigate]);
 
+  const [pendingEmail, setPendingEmail] = useState("");
+  const [unverified, setUnverified] = useState(false);
   function showMessage(message: string, error = false) {
     setMsg(message);
     setErrorMessage(error);
+    if (!message) setUnverified(false);
+  }
+
+  async function resend(addr: string) {
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.resend({ type: "signup", email: addr, options: { emailRedirectTo: `${window.location.origin}/verified` } });
+      showMessage(error ? error.message : `A new verification link was sent to ${addr}.`, Boolean(error));
+    } catch { showMessage("Could not send the email. Please try again.", true); }
+    finally { setBusy(false); }
   }
 
   const [entering, setEntering] = useState(false);
@@ -68,17 +80,18 @@ export function AuthPage() {
       if (mode === "up") {
         const { data, error } = await supabase.auth.signUp({
           email: email.trim(), password,
-          options: { emailRedirectTo: `${window.location.origin}/auth`, data: { display_name: name.trim() } },
+          options: { emailRedirectTo: `${window.location.origin}/verified`, data: { display_name: name.trim() } },
         });
         if (error) showMessage(error.message, true);
         else if (signupNextStep(data.session) === "confirm-email") {
-          showMessage("Check your email to confirm your account, then sign in.");
+          setPendingEmail(email.trim());
           setMode("in");
           setPassword("");
         } else await openApp();
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-        if (error) showMessage(error.message, true);
+        if (error && /not confirmed/i.test(error.message)) { setUnverified(true); showMessage("Your email is not verified yet. Open the link we emailed you, or resend it below.", true); }
+        else if (error) showMessage(error.message, true);
         else await openApp();
       }
     } catch {
@@ -122,7 +135,20 @@ export function AuthPage() {
         <h1 className="mt-1 font-display text-2xl font-bold text-foreground">{user ? "Your account" : mode === "up" ? "Create Free Account" : "Welcome back"}</h1>
         {!user && <p className="mt-3 text-base text-muted-foreground">{mode === "up" ? "Official GES terminal report cards and SBA for KG 1 to Basic 9." : "Sign in to access your school records, SBA, and report cards."}</p>}
         {!user && (() => { const pill = "rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-primary whitespace-nowrap"; return <div className="mt-4 space-y-2 text-sm font-semibold"><div className="flex justify-between gap-2"><span className={pill}>🇬🇭 GES Standard</span><span className={pill}>⚡ Works Offline</span></div><div className="flex justify-center"><span className={pill}>📱 Phone &amp; Laptop</span></div></div>; })()}
-        {!ready || entering ? <p className="mt-8 flex items-center gap-2 text-muted-foreground" role="status"><LoaderCircle className="h-5 w-5 animate-spin motion-reduce:animate-none" />{entering ? "Opening EduReport…" : "Checking your account…"}</p> : user ? (
+        {!user && pendingEmail ? (
+          <div className="mt-7 rounded-lg border border-primary/30 bg-primary/5 p-5 text-center" role="status">
+            <p className="text-5xl" aria-hidden>✉️</p>
+            <h2 className="mt-3 font-display text-xl font-bold">Check your inbox to verify your email</h2>
+            <p className="mt-2 text-sm text-muted-foreground">We sent a verification link to <strong className="break-all text-foreground">{pendingEmail}</strong>.</p>
+            <ol className="mt-4 space-y-1 text-left text-sm">
+              <li>1. Open your email (check Spam or Promotions too).</li>
+              <li>2. Tap the link from EduReport to verify.</li>
+              <li>3. Come back here and sign in.</li>
+            </ol>
+            <Button variant="outline" className="mt-5 h-12 w-full" disabled={busy} onClick={() => resend(pendingEmail)}>Resend verification link</Button>
+            <Button className="mt-3 h-12 w-full" onClick={() => { setPendingEmail(""); setMode("in"); showMessage(""); }}>Back to Sign in<ArrowRight /></Button>
+          </div>
+        ) : !ready || entering ? <p className="mt-8 flex items-center gap-2 text-muted-foreground" role="status"><LoaderCircle className="h-5 w-5 animate-spin motion-reduce:animate-none" />{entering ? "Opening EduReport…" : "Checking your account…"}</p> : user ? (
           <div className="mt-7 space-y-4">
             <p className="break-all text-sm text-muted-foreground">Signed in as <strong className="text-foreground">{user.email}</strong></p>
             <Button className="h-12 w-full" onClick={openApp} disabled={busy}>Continue to EduReport<ArrowRight /></Button>
@@ -143,6 +169,7 @@ export function AuthPage() {
           </div>
         )}
         {msg && <p role={errorMessage ? "alert" : "status"} className={`mt-4 text-sm ${errorMessage ? "text-destructive" : "text-primary"}`}>{msg}</p>}
+        {unverified && !pendingEmail && <Button variant="outline" className="mt-3 h-11 w-full" disabled={busy} onClick={() => resend(email.trim())}>Resend verification link</Button>}
         {!user && <p className="mt-6 border-t border-border pt-5 text-center text-sm text-muted-foreground">No payment required to start.<br />An active license or gift code is required to print or save report PDFs.</p>}
         {!user && <footer className="mt-6 text-center text-xs text-muted-foreground"><p>🇬🇭 EduReport Ghana</p><p>A Product of <strong className="text-foreground">JA EduTech Solutions</strong></p><p>Practical digital tools for Ghanaian schools • South Tongu, Ghana</p><p className="mt-1"><a href="https://wa.me/233530887628" target="_blank" rel="noreferrer" className="font-bold text-primary underline">Chat on WhatsApp</a> • <a href="mailto:jatideku@gmail.com" className="font-bold text-primary underline">Email: Click Here</a></p></footer>}
         <p className="mt-4 text-center text-sm"><Link to="/privacy" className="text-primary underline">Privacy Policy</Link></p>
