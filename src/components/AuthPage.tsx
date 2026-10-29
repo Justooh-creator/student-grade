@@ -169,6 +169,7 @@ export function AuthPage() {
           </div>
         )}
         {msg && <p role={errorMessage ? "alert" : "status"} className={`mt-4 text-sm ${errorMessage ? "text-destructive" : "text-primary"}`}>{msg}</p>}
+        {unverified && !pendingEmail && <Button variant="outline" className="mt-3 h-11 w-full" disabled={busy} onClick={() => resend(email.trim())}>Resend verification link</Button>}
         {!user && <p className="mt-6 border-t border-border pt-5 text-center text-sm text-muted-foreground">No payment required to start.<br />An active license or gift code is required to print or save report PDFs.</p>}
         {!user && <footer className="mt-6 text-center text-xs text-muted-foreground"><p>🇬🇭 EduReport Ghana</p><p>A Product of <strong className="text-foreground">JA EduTech Solutions</strong></p><p>Practical digital tools for Ghanaian schools • South Tongu, Ghana</p><p className="mt-1"><a href="https://wa.me/233530887628" target="_blank" rel="noreferrer" className="font-bold text-primary underline">Chat on WhatsApp</a> • <a href="mailto:jatideku@gmail.com" className="font-bold text-primary underline">Email: Click Here</a></p></footer>}
         <p className="mt-4 text-center text-sm"><Link to="/privacy" className="text-primary underline">Privacy Policy</Link></p>
