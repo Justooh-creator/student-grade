@@ -23,3 +23,7 @@
 - [x] Owner cash register: fee rates, per-learner toggles, No Money Today, arrears/advance, MoMo WhatsApp reminders.
 - [x] Phases 1–3: Account Office/Unpaid wording, general fee rates with learner overrides, School Details sign-in destination; 21 tests and authenticated fee save/reload verified. Successful-session sign-in transition verified; live password exchange not tested.
 - [ ] Fingerprint authentication (next phase; not part of phases 1–3).
+- [ ] Expand eight JHS subjects to fresh 45-question sets and five structured theory questions.
+- [ ] Add five-question quiz paging and horizontal exam options; preserve matching marking schemes and print licensing.
+- [ ] Verify expanded Q&A rules and authenticated quiz/exam flow.
+- [ ] Check existing Lovable Cloud sign-up/login and returning-user saved data; preserve established account and school-sync ownership.
