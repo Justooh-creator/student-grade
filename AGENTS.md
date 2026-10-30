@@ -15,7 +15,7 @@
 - Broadsheets derive results and exact-stream ranking from the existing results module, use named landscape print pages, and reuse the existing PrintButton license gate so report-card grading and print rules remain unchanged.
 - Privacy is a public content route; school records and broadsheets stay under the client-only authenticated layout.
 - Keep both public manifest filenames identical after any metadata update for packaging-tool compatibility.
-- Generate Mathematics Q&A packs in a browser-safe seeded module; keep one pack in page state for quiz, exam and scheme so answers and printing never regenerate independently.
+- Generate Q&A packs in browser-safe seeded modules with shared quiz/exam rules; keep one pack in page state for quiz, exam and scheme so answers and printing never regenerate independently. Original revision banks must not be presented as official WAEC papers or verified curriculum.
 - Lesson-note drafts use teacher-scoped local storage; their separate A4 print page and dynamically loaded DOCX exporter must never change report-card print licensing or scoring.
 - Bundle only verified curriculum references as official; teacher-provided scanned examples remain editable and explicitly attributed in their reference field.
 - Attendance has its own early-years roster and class identifiers; reuse existing KG–Basic 9 school learners without expanding report-card class or scoring rules.
