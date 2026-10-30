@@ -26,3 +26,4 @@
 - [ ] Expand eight JHS subjects to fresh 45-question sets and five structured theory questions.
 - [ ] Add five-question quiz paging and horizontal exam options; preserve matching marking schemes and print licensing.
 - [ ] Verify expanded Q&A rules and authenticated quiz/exam flow.
+- [ ] Check existing Lovable Cloud sign-up/login and returning-user saved data; preserve established account and school-sync ownership.
