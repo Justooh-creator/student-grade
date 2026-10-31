@@ -16,6 +16,7 @@ import { InstallBanner } from "@/components/InstallBanner";
 import { Toaster } from "@/components/ui/sonner";
 import { AccountProvider } from "@/lib/auth";
 import { FingerprintLock } from "@/components/FingerprintLock";
+import { OfflineStatus } from "@/components/OfflineStatus";
 
 function NotFoundComponent() {
   return (
@@ -137,6 +138,7 @@ function RootComponent() {
       <SyncListener />
       <FingerprintLock />
       <InstallBanner />
+      <OfflineStatus />
       <Toaster position="bottom-center" offset={24} />
       </AccountProvider>
     </QueryClientProvider>
