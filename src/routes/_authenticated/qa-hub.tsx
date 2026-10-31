@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAppData } from "@/lib/store";
 import { CLASS_LEVELS, classDisplayName, type ClassId } from "@/lib/ges";
 import { BANKS, scoreQuiz, type SubjectBank } from "@/lib/questionBank";
+import { generateJhsPack, JHS_SUBJECTS } from "@/lib/dynamicJhs";
+import { isJhsClass, quizPageRange, THEORY_REQUIRED } from "@/lib/qaRules";
 import { freshMathSeed, generateMathPack, isMathClass, mathTopicLabel, MATH_TOPICS, type MathTopicChoice } from "@/lib/dynamicMath";
 
 export const Route = createFileRoute("/_authenticated/qa-hub")({
@@ -35,18 +37,26 @@ function QaHub() {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [done, setDone] = useState(false);
   const [revision, setRevision] = useState(1);
+  const [page, setPage] = useState(0);
   const math = subject === "Mathematics" && isMathClass(classId);
   const kindergarten = classId.startsWith("kg");
-  const subjects = isMathClass(classId)
+  const jhs = isJhsClass(classId);
+  const dynamic = math || jhs;
+  const subjects = jhs ? [...JHS_SUBJECTS] : isMathClass(classId)
     ? ["Mathematics", ...BANKS.filter((b) => b.classId === classId && b.subject !== "Mathematics").map((b) => b.subject)]
     : [];
   const result = scoreQuiz(bank?.objectives ?? [], answers);
   const answered = Object.keys(answers).length;
 
-  const reset = () => { setAnswers({}); setDone(false); };
+  const reset = () => { setAnswers({}); setDone(false); setPage(0); };
+  const makePack = (id: ClassId, name: string, prev?: SubjectBank): SubjectBank | null => {
+    if (isJhsClass(id) && name !== "Mathematics") return generateJhsPack(id, name, freshMathSeed(), prev);
+    if (name === "Mathematics" && isMathClass(id)) return generateMathPack(id, freshMathSeed(), "all", prev);
+    return BANKS.find((b) => b.classId === id && b.subject === name) ?? null;
+  };
   const newQuestions = () => {
-    if (!isMathClass(classId) || !math) return;
-    setBank(generateMathPack(classId, freshMathSeed(), topic, bank ?? undefined));
+    if (!dynamic) return;
+    setBank(math && isMathClass(classId) ? generateMathPack(classId, freshMathSeed(), topic, bank ?? undefined) : makePack(classId, subject, bank ?? undefined));
     setRevision((n) => n + 1);
     reset();
   };
@@ -56,9 +66,7 @@ function QaHub() {
   };
   const selectSubject = (name: string) => {
     setSubject(name); setTopic("all"); setMode("menu"); reset();
-    setBank(name === "Mathematics" && isMathClass(classId)
-      ? generateMathPack(classId, freshMathSeed())
-      : BANKS.find((b) => b.classId === classId && b.subject === name) ?? null);
+    setBank(makePack(classId, name));
   };
   const selectTopic = (value: string) => {
     const choice = value === "all" ? "all" : MATH_TOPICS.find((t) => t === value);
@@ -66,7 +74,7 @@ function QaHub() {
     setTopic(choice); reset();
     setBank(generateMathPack(classId, freshMathSeed(), choice));
   };
-  const startQuiz = () => { if (math) newQuestions(); else reset(); setMode("quiz"); };
+  const startQuiz = () => { if (dynamic) newQuestions(); else reset(); setMode("quiz"); };
 
   return <div className="min-h-screen bg-background pb-10 text-foreground">
     <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={classId} />
@@ -82,6 +90,7 @@ function QaHub() {
         {subjects.length > 0 && <div className="flex flex-wrap gap-2" aria-label="Subjects">
           {subjects.map((name) => <Button key={name} aria-pressed={name === subject} variant={name === subject ? "default" : "outline"} className="h-auto min-h-11 whitespace-normal" onClick={() => selectSubject(name)}>{name}</Button>)}
         </div>}
+        {jhs && !math && <Button variant="outline" className="h-11" onClick={newQuestions}><RefreshCw /> New Questions</Button>}
         {math && <div className="flex flex-wrap items-end gap-3">
           <div className="min-w-0 flex-1 basis-52">
             <label id="math-topic-label" className="mb-1 block text-sm font-semibold">Topic</label>
@@ -117,7 +126,10 @@ function QaHub() {
 
       {bank && mode === "quiz" && <div className="no-print space-y-4">
         <p className="font-semibold" aria-live="polite">{answered} / {bank.objectives.length} answered</p>
-        {bank.objectives.map((q, i) => {
+        {(() => { const pr = quizPageRange(bank.objectives.length, page); return <>
+        <div className="flex items-center justify-between gap-2"><span className="rounded-full bg-primary/15 px-3 py-1 text-sm font-bold">Questions {pr.start + 1}–{pr.end} of {bank.objectives.length}</span><span className="text-sm text-muted-foreground">Page {pr.current + 1} / {pr.pages}</span></div>
+        <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full bg-primary" style={{ width: `${((pr.current + 1) / pr.pages) * 100}%` }} /></div>
+        {bank.objectives.slice(pr.start, pr.end).map((q, k) => { const i = pr.start + k;
           const picked = answers[q.id];
           const show = picked !== undefined;
           return <div key={q.id} className="rounded-lg border border-border bg-card p-4">
@@ -131,12 +143,14 @@ function QaHub() {
             {show && <p className="mt-3 rounded-md bg-muted p-3 text-sm" role="status"><b>{picked === q.answer ? "✅ Correct." : `❌ Answer: ${L[q.answer]}.`}</b> {q.explain}</p>}
           </div>;
         })}
-        <Button className="h-12 w-full" onClick={() => setDone(true)}>See my score</Button>
+        <div className="flex gap-2"><Button variant="outline" className="h-12 flex-1" disabled={pr.current === 0} onClick={() => { setPage(pr.current - 1); window.scrollTo({ top: 0 }); }}>← Previous</Button>
+        {pr.current < pr.pages - 1 ? <Button className="h-12 flex-1" onClick={() => { setPage(pr.current + 1); window.scrollTo({ top: 0 }); }}>Next →</Button> : <Button className="h-12 flex-1" onClick={() => setDone(true)}>See my score</Button>}</div>
+        </>; })()}
         {done && <div className="rounded-lg border-2 border-primary p-4 text-center" role="status">
           <p className="text-3xl font-black">{result.correct} / {result.total}</p>
           <p className="text-muted-foreground">{result.percent}% · {result.percent >= 80 ? "Excellent!" : result.percent >= 50 ? "Good effort — review the explanations." : "Keep practising."}</p>
           <p className="mt-1 text-sm text-muted-foreground">{result.total - answered} unanswered</p>
-          <Button variant="outline" className="mt-3 h-11" onClick={startQuiz}>{math ? "Try fresh questions" : "Try again"}</Button>
+          <Button variant="outline" className="mt-3 h-11" onClick={startQuiz}>{dynamic ? "Try fresh questions" : "Try again"}</Button>
         </div>}
       </div>}
 
@@ -147,17 +161,17 @@ function QaHub() {
           <p className="text-sm">{school.term} · {school.academicYear} · {kindergarten ? "Teacher-guided practice" : "Time: 2 hours"}</p>
           {topic !== "all" && <p className="text-sm">{topic}</p>}
           <p className="mt-1 text-xs">🇬🇭 GES & NaCCA curriculum-based practice</p>
-          {mode === "paper" && <><p className="mt-2 text-left text-sm">Name: ______________________________ Class: __________ Date: __________</p><p className="mt-2 text-sm italic">{kindergarten ? "Teacher reads each question aloud. Learner may point, count or respond orally." : "Answer all questions in Sections A and B. Show your working in Section B."}</p></>}
+          {mode === "paper" && <><p className="mt-2 text-left text-sm">Name: ______________________________ Class: __________ Date: __________</p><p className="mt-2 text-sm italic">{kindergarten ? "Teacher reads each question aloud. Learner may point, count or respond orally." : jhs ? `Answer ALL questions in Section A. In Section B, answer Question 1 and any other ${THEORY_REQUIRED - 1} questions.` : "Answer all questions in Sections A and B. Show your working in Section B."}</p></>}
         </header>
         <h3 className="mb-2 font-bold">SECTION A — Objective ({bank.objectives.length} marks)</h3>
         <ol className="mb-5 list-decimal space-y-3 pl-6">
           {bank.objectives.map((q) => <li key={q.id} className="break-inside-avoid">{q.q}
             {mode === "paper"
-              ? <div className="mt-1 grid grid-cols-1 gap-x-4 text-sm sm:grid-cols-2 print:grid-cols-2">{q.options.map((opt, j) => <span key={j}>{L[j]}. {opt}</span>)}</div>
+              ? <div className="mt-1 flex flex-wrap items-baseline gap-x-6 gap-y-1 text-sm">{q.options.map((opt, j) => <span key={j} className={opt.length > 24 ? "basis-full" : "whitespace-nowrap"}><b>{L[j]}.</b> {opt}</span>)}</div>
               : <p className="mt-1 text-sm"><b>{L[q.answer]}: {q.options[q.answer]}</b> — {q.explain}</p>}
           </li>)}
         </ol>
-        <h3 className="mb-2 font-bold">{kindergarten ? "SECTION B — Oral & Practical Observation" : `SECTION B — Subjective (${bank.theory.reduce((sum, t) => sum + t.marks, 0)} marks)`}</h3>
+        <h3 className="mb-2 font-bold">{kindergarten ? "SECTION B — Oral & Practical Observation" : jhs ? `SECTION B — Subjective (${THEORY_REQUIRED * (bank.theory[0]?.marks ?? 20)} marks) · Question 1 is compulsory` : `SECTION B — Subjective (${bank.theory.reduce((sum, t) => sum + t.marks, 0)} marks)`}</h3>
         <ol className="list-decimal space-y-4 pl-6">
           {bank.theory.map((t) => <li key={t.id} className="break-inside-avoid">{t.q} <b>{kindergarten ? "[Gold / Silver / Bronze]" : `[${t.marks} marks]`}</b>
             {mode === "scheme" ? <ul className="mt-1 list-disc pl-5 text-sm">{t.scheme.map((s) => <li key={s}>{s}</li>)}</ul> : <div className="mt-3 space-y-5" aria-label="Answer space"><div className="border-b border-border" /><div className="border-b border-border" /><div className="border-b border-border" /></div>}
