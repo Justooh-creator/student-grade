@@ -10,7 +10,7 @@ function isRefusedContext(): boolean {
   }
   const h = window.location.hostname.toLowerCase();
   if (new URLSearchParams(window.location.search).get("sw") === "off") return true;
-  const label = h.split(".")[0];
+  const label = h.split(".")[0] ?? "";
   const lovableHost = /\.(lovable\.app|gpt-eng\.com|gptengineer\.run)$/.test(h);
   if (lovableHost && /^(?:id-preview|preview)(?:-[a-z0-9]+)?--.+$/.test(label)) return true;
   if (lovableHost && /^project--.+-dev$/.test(label)) return true;
