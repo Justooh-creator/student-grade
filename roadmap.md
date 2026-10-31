@@ -27,3 +27,4 @@
 - [x] Add five-question quiz paging and horizontal exam options; preserve matching marking schemes and print licensing.
 - [x] Verify expanded Q&A rules and authenticated quiz/exam flow.
 - [ ] Check existing Lovable Cloud sign-up/login and returning-user saved data; preserve established account and school-sync ownership.
+- [x] Offline PWA: cached app pages/assets, offline/back-online banner (published app only).
