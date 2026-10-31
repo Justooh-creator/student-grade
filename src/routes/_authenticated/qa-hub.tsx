@@ -167,7 +167,7 @@ function QaHub() {
         <ol className="mb-5 list-decimal space-y-3 pl-6">
           {bank.objectives.map((q) => <li key={q.id} className="break-inside-avoid">{q.q}
             {mode === "paper"
-              ? <div className="mt-1 flex flex-wrap items-baseline gap-x-6 gap-y-1 text-sm">{q.options.map((opt, j) => <span key={j} className="whitespace-nowrap"><b>{L[j]}.</b> {opt}</span>)}</div>
+              ? <div className="mt-1 flex flex-wrap items-baseline gap-x-6 gap-y-1 text-sm">{q.options.map((opt, j) => <span key={j} className={opt.length > 24 ? "basis-full" : "whitespace-nowrap"}><b>{L[j]}.</b> {opt}</span>)}</div>
               : <p className="mt-1 text-sm"><b>{L[q.answer]}: {q.options[q.answer]}</b> — {q.explain}</p>}
           </li>)}
         </ol>
