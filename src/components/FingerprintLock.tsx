@@ -11,26 +11,50 @@ export function FingerprintLock() {
   const [error, setError] = useState("");
   const hiddenAt = useRef<number | null>(null);
 
+  const activeKey = user ? `edureport:fp-active:${user.id}` : "";
+  const markActive = useCallback(() => {
+    if (activeKey) localStorage.setItem(activeKey, String(Date.now()));
+  }, [activeKey]);
+
   const unlock = useCallback(async () => {
     if (!user) return;
     setError("");
     try {
-      if (await verifyFingerprint(user.id)) setLocked(false);
+      if (await verifyFingerprint(user.id)) { markActive(); setLocked(false); }
     } catch {
       setError("Fingerprint not recognised. Try again.");
     }
-  }, [user]);
+  }, [user, markActive]);
 
   useEffect(() => {
     if (!user || !fingerprintEnabled(user.id)) { setLocked(false); return; }
-    setLocked(true);
-    const onVis = () => {
-      if (document.hidden) hiddenAt.current = Date.now();
-      else if (hiddenAt.current && Date.now() - hiddenAt.current > RELOCK_AFTER_MS && fingerprintEnabled(user.id)) setLocked(true);
+    const isStale = () => {
+      const last = Number(localStorage.getItem(activeKey) || 0);
+      return !last || Date.now() - last > RELOCK_AFTER_MS;
     };
+    // Refresh within 2 minutes of activity stays unlocked; login / long idle locks.
+    if (isStale()) setLocked(true); else markActive();
+    let lastWrite = 0;
+    const onActivity = () => {
+      if (document.hidden || document.querySelector("[data-fp-lock]")) return;
+      const now = Date.now();
+      if (now - lastWrite > 5000) { lastWrite = now; markActive(); }
+    };
+    const events = ["pointerdown", "keydown", "scroll", "touchstart"] as const;
+    events.forEach((e) => window.addEventListener(e, onActivity, { passive: true }));
+    const onVis = () => {
+      if (!document.hidden && fingerprintEnabled(user.id) && isStale()) setLocked(true);
+    };
+    const timer = window.setInterval(() => {
+      if (fingerprintEnabled(user.id) && isStale()) setLocked(true);
+    }, 10_000);
     document.addEventListener("visibilitychange", onVis);
-    return () => document.removeEventListener("visibilitychange", onVis);
-  }, [user]);
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, onActivity));
+      document.removeEventListener("visibilitychange", onVis);
+      window.clearInterval(timer);
+    };
+  }, [user, activeKey, markActive]);
 
   useEffect(() => {
     if (locked && user) unlock();
@@ -38,7 +62,7 @@ export function FingerprintLock() {
 
   if (!locked || !user) return null;
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-5 bg-background px-6 text-center">
+    <div data-fp-lock className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-5 bg-background px-6 text-center">
       <img src="/icon-192.png" alt="EduReport logo" className="h-16 w-16 rounded-md" />
       <p className="font-display text-2xl font-black text-primary">EduReport Ghana</p>
       <button onClick={unlock} aria-label="Unlock with fingerprint" className="rounded-full border-2 border-primary p-6 text-primary">
