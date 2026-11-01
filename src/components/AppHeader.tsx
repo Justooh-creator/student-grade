@@ -174,7 +174,7 @@ export function AppHeader({
   ] as const;
 
   return (
-    <header className="no-print border-b border-border bg-primary text-primary-foreground">
+    <header className="no-print sticky top-0 z-40 border-b border-border bg-primary text-primary-foreground shadow-md">
       <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 pt-[calc(env(safe-area-inset-top)+2rem)]">
         <Button
           onClick={() => setOpen(true)}
