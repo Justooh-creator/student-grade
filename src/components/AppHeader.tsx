@@ -241,18 +241,15 @@ export function AppHeader({
                   <RowCell icon={ICON.cloud} title="School Cloud" desc="Join your school and sync records" />
                 </Link>
               </nav>
-              <Accordion type="single" collapsible defaultValue={pathname.startsWith("/qa-hub") || pathname.startsWith("/lesson-notes") ? "learning" : ["/staff-meeting", "/timetable", "/duty-roster", "/pta-announcement"].some((p) => pathname.startsWith(p)) ? "staff" : pathname.startsWith("/auth") || pathname.startsWith("/feedback") ? "account" : "records"}>
+              <Accordion type="single" collapsible defaultValue={pathname.startsWith("/qa-hub") || pathname.startsWith("/lesson-notes") ? "learning" : ["/staff-meeting", "/timetable", "/duty-roster", "/pta-announcement", "/attendance", "/fees"].some((p) => pathname.startsWith(p)) ? "staff" : pathname.startsWith("/auth") || pathname.startsWith("/feedback") ? "account" : "records"}>
                 <AccordionItem value="records">
-                  <AccordionTrigger className="font-bold text-primary">Learners & Reports</AccordionTrigger>
+                  <AccordionTrigger className="font-bold text-primary">📘 Academic & Reports</AccordionTrigger>
                   <AccordionContent><nav className="grid gap-1" onClick={() => setOpen(false)}>
                 <Link to="/setup" search={{ class: navClass }} className={rowCls(pathname.startsWith("/setup"))}>
                   <RowCell icon={ICON.school} title="School Details" desc="Name, motto, EMIS code, logo" />
                 </Link>
                 <Link to="/students" search={{ class: navClass }} className={rowCls(pathname.startsWith("/students"))}>
                   <RowCell icon={ICON.cap} title="Student Details" desc="Learners, photos, parent numbers" />
-                </Link>
-                <Link to="/attendance" className={rowCls(pathname.startsWith("/attendance"))}>
-                  <RowCell icon={ICON.people} title="Daily Attendance" desc="Daily class register and history" />
                 </Link>
                 <Link to="/sba-details" search={{ class: navClass }} className={rowCls((pathname === "/" || pathname === "/sba-details"))}>
                   <RowCell icon={ICON.pencil} title="SBA Details" desc="Tests, project, group, exam marks" />
@@ -272,17 +269,17 @@ export function AppHeader({
                 </Link>
                   </nav></AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="learning">
-                  <AccordionTrigger className="font-bold text-primary">Teaching & Learning</AccordionTrigger>
-                  <AccordionContent><nav className="grid gap-1" onClick={() => setOpen(false)}>
-                <Link to="/qa-hub" className={rowCls(pathname.startsWith("/qa-hub"))}>
-                  <RowCell icon={ICON.file} title="📚 Q&A Hub" desc="Quizzes, exam papers, marking schemes" />
-                </Link>
-                  </nav></AccordionContent>
-                </AccordionItem>
                 <AccordionItem value="staff">
-                  <AccordionTrigger className="font-bold text-primary">Staff & Communication {unread.length + dutyReminders.length > 0 && <span className="ml-2 rounded-full bg-accent px-2 text-xs text-accent-foreground">{unread.length + dutyReminders.length} new</span>}</AccordionTrigger>
+                  <AccordionTrigger className="font-bold text-primary">🏫 School Management {unread.length + dutyReminders.length > 0 && <span className="ml-2 rounded-full bg-accent px-2 text-xs text-accent-foreground">{unread.length + dutyReminders.length} new</span>}</AccordionTrigger>
                   <AccordionContent><nav className="grid gap-1" onClick={() => setOpen(false)}>
+                <Link to="/attendance" className={rowCls(pathname.startsWith("/attendance"))}>
+                  <RowCell icon={ICON.people} title="Daily Attendance" desc="Daily class register and history" />
+                </Link>
+                {cloud.role === "headteacher" && (
+                  <Link to="/fees" className={rowCls(pathname.startsWith("/fees"))}>
+                    <RowCell icon={ICON.school} title="Account Office" desc="Daily fees, arrears and totals" />
+                  </Link>
+                )}
                 <Link to="/pta-announcement" search={{ class: navClass }} className={rowCls(pathname.startsWith("/pta-announcement"))}>
                   <RowCell icon={ICON.megaphone} title="PTA Meeting Notice" desc="Invite parents, class by class" />
                 </Link>
@@ -307,8 +304,16 @@ export function AppHeader({
                 </Link>
                   </nav></AccordionContent>
                 </AccordionItem>
+                <AccordionItem value="learning">
+                  <AccordionTrigger className="font-bold text-primary">📚 Learning Tools</AccordionTrigger>
+                  <AccordionContent><nav className="grid gap-1" onClick={() => setOpen(false)}>
+                <Link to="/qa-hub" className={rowCls(pathname.startsWith("/qa-hub"))}>
+                  <RowCell icon={ICON.bulb} title="Q&A Hub" desc="Quizzes, exam papers, marking schemes" />
+                </Link>
+                  </nav></AccordionContent>
+                </AccordionItem>
                 <AccordionItem value="account">
-                  <AccordionTrigger className="font-bold text-primary">Account & Support</AccordionTrigger>
+                  <AccordionTrigger className="font-bold text-primary">👤 Account & Support</AccordionTrigger>
                   <AccordionContent><nav className="grid gap-1" onClick={() => setOpen(false)}>
                 <Link to="/feedback" className={rowCls(pathname.startsWith("/feedback"))}>
                   <RowCell icon={ICON.bulb} title="Help & Support" desc="Suggestions and support from JA EduTech Solutions" />
