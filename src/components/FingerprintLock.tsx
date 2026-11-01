@@ -36,7 +36,7 @@ export function FingerprintLock() {
     if (isStale()) setLocked(true); else markActive();
     let lastWrite = 0;
     const onActivity = () => {
-      if (document.hidden) return;
+      if (document.hidden || document.querySelector("[data-fp-lock]")) return;
       const now = Date.now();
       if (now - lastWrite > 5000) { lastWrite = now; markActive(); }
     };
@@ -62,7 +62,7 @@ export function FingerprintLock() {
 
   if (!locked || !user) return null;
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-5 bg-background px-6 text-center">
+    <div data-fp-lock className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-5 bg-background px-6 text-center">
       <img src="/icon-192.png" alt="EduReport logo" className="h-16 w-16 rounded-md" />
       <p className="font-display text-2xl font-black text-primary">EduReport Ghana</p>
       <button onClick={unlock} aria-label="Unlock with fingerprint" className="rounded-full border-2 border-primary p-6 text-primary">
