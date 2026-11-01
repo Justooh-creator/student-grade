@@ -10,13 +10,21 @@ export const Route = createFileRoute("/")({
   head: () => ({ meta: [
     { title: "EduReport Ghana — School Management & GES SBA Report Cards" },
     { name: "description", content: "EduReport Ghana by JA EduTech Solutions (founded by Justice Atideku): offline-first school management, GES SBA assessments and A4 terminal report cards for KG 1 to Basic 9." },
-    { property: "og:title", content: "EduReport Ghana — School Management & GES SBA Report Cards" },
-    { property: "og:description", content: "Manage learners, SBA assessments and terminal report cards on your phone or laptop. Built in Ghana by JA EduTech Solutions." },
+    { property: "og:title", content: "EduReport Ghana by JA EduTech Solutions" },
+    { property: "og:description", content: "Automated school report card generation, SBA scaling, and learner record management for Ghanaian educators. Developed by JA EduTech Solutions." },
     { property: "og:type", content: "website" },
-    { property: "og:url", content: "https://edureportghana.com/" },
-    { name: "twitter:card", content: "summary" },
+    { property: "og:site_name", content: "JA EduTech Solutions" },
+    { property: "og:url", content: "https://edureportghana.com" },
+    { property: "og:image", content: "https://edureportghana.com/logo.png" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: "EduReport Ghana - JA EduTech Solutions" },
+    { name: "twitter:description", content: "Automated terminal reporting and SBA tools for Ghanaian basic schools by JA EduTech Solutions." },
+    { name: "twitter:image", content: "https://edureportghana.com/logo.png" },
     { name: "author", content: "JA EduTech Solutions, Justice Atideku" },
-  ], links: [{ rel: "canonical", href: "https://edureportghana.com/" }], scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "SoftwareApplication", name: "EduReport Ghana", url: "https://edureportghana.com/", applicationCategory: "EducationalApplication", operatingSystem: "Web, Android", publisher: { "@type": "Organization", name: "JA EduTech Solutions", founder: { "@type": "Person", name: "Justice Atideku" } }, author: { "@type": "Person", name: "Justice Atideku" } }) }] }),
+  ], links: [{ rel: "canonical", href: "https://edureportghana.com/" }], scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@graph": [
+    { "@type": "Organization", "@id": "https://edureportghana.com/#organization", name: "JA EduTech Solutions", url: "https://edureportghana.com", logo: "https://edureportghana.com/logo.png", founder: { "@type": "Person", name: "Justice Atideku" }, sameAs: ["https://www.linkedin.com/company/ja-edutech-solutions"] },
+    { "@type": "SoftwareApplication", name: "EduReport Ghana", url: "https://edureportghana.com/", applicationCategory: "EducationalApplication", operatingSystem: "Web, Android", description: "Automated school report card generation, SBA scaling, and learner record management for Ghanaian basic schools.", author: { "@id": "https://edureportghana.com/#organization" }, publisher: { "@id": "https://edureportghana.com/#organization" } },
+  ] }) }] }),
   component: Welcome,
 });
 
