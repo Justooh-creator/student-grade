@@ -29,4 +29,4 @@
 - [ ] Check existing Lovable Cloud sign-up/login and returning-user saved data; preserve established account and school-sync ownership.
 - [x] Offline PWA: cached app pages/assets, offline/back-online banner (published app only).
 - [x] Option 1: Optional school contact on School Details and report cards; visible official support email on Privacy Policy and support; authenticated save/reload and actual A4 report verified; test phone restored.
-- [ ] Option 2: Fingerprint confirmation on account and lock-screen sign-out, OS PIN/password fallback, cancellation preserves session; test guarded sign-out.
+- [x] Option 2: Fingerprint confirmation on account and lock-screen sign-out, OS PIN/password fallback; 11 tests passed and authenticated cancellation/success verified with a virtual device. Physical phone/PIN fallback remains device-dependent.
