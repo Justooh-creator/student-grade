@@ -3,12 +3,13 @@ import { Fingerprint, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
-import { fingerprintEnabled, RELOCK_AFTER_MS, verifyFingerprint } from "@/lib/biometric";
+import { fingerprintEnabled, RELOCK_AFTER_MS, verifyFingerprint, signOutWithFingerprint } from "@/lib/biometric";
 
 export function FingerprintLock() {
   const { user } = useUser();
   const [locked, setLocked] = useState(false);
   const [error, setError] = useState("");
+  const [signingOut, setSigningOut] = useState(false);
   const hiddenAt = useRef<number | null>(null);
 
   const activeKey = user ? `edureport:fp-active:${user.id}` : "";
@@ -69,8 +70,22 @@ export function FingerprintLock() {
         <Fingerprint className="h-14 w-14" />
       </button>
       {error && <p className="text-sm text-destructive">{error}</p>}
-      <Button variant="ghost" onClick={async () => { await supabase.auth.signOut(); setLocked(false); }}>
-        <LogOut />Use password instead
+      <Button variant="ghost" disabled={signingOut} onClick={async () => {
+        if (signingOut) return;
+        setSigningOut(true);
+        setError("");
+        try {
+          const confirmed = await signOutWithFingerprint(user.id, async () => {
+            const { error: signOutError } = await supabase.auth.signOut();
+            if (signOutError) throw signOutError;
+          });
+          if (confirmed) setLocked(false);
+          else setError("Sign-out was not confirmed. You are still signed in.");
+        } catch {
+          setError("Confirm with your fingerprint or device PIN/password to sign out. You are still signed in.");
+        } finally { setSigningOut(false); }
+      }}>
+        <LogOut />{signingOut ? "Confirming…" : "Sign out"}
       </Button>
     </div>
   );

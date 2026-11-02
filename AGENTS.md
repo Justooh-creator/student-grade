@@ -22,5 +22,6 @@
 - Save attendance through an authenticated database RPC that validates membership, assignments and first-use trial atomically; never derive attendance licensing or permissions from browser storage.
 - Daily fee totals are derived in the browser from saved attendance, payments and current rates (src/lib/fees.ts); learner profile rate_overrides inherit the general fee rate when absent and retain explicit zero; owner-only access and the trial gate are enforced by fee_admin_ok RLS.
 - Fingerprint unlock is a device-local WebAuthn lock over the existing session (src/lib/biometric.ts + root FingerprintLock); it never replaces password sign-in or touches licensing.
+- Explicit sign-out actions use signOutWithFingerprint before clearing session/caches; fallback verification is the operating system's PIN/password, never an app-stored PIN.
 - Offline support uses vite-plugin-pwa generateSW with one guarded registrar (src/lib/registerSW.ts); never hand-write sw.js or register in preview/dev.
 - Keep the optional school contact in the shared School record and render it through ReportSheet so local/cloud saves and all report exports use the same value.
