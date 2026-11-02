@@ -98,7 +98,7 @@ function FeedbackPage() {
               <button onClick={submit} disabled={busy} className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground disabled:opacity-60">{busy ? "Sending…" : "Submit in app"}</button>
               <a href={waUrl} target="_blank" rel="noreferrer" className="rounded-md bg-accent px-4 py-2 text-sm font-bold text-accent-foreground">Send via WhatsApp</a>
             </div>
-            <p className="text-xs text-muted-foreground">Need to email us? <a href="mailto:jatideku@gmail.com" className="font-bold text-primary underline">Click Here</a></p>
+            <p className="text-xs text-muted-foreground">Need to email us? <a href="mailto:support@edureportghana.com" className="break-words font-bold text-primary underline">support@edureportghana.com</a></p>
           </div>
         </section>
 
@@ -117,7 +117,7 @@ function FeedbackPage() {
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
             <a href={`https://wa.me/${SUPPORT_WHATSAPP}`} target="_blank" rel="noreferrer" className="rounded-md bg-primary px-3 py-1.5 font-bold text-primary-foreground">Chat on WhatsApp</a>
-            <a href="mailto:jatideku@gmail.com" className="rounded-md bg-accent px-3 py-1.5 font-bold text-accent-foreground">Email: Click Here</a>
+            <a href="mailto:support@edureportghana.com" className="break-words rounded-md bg-accent px-3 py-1.5 font-bold text-accent-foreground">Email: support@edureportghana.com</a>
           </div>
         </section>
 

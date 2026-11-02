@@ -61,11 +61,15 @@ function Field({
   value,
   onChange,
   placeholder,
+  type = "text",
+  maxLength,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
+  type?: "text" | "tel";
+  maxLength?: number;
 }) {
   return (
     <label className="block">
@@ -73,6 +77,8 @@ function Field({
         {label}
       </span>
       <input
+        type={type}
+        maxLength={maxLength}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
@@ -112,6 +118,14 @@ function SetupPage() {
               value={school.address}
               onChange={(v) => setSchool({ address: v })}
               placeholder="P.O. Box 12, Koforidua"
+            />
+            <Field
+              label="School contact / Headteacher phone (optional)"
+              value={school.contactPhone ?? ""}
+              onChange={(v) => setSchool({ contactPhone: v })}
+              type="tel"
+              maxLength={60}
+              placeholder="Enter the school's contact number"
             />
             <Field
               label="School motto"

@@ -28,3 +28,4 @@
 - [x] Verify expanded Q&A rules and authenticated quiz/exam flow.
 - [ ] Check existing Lovable Cloud sign-up/login and returning-user saved data; preserve established account and school-sync ownership.
 - [x] Offline PWA: cached app pages/assets, offline/back-online banner (published app only).
+- [x] Option 1: Optional school contact on School Details and report cards; visible official support email on Privacy Policy and support; authenticated save/reload and actual A4 report verified; test phone restored.
