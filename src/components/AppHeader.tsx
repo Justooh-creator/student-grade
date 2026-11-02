@@ -332,7 +332,7 @@ export function AppHeader({
                 <p>🇬🇭 EduReport Ghana</p>
                 <p>A Product of <strong className="text-foreground">JA EduTech Solutions</strong></p>
                 <p>Practical digital tools for Ghanaian schools • South Tongu, Ghana</p>
-                <p className="mt-1"><a href="https://wa.me/233530887628" target="_blank" rel="noreferrer" className="font-bold text-primary underline">Chat on WhatsApp</a> • <a href="mailto:jatideku@gmail.com" className="font-bold text-primary underline">Email: Click Here</a></p>
+                <p className="mt-1"><a href="https://wa.me/233530887628" target="_blank" rel="noreferrer" className="font-bold text-primary underline">Chat on WhatsApp</a> • <a href="mailto:support@edureportghana.com" className="break-words font-bold text-primary underline">support@edureportghana.com</a></p>
               </footer>
             </div>
           </aside>
