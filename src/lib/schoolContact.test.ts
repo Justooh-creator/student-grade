@@ -11,6 +11,8 @@ describe("school contact persistence", () => {
 
   it("does not invent a contact for existing school records", () => {
     expect(DEFAULT_SCHOOL.contactPhone).toBe("");
-    expect(keepLocalSchoolImages(DEFAULT_SCHOOL, { ...DEFAULT_SCHOOL, contactPhone: undefined }).contactPhone).toBeUndefined();
+    const legacySchool = { ...DEFAULT_SCHOOL };
+    delete legacySchool.contactPhone;
+    expect(keepLocalSchoolImages(DEFAULT_SCHOOL, legacySchool).contactPhone).toBeUndefined();
   });
 });
