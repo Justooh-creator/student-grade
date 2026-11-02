@@ -4,6 +4,8 @@ import type { ClassId } from "./ges";
 export interface School {
   name: string;
   address: string;
+  /** Optional public school/headteacher phone printed on report cards. */
+  contactPhone?: string;
   term: string;
   academicYear: string;
   reopeningDate: string;
@@ -64,6 +66,7 @@ const STORAGE_KEY = "sba-report-cards-v1";
 export const DEFAULT_SCHOOL: School = {
   name: "",
   address: "",
+  contactPhone: "",
   term: "Term 1",
   academicYear: "2025/2026",
   reopeningDate: "",

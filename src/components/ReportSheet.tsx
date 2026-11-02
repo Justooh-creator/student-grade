@@ -39,6 +39,9 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
             </h1>
             {school.motto?.trim() && <p className="text-[9pt] font-bold italic">“{school.motto.trim()}”</p>}
             <p className="text-[9pt] font-bold">{school.address || "School address"}</p>
+            {school.contactPhone?.trim() && (
+              <p className="num break-words text-[9pt] font-bold">School contact: {school.contactPhone.trim()}</p>
+            )}
             {(school.district || school.region) && (
               <p className="text-[9pt] font-bold">
                 {[school.district && `${school.district} District`, school.region && `${school.region} Region`].filter(Boolean).join(" · ")}
