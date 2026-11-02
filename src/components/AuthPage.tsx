@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/lib/auth";
 import { accountHome, signupNextStep } from "@/lib/accountAccess";
 import { Button } from "@/components/ui/button";
+import { signOutWithFingerprint } from "@/lib/biometric";
 
 export function AuthPage() {
   const { user, ready } = useUser();
@@ -110,13 +111,20 @@ export function AuthPage() {
   }
 
   async function signOut() {
+    if (!user || busy) return;
     setBusy(true);
+    showMessage("");
     try {
+      const confirmed = await signOutWithFingerprint(user.id, async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+      });
+      if (!confirmed) { showMessage("Sign-out was not confirmed. You are still signed in.", true); return; }
       await queryClient.cancelQueries();
       queryClient.clear();
-      const { error } = await supabase.auth.signOut();
-      if (error) { showMessage(error.message, true); return; }
       await navigate({ to: "/auth", replace: true });
+    } catch {
+      showMessage("Sign-out could not be completed. Try again and confirm with your fingerprint or your device PIN/password.", true);
     } finally { setBusy(false); }
   }
 

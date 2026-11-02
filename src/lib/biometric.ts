@@ -58,3 +58,11 @@ export async function verifyFingerprint(userId: string): Promise<boolean> {
   });
   return Boolean(result);
 }
+
+/** Verify on this device before ending the session; OS PIN/password may satisfy WebAuthn. */
+export async function signOutWithFingerprint(userId: string, endSession: () => Promise<void>): Promise<boolean> {
+  if (fingerprintEnabled(userId) && !(await verifyFingerprint(userId))) return false;
+  await endSession();
+  localStorage.removeItem(`edureport:fp-active:${userId}`);
+  return true;
+}
