@@ -25,3 +25,4 @@
 - Explicit sign-out actions use signOutWithFingerprint before clearing session/caches; fallback verification is the operating system's PIN/password, never an app-stored PIN.
 - Offline support uses vite-plugin-pwa generateSW with one guarded registrar (src/lib/registerSW.ts); never hand-write sw.js or register in preview/dev.
 - Keep the optional school contact in the shared School record and render it through ReportSheet so local/cloud saves and all report exports use the same value.
+- Individual print licenses lock to the first class printed via record_print_class; school/developer licenses and class-less prints (Q&A) are unrestricted — closes the multi-class loophole.
