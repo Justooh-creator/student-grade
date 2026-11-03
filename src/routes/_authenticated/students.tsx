@@ -118,7 +118,7 @@ function StudentsPage() {
                     <Button variant="ghost" size="icon" onClick={() => removeStudent(s.id)} className="shrink-0 text-muted-foreground hover:text-destructive" aria-label={`Remove ${s.name}`}>✕</Button>
                     </div>
                     <div className="mt-1 flex flex-wrap items-center gap-2">
-                      <Button asChild className="px-2 text-[13px] font-bold"><CameraButton title="Learner passport photo" onFile={async (f) => { { updateStudent(s.id, { photo: await passportPhoto(f) }); toast.success("Photo added to report card"); } }}>📷 Snap photo</CameraButton></Button>
+                      <CameraButton className="inline-flex h-9 items-center rounded-md bg-primary px-2 text-[13px] font-bold text-primary-foreground hover:opacity-90" title="Learner passport photo" onFile={async (f) => { { updateStudent(s.id, { photo: await passportPhoto(f) }); toast.success("Photo added to report card"); } }}>📷 Snap photo</CameraButton>
                       <Button asChild variant="outline" className="px-2 text-[13px] font-bold">
                       <label>
                         🖼 Upload photo
