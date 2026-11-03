@@ -48,12 +48,20 @@ export async function redeemCode(code: string): Promise<LicenseState> {
   };
 }
 
-/** Record the first save/print of this term (starts the 15-day window; reprints never reset it). */
-export async function recordPrint(termKey: string): Promise<{ blocked: boolean; lockedTerm?: string | undefined }> {
-  const { data, error } = await supabase.rpc("record_print", { _term_key: termKey });
+/** Record the first save/print of this term (starts the 15-day window; reprints never reset it).
+ * When classId is given, an individual license locks to the first class printed. */
+export async function recordPrint(termKey: string, classId?: string): Promise<{ blocked: boolean; lockedTerm?: string | undefined; classBlocked?: boolean; lockedClass?: string | undefined }> {
+  const { data, error } = classId
+    ? await supabase.rpc("record_print_class", { _term_key: termKey, _class_id: classId })
+    : await supabase.rpc("record_print", { _term_key: termKey });
   if (error) throw new Error(error.message);
   const d = (data ?? {}) as Record<string, unknown>;
-  return { blocked: d["term_blocked"] === true, lockedTerm: d["locked_term"] as string | undefined };
+  return {
+    blocked: d["term_blocked"] === true,
+    lockedTerm: d["locked_term"] as string | undefined,
+    classBlocked: d["class_blocked"] === true,
+    lockedClass: d["locked_class"] as string | undefined,
+  };
 }
 
 

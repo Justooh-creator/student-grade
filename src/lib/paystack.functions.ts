@@ -85,7 +85,7 @@ export const verifyPaystackPayment = createServerFn({ method: "POST" })
       const expires = new Date(base.getTime() + days * 86400000).toISOString();
       await supabaseAdmin.from("user_licenses").upsert({
         user_id: userId, expires_at: expires, license_terms: plan.terms,
-        first_printed_at: null, print_term_key: null, updated_at: new Date().toISOString(),
+        first_printed_at: null, print_term_key: null, locked_class_id: null, updated_at: new Date().toISOString(),
       });
     }
 
