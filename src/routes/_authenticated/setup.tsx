@@ -1,3 +1,4 @@
+import { CameraButton } from "@/components/CameraCapture";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppHeader } from "@/components/AppHeader";
 import { validateClassSearch } from "@/lib/classSearch";
@@ -249,10 +250,9 @@ function SetupPage() {
                 {school.signature ? <img src={school.signature} alt="Head teacher signature" className="max-h-full max-w-full object-contain" /> : <span className="text-[12px] text-muted-foreground">No signature</span>}
               </div>
               <div className="mt-2 grid max-w-[420px] grid-cols-2 gap-2">
-                <label className="cursor-pointer rounded-md bg-primary px-2 py-2 text-center text-xs font-bold text-primary-foreground hover:opacity-90">
+                <CameraButton className="cursor-pointer rounded-md bg-primary px-2 py-2 text-center text-xs font-bold text-primary-foreground hover:opacity-90" onFile={async (f) => { setSchool({ signature: await extractSignature(f) }); }}>
                   Snap with camera
-                  <input type="file" accept="image/*" capture="environment" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setSchool({ signature: await extractSignature(f) }); }} />
-                </label>
+                </CameraButton>
                 <label className="cursor-pointer rounded-md border border-border px-2 py-2 text-center text-xs font-bold hover:bg-muted">
                   Upload image
                   <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setSchool({ signature: await extractSignature(f) }); }} />
@@ -269,10 +269,9 @@ function SetupPage() {
                 <div className="flex h-16 w-24 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-background">
                   {school.stamp ? <img src={school.stamp} alt="School stamp" className="max-h-full max-w-full object-contain" /> : <span className="text-[12px] text-muted-foreground">No stamp</span>}
                 </div>
-                <label className="cursor-pointer rounded-md bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:opacity-90">
+                <CameraButton className="cursor-pointer rounded-md bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:opacity-90" onFile={async (f) => { setSchool({ stamp: await extractSignature(f) }); }}>
                   Snap with camera
-                  <input type="file" accept="image/*" capture="environment" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setSchool({ stamp: await extractSignature(f) }); }} />
-                </label>
+                </CameraButton>
                 <label className="cursor-pointer rounded-md border border-border px-3 py-2 text-xs font-bold hover:bg-muted">
                   Upload image
                   <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setSchool({ stamp: await extractSignature(f) }); }} />

@@ -1,3 +1,4 @@
+import { CameraButton } from "@/components/CameraCapture";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
@@ -64,10 +65,9 @@ function StudentsPage() {
                     ? <img src={school.classTeacherSignatures[classId]} alt={`${level.name} teacher signature`} className="max-h-full max-w-full object-contain" />
                     : <span className="text-[12px] text-muted-foreground">No signature</span>}
                 </div>
-                <label className="cursor-pointer rounded-md bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:opacity-90">
+                <CameraButton className="cursor-pointer rounded-md bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:opacity-90" onFile={async (f) => { setSchool({ classTeacherSignatures: { ...(school.classTeacherSignatures ?? {}), [classId]: await extractSignature(f) } }); }}>
                   Camera
-                  <input type="file" accept="image/*" capture="environment" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setSchool({ classTeacherSignatures: { ...(school.classTeacherSignatures ?? {}), [classId]: await extractSignature(f) } }); }} />
-                </label>
+                </CameraButton>
                 <label className="cursor-pointer rounded-md border border-border px-3 py-2 text-xs font-bold hover:bg-muted">
                   Upload
                   <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setSchool({ classTeacherSignatures: { ...(school.classTeacherSignatures ?? {}), [classId]: await extractSignature(f) } }); }} />
@@ -118,12 +118,7 @@ function StudentsPage() {
                     <Button variant="ghost" size="icon" onClick={() => removeStudent(s.id)} className="shrink-0 text-muted-foreground hover:text-destructive" aria-label={`Remove ${s.name}`}>✕</Button>
                     </div>
                     <div className="mt-1 flex flex-wrap items-center gap-2">
-                      <Button asChild className="px-2 text-[13px] font-bold">
-                      <label>
-                        📷 Snap photo
-                        <input type="file" accept="image/*" capture="environment" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) { updateStudent(s.id, { photo: await passportPhoto(f) }); toast.success("Photo added to report card"); } }} />
-                      </label>
-                      </Button>
+                      <CameraButton className="inline-flex h-9 items-center rounded-md bg-primary px-2 text-[13px] font-bold text-primary-foreground hover:opacity-90" title="Learner passport photo" onFile={async (f) => { { updateStudent(s.id, { photo: await passportPhoto(f) }); toast.success("Photo added to report card"); } }}>📷 Snap photo</CameraButton>
                       <Button asChild variant="outline" className="px-2 text-[13px] font-bold">
                       <label>
                         🖼 Upload photo
