@@ -688,6 +688,7 @@ export type Database = {
           expires_at: string | null
           first_printed_at: string | null
           license_terms: number | null
+          locked_class_id: string | null
           permanent: boolean
           print_term_key: string | null
           updated_at: string
@@ -697,6 +698,7 @@ export type Database = {
           expires_at?: string | null
           first_printed_at?: string | null
           license_terms?: number | null
+          locked_class_id?: string | null
           permanent?: boolean
           print_term_key?: string | null
           updated_at?: string
@@ -706,6 +708,7 @@ export type Database = {
           expires_at?: string | null
           first_printed_at?: string | null
           license_terms?: number | null
+          locked_class_id?: string | null
           permanent?: boolean
           print_term_key?: string | null
           updated_at?: string
@@ -757,6 +760,10 @@ export type Database = {
         Returns: boolean
       }
       record_print: { Args: { _term_key: string }; Returns: Json }
+      record_print_class: {
+        Args: { _class_id: string; _term_key: string }
+        Returns: Json
+      }
       redeem_code: { Args: { _code: string }; Returns: Json }
       regenerate_join_code: { Args: { _school: string }; Returns: string }
       remove_member: { Args: { _member: string }; Returns: undefined }

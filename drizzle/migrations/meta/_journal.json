@@ -134,6 +134,13 @@
       "when": 1793065268215,
       "tag": "0018_learner_fee_rate_overrides",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1793671207289,
+      "tag": "0019_individual_license_class_lock",
+      "breakpoints": true
     }
   ]
 }

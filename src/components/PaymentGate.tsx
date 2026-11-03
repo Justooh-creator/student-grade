@@ -1,4 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { getClassLevel, type ClassId } from "@/lib/ges";
 import { toast } from "sonner";
 import { useUser } from "@/lib/auth";
 import { recordPrint, useLicense } from "@/lib/license";
@@ -21,11 +23,12 @@ function printReports() {
   });
 }
 
-export function PrintButton({ label = "Print / Save whole class as PDF (A4)" }: { label?: string }) {
+export function PrintButton({ label = "Print / Save whole class as PDF (A4)", classId }: { label?: string; classId?: string }) {
   const { user, ready } = useUser();
   const lic = useLicense(user?.id);
   const { school } = useAppData();
   const navigate = useNavigate();
+  const [lockedClass, setLockedClass] = useState<string | null>(null);
 
   const locked = ready && !lic.loading && !lic.canPrint;
 
@@ -41,9 +44,20 @@ export function PrintButton({ label = "Print / Save whole class as PDF (A4)" }: 
     );
   }
 
+  if (lockedClass) {
+    const name = getClassLevel(lockedClass as ClassId)?.name ?? lockedClass.toUpperCase();
+    return (
+      <div className="max-w-md rounded-md border border-border bg-muted p-3 text-sm">
+        <p>🔒 Your Individual Teacher license is assigned to <strong>{name}</strong>. To print report cards for other classes, upgrade to the School Cloud plan.</p>
+        <button onClick={() => navigate({ to: "/school-cloud" })} className="mt-2 h-9 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">Upgrade license</button>
+      </div>
+    );
+  }
+
   const onPrint = async () => {
     try {
-      const r = await recordPrint(`${school.academicYear} ${school.term}`);
+      const r = await recordPrint(`${school.academicYear} ${school.term}`, classId);
+      if (r.classBlocked) { setLockedClass(r.lockedClass ?? ""); return; }
       if (r.blocked) {
         toast.error(`Your 1-term license is for ${r.lockedTerm}. Buy a new term or a 3-term plan to print ${school.academicYear} ${school.term}.`);
         return;

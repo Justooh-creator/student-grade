@@ -49,7 +49,7 @@ function ClassReportPage() {
         <div className="flex flex-wrap items-center gap-2">
           <ClassTransfer classId={classId} className={level.name} />
           <Button asChild variant="outline"><Link to="/broadsheet" search={{ class: classId as ClassId }}>Class Broadsheet</Link></Button>
-          {list.length > 0 && <PrintButton />}
+          {list.length > 0 && <PrintButton classId={classId} />}
           <ClassWhatsAppShare classId={classId} className={level.name} />
         </div>
       </div>
