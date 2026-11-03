@@ -13,7 +13,7 @@ export function CameraButton({ children, className, onFile, title = "Take photo"
   const fallback = useRef<HTMLInputElement>(null);
 
   function start() {
-    if (typeof navigator !== "undefined" && navigator.mediaDevices?.getUserMedia) setOpen(true);
+    if (typeof navigator !== "undefined" && typeof navigator.mediaDevices?.getUserMedia === "function") setOpen(true);
     else fallback.current?.click();
   }
 
