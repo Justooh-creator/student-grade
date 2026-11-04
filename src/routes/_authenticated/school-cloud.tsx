@@ -9,6 +9,7 @@ import { useCloud, loadSchool, hasLocalBackup, uploadLocalBackup } from "@/lib/c
 import { SchoolAdmin } from "@/components/SchoolAdmin";
 import { LicenseCard } from "@/components/LicenseCard";
 import { useLicense } from "@/lib/license";
+import { BackupRestore } from "@/components/BackupRestore";
 
 export const Route = createFileRoute("/_authenticated/school-cloud")({
   head: () => ({
@@ -102,6 +103,7 @@ function SchoolCloudPage() {
                 <button onClick={upload} disabled={busy} className={`${btn} mt-3`}>Upload to School Cloud</button>
               </div>
             )}
+            <BackupRestore canRestore={cloud.role === "headteacher"} />
             <button onClick={leave} className="text-sm font-semibold text-destructive underline">Leave school</button>
           </>
         ) : (
@@ -122,6 +124,7 @@ function SchoolCloudPage() {
               </label>
               <button onClick={join} disabled={busy || code.trim().length < 6} className={`${btn} mt-3`}>Join school</button>
             </div>
+            <BackupRestore canRestore />
           </>
         )}
       </main>
