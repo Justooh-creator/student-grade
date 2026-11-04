@@ -17,6 +17,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as VerifiedRouteImport } from './routes/verified'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
 import { Route as AuthenticatedBroadsheetRouteImport } from './routes/_authenticated/broadsheet'
+import { Route as AuthenticatedCertificatesRouteImport } from './routes/_authenticated/certificates'
 import { Route as AuthenticatedDutyRosterRouteImport } from './routes/_authenticated/duty-roster'
 import { Route as AuthenticatedFeedbackRouteImport } from './routes/_authenticated/feedback'
 import { Route as AuthenticatedFeesRouteImport } from './routes/_authenticated/fees'
@@ -72,6 +73,12 @@ const AuthenticatedBroadsheetRoute = AuthenticatedBroadsheetRouteImport.update({
   path: '/broadsheet',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCertificatesRoute =
+  AuthenticatedCertificatesRouteImport.update({
+    id: '/certificates',
+    path: '/certificates',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDutyRosterRoute = AuthenticatedDutyRosterRouteImport.update({
   id: '/duty-roster',
   path: '/duty-roster',
@@ -163,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/verified': typeof VerifiedRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
   '/broadsheet': typeof AuthenticatedBroadsheetRoute
+  '/certificates': typeof AuthenticatedCertificatesRoute
   '/duty-roster': typeof AuthenticatedDutyRosterRoute
   '/feedback': typeof AuthenticatedFeedbackRoute
   '/fees': typeof AuthenticatedFeesRoute
@@ -187,6 +195,7 @@ export interface FileRoutesByTo {
   '/verified': typeof VerifiedRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
   '/broadsheet': typeof AuthenticatedBroadsheetRoute
+  '/certificates': typeof AuthenticatedCertificatesRoute
   '/duty-roster': typeof AuthenticatedDutyRosterRoute
   '/feedback': typeof AuthenticatedFeedbackRoute
   '/fees': typeof AuthenticatedFeesRoute
@@ -213,6 +222,7 @@ export interface FileRoutesById {
   '/verified': typeof VerifiedRoute
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRoute
   '/_authenticated/broadsheet': typeof AuthenticatedBroadsheetRoute
+  '/_authenticated/certificates': typeof AuthenticatedCertificatesRoute
   '/_authenticated/duty-roster': typeof AuthenticatedDutyRosterRoute
   '/_authenticated/feedback': typeof AuthenticatedFeedbackRoute
   '/_authenticated/fees': typeof AuthenticatedFeesRoute
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/verified'
     | '/attendance'
     | '/broadsheet'
+    | '/certificates'
     | '/duty-roster'
     | '/feedback'
     | '/fees'
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/verified'
     | '/attendance'
     | '/broadsheet'
+    | '/certificates'
     | '/duty-roster'
     | '/feedback'
     | '/fees'
@@ -288,6 +300,7 @@ export interface FileRouteTypes {
     | '/verified'
     | '/_authenticated/attendance'
     | '/_authenticated/broadsheet'
+    | '/_authenticated/certificates'
     | '/_authenticated/duty-roster'
     | '/_authenticated/feedback'
     | '/_authenticated/fees'
@@ -370,6 +383,13 @@ declare module '@tanstack/react-router' {
       path: '/broadsheet'
       fullPath: '/broadsheet'
       preLoaderRoute: typeof AuthenticatedBroadsheetRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/certificates': {
+      id: '/_authenticated/certificates'
+      path: '/certificates'
+      fullPath: '/certificates'
+      preLoaderRoute: typeof AuthenticatedCertificatesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/duty-roster': {
@@ -483,6 +503,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRoute
   AuthenticatedBroadsheetRoute: typeof AuthenticatedBroadsheetRoute
+  AuthenticatedCertificatesRoute: typeof AuthenticatedCertificatesRoute
   AuthenticatedDutyRosterRoute: typeof AuthenticatedDutyRosterRoute
   AuthenticatedFeedbackRoute: typeof AuthenticatedFeedbackRoute
   AuthenticatedFeesRoute: typeof AuthenticatedFeesRoute
@@ -503,6 +524,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAttendanceRoute: AuthenticatedAttendanceRoute,
   AuthenticatedBroadsheetRoute: AuthenticatedBroadsheetRoute,
+  AuthenticatedCertificatesRoute: AuthenticatedCertificatesRoute,
   AuthenticatedDutyRosterRoute: AuthenticatedDutyRosterRoute,
   AuthenticatedFeedbackRoute: AuthenticatedFeedbackRoute,
   AuthenticatedFeesRoute: AuthenticatedFeesRoute,
