@@ -267,6 +267,9 @@ export function AppHeader({
                 <Link to="/broadsheet" search={{ class: navClass }} className={rowCls(pathname.startsWith("/broadsheet"))}>
                   <RowCell icon={ICON.file} title="Class Broadsheet" desc="Master marks, grades and positions" />
                 </Link>
+                <Link to="/certificates" className={rowCls(pathname.startsWith("/certificates"))}>
+                  <RowCell icon={ICON.file} title="Awards & Certificates" desc="A4 award certificates for learners" />
+                </Link>
                   </nav></AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="staff">
