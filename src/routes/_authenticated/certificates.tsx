@@ -40,10 +40,11 @@ function CertificatesPage() {
   const inClass = students.filter((s) => s.classId === classId);
   const awardTitle = award === "Custom Award" ? custom || "Special Award" : award;
 
+  const occasion = `${school.term} · ${school.academicYear} Academic Year`;
   const certs: CertData[] = mode === "top3"
     ? topLearners(students, classId).map(({ student, position }) => ({
-        learner: student.name, className, award: POSITION_AWARD[position] ?? "", citation: citation || defaultCitation("Position"), date }))
-    : [{ learner: inClass.find((s) => s.id === studentId)?.name ?? "", className, award: awardTitle, citation: citation || defaultCitation(awardTitle), date }];
+        recipient: "learner" as const, name: student.name, line1: className, award: POSITION_AWARD[position] ?? "", citation: citation || defaultCitation("Position"), date, occasion, leftSigner: "Class Teacher" }))
+    : [{ recipient: "learner" as const, name: inClass.find((s) => s.id === studentId)?.name ?? "", line1: className, award: awardTitle, citation: citation || defaultCitation(awardTitle), date, occasion, leftSigner: "Class Teacher" }];
 
   return <div className="min-h-screen bg-background pb-8">
     <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={classId} />
