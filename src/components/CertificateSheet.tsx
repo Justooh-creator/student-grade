@@ -88,7 +88,7 @@ function YoungArt() {
     </svg>);
 }
 
-function Photo({ p, w, h, t }: { p?: PhotoAdjust; w: number; h: number; t: T }) {
+function Photo({ p, w, h, t }: { p?: PhotoAdjust | undefined; w: number; h: number; t: T }) {
   return (
     <div style={{ width: `${w}mm`, height: `${h}mm`, border: `1.2mm solid ${t.accent2}`, outline: `0.4mm solid ${t.accent}`, outlineOffset: "0.8mm", overflow: "hidden", background: t.dark ? "#222" : "#f1ede3", flexShrink: 0 }}
       className="flex items-center justify-center">
