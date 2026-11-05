@@ -1,16 +1,16 @@
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { getData, updateData } from "@/lib/store";
-import { buildBackup, parseBackup } from "@/lib/backup";
+import { assertSameSchool, buildBackup, mergeRestore, parseBackup } from "@/lib/backup";
 
-export function BackupRestore({ canRestore }: { canRestore: boolean }) {
+export function BackupRestore({ canRestore, schoolId = null }: { canRestore: boolean; schoolId?: string | null }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const btn = "rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground disabled:opacity-50";
 
   function exportBackup() {
     const data = getData();
-    const blob = new Blob([JSON.stringify(buildBackup(data), null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(buildBackup(data, new Date(), schoolId), null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     const safe = (data.school.name || "school").replace(/[^a-z0-9]+/gi, "-").toLowerCase();
@@ -25,8 +25,9 @@ export function BackupRestore({ canRestore }: { canRestore: boolean }) {
     setBusy(true);
     try {
       const backup = parseBackup(await file.text());
-      if (!window.confirm(`Restore ${backup.students.length} learner(s) and school details from this backup? Current records on this account will be replaced.`)) return;
-      updateData(() => backup);
+      assertSameSchool(backup.schoolId, schoolId);
+      if (!window.confirm(`Restore ${backup.students.length} learner(s) and school details from this backup? Current text records will be replaced; photos, logos, signatures and stamps on this device are kept.`)) return;
+      updateData((cur) => mergeRestore(cur, backup));
       toast.success("Backup restored.");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not restore backup.");
@@ -39,7 +40,7 @@ export function BackupRestore({ canRestore }: { canRestore: boolean }) {
   return (
     <div className="rounded-lg border border-border bg-card p-5">
       <p className="font-bold">💾 Backup & Restore</p>
-      <p className="mt-1 text-sm text-muted-foreground">Download a copy of your school details, learners, marks and remarks. Keep it safe — it contains learners' personal information.</p>
+      <p className="mt-1 text-sm text-muted-foreground">Download a copy of your school details, learners, marks and remarks. Photos, logos, signatures and stamps are not included. The file is not encrypted — keep it safe — it contains learners' personal information.</p>
       <div className="mt-3 flex flex-wrap gap-2">
         <button onClick={exportBackup} className={btn}>Download backup</button>
         {canRestore && (

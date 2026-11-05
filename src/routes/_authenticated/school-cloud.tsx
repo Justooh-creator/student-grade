@@ -103,7 +103,7 @@ function SchoolCloudPage() {
                 <button onClick={upload} disabled={busy} className={`${btn} mt-3`}>Upload to School Cloud</button>
               </div>
             )}
-            <BackupRestore canRestore={cloud.role === "headteacher"} />
+            <BackupRestore canRestore={cloud.role === "headteacher"} schoolId={cloud.schoolId} />
             <button onClick={leave} className="text-sm font-semibold text-destructive underline">Leave school</button>
           </>
         ) : (
