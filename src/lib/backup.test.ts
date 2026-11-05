@@ -26,7 +26,7 @@ describe("backup privacy", () => {
     const back = parseBackup(JSON.stringify(buildBackup(full)));
     const merged = mergeRestore(full, back);
     expect(merged.school.logo).toBe("data:L");
-    expect(merged.students[0].photo).toBe("data:P");
+    expect(merged.students[0]?.photo).toBe("data:P");
   });
   it("blocks restoring another school's backup", () => {
     expect(() => assertSameSchool("a", "b")).toThrow();
