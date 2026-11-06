@@ -225,7 +225,7 @@ function CertificatesPage() {
         </details>
 
         {!staff && mode === "top3" && certs.length === 0 && <p className="text-sm text-muted-foreground">No marks entered for this class yet, so positions can't be worked out.</p>}
-        <PrintButton label="Print / Save certificates as PDF" classId={staff ? undefined : classId} />
+        {staff ? <PrintButton label="Print / Save certificates as PDF" /> : <PrintButton label="Print / Save certificates as PDF" classId={classId} />}
       </div>
       <div className="certificate-pages overflow-x-auto">
         {certs.map((c, i) => <CertificateSheet key={i} data={c} school={school} theme={theme} watermark={!lic.loading && !lic.canPrint}

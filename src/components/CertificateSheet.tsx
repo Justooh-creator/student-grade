@@ -8,12 +8,12 @@ export type CertData = {
   /** Learner: class name. Staff: position / designation. */
   line1: string;
   /** Staff: subject / department. */
-  line2?: string;
+  line2?: string | undefined;
   award: string; citation: string; date: string;
   occasion: string;
   leftSigner: string | null; leftSignature?: string;
-  rightSigner?: string; rightName?: string;
-  photo?: PhotoAdjust;
+  rightSigner?: string | undefined; rightName?: string | undefined;
+  photo?: PhotoAdjust | undefined;
 };
 export type PhotoMode = "none" | "passport" | "full";
 
