@@ -1,5 +1,5 @@
 import type { School } from "@/lib/store";
-import type { CertTheme } from "@/lib/certificates";
+import { DEFAULT_DISPLAY, headerLines, type CertTheme, type CertDisplay, type Medallion, type PhotoFrame, type CertFonts } from "@/lib/certificates";
 
 export type PhotoAdjust = { src: string; zoom: number; x: number; y: number };
 export type CertData = {
@@ -11,7 +11,8 @@ export type CertData = {
   line2?: string;
   award: string; citation: string; date: string;
   occasion: string;
-  leftSigner: string; leftSignature?: string;
+  leftSigner: string | null; leftSignature?: string;
+  rightSigner?: string; rightName?: string;
   photo?: PhotoAdjust;
 };
 export type PhotoMode = "none" | "passport" | "full";
@@ -25,10 +26,27 @@ const THEME: Record<CertTheme | "executive", T> = {
   chancellor: { bg: "linear-gradient(135deg,#fbf7ea,#efe6cc)", ink: "#0f3b2c", accent: "#0f5c3f", accent2: "#b8892b", title: "'Pinyon Script', cursive", name: "'Cinzel', serif", body: "'Cormorant Garamond', serif" },
   elite: { bg: "radial-gradient(circle,#262626,#0b0b0b)", ink: "#f4e3b0", accent: "#d4af37", accent2: "#f1d67a", title: "'Cinzel', serif", name: "'Playfair Display', serif", body: "'Cormorant Garamond', serif", dark: true },
   young: { bg: "linear-gradient(135deg,#fffaf0,#eef6ff)", ink: "#1e3a8a", accent: "#e85d2a", accent2: "#16a34a", title: "'Sora', sans-serif", name: "'Playfair Display', serif", body: "'Manrope', sans-serif" },
+  royalblue: { bg: "linear-gradient(160deg,#fffdf6,#f7efd9)", ink: "#0a2558", accent: "#0a2558", accent2: "#d4a017", title: "'Cinzel', serif", name: "'Great Vibes', cursive", body: "'Cormorant Garamond', serif" },
+  platinum: { bg: "linear-gradient(135deg,#fafafa,#e7e9ec)", ink: "#2a2f36", accent: "#4b5563", accent2: "#9ca3af", title: "'Cinzel', serif", name: "'Playfair Display', serif", body: "'Cormorant Garamond', serif" },
+  grand: { bg: "linear-gradient(135deg,#fdf9ee,#f1e6c8)", ink: "#2d2312", accent: "#6b4f1d", accent2: "#c49a3a", title: "'Pinyon Script', cursive", name: "'Cinzel', serif", body: "'Cormorant Garamond', serif" },
+  emerald: { bg: "radial-gradient(circle,#0f4d36,#08291d)", ink: "#f3e6bf", accent: "#d4af37", accent2: "#f1d67a", title: "'Cinzel', serif", name: "'Great Vibes', cursive", body: "'Cormorant Garamond', serif", dark: true },
+  minimal: { bg: "#ffffff", ink: "#111827", accent: "#111827", accent2: "#c9a23a", title: "'Sora', sans-serif", name: "'Playfair Display', serif", body: "'Manrope', sans-serif" },
+  african: { bg: "linear-gradient(135deg,#fffaf0,#f6ead0)", ink: "#3b2205", accent: "#8a4b0f", accent2: "#d4a017", title: "'Cinzel', serif", name: "'Playfair Display', serif", body: "'Cormorant Garamond', serif" },
   executive: { bg: "linear-gradient(135deg,#ffffff,#eef2fb)", ink: "#13264f", accent: "#1d3a7a", accent2: "#c9a23a", title: "'Cinzel', serif", name: "'Playfair Display', serif", body: "'Manrope', sans-serif" },
 };
 
 function Corner({ t, kind, style }: { t: T; kind: CertTheme | "executive"; style: React.CSSProperties }) {
+  if (kind === "african") return (
+    <svg viewBox="0 0 100 100" style={style} aria-hidden fill="none" stroke={t.accent} strokeWidth="2.2">
+      {/* Dwennimmen-inspired ram's horns */}
+      <path d="M20 20 q14 -14 26 0 q-12 4 -12 14 M20 20 q-14 14 0 26 q4 -12 14 -12" />
+      <path d="M34 34 q14 -14 26 0 q-12 4 -12 14 M34 34 q-14 14 0 26 q4 -12 14 -12" stroke={t.accent2} />
+      {/* Mate Masie-inspired knot */}
+      <rect x="64" y="8" width="14" height="14" /><rect x="8" y="64" width="14" height="14" />
+      <circle cx="71" cy="15" r="2.5" fill={t.accent2} /><circle cx="15" cy="71" r="2.5" fill={t.accent2} />
+    </svg>);
+  if (kind === "minimal") return (
+    <svg viewBox="0 0 100 100" style={style} aria-hidden><path d="M8 60 V8 H60" fill="none" stroke={t.accent2} strokeWidth="2" /></svg>);
   if (kind === "modern" || kind === "executive") return (
     <svg viewBox="0 0 100 100" style={style} aria-hidden>
       <polygon points="0,0 70,0 0,70" fill={t.accent} /><polygon points="0,0 48,0 0,48" fill={t.accent2} />
@@ -58,7 +76,7 @@ function Star({ cx, cy, r, fill }: { cx: number; cy: number; r: number; fill: st
   return <polygon points={pts} fill={fill} />;
 }
 
-function Seal({ t, label }: { t: T; label: string }) {
+function Seal({ t, label, medallion = "star", crest }: { t: T; label: string; medallion?: Medallion; crest?: string }) {
   const burst = Array.from({ length: 48 }, (_, i) => {
     const a = (Math.PI / 24) * i; const r = i % 2 ? 44 : 48;
     return `${50 + r * Math.cos(a)},${50 + r * Math.sin(a)}`;
@@ -74,7 +92,13 @@ function Seal({ t, label }: { t: T; label: string }) {
       <polygon points={burst} fill={`url(#g-${t.accent})`} />
       <circle cx="50" cy="50" r="38" fill="none" stroke={t.dark ? "#1a1a1a" : "#fff"} strokeWidth="1.2" />
       {leaves}
-      <Star cx={50} cy={40} r={8} fill={t.dark ? "#1a1a1a" : "#fff"} />
+      {medallion === "crest" && crest
+        ? <image href={crest} x="36" y="26" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
+        : medallion === "crest"
+          ? <path d="M40 28 h20 v12 q0 10 -10 14 q-10 -4 -10 -14z" fill={t.dark ? "#1a1a1a" : "#fff"} />
+          : medallion === "trophy"
+            ? <g fill={t.dark ? "#1a1a1a" : "#fff"}><path d="M41 29 h18 v6 a9 9 0 0 1 -18 0z" /><path d="M41 31 h-4 a4 4 0 0 0 4 6 M59 31 h4 a4 4 0 0 1 -4 6" fill="none" stroke={t.dark ? "#1a1a1a" : "#fff"} strokeWidth="1.4" /><rect x="48.5" y="43" width="3" height="5" /><rect x="44" y="48" width="12" height="3" /></g>
+            : <Star cx={50} cy={40} r={8} fill={t.dark ? "#1a1a1a" : "#fff"} />}
       <text x="50" y="62" textAnchor="middle" fontSize="7.5" fontWeight="700" fill={t.dark ? "#1a1a1a" : "#fff"} fontFamily="Cinzel, serif">{label}</text>
     </svg>);
 }
@@ -88,9 +112,10 @@ function YoungArt() {
     </svg>);
 }
 
-function Photo({ p, w, h, t }: { p?: PhotoAdjust | undefined; w: number; h: number; t: T }) {
+function Photo({ p, w, h, t, frame = "rect" }: { p?: PhotoAdjust | undefined; w: number; h: number; t: T; frame?: PhotoFrame }) {
+  const W = frame === "circle" ? Math.min(w, h) : w; const H = frame === "circle" ? W : h;
   return (
-    <div style={{ width: `${w}mm`, height: `${h}mm`, border: `1.2mm solid ${t.accent2}`, outline: `0.4mm solid ${t.accent}`, outlineOffset: "0.8mm", overflow: "hidden", background: t.dark ? "#222" : "#f1ede3", flexShrink: 0 }}
+    <div style={{ width: `${W}mm`, height: `${H}mm`, borderRadius: frame === "rect" ? 0 : "50%", border: `1.2mm solid ${t.accent2}`, outline: `0.4mm solid ${t.accent}`, outlineOffset: frame === "rect" ? "0.8mm" : 0, overflow: "hidden", background: t.dark ? "#222" : "#f1ede3", flexShrink: 0 }}
       className="flex items-center justify-center">
       {p?.src
         ? <img src={p.src} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", transform: `translate(${p.x}%, ${p.y}%) scale(${p.zoom})` }} />
@@ -98,10 +123,47 @@ function Photo({ p, w, h, t }: { p?: PhotoAdjust | undefined; w: number; h: numb
     </div>);
 }
 
+function Ribbons() {
+  return (<>
+    <svg viewBox="0 0 300 120" preserveAspectRatio="none" aria-hidden style={{ position: "absolute", top: 0, left: 0, width: "120mm", height: "46mm" }}>
+      <defs><linearGradient id="rb-gold" x1="0" x2="1"><stop offset="0" stopColor="#b8860b" /><stop offset=".45" stopColor="#f5d061" /><stop offset=".55" stopColor="#fff6c8" /><stop offset="1" stopColor="#c8961e" /></linearGradient></defs>
+      <path d="M0 0 H300 Q180 20 110 60 T0 115 Z" fill="#0a2558" />
+      <path d="M0 0 H230 Q150 22 95 52 T0 92 Z" fill="#1e3a8a" />
+      <path d="M0 98 Q60 80 110 62 T300 2 L300 8 Q190 30 116 70 T0 106 Z" fill="url(#rb-gold)" />
+    </svg>
+    <svg viewBox="0 0 300 120" preserveAspectRatio="none" aria-hidden style={{ position: "absolute", bottom: 0, right: 0, width: "120mm", height: "46mm", transform: "rotate(180deg)" }}>
+      <path d="M0 0 H300 Q180 20 110 60 T0 115 Z" fill="#0a2558" />
+      <path d="M0 0 H230 Q150 22 95 52 T0 92 Z" fill="#1e3a8a" />
+      <path d="M0 98 Q60 80 110 62 T300 2 L300 8 Q190 30 116 70 T0 106 Z" fill="url(#rb-gold)" />
+    </svg>
+  </>);
+}
+
+function Kente({ pos }: { pos: React.CSSProperties }) {
+  const cols = ["#d4a017", "#0b6b3a", "#b91c1c", "#111827", "#d4a017", "#0b6b3a"];
+  return (
+    <svg viewBox="0 0 240 10" preserveAspectRatio="none" aria-hidden style={{ position: "absolute", left: "10mm", right: "10mm", height: "5mm", width: "calc(100% - 20mm)", ...pos }}>
+      {Array.from({ length: 48 }, (_, i) => <rect key={i} x={i * 5} y="0" width="5" height="10" fill={cols[i % cols.length]} />)}
+      {Array.from({ length: 24 }, (_, i) => <rect key={`z${i}`} x={i * 10 + 2} y="3.5" width="3" height="3" fill="#fffaf0" />)}
+    </svg>);
+}
+
+function Laurel({ color, flip }: { color: string; flip?: boolean }) {
+  return (
+    <svg viewBox="0 0 40 80" aria-hidden style={{ width: "10mm", height: "20mm", transform: flip ? "scaleX(-1)" : undefined }}>
+      <path d="M30 78 Q8 50 22 4" fill="none" stroke={color} strokeWidth="1.6" />
+      {Array.from({ length: 7 }, (_, i) => <ellipse key={i} cx={20 - i * 0.6 + (i % 2 ? 6 : -4)} cy={70 - i * 10} rx="3" ry="6.5" fill={color} transform={`rotate(${i % 2 ? 35 : -35} ${20 + (i % 2 ? 6 : -4)} ${70 - i * 10})`} />)}
+    </svg>);
+}
+
 /** One certificate at the given page size (mm). Artwork is designed at A4 width and scaled for larger paper. */
-export function CertificateSheet({ data, school, theme, watermark, photoMode = "none", size = { w: 297, h: 210 } }: {
+export function CertificateSheet({ data, school, theme, watermark, photoMode = "none", size = { w: 297, h: 210 }, display = DEFAULT_DISPLAY, medallion = "trophy", frame: photoFrame = "rect", fonts }: {
   data: CertData; school: School; theme: CertTheme; watermark: boolean; photoMode?: PhotoMode; size?: { w: number; h: number };
+  display?: CertDisplay; medallion?: Medallion; frame?: PhotoFrame; fonts?: Partial<CertFonts>;
 }) {
+  const d = display;
+  const f = { heading: fonts?.heading || "", name: fonts?.name || "", award: fonts?.award || "", citation: fonts?.citation || "" };
+  const lines = headerLines(school, d);
   const kind = theme === "young" && data.recipient === "staff" ? "executive" : theme;
   const t = THEME[kind];
   const portrait = size.h > size.w;
@@ -110,18 +172,18 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
   const zoom = size.w / baseW;
   const staff = data.recipient === "staff";
   const full = photoMode === "full";
-  const frame = theme === "royal" || theme === "elite" ? `double 2.4mm ${t.accent}` : theme === "young" ? `1.6mm dashed ${t.accent2}` : `1.4mm solid ${t.accent}`;
+  const frame = theme === "royalblue" ? `1.8mm solid #d4a017` : theme === "grand" ? `double 3mm ${t.accent2}` : theme === "minimal" ? `0.4mm solid ${t.accent2}` : theme === "royal" || theme === "elite" || theme === "emerald" ? `double 2.4mm ${t.accent}` : theme === "young" ? `1.6mm dashed ${t.accent2}` : `1.4mm solid ${t.accent}`;
   const cornerSize = theme === "young" ? "30mm" : "26mm";
   const corner = (r: number, pos: React.CSSProperties) => <Corner t={t} kind={kind} style={{ position: "absolute", width: cornerSize, height: cornerSize, transform: `rotate(${r}deg)`, ...pos }} />;
 
   const text = (
     <div className="flex flex-1 flex-col items-center text-center" style={{ minWidth: 0 }}>
       <p style={{ fontFamily: t.body }} className="text-[14pt] italic">This certificate is proudly presented to</p>
-      <p style={{ fontFamily: t.name, borderColor: t.accent2 }} className={`mt-[2mm] border-b-2 px-6 font-bold leading-tight ${portrait ? "text-[30pt]" : "text-[36pt]"}`}>{data.name || (staff ? "Staff Name" : "Learner Name")}</p>
-      <p style={{ fontFamily: t.body }} className="mt-[2mm] text-[13pt]">{staff ? [data.line1, data.line2].filter(Boolean).join(" · ") : data.line1 ? `of ${data.line1}` : ""}</p>
-      <p style={{ fontFamily: kind === "modern" || kind === "young" ? t.title : "'Cinzel', serif", color: t.accent }} className="mt-[4mm] text-[21pt] font-extrabold uppercase tracking-wide">{data.award}</p>
-      <p style={{ fontFamily: t.body }} className="mt-[2mm] max-w-[200mm] text-[14pt] italic">{data.citation}</p>
-      <p style={{ fontFamily: t.body }} className="mt-[1mm] text-[12pt]">{data.occasion}</p>
+      <p style={{ fontFamily: f.name || t.name, borderColor: t.accent2, color: kind === "royalblue" ? "#0a2558" : undefined }} className={`mt-[2mm] border-b-2 px-6 leading-tight ${t.name.includes("cursive") ? "font-normal" : "font-bold"} ${portrait ? "text-[32pt]" : "text-[40pt]"}`}>{data.name || (staff ? "Staff Name" : "Learner Name")}</p>
+      {d.className && <p style={{ fontFamily: t.body }} className="mt-[2mm] text-[13pt]">{staff ? [data.line1, data.line2].filter(Boolean).join(" · ") : data.line1 ? `of ${data.line1}` : ""}</p>}
+      <p style={{ fontFamily: f.award || (kind === "modern" || kind === "young" || kind === "minimal" ? t.title : "'Cinzel', serif"), color: kind === "royalblue" ? "#b8860b" : t.accent }} className="mt-[4mm] text-[21pt] font-extrabold uppercase tracking-wide">{data.award}</p>
+      {d.citation && data.citation && <p style={{ fontFamily: f.citation || t.body }} className="mt-[2mm] max-w-[200mm] text-[14pt] italic">{data.citation}</p>}
+      {d.occasion && data.occasion && <p style={{ fontFamily: t.body }} className="mt-[1mm] text-[12pt]">{data.occasion}</p>}
     </div>);
 
   return (
@@ -131,6 +193,9 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
         <div aria-hidden style={{ position: "absolute", inset: "10mm", border: `0.4mm solid ${t.accent2}` }} />
         {corner(0, { top: "4mm", left: "4mm" })}{corner(90, { top: "4mm", right: "4mm" })}
         {corner(270, { bottom: "4mm", left: "4mm" })}{corner(180, { bottom: "4mm", right: "4mm" })}
+        {d.watermarkBg && <div aria-hidden style={{ position: "absolute", inset: "10mm", opacity: t.dark ? 0.08 : 0.06, backgroundImage: `repeating-radial-gradient(circle at 50% 50%, ${t.accent} 0 0.3mm, transparent 0.3mm 2.2mm)` }} />}
+        {kind === "royalblue" && <Ribbons />}
+        {kind === "african" && <><Kente pos={{ top: "11mm" }} /><Kente pos={{ bottom: "11mm" }} /></>}
         {theme === "young" && !staff && <YoungArt />}
         {watermark && (
           <div aria-hidden className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
@@ -140,31 +205,39 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
           </div>
         )}
         <div className="relative z-10 flex h-full flex-col items-center px-[22mm] py-[15mm] text-center">
-          <div className="flex w-full items-center justify-center gap-4">
-            {school.logo && <img src={school.logo} alt="School logo" className="h-[20mm] w-[20mm] object-contain" />}
-            <div className="max-w-[170mm]">
-              <p style={{ fontFamily: "'Cinzel', serif" }} className="text-[16pt] font-extrabold uppercase tracking-wide">{school.name || "School Name"}</p>
-              {school.motto?.trim() && <p style={{ fontFamily: t.body }} className="text-[11pt] italic">“{school.motto}”</p>}
-              <p style={{ fontFamily: t.body }} className="text-[10pt]">{[school.district, school.region].filter(Boolean).join(", ")}</p>
-            </div>
-          </div>
-          {photoMode === "passport" && <div style={{ position: "absolute", top: "15mm", right: "20mm" }}><Photo p={data.photo} w={24} h={30} t={t} /></div>}
-          <h1 style={{ fontFamily: t.title, color: t.accent }} className={`mt-[4mm] leading-none ${kind === "modern" || kind === "young" || kind === "executive" ? "text-[30pt] font-bold uppercase tracking-wider" : "text-[38pt]"}`}>
+          {(lines.length > 0 || (d.logo && school.logo)) && <div className="flex w-full items-center justify-center gap-4">
+            {d.logo && school.logo && <img src={school.logo} alt="School logo" className="h-[20mm] w-[20mm] object-contain" />}
+            {lines.length > 0 && <div className="max-w-[170mm]">
+              {lines.map((l) => l.kind === "name"
+                ? <p key="n" style={{ fontFamily: "'Cinzel', serif" }} className="text-[16pt] font-extrabold uppercase tracking-wide">{l.text}</p>
+                : l.kind === "motto"
+                  ? <p key="m" style={{ fontFamily: t.body }} className="text-[11pt] italic">“{l.text}”</p>
+                  : <p key="l" style={{ fontFamily: t.body }} className="text-[10pt]">{l.text}</p>)}
+            </div>}
+          </div>}
+          {photoMode === "passport" && <div style={{ position: "absolute", top: "15mm", right: "20mm" }}><Photo p={data.photo} w={24} h={30} t={t} frame={photoFrame} /></div>}
+          <div className="mt-[4mm] flex items-center gap-3">
+          {kind === "royalblue" && <Laurel color="#c8961e" />}
+          <h1 style={{ fontFamily: f.heading || t.title, color: t.accent }} className={`leading-none ${kind === "modern" || kind === "young" || kind === "executive" || kind === "minimal" ? "text-[30pt] font-bold uppercase tracking-wider" : "text-[38pt]"}`}>
             {staff ? "Certificate of Recognition" : kind === "young" ? "Super Star Award" : "Certificate of Award"}
           </h1>
+          {kind === "royalblue" && <Laurel color="#c8961e" flip />}
+          </div>
           <div className={`mt-[5mm] flex w-full flex-1 items-center gap-[8mm] ${portrait ? "flex-col justify-start" : "justify-center"}`}>
-            {full && <Photo p={data.photo} w={portrait ? 46 : 46} h={portrait ? 56 : 58} t={t} />}
+            {full && <Photo p={data.photo} w={46} h={portrait ? 56 : 58} t={t} frame={photoFrame} />}
             {text}
           </div>
           <div className="grid w-full grid-cols-3 items-end gap-6 text-[11pt]" style={{ fontFamily: t.body }}>
-            <div>{data.leftSignature ? <img src={data.leftSignature} alt="" className="mx-auto h-[14mm] object-contain" /> : <div className="h-[14mm]" />}
-              <p className="border-t pt-1" style={{ borderColor: t.ink }}>{data.leftSigner}</p></div>
+            <div>{d.leftSignature && data.leftSigner && <>
+              {data.leftSignature ? <img src={data.leftSignature} alt="" className="mx-auto h-[14mm] object-contain" /> : <div className="h-[14mm]" />}
+              <p className="border-t pt-1" style={{ borderColor: t.ink }}>{data.leftSigner}</p></>}</div>
             <div className="flex flex-col items-center">
-              {school.stamp ? <img src={school.stamp} alt="" className="h-[22mm] object-contain" /> : <Seal t={t} label="EXCELLENCE" />}
-              <p className="mt-1">{data.date}</p>
+              {d.seal && (school.stamp ? <img src={school.stamp} alt="" className="h-[22mm] object-contain" /> : <Seal t={t} label="EXCELLENCE" medallion={medallion} crest={school.logo} />)}
+              {d.date && data.date && <p className="mt-1">{data.date}</p>}
             </div>
-            <div>{school.signature ? <img src={school.signature} alt="" className="mx-auto h-[14mm] object-contain" /> : <div className="h-[14mm]" />}
-              <p className="border-t pt-1" style={{ borderColor: t.ink }}>{school.headTeacher || "Headteacher / Proprietor"}</p></div>
+            <div>{d.rightSignature && <>
+              {school.signature ? <img src={school.signature} alt="" className="mx-auto h-[14mm] object-contain" /> : <div className="h-[14mm]" />}
+              <p className="border-t pt-1" style={{ borderColor: t.ink }}>{data.rightSigner ?? "Headteacher"}{data.rightName ? ` – ${data.rightName}` : ""}</p></>}</div>
           </div>
         </div>
       </div>
