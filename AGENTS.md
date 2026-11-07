@@ -26,3 +26,4 @@
 - Offline support uses vite-plugin-pwa generateSW with one guarded registrar (src/lib/registerSW.ts); never hand-write sw.js or register in preview/dev.
 - Keep the optional school contact in the shared School record and render it through ReportSheet so local/cloud saves and all report exports use the same value.
 - Individual print licenses lock to the first class printed via record_print_class; school/developer licenses and class-less prints (Q&A) are unrestricted — closes the multi-class loophole.
+- Certificate editor preferences remain transient display state; CertificatePreview fits the unchanged millimetre sheet on screen and resets fitting for print, so school data and licensed print accounting stay separate.
