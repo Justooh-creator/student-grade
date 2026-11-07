@@ -210,6 +210,8 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
   @page certificate { size: A4 landscape; margin: 0; }
   body:has(.certificate-page) main { max-width: none; padding: 0; }
   body:has(.certificate-page) .min-h-screen { min-height: 0 !important; padding-bottom: 0 !important; }
+  body:has(.certificate-page) { page: certificate; }
+  .certificate-workspace, .certificate-editor-grid, .certificate-preview, .certificate-preview-viewport, .certificate-pages { page: certificate; }
   .certificate-workspace, .certificate-editor-grid, .certificate-preview, .certificate-preview-viewport { margin: 0 !important; padding: 0 !important; }
   .certificate-pages { overflow: visible; zoom: 1 !important; }
   .certificate-editor-grid { display: block !important; }
