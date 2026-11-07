@@ -30,3 +30,5 @@
 - [x] Offline PWA: cached app pages/assets, offline/back-online banner (published app only).
 - [x] Option 1: Optional school contact on School Details and report cards; visible official support email on Privacy Policy and support; authenticated save/reload and actual A4 report verified; test phone restored.
 - [x] Option 2: Fingerprint confirmation on account and lock-screen sign-out, OS PIN/password fallback; 11 tests passed and authenticated cancellation/success verified with a virtual device. Physical phone/PIN fallback remains device-dependent.
+- [ ] Certificate refinements: responsive workspace/fit preview, headings/Gothic font, royal ribbon clearance, class/design dropdowns, African spacing, independent term/year, larger photos.
+- [ ] Verify certificate refinements with automated tests and signed-in desktop/mobile preview and print checks.
