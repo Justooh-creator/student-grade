@@ -1,5 +1,5 @@
 import type { School } from "@/lib/store";
-import { DEFAULT_DISPLAY, headerLines, type CertTheme, type CertDisplay, type Medallion, type PhotoFrame, type CertFonts } from "@/lib/certificates";
+import { DEFAULT_DISPLAY, headerLines, certificateSession, certificatePresentation, type CertTheme, type CertDisplay, type Medallion, type PhotoFrame, type CertFonts } from "@/lib/certificates";
 
 export type PhotoAdjust = { src: string; zoom: number; x: number; y: number };
 export type CertData = {
@@ -11,6 +11,7 @@ export type CertData = {
   line2?: string | undefined;
   award: string; citation: string; date: string;
   occasion: string;
+  heading?: string;
   leftSigner: string | null; leftSignature?: string;
   rightSigner?: string | undefined; rightName?: string | undefined;
   photo?: PhotoAdjust | undefined;
@@ -123,15 +124,16 @@ function Photo({ p, w, h, t, frame = "rect" }: { p?: PhotoAdjust | undefined; w:
     </div>);
 }
 
-function Ribbons() {
+function Ribbons({ portrait }: { portrait: boolean }) {
+  const dimensions = { width: portrait ? "58mm" : "85mm", height: portrait ? "23mm" : "30mm" };
   return (<>
-    <svg viewBox="0 0 300 120" preserveAspectRatio="none" aria-hidden style={{ position: "absolute", top: 0, left: 0, width: "120mm", height: "46mm" }}>
+    <svg data-decoration="ribbon-top" viewBox="0 0 300 120" preserveAspectRatio="none" aria-hidden style={{ position: "absolute", top: 0, left: 0, ...dimensions }}>
       <defs><linearGradient id="rb-gold" x1="0" x2="1"><stop offset="0" stopColor="#b8860b" /><stop offset=".45" stopColor="#f5d061" /><stop offset=".55" stopColor="#fff6c8" /><stop offset="1" stopColor="#c8961e" /></linearGradient></defs>
       <path d="M0 0 H300 Q180 20 110 60 T0 115 Z" fill="#0a2558" />
       <path d="M0 0 H230 Q150 22 95 52 T0 92 Z" fill="#1e3a8a" />
       <path d="M0 98 Q60 80 110 62 T300 2 L300 8 Q190 30 116 70 T0 106 Z" fill="url(#rb-gold)" />
     </svg>
-    <svg viewBox="0 0 300 120" preserveAspectRatio="none" aria-hidden style={{ position: "absolute", bottom: 0, right: 0, width: "120mm", height: "46mm", transform: "rotate(180deg)" }}>
+    <svg data-decoration="ribbon-bottom" viewBox="0 0 300 120" preserveAspectRatio="none" aria-hidden style={{ position: "absolute", bottom: 0, right: 0, ...dimensions, transform: "rotate(180deg)" }}>
       <path d="M0 0 H300 Q180 20 110 60 T0 115 Z" fill="#0a2558" />
       <path d="M0 0 H230 Q150 22 95 52 T0 92 Z" fill="#1e3a8a" />
       <path d="M0 98 Q60 80 110 62 T300 2 L300 8 Q190 30 116 70 T0 106 Z" fill="url(#rb-gold)" />
@@ -172,18 +174,20 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
   const zoom = size.w / baseW;
   const staff = data.recipient === "staff";
   const full = photoMode === "full";
+  const heading = data.heading?.trim() || (staff ? "Certificate of Recognition" : kind === "young" ? "Super Star Award" : "Certificate of Award");
+  const session = certificateSession(school.term, school.academicYear, d);
   const frame = theme === "royalblue" ? `1.8mm solid #d4a017` : theme === "grand" ? `double 3mm ${t.accent2}` : theme === "minimal" ? `0.4mm solid ${t.accent2}` : theme === "royal" || theme === "elite" || theme === "emerald" ? `double 2.4mm ${t.accent}` : theme === "young" ? `1.6mm dashed ${t.accent2}` : `1.4mm solid ${t.accent}`;
   const cornerSize = theme === "young" ? "30mm" : "26mm";
   const corner = (r: number, pos: React.CSSProperties) => <Corner t={t} kind={kind} style={{ position: "absolute", width: cornerSize, height: cornerSize, transform: `rotate(${r}deg)`, ...pos }} />;
 
   const text = (
     <div className="flex flex-1 flex-col items-center text-center" style={{ minWidth: 0 }}>
-      <p style={{ fontFamily: t.body }} className="text-[14pt] italic">This certificate is proudly presented to</p>
-      <p style={{ fontFamily: f.name || t.name, borderColor: t.accent2, color: kind === "royalblue" ? "#0a2558" : undefined }} className={`mt-[2mm] border-b-2 px-6 leading-tight ${t.name.includes("cursive") ? "font-normal" : "font-bold"} ${portrait ? "text-[32pt]" : "text-[40pt]"}`}>{data.name || (staff ? "Staff Name" : "Learner Name")}</p>
+      <p style={{ fontFamily: t.body }} className="text-[14pt] italic">{certificatePresentation(heading)}</p>
+      <p data-cert="recipient" style={{ fontFamily: f.name || t.name, borderColor: t.accent2, color: kind === "royalblue" ? "#0a2558" : undefined }} className={`mt-[2mm] max-w-full break-words border-b-2 px-2 leading-tight ${t.name.includes("cursive") ? "font-normal" : "font-bold"} ${portrait ? "text-[32pt]" : "text-[40pt]"}`}>{data.name || (staff ? "Staff Name" : "Learner Name")}</p>
       {d.className && <p style={{ fontFamily: t.body }} className="mt-[2mm] text-[13pt]">{staff ? [data.line1, data.line2].filter(Boolean).join(" · ") : data.line1 ? `of ${data.line1}` : ""}</p>}
-      <p style={{ fontFamily: f.award || (kind === "modern" || kind === "young" || kind === "minimal" ? t.title : "'Cinzel', serif"), color: kind === "royalblue" ? "#b8860b" : t.accent }} className="mt-[4mm] text-[21pt] font-extrabold uppercase tracking-wide">{data.award}</p>
+      <p style={{ fontFamily: f.award || (kind === "modern" || kind === "young" || kind === "minimal" ? t.title : "'Cinzel', serif"), color: kind === "royalblue" ? "#b8860b" : t.accent }} className="mt-[4mm] max-w-full break-words text-[21pt] font-extrabold uppercase">{data.award}</p>
       {d.citation && data.citation && <p style={{ fontFamily: f.citation || t.body }} className="mt-[2mm] max-w-[200mm] text-[14pt] italic">{data.citation}</p>}
-      {d.occasion && data.occasion && <p style={{ fontFamily: t.body }} className="mt-[1mm] text-[12pt]">{data.occasion}</p>}
+      {session && <p data-cert="session" style={{ fontFamily: t.body }} className="mt-[1mm] text-[12pt]">{session}</p>}
     </div>);
 
   return (
@@ -194,8 +198,8 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
         {corner(0, { top: "4mm", left: "4mm" })}{corner(90, { top: "4mm", right: "4mm" })}
         {corner(270, { bottom: "4mm", left: "4mm" })}{corner(180, { bottom: "4mm", right: "4mm" })}
         {d.watermarkBg && <div aria-hidden style={{ position: "absolute", inset: "10mm", opacity: t.dark ? 0.08 : 0.06, backgroundImage: `repeating-radial-gradient(circle at 50% 50%, ${t.accent} 0 0.3mm, transparent 0.3mm 2.2mm)` }} />}
-        {kind === "royalblue" && <Ribbons />}
-        {kind === "african" && <><Kente pos={{ top: "11mm" }} /><Kente pos={{ bottom: "11mm" }} /></>}
+        {kind === "royalblue" && <Ribbons portrait={portrait} />}
+        {kind === "african" && <><Kente pos={{ top: "8mm" }} /><Kente pos={{ bottom: "8mm" }} /></>}
         {theme === "young" && !staff && <YoungArt />}
         {watermark && (
           <div aria-hidden className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
@@ -204,8 +208,8 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
             </span>
           </div>
         )}
-        <div className="relative z-10 flex h-full flex-col items-center px-[22mm] py-[15mm] text-center">
-          {(lines.length > 0 || (d.logo && school.logo)) && <div className="flex w-full items-center justify-center gap-4">
+        <div data-cert="content" className="relative z-10 flex h-full flex-col items-center text-center" style={{ padding: kind === "african" ? "22mm 24mm 22mm" : kind === "royalblue" ? "24mm 24mm 24mm" : "18mm 22mm", overflowWrap: "anywhere", letterSpacing: 0 }}>
+          {(lines.length > 0 || (d.logo && school.logo)) && <div className={`flex w-full shrink-0 items-center justify-center gap-4 ${portrait ? "flex-col gap-1" : ""}`}>
             {d.logo && school.logo && <img src={school.logo} alt="School logo" className="h-[20mm] w-[20mm] object-contain" />}
             {lines.length > 0 && <div className="max-w-[170mm]">
               {lines.map((l) => l.kind === "name"
@@ -215,29 +219,29 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
                   : <p key="l" style={{ fontFamily: t.body }} className="text-[10pt]">{l.text}</p>)}
             </div>}
           </div>}
-          {photoMode === "passport" && <div style={{ position: "absolute", top: "15mm", right: "20mm" }}><Photo p={data.photo} w={24} h={30} t={t} frame={photoFrame} /></div>}
-          <div className="mt-[4mm] flex items-center gap-3">
+          <div className="mt-[4mm] flex w-full shrink-0 items-center justify-center gap-3">
           {kind === "royalblue" && <Laurel color="#c8961e" />}
-          <h1 style={{ fontFamily: f.heading || t.title, color: t.accent }} className={`leading-none ${kind === "modern" || kind === "young" || kind === "executive" || kind === "minimal" ? "text-[30pt] font-bold uppercase tracking-wider" : "text-[38pt]"}`}>
-            {staff ? "Certificate of Recognition" : kind === "young" ? "Super Star Award" : "Certificate of Award"}
+          <h1 style={{ fontFamily: f.heading || t.title, color: t.accent, letterSpacing: 0 }} className={`min-w-0 break-words leading-tight ${portrait ? "text-[29pt]" : "text-[34pt]"}`}>
+            {heading}
           </h1>
           {kind === "royalblue" && <Laurel color="#c8961e" flip />}
           </div>
-          <div className={`mt-[5mm] flex w-full flex-1 items-center gap-[8mm] ${portrait ? "flex-col justify-start" : "justify-center"}`}>
-            {full && <Photo p={data.photo} w={46} h={portrait ? 56 : 58} t={t} frame={photoFrame} />}
+          <div data-cert="body" className={`my-[4mm] flex w-full flex-1 items-center gap-[6mm] ${portrait ? "flex-col justify-center" : "justify-center"}`}>
+            {photoMode !== "none" && <Photo p={data.photo} w={full ? portrait ? 68 : 62 : 35} h={full ? portrait ? 85 : 78 : 45} t={t} frame={photoFrame} />}
             {text}
           </div>
-          <div className="grid w-full grid-cols-3 items-end gap-6 text-[11pt]" style={{ fontFamily: t.body }}>
-            <div>{d.leftSignature && data.leftSigner && <>
+          <div data-cert="footer" className="flex w-full shrink-0 items-end justify-around gap-[4mm] text-[11pt]" style={{ fontFamily: t.body }}>
+            {d.leftSignature && data.leftSigner && <div className="min-w-0 flex-1">
               {data.leftSignature ? <img src={data.leftSignature} alt="" className="mx-auto h-[14mm] object-contain" /> : <div className="h-[14mm]" />}
-              <p className="border-t pt-1" style={{ borderColor: t.ink }}>{data.leftSigner}</p></>}</div>
-            <div className="flex flex-col items-center">
+              <p className="border-t pt-1" style={{ borderColor: t.ink }}>{data.leftSigner}</p></div>}
+            {(d.seal || (d.date && data.date)) && <div className="flex shrink-0 flex-col items-center">
               {d.seal && (school.stamp ? <img src={school.stamp} alt="" className="h-[22mm] object-contain" /> : <Seal t={t} label="EXCELLENCE" medallion={medallion} crest={school.logo} />)}
               {d.date && data.date && <p className="mt-1">{data.date}</p>}
-            </div>
-            <div>{d.rightSignature && <>
+            </div>}
+            {d.rightSignature && <div data-cert="right-signature" className="min-w-0 flex-1">
               {school.signature ? <img src={school.signature} alt="" className="mx-auto h-[14mm] object-contain" /> : <div className="h-[14mm]" />}
-              <p className="border-t pt-1" style={{ borderColor: t.ink }}>{data.rightSigner ?? "Headteacher"}{data.rightName ? ` – ${data.rightName}` : ""}</p></>}</div>
+              <p className="border-t pt-1" style={{ borderColor: t.ink }}>{data.rightSigner ?? "Headteacher"}</p>
+              {data.rightName && <p className="mt-1 break-words leading-tight">{data.rightName}</p>}</div>}
           </div>
         </div>
       </div>
