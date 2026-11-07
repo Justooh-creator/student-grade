@@ -23,12 +23,12 @@ export const CERT_THEMES: { id: CertTheme; label: string; note: string }[] = [
 /** Display preferences only — never written back to school or learner records. */
 export interface CertDisplay {
   logo: boolean; schoolName: boolean; motto: boolean; location: boolean;
-  className: boolean; citation: boolean; occasion: boolean; date: boolean;
+  className: boolean; citation: boolean; term: boolean; academicYear: boolean; date: boolean;
   leftSignature: boolean; rightSignature: boolean; seal: boolean; watermarkBg: boolean;
 }
 export const DEFAULT_DISPLAY: CertDisplay = {
   logo: true, schoolName: true, motto: true, location: true, className: true, citation: true,
-  occasion: true, date: true, leftSignature: true, rightSignature: true, seal: true, watermarkBg: true,
+  term: true, academicYear: true, date: true, leftSignature: true, rightSignature: true, seal: true, watermarkBg: true,
 };
 export const DISPLAY_LABELS: { key: keyof CertDisplay; label: string; group: "Header" | "Text" | "Signatures" }[] = [
   { key: "logo", label: "School logo", group: "Header" },
@@ -37,7 +37,8 @@ export const DISPLAY_LABELS: { key: keyof CertDisplay; label: string; group: "He
   { key: "location", label: "District & region", group: "Header" },
   { key: "className", label: "Class / designation", group: "Text" },
   { key: "citation", label: "Citation", group: "Text" },
-  { key: "occasion", label: "Term & academic year", group: "Text" },
+  { key: "term", label: "Academic term", group: "Text" },
+  { key: "academicYear", label: "Academic year", group: "Text" },
   { key: "date", label: "Award date", group: "Text" },
   { key: "leftSignature", label: "Left signature", group: "Signatures" },
   { key: "rightSignature", label: "Right signature", group: "Signatures" },
@@ -94,8 +95,20 @@ export const FONT_CHOICES: { id: string; label: string }[] = [
   { id: "'Pinyon Script', 'Brush Script MT', cursive", label: "Pinyon Script" },
   { id: "'Sora', Arial, sans-serif", label: "Sora (modern)" },
   { id: "'Manrope', Arial, sans-serif", label: "Manrope" },
+  { id: "'UnifrakturMaguntia', 'Old English Text MT', Georgia, serif", label: "Gothic / Blackletter" },
 ];
 export type CertFonts = { heading: string; name: string; award: string; citation: string };
+
+export const CERT_HEADINGS = ["Certificate of Award", "Citation", "Citation of Honour", "Certificate of Recognition", "Certificate of Appreciation", "Certificate of Honour", "Certificate of Merit", "Certificate of Excellence", "Custom Heading"];
+
+/** Session display is assembled from independent preferences, never by editing records. */
+export function certificateSession(term: string, academicYear: string, display: CertDisplay): string {
+  return [display.term && term.trim(), display.academicYear && academicYear.trim() && `${academicYear.trim()} Academic Year`].filter(Boolean).join(" · ");
+}
+
+export function certificatePresentation(heading: string): string {
+  return /^citation\b/i.test(heading.trim()) ? "In honour of" : "This certificate is proudly presented to";
+}
 
 export const AWARD_PRESETS = [
   "First Position in Class",

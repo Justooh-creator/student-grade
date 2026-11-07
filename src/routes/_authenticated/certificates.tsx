@@ -1,16 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
-import { ClassPicker } from "@/components/ClassPicker";
+import { Button } from "@/components/ui/button";
+import { CertificatePreview } from "@/components/CertificatePreview";
 import { PrintButton } from "@/components/PaymentGate";
 import { CertificateSheet, type CertData, type PhotoMode, type PhotoAdjust } from "@/components/CertificateSheet";
 import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
 import { useLicense } from "@/lib/license";
 import { useCloud } from "@/lib/cloud";
-import { getClassLevel, type ClassId } from "@/lib/ges";
+import { getClassLevel, schoolClassIds, type ClassId } from "@/lib/ges";
 import {
-  AWARD_PRESETS, STAFF_AWARD_PRESETS, CERT_THEMES, POSITION_AWARD, DEFAULT_DISPLAY, DISPLAY_LABELS, SIGNER_PRESETS, MEDALLIONS,
+  CERT_HEADINGS, AWARD_PRESETS, STAFF_AWARD_PRESETS, CERT_THEMES, POSITION_AWARD, DEFAULT_DISPLAY, DISPLAY_LABELS, SIGNER_PRESETS, MEDALLIONS,
   PHOTO_FRAMES, FONT_CHOICES, PAPERS, defaultCitation, defaultStaffCitation, topLearners, signerTitles, paperSize, canMakeCertificates,
   type CertTheme, type CertDisplay, type SignerPreset, type Medallion, type PhotoFrame, type PaperId, type CertFonts,
 } from "@/lib/certificates";
@@ -28,7 +29,6 @@ export const Route = createFileRoute("/_authenticated/certificates")({
 });
 
 const input = "h-10 w-full rounded-md border border-input bg-background px-3 text-sm";
-const chip = (on: boolean) => `h-9 rounded-md px-3 text-sm font-semibold ${on ? "bg-primary text-primary-foreground" : "border border-border"}`;
 
 function CertificatesPage() {
   const { school, students } = useAppData();
@@ -42,6 +42,8 @@ function CertificatesPage() {
   const [studentId, setStudentId] = useState("");
   const [award, setAward] = useState<string>(AWARD_PRESETS[0]);
   const [custom, setCustom] = useState("");
+  const [heading, setHeading] = useState("Certificate of Award");
+  const [customHeading, setCustomHeading] = useState("");
   const [citation, setCitation] = useState("");
   const [staffName, setStaffName] = useState("");
   const [staffPos, setStaffPos] = useState("");
@@ -79,7 +81,7 @@ function CertificatesPage() {
   const size = paperSize(paper, orientation, customSize);
   const chosen = inClass.find((s) => s.id === studentId);
   const photoFor = (src?: string): PhotoAdjust | undefined => photo.src ? photo : src ? { src, zoom: photo.zoom, x: photo.x, y: photo.y } : undefined;
-  const base = { date, occasion, leftSigner: titles.left, rightSigner: titles.right, rightName: school.headTeacher || undefined };
+  const base = { heading: heading === "Custom Heading" ? customHeading : heading, date, occasion, leftSigner: titles.left, rightSigner: titles.right, rightName: school.headTeacher || undefined };
 
   const certs: CertData[] = staff
     ? [{ ...base, recipient: "staff", name: staffName, line1: staffPos, line2: staffDept, award: awardTitle, citation: citation || defaultStaffCitation(awardTitle), photo: photo.src ? photo : undefined }]
@@ -96,6 +98,7 @@ function CertificatesPage() {
     r.readAsDataURL(file);
   };
   const switchRecipient = (r: "learner" | "staff") => {
+    setHeading(r === "staff" ? "Certificate of Recognition" : "Certificate of Award");
     setRecipient(r); setAward(r === "staff" ? STAFF_AWARD_PRESETS[0] : AWARD_PRESETS[0]); setCitation("");
     setSigners(r === "staff" ? "prop_ht" : "ct_ht"); setPhoto({ src: "", zoom: 1, x: 0, y: 0 });
   };
@@ -108,33 +111,45 @@ function CertificatesPage() {
   return <div className="min-h-screen bg-background pb-8">
     <style>{`@media print { @page certificate { size: ${size.w}mm ${size.h}mm; margin: 0; } }`}</style>
     <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={classId} />
-    <main className="mx-auto max-w-5xl px-4">
-      <div className="no-print space-y-4 py-4">
-        <h1 className="font-display text-2xl font-bold">🏅 Awards & Certificates</h1>
+    <main className="certificate-workspace mx-auto w-full max-w-[1800px] px-4 lg:px-6">
+      <div className="certificate-editor-grid grid min-w-0 gap-6 lg:grid-cols-[minmax(320px,380px)_minmax(0,1fr)]">
+      <div className="certificate-controls no-print min-w-0 space-y-4 py-4">
+        <h1 className="font-display text-2xl font-bold">Awards & Certificates</h1>
         <div className="flex flex-wrap gap-2">
-          <button onClick={() => switchRecipient("learner")} className={chip(!staff)}>Learner award</button>
-          <button onClick={() => switchRecipient("staff")} className={chip(staff)}>Teacher / Staff award</button>
+          <Button onClick={() => switchRecipient("learner")} variant={!staff ? "default" : "outline"}>Learner award</Button>
+          <Button onClick={() => switchRecipient("staff")} variant={staff ? "default" : "outline"}>Teacher / Staff award</Button>
         </div>
 
         <section className="space-y-2">
           <h2 className="font-semibold">Design</h2>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {CERT_THEMES.map((t) => <button key={t.id} onClick={() => setTheme(t.id)}
-              className={`rounded-md border p-2 text-left text-xs ${theme === t.id ? "border-primary ring-2 ring-primary" : "border-border"}`}>
-              <span className="block font-semibold">{t.label}</span><span className="text-muted-foreground">{t.note}</span>
-            </button>)}
-          </div>
+          <label className="block text-sm font-semibold">Certificate design
+            <select className={input} value={theme} onChange={(e) => setTheme(e.target.value as CertTheme)}>
+              {CERT_THEMES.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
+            </select>
+          </label>
         </section>
 
         {!staff && <>
-          <ClassPicker value={classId} onChange={(c) => { setClassId(c); setStudentId(""); }} />
+          <label className="block text-sm font-semibold">Class
+            <select className={input} value={classId} onChange={(e) => { setClassId(e.target.value as ClassId); setStudentId(""); }}>
+              {schoolClassIds(school).map((id) => <option key={id} value={id}>{getClassLevel(id).name}</option>)}
+            </select>
+          </label>
           <div className="flex gap-2">
-            <button onClick={() => setMode("single")} className={chip(mode === "single")}>One learner</button>
-            <button onClick={() => setMode("top3")} className={chip(mode === "top3")}>Top 3 in class (auto)</button>
+            <Button onClick={() => setMode("single")} variant={mode === "single" ? "default" : "outline"}>One learner</Button>
+            <Button onClick={() => setMode("top3")} variant={mode === "top3" ? "default" : "outline"}>Top 3 in class (auto)</Button>
           </div>
         </>}
 
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+          <label className="text-sm font-semibold">Certificate heading
+            <select className={input} value={heading} onChange={(e) => setHeading(e.target.value)}>
+              {CERT_HEADINGS.map((h) => <option key={h}>{h}</option>)}
+            </select>
+          </label>
+          {heading === "Custom Heading" && <label className="text-sm font-semibold">Custom heading
+            <input className={input} value={customHeading} onChange={(e) => setCustomHeading(e.target.value)} />
+          </label>}
           {staff && <>
             <label className="text-sm font-semibold">Staff name<input className={input} value={staffName} onChange={(e) => setStaffName(e.target.value)} /></label>
             <label className="text-sm font-semibold">Position / designation<input className={input} value={staffPos} onChange={(e) => setStaffPos(e.target.value)} placeholder="e.g. Class Teacher, Basic 4" /></label>
@@ -152,7 +167,7 @@ function CertificatesPage() {
           {(staff || mode === "single") && award === "Custom Award" && <label className="text-sm font-semibold">Award title
             <input className={input} value={custom} onChange={(e) => setCustom(e.target.value)} placeholder="e.g. Best Reader" /></label>}
           <label className="text-sm font-semibold">Date<input className={input} value={date} onChange={(e) => setDate(e.target.value)} /></label>
-          <label className="text-sm font-semibold sm:col-span-2">Citation (optional)
+          <label className="text-sm font-semibold sm:col-span-2 lg:col-span-1">Citation (optional)
             <input className={input} value={citation} onChange={(e) => setCitation(e.target.value)} placeholder="Leave blank to use the standard wording" /></label>
           <label className="text-sm font-semibold">Signatures
             <select className={input} value={signers} onChange={(e) => setSigners(e.target.value as SignerPreset)}>
@@ -179,18 +194,18 @@ function CertificatesPage() {
           <summary className="cursor-pointer font-semibold">Photograph</summary>
           <div className="mt-3 space-y-3">
             <div className="flex flex-wrap gap-2">
-              {(["none", "passport", "full"] as PhotoMode[]).map((m) => <button key={m} onClick={() => setPhotoMode(m)} className={chip(photoMode === m)}>
-                {m === "none" ? "No photo" : m === "passport" ? "Passport" : "Large portrait"}</button>)}
+              {(["none", "passport", "full"] as PhotoMode[]).map((m) => <Button key={m} onClick={() => setPhotoMode(m)} variant={photoMode === m ? "default" : "outline"}>
+                {m === "none" ? "No photo" : m === "passport" ? "Passport" : "Large portrait"}</Button>)}
             </div>
             {photoMode !== "none" && <>
               <div className="flex flex-wrap gap-2">
-                {PHOTO_FRAMES.map((p) => <button key={p.id} onClick={() => setFrame(p.id)} className={chip(frame === p.id)}>{p.label}</button>)}
+                {PHOTO_FRAMES.map((p) => <Button key={p.id} onClick={() => setFrame(p.id)} variant={frame === p.id ? "default" : "outline"}>{p.label}</Button>)}
               </div>
               <p className="text-xs text-muted-foreground">{staff ? "Upload the staff photo." : "Uses the learner's saved photo, or upload a one-off photo."} Photos stay on this device only.</p>
               <div className="flex flex-wrap items-center gap-2">
                 <label className="cursor-pointer rounded-md border border-border px-3 py-2 text-sm font-semibold">{photo.src ? "Replace photo" : "Upload photo"}
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => onPhoto(e.target.files?.[0])} /></label>
-                {photo.src && <button onClick={() => setPhoto({ src: "", zoom: 1, x: 0, y: 0 })} className="rounded-md border border-border px-3 py-2 text-sm">Remove</button>}
+                {photo.src && <Button onClick={() => setPhoto({ src: "", zoom: 1, x: 0, y: 0 })} className="rounded-md border border-border px-3 py-2 text-sm">Remove</Button>}
               </div>
               <div className="grid gap-2 sm:grid-cols-3">
                 <label className="text-sm">Zoom<input type="range" min={1} max={3} step={0.05} value={photo.zoom} onChange={(e) => setPhoto({ ...photo, zoom: +e.target.value })} className="w-full" /></label>
@@ -213,9 +228,9 @@ function CertificatesPage() {
         <details className="rounded-md border border-border p-3">
           <summary className="cursor-pointer font-semibold">Paper size: {paper === "custom" ? "Custom" : paper} {orientation}</summary>
           <div className="mt-3 flex flex-wrap gap-2">
-            {([...Object.keys(PAPERS), "custom"] as PaperId[]).map((p) => <button key={p} onClick={() => setPaper(p)} className={chip(paper === p)}>{p === "custom" ? "Custom" : p}</button>)}
-            <button onClick={() => setOrientation("landscape")} className={chip(orientation === "landscape")}>Landscape</button>
-            <button onClick={() => setOrientation("portrait")} className={chip(orientation === "portrait")}>Portrait</button>
+            {([...Object.keys(PAPERS), "custom"] as PaperId[]).map((p) => <Button key={p} onClick={() => setPaper(p)} variant={paper === p ? "default" : "outline"}>{p === "custom" ? "Custom" : p}</Button>)}
+            <Button onClick={() => setOrientation("landscape")} variant={orientation === "landscape" ? "default" : "outline"}>Landscape</Button>
+            <Button onClick={() => setOrientation("portrait")} variant={orientation === "portrait" ? "default" : "outline"}>Portrait</Button>
           </div>
           {paper === "custom" && <div className="mt-3 grid grid-cols-3 gap-2">
             <label className="text-sm">Width<input type="number" className={input} value={customSize.w} onChange={(e) => setCustomSize({ ...customSize, w: +e.target.value })} /></label>
@@ -227,9 +242,10 @@ function CertificatesPage() {
         {!staff && mode === "top3" && certs.length === 0 && <p className="text-sm text-muted-foreground">No marks entered for this class yet, so positions can't be worked out.</p>}
         {staff ? <PrintButton label="Print / Save certificates as PDF" /> : <PrintButton label="Print / Save certificates as PDF" classId={classId} />}
       </div>
-      <div className="certificate-pages overflow-x-auto">
+      <CertificatePreview size={size}>
         {certs.map((c, i) => <CertificateSheet key={i} data={c} school={school} theme={theme} watermark={!lic.loading && !lic.canPrint}
           photoMode={photoMode} size={size} display={display} medallion={medallion} frame={frame} fonts={fonts} />)}
+      </CertificatePreview>
       </div>
     </main>
   </div>;
