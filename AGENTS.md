@@ -28,3 +28,4 @@
 - Individual print licenses lock to the first class printed via record_print_class; school/developer licenses and class-less prints (Q&A) are unrestricted — closes the multi-class loophole.
 - Certificate editor preferences remain transient display state; CertificatePreview fits the unchanged millimetre sheet on screen and resets fitting for print, so school data and licensed print accounting stay separate.
 - Certificate emblems use shared vector artwork and a symmetric three-column signature footer with a separate stamp slot; typography sizing is display-only so templates and record data stay unchanged.
+- Q&A selection maps displayed learning areas to exact available banks and leaves missing banks unavailable; English written packs keep composition choices, passage and literature together with their marking schemes.

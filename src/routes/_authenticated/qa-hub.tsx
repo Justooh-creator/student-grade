@@ -11,6 +11,7 @@ import { BANKS, scoreQuiz, type SubjectBank } from "@/lib/questionBank";
 import { generateJhsPack, JHS_SUBJECTS } from "@/lib/dynamicJhs";
 import { isJhsClass, quizPageRange, THEORY_REQUIRED } from "@/lib/qaRules";
 import { freshMathSeed, generateMathPack, isMathClass, mathTopicLabel, MATH_TOPICS, type MathTopicChoice } from "@/lib/dynamicMath";
+import { qaSubjects, qaBankSubject, GHANAIAN_LANGUAGES, theoryParts } from "@/lib/qaSubjects";
 
 export const Route = createFileRoute("/_authenticated/qa-hub")({
   head: () => ({ meta: [
@@ -31,6 +32,7 @@ function QaHub() {
   const { school } = useAppData();
   const [classId, setClassId] = useState<ClassId>("b9");
   const [subject, setSubject] = useState("Mathematics");
+  const [language, setLanguage] = useState<string>("Eʋegbe");
   const [topic, setTopic] = useState<MathTopicChoice>("all");
   const [bank, setBank] = useState<SubjectBank | null>(() => generateMathPack("b9", freshMathSeed()));
   const [mode, setMode] = useState<Mode>("menu");
@@ -38,35 +40,34 @@ function QaHub() {
   const [done, setDone] = useState(false);
   const [revision, setRevision] = useState(1);
   const [page, setPage] = useState(0);
-  const math = subject === "Mathematics" && isMathClass(classId);
+  const math = (subject === "Mathematics" || subject === "Numeracy") && isMathClass(classId);
   const kindergarten = classId.startsWith("kg");
   const jhs = isJhsClass(classId);
-  const dynamic = math || jhs;
-  const subjects = jhs ? [...JHS_SUBJECTS] : isMathClass(classId)
-    ? ["Mathematics", ...BANKS.filter((b) => b.classId === classId && b.subject !== "Mathematics").map((b) => b.subject)]
-    : [];
+  const dynamic = !!bank && (math || jhs);
+  const english = subject === "English Language" && jhs;
+  const subjects = qaSubjects(classId);
   const result = scoreQuiz(bank?.objectives ?? [], answers);
   const answered = Object.keys(answers).length;
 
   const reset = () => { setAnswers({}); setDone(false); setPage(0); };
   const makePack = (id: ClassId, name: string, prev?: SubjectBank): SubjectBank | null => {
-    if (isJhsClass(id) && name !== "Mathematics") return generateJhsPack(id, name, freshMathSeed(), prev);
+    if (isJhsClass(id) && name !== "Mathematics" && JHS_SUBJECTS.some((s) => s === name)) return generateJhsPack(id, name, freshMathSeed(), prev);
     if (name === "Mathematics" && isMathClass(id)) return generateMathPack(id, freshMathSeed(), "all", prev);
     return BANKS.find((b) => b.classId === id && b.subject === name) ?? null;
   };
   const newQuestions = () => {
     if (!dynamic) return;
-    setBank(math && isMathClass(classId) ? generateMathPack(classId, freshMathSeed(), topic, bank ?? undefined) : makePack(classId, subject, bank ?? undefined));
+    setBank(math && isMathClass(classId) ? generateMathPack(classId, freshMathSeed(), topic, bank ?? undefined) : makePack(classId, qaBankSubject(subject, language), bank ?? undefined));
     setRevision((n) => n + 1);
     reset();
   };
   const selectClass = (id: ClassId) => {
-    setClassId(id); setSubject("Mathematics"); setTopic("all"); setMode("menu"); reset();
+    setClassId(id); setSubject(id.startsWith("kg") ? "Numeracy" : "Mathematics"); setTopic("all"); setMode("menu"); reset();
     setBank(isMathClass(id) ? generateMathPack(id, freshMathSeed()) : null);
   };
   const selectSubject = (name: string) => {
     setSubject(name); setTopic("all"); setMode("menu"); reset();
-    setBank(makePack(classId, name));
+    setBank(makePack(classId, qaBankSubject(name, language)));
   };
   const selectTopic = (value: string) => {
     const choice = value === "all" ? "all" : MATH_TOPICS.find((t) => t === value);
@@ -90,7 +91,14 @@ function QaHub() {
         {subjects.length > 0 && <div className="flex flex-wrap gap-2" aria-label="Subjects">
           {subjects.map((name) => <Button key={name} aria-pressed={name === subject} variant={name === subject ? "default" : "outline"} className="h-auto min-h-11 whitespace-normal" onClick={() => selectSubject(name)}>{name}</Button>)}
         </div>}
-        {jhs && !math && <Button variant="outline" className="h-11" onClick={newQuestions}><RefreshCw /> New Questions</Button>}
+        {subject === "Ghanaian Language" && <div>
+          <label id="ghanaian-language-label" className="mb-1 block text-sm font-semibold">Ghanaian language</label>
+          <Select value={language} onValueChange={(value) => { setLanguage(value); setMode("menu"); reset(); setBank(makePack(classId, qaBankSubject(subject, value))); }}>
+            <SelectTrigger aria-labelledby="ghanaian-language-label"><SelectValue /></SelectTrigger>
+            <SelectContent>{GHANAIAN_LANGUAGES.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>}
+        {dynamic && jhs && !math && <Button variant="outline" className="h-11" onClick={newQuestions}><RefreshCw /> New Questions</Button>}
         {math && <div className="flex flex-wrap items-end gap-3">
           <div className="min-w-0 flex-1 basis-52">
             <label id="math-topic-label" className="mb-1 block text-sm font-semibold">Topic</label>
@@ -103,7 +111,7 @@ function QaHub() {
         </div>}
         {bank && <>
           <p className="text-sm text-muted-foreground">{classDisplayName(classId)} · {bank.subject} · {bank.objectives.length} multiple-choice · {bank.theory.length} subjective</p>
-          <p className="text-sm text-muted-foreground">🇬🇭 GES & NaCCA curriculum-based practice · {kindergarten ? "Numeracy & teacher observations" : "Questions & worked marking schemes"}</p>
+          <p className="text-sm text-muted-foreground">Original revision practice · Not an official WAEC paper</p>
           <div className="flex flex-wrap gap-2">
             <Button variant={mode === "quiz" ? "default" : "secondary"} className="h-11" onClick={startQuiz}>🎯 Interactive quiz (free)</Button>
             <Button variant={mode === "paper" ? "default" : "secondary"} className="h-11" onClick={() => setMode("paper")}>📝 Exam paper</Button>
@@ -115,9 +123,9 @@ function QaHub() {
       </div>
 
       {!bank && <div className="py-8 text-center">
-        <h2 className="text-xl font-bold">{classDisplayName(classId)}</h2>
-        <p className="mt-2 text-muted-foreground">Questions for this class are not available yet.</p>
-        <Button variant="outline" className="mt-4" onClick={() => selectClass("b7")}>Basic 7 Mathematics</Button>
+        <h2 className="text-xl font-bold">Updates Coming Soon</h2>
+        <p className="mt-2 text-muted-foreground">{classDisplayName(classId)} · {subject === "Ghanaian Language" ? language : subject}</p>
+        <p className="mt-1 text-muted-foreground">This question bank is being prepared.</p>
       </div>}
       {bank && mode === "menu" && <div className="border-y border-border py-6">
         <h2 className="text-lg font-bold">{bank.subject} · {classDisplayName(classId)}</h2>
@@ -160,8 +168,8 @@ function QaHub() {
           <p className="font-semibold">{classDisplayName(classId)} · {bank.subject} {mode === "scheme" ? "— Marking Scheme" : "— Practice Paper"}</p>
           <p className="text-sm">{school.term} · {school.academicYear} · {kindergarten ? "Teacher-guided practice" : "Time: 2 hours"}</p>
           {topic !== "all" && <p className="text-sm">{topic}</p>}
-          <p className="mt-1 text-xs">🇬🇭 GES & NaCCA curriculum-based practice</p>
-          {mode === "paper" && <><p className="mt-2 text-left text-sm">Name: ______________________________ Class: __________ Date: __________</p><p className="mt-2 text-sm italic">{kindergarten ? "Teacher reads each question aloud. Learner may point, count or respond orally." : jhs ? `Answer ALL questions in Section A. In Section B, answer Question 1 and any other ${THEORY_REQUIRED - 1} questions.` : "Answer all questions in Sections A and B. Show your working in Section B."}</p></>}
+          <p className="mt-1 text-xs">Original revision practice · Not an official WAEC paper</p>
+          {mode === "paper" && <><p className="mt-2 text-left text-sm">Name: ______________________________ Class: __________ Date: __________</p><p className="mt-2 text-sm italic">{kindergarten ? "Teacher reads each question aloud. Learner may point, count or respond orally." : english ? "Answer ALL questions in Section A. In Section B, answer ONE composition question in Part A and ALL questions in Parts B and C." : jhs ? `Answer ALL questions in Section A. In Section B, answer Question 1 and any other ${THEORY_REQUIRED - 1} questions.` : "Answer all questions in Sections A and B. Show your working in Section B."}</p></>}
         </header>
         <h3 className="mb-2 font-bold">SECTION A — Objective ({bank.objectives.length} marks)</h3>
         <ol className="mb-5 list-decimal space-y-3 pl-6">
@@ -171,9 +179,11 @@ function QaHub() {
               : <p className="mt-1 text-sm"><b>{L[q.answer]}: {q.options[q.answer]}</b> — {q.explain}</p>}
           </li>)}
         </ol>
-        <h3 className="mb-2 font-bold">{kindergarten ? "SECTION B — Oral & Practical Observation" : jhs ? `SECTION B — Subjective (${THEORY_REQUIRED * (bank.theory[0]?.marks ?? 20)} marks) · Question 1 is compulsory` : `SECTION B — Subjective (${bank.theory.reduce((sum, t) => sum + t.marks, 0)} marks)`}</h3>
-        <ol className="list-decimal space-y-4 pl-6">
-          {bank.theory.map((t) => <li key={t.id} className="break-inside-avoid">{t.q} <b>{kindergarten ? "[Gold / Silver / Bronze]" : `[${t.marks} marks]`}</b>
+        <h3 className="mb-2 font-bold">{kindergarten ? "SECTION B — Oral & Practical Observation" : english ? "SECTION B — Written Paper (70 marks)" : jhs ? `SECTION B — Subjective (${THEORY_REQUIRED * (bank.theory[0]?.marks ?? 20)} marks) · Question 1 is compulsory` : `SECTION B — Subjective (${bank.theory.reduce((sum, t) => sum + t.marks, 0)} marks)`}</h3>
+        <ol className="space-y-4">
+          {bank.theory.map((t, i) => <li key={t.id} className="break-inside-avoid">
+            {english && (i === 0 || i === 3 || i === 4) && <h4 className="mb-3 border-b border-border pb-2 font-bold">{i === 0 ? "PART A — Composition (30 marks) · Answer ONE question" : i === 3 ? "PART B — Comprehension (30 marks) · Compulsory" : "PART C — Literature (10 marks) · Compulsory"}</h4>}
+            <div className="flex items-start gap-3"><b className="shrink-0">{i + 1}.</b><div className="min-w-0 flex-1 space-y-2">{theoryParts(t.q).map((part, n) => <p key={n} className={`whitespace-pre-line ${/^\([a-z]\)/.test(part) ? "pl-4" : ""}`}>{part}</p>)}<b>{kindergarten ? "[Gold / Silver / Bronze]" : `[${t.marks} marks]`}</b></div></div>
             {mode === "scheme" ? <ul className="mt-1 list-disc pl-5 text-sm">{t.scheme.map((s) => <li key={s}>{s}</li>)}</ul> : <div className="mt-3 space-y-5" aria-label="Answer space"><div className="border-b border-border" /><div className="border-b border-border" /><div className="border-b border-border" /></div>}
           </li>)}
         </ol>
