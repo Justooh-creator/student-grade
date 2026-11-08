@@ -32,3 +32,6 @@
 - [x] Option 2: Fingerprint confirmation on account and lock-screen sign-out, OS PIN/password fallback; 11 tests passed and authenticated cancellation/success verified with a virtual device. Physical phone/PIN fallback remains device-dependent.
 - [ ] Certificate refinements: responsive workspace/fit preview, headings/Gothic font, royal ribbon clearance, class/design dropdowns, African spacing, independent term/year, larger photos.
 - [ ] Verify certificate refinements with automated tests and signed-in desktop/mobile preview and print checks.
+- [ ] Replace certificate coin seals with optional 25mm laurel emblems and separate school stamp across twelve designs.
+- [ ] Add independent certificate text sizes and verify A4/A3 output.
+- [ ] Add Q&A subject/language choices, upcoming notices and organised written questions.

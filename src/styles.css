@@ -65,6 +65,8 @@
   --ring: oklch(0.42 0.14 250);
   --paper: oklch(0.995 0.003 90);
   --rule: oklch(0.84 0.018 86);
+  --certificate-gold: #b58a2e;
+  --certificate-gold-light: #d8b65c;
 }
 
 @layer base {
@@ -225,6 +227,7 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
   .certificate-preview { position: sticky; top: 5rem; align-self: start; padding-top: 1rem; }
 }
 .certificate-page h1 { letter-spacing: 0; }
+.certificate-emblem { color: var(--certificate-gold); flex-shrink: 0; overflow: visible; }
 
 /* Stop stray insertion carets/selection on taps outside editable fields */
 @layer base {

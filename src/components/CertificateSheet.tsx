@@ -1,5 +1,5 @@
 import type { School } from "@/lib/store";
-import { DEFAULT_DISPLAY, headerLines, certificateSession, certificatePresentation, type CertTheme, type CertDisplay, type Medallion, type PhotoFrame, type CertFonts } from "@/lib/certificates";
+import { DEFAULT_DISPLAY, DEFAULT_MEDALLION, EMBLEM_HEIGHT_MM, certificateTextPoints, headerLines, certificateSession, certificatePresentation, type CertTheme, type CertDisplay, type Medallion, type PhotoFrame, type CertFonts, type CertTextSizes } from "@/lib/certificates";
 
 export type PhotoAdjust = { src: string; zoom: number; x: number; y: number };
 export type CertData = {
@@ -77,31 +77,26 @@ function Star({ cx, cy, r, fill }: { cx: number; cy: number; r: number; fill: st
   return <polygon points={pts} fill={fill} />;
 }
 
-function Seal({ t, label, medallion = "star", crest }: { t: T; label: string; medallion?: Medallion; crest?: string }) {
-  const burst = Array.from({ length: 48 }, (_, i) => {
-    const a = (Math.PI / 24) * i; const r = i % 2 ? 44 : 48;
-    return `${50 + r * Math.cos(a)},${50 + r * Math.sin(a)}`;
-  }).join(" ");
-  const leaves: React.ReactNode[] = [];
-  for (let d = 105; d <= 245; d += 14) for (const side of [d, 180 - d]) {
-    const a = (side * Math.PI) / 180;
-    leaves.push(<ellipse key={side} cx={50 + 31 * Math.cos(a)} cy={50 + 31 * Math.sin(a)} rx="2.4" ry="5.5" fill={t.dark ? "#1a1a1a" : "#fff"} opacity=".85" transform={`rotate(${side + 90 + (side > 90 && side < 270 ? 25 : -25)} ${50 + 31 * Math.cos(a)} ${50 + 31 * Math.sin(a)})`} />);
-  }
-  return (
-    <svg viewBox="0 0 100 100" style={{ width: "28mm", height: "28mm" }} aria-hidden>
-      <defs><radialGradient id={`g-${t.accent}`}><stop offset="0" stopColor={t.accent2} /><stop offset="1" stopColor={t.accent} /></radialGradient></defs>
-      <polygon points={burst} fill={`url(#g-${t.accent})`} />
-      <circle cx="50" cy="50" r="38" fill="none" stroke={t.dark ? "#1a1a1a" : "#fff"} strokeWidth="1.2" />
-      {leaves}
-      {medallion === "crest" && crest
-        ? <image href={crest} x="36" y="26" width="28" height="28" preserveAspectRatio="xMidYMid meet" />
-        : medallion === "crest"
-          ? <path d="M40 28 h20 v12 q0 10 -10 14 q-10 -4 -10 -14z" fill={t.dark ? "#1a1a1a" : "#fff"} />
-          : medallion === "trophy"
-            ? <g fill={t.dark ? "#1a1a1a" : "#fff"}><path d="M41 29 h18 v6 a9 9 0 0 1 -18 0z" /><path d="M41 31 h-4 a4 4 0 0 0 4 6 M59 31 h4 a4 4 0 0 1 -4 6" fill="none" stroke={t.dark ? "#1a1a1a" : "#fff"} strokeWidth="1.4" /><rect x="48.5" y="43" width="3" height="5" /><rect x="44" y="48" width="12" height="3" /></g>
-            : <Star cx={50} cy={40} r={8} fill={t.dark ? "#1a1a1a" : "#fff"} />}
-      <text x="50" y="62" textAnchor="middle" fontSize="7.5" fontWeight="700" fill={t.dark ? "#1a1a1a" : "#fff"} fontFamily="Cinzel, serif">{label}</text>
-    </svg>);
+function AcademicEmblem({ medallion, crest }: { medallion: Medallion; crest?: string }) {
+  if (medallion === "none") return null;
+  return <svg data-cert="emblem" className="certificate-emblem" viewBox="0 0 100 100" style={{ width: `${EMBLEM_HEIGHT_MM}mm`, height: `${EMBLEM_HEIGHT_MM}mm` }} role="img" aria-label={`${medallion} in gold laurel wreath`}>
+    {[false, true].map((mirror) => <g key={String(mirror)} transform={mirror ? "translate(100 0) scale(-1 1)" : undefined}>
+      <path d="M49 91 C22 83 13 53 24 25 Q28 15 35 10" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      {Array.from({ length: 9 }, (_, i) => {
+        const a = (128 + i * 13) * Math.PI / 180;
+        const x = 50 + 31 * Math.cos(a), y = 49 + 38 * Math.sin(a);
+        return <g key={i} transform={`translate(${x} ${y}) rotate(${-42 + i * 12})`}>
+          <path d="M0 0 Q-13 -2 -12 -12 Q-1 -12 0 0Z" fill="currentColor" />
+          <path d="M0 0 Q11 -2 10 -10 Q0 -9 0 0Z" fill="var(--certificate-gold-light)" />
+        </g>;
+      })}
+    </g>)}
+    <path d="M42 92 Q50 86 58 92 M50 89 l-4 7 M50 89 l4 7" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    {medallion === "crest" && crest ? <image href={crest} x="35" y="32" width="30" height="32" preserveAspectRatio="xMidYMid meet" />
+      : medallion === "crest" ? <path d="M37 31 H63 V48 Q63 61 50 68 Q37 61 37 48Z M43 38 H57" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      : medallion === "trophy" ? <g fill="currentColor"><path d="M38 33 H62 V43 Q62 56 50 56 Q38 56 38 43Z" /><path d="M38 37 H32 V41 Q32 49 40 49 M62 37 H68 V41 Q68 49 60 49" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M48 55 H52 V65 H60 V68 H40 V65 H48Z" /></g>
+      : <Star cx={50} cy={48} r={15} fill="currentColor" />}
+  </svg>;
 }
 
 function YoungArt() {
@@ -159,9 +154,9 @@ function Laurel({ color, flip }: { color: string; flip?: boolean }) {
 }
 
 /** One certificate at the given page size (mm). Artwork is designed at A4 width and scaled for larger paper. */
-export function CertificateSheet({ data, school, theme, watermark, photoMode = "none", size = { w: 297, h: 210 }, display = DEFAULT_DISPLAY, medallion = "trophy", frame: photoFrame = "rect", fonts }: {
+export function CertificateSheet({ data, school, theme, watermark, photoMode = "none", size = { w: 297, h: 210 }, display = DEFAULT_DISPLAY, medallion = DEFAULT_MEDALLION, frame: photoFrame = "rect", fonts, textSizes }: {
   data: CertData; school: School; theme: CertTheme; watermark: boolean; photoMode?: PhotoMode; size?: { w: number; h: number };
-  display?: CertDisplay; medallion?: Medallion; frame?: PhotoFrame; fonts?: Partial<CertFonts>;
+  display?: CertDisplay; medallion?: Medallion; frame?: PhotoFrame; fonts?: Partial<CertFonts>; textSizes?: Partial<CertTextSizes>;
 }) {
   const d = display;
   const f = { heading: fonts?.heading || "", name: fonts?.name || "", award: fonts?.award || "", citation: fonts?.citation || "" };
@@ -169,6 +164,7 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
   const kind = theme === "young" && data.recipient === "staff" ? "executive" : theme;
   const t = THEME[kind];
   const portrait = size.h > size.w;
+  const points = (element: keyof CertFonts) => `${certificateTextPoints(element, portrait, textSizes?.[element])}pt`;
   const baseW = portrait ? 210 : 297;
   const baseH = (baseW * size.h) / size.w;
   const zoom = size.w / baseW;
@@ -183,10 +179,10 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
   const text = (
     <div className="flex flex-1 flex-col items-center text-center" style={{ minWidth: 0 }}>
       <p style={{ fontFamily: t.body }} className="text-[14pt] italic">{certificatePresentation(heading)}</p>
-      <p data-cert="recipient" style={{ fontFamily: f.name || t.name, borderColor: t.accent2, color: kind === "royalblue" ? "#0a2558" : undefined }} className={`mt-[2mm] max-w-full break-words border-b-2 px-2 leading-tight ${t.name.includes("cursive") ? "font-normal" : "font-bold"} ${portrait ? "text-[32pt]" : "text-[40pt]"}`}>{data.name || (staff ? "Staff Name" : "Learner Name")}</p>
+      <p data-cert="recipient" style={{ fontFamily: f.name || t.name, fontSize: points("name"), borderColor: t.accent2, color: kind === "royalblue" ? "#0a2558" : undefined }} className={`mt-[2mm] max-w-full break-words border-b-2 px-2 leading-tight ${t.name.includes("cursive") ? "font-normal" : "font-bold"}`}>{data.name || (staff ? "Staff Name" : "Learner Name")}</p>
       {d.className && <p style={{ fontFamily: t.body }} className="mt-[2mm] text-[13pt]">{staff ? [data.line1, data.line2].filter(Boolean).join(" · ") : data.line1 ? `of ${data.line1}` : ""}</p>}
-      <p style={{ fontFamily: f.award || (kind === "modern" || kind === "young" || kind === "minimal" ? t.title : "'Cinzel', serif"), color: kind === "royalblue" ? "#b8860b" : t.accent }} className="mt-[4mm] max-w-full break-words text-[21pt] font-extrabold uppercase">{data.award}</p>
-      {d.citation && data.citation && <p style={{ fontFamily: f.citation || t.body }} className="mt-[2mm] max-w-[200mm] text-[14pt] italic">{data.citation}</p>}
+      <p data-cert="award" style={{ fontFamily: f.award || (kind === "modern" || kind === "young" || kind === "minimal" ? t.title : "'Cinzel', serif"), fontSize: points("award"), color: kind === "royalblue" ? "#b8860b" : t.accent }} className="mt-[4mm] max-w-full break-words font-extrabold uppercase">{data.award}</p>
+      {d.citation && data.citation && <p data-cert="citation" style={{ fontFamily: f.citation || t.body, fontSize: points("citation") }} className="mt-[2mm] max-w-[200mm] italic">{data.citation}</p>}
       {session && <p data-cert="session" style={{ fontFamily: t.body }} className="mt-[1mm] text-[12pt]">{session}</p>}
     </div>);
 
@@ -221,7 +217,7 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
           </div>}
           <div className="mt-[4mm] flex w-full shrink-0 items-center justify-center gap-3">
           {kind === "royalblue" && <Laurel color="#c8961e" />}
-          <h1 style={{ fontFamily: f.heading || t.title, color: t.accent, letterSpacing: 0 }} className={`min-w-0 break-words leading-tight ${portrait ? "text-[29pt]" : "text-[34pt]"}`}>
+          <h1 data-cert="heading" style={{ fontFamily: f.heading || t.title, fontSize: points("heading"), color: t.accent, letterSpacing: 0 }} className="min-w-0 break-words leading-tight">
             {heading}
           </h1>
           {kind === "royalblue" && <Laurel color="#c8961e" flip />}
@@ -230,18 +226,19 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
             {photoMode !== "none" && <Photo p={data.photo} w={full ? portrait ? 68 : 62 : 35} h={full ? portrait ? 85 : 78 : 45} t={t} frame={photoFrame} />}
             {text}
           </div>
-          <div data-cert="footer" className="flex w-full shrink-0 items-end justify-around gap-[4mm] text-[11pt]" style={{ fontFamily: t.body }}>
-            {d.leftSignature && data.leftSigner && <div className="min-w-0 flex-1">
+          <div data-cert="footer" className="grid w-full shrink-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-[4mm] text-[11pt]" style={{ fontFamily: t.body }}>
+            <div data-cert="left-signature" className="min-w-0">{d.leftSignature && data.leftSigner && <>
               {data.leftSignature ? <img src={data.leftSignature} alt="" className="mx-auto h-[14mm] object-contain" /> : <div className="h-[14mm]" />}
-              <p className="border-t pt-1" style={{ borderColor: t.ink }}>{data.leftSigner}</p></div>}
-            {(d.seal || (d.date && data.date)) && <div className="flex shrink-0 flex-col items-center">
-              {d.seal && (school.stamp ? <img src={school.stamp} alt="" className="h-[22mm] object-contain" /> : <Seal t={t} label="EXCELLENCE" medallion={medallion} crest={school.logo} />)}
+              <p className="border-t pt-1" style={{ borderColor: t.ink }}>{data.leftSigner}</p></>}</div>
+            <div data-cert="award-centre" className="flex flex-col items-center">
+              {d.seal && <AcademicEmblem medallion={medallion} crest={school.logo} />}
+              {d.seal && school.stamp && <img data-cert="stamp" src={school.stamp} alt="School stamp" className="mt-[2mm] h-[18mm] max-w-[28mm] object-contain" />}
               {d.date && data.date && <p className="mt-1">{data.date}</p>}
-            </div>}
-            {d.rightSignature && <div data-cert="right-signature" className="min-w-0 flex-1">
+            </div>
+            <div data-cert="right-signature" className="min-w-0">{d.rightSignature && <>
               {school.signature ? <img src={school.signature} alt="" className="mx-auto h-[14mm] object-contain" /> : <div className="h-[14mm]" />}
               <p className="border-t pt-1" style={{ borderColor: t.ink }}>{data.rightSigner ?? "Headteacher"}</p>
-              {data.rightName && <p className="mt-1 break-words leading-tight">{data.rightName}</p>}</div>}
+              {data.rightName && <p className="mt-1 break-words leading-tight">{data.rightName}</p>}</>}</div>
           </div>
         </div>
       </div>

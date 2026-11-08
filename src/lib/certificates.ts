@@ -42,7 +42,7 @@ export const DISPLAY_LABELS: { key: keyof CertDisplay; label: string; group: "He
   { key: "date", label: "Award date", group: "Text" },
   { key: "leftSignature", label: "Left signature", group: "Signatures" },
   { key: "rightSignature", label: "Right signature", group: "Signatures" },
-  { key: "seal", label: "Medallion / stamp", group: "Signatures" },
+  { key: "seal", label: "Emblem & school stamp", group: "Signatures" },
   { key: "watermarkBg", label: "Background pattern", group: "Signatures" },
 ];
 
@@ -75,9 +75,14 @@ export function signerTitles(p: SignerPreset, custom: { left: string; right: str
   }
 }
 
-export type Medallion = "trophy" | "star" | "crest";
+export type Medallion = "trophy" | "star" | "crest" | "none";
+export const DEFAULT_MEDALLION: Medallion = "star";
+export const EMBLEM_HEIGHT_MM = 25;
 export const MEDALLIONS: { id: Medallion; label: string }[] = [
-  { id: "trophy", label: "Award Trophy" }, { id: "star", label: "Five-Point Star" }, { id: "crest", label: "School Crest" },
+  { id: "star", label: "Gold Laurel Wreath & Star" },
+  { id: "crest", label: "School Crest in Laurel Wreath" },
+  { id: "trophy", label: "Award Trophy in Laurel Wreath" },
+  { id: "none", label: "None" },
 ];
 
 export type PhotoFrame = "circle" | "oval" | "rect";
@@ -98,6 +103,17 @@ export const FONT_CHOICES: { id: string; label: string }[] = [
   { id: "'UnifrakturMaguntia', 'Old English Text MT', Georgia, serif", label: "Gothic / Blackletter" },
 ];
 export type CertFonts = { heading: string; name: string; award: string; citation: string };
+export type CertTextSizes = Record<keyof CertFonts, number>;
+export const DEFAULT_TEXT_SIZES: CertTextSizes = { heading: 1, name: 1, award: 1, citation: 1 };
+export const TEXT_SIZE_CHOICES = [
+  { label: "Small", value: 0.85 }, { label: "Normal", value: 1 },
+  { label: "Large", value: 1.15 }, { label: "Extra Large", value: 1.3 },
+];
+/** Limit display-only scaling; paper dimensions and stored school data never change. */
+export function certificateTextPoints(element: keyof CertFonts, portrait: boolean, scale = 1) {
+  const base = { heading: portrait ? 29 : 34, name: portrait ? 32 : 40, award: 21, citation: 14 };
+  return base[element] * Math.max(0.85, Math.min(1.3, Number.isFinite(scale) ? scale : 1));
+}
 
 export const CERT_HEADINGS = ["Certificate of Award", "Citation", "Citation of Honour", "Certificate of Recognition", "Certificate of Appreciation", "Certificate of Honour", "Certificate of Merit", "Certificate of Excellence", "Custom Heading"];
 
