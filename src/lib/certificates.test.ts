@@ -1,7 +1,28 @@
 import { describe, it, expect } from "vitest";
-import { DEFAULT_DISPLAY, DISPLAY_LABELS, headerLines, signerTitles, canMakeCertificates, paperSize, certificateSession, certificatePresentation } from "./certificates";
+import { DEFAULT_DISPLAY, DISPLAY_LABELS, DEFAULT_MEDALLION, EMBLEM_HEIGHT_MM, MEDALLIONS, DEFAULT_TEXT_SIZES, certificateTextPoints, headerLines, signerTitles, canMakeCertificates, paperSize, certificateSession, certificatePresentation } from "./certificates";
 
 const school = { name: "Awuyakope D/A Basic", motto: "Knowledge is power", district: "South Tongu", region: "Volta" };
+
+describe("academic emblem and independent sizing", () => {
+  it("defaults to a star with crest, trophy and none alternatives", () => {
+    expect(DEFAULT_MEDALLION).toBe("star");
+    expect(MEDALLIONS.map((m) => m.id)).toEqual(["star", "crest", "trophy", "none"]);
+  });
+  it("uses a delicate 24–26mm A4 emblem", () => {
+    expect(EMBLEM_HEIGHT_MM).toBeGreaterThanOrEqual(24);
+    expect(EMBLEM_HEIGHT_MM).toBeLessThanOrEqual(26);
+  });
+  it("preserves normal sizes", () => {
+    expect(certificateTextPoints("name", false, DEFAULT_TEXT_SIZES.name)).toBe(40);
+    expect(certificateTextPoints("heading", true, DEFAULT_TEXT_SIZES.heading)).toBe(29);
+  });
+  for (const [scale, value] of [[0.85, 34], [1.15, 46], [1.3, 52]]) {
+    it(`scales names independently at ${scale}`, () => {
+      expect(certificateTextPoints("name", false, scale)).toBe(value);
+      expect(certificateTextPoints("citation", false, DEFAULT_TEXT_SIZES.citation)).toBe(14);
+    });
+  }
+});
 
 describe("certificate display options", () => {
   it("retains all preferences and splits session into two toggles", () => {

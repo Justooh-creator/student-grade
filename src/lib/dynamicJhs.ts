@@ -1,6 +1,7 @@
 import { JHS_CONTENT } from "./jhsContent";
 import type { Objective, SubjectBank } from "./questionBank";
 import { JHS_OBJECTIVE_COUNT, JHS_THEORY_COUNT, THEORY_MARKS } from "./qaRules";
+import { englishWritten } from "./englishWritten";
 
 export const JHS_SUBJECTS = ["Mathematics", "Integrated Science", "English Language", "Ghanaian Language (Eʋegbe)", "Social Studies", "Religious and Moral Education", "Computing", "Career Technology"] as const;
 export function generateJhsPack(classId: "b7" | "b8" | "b9", subject: string, seed: number, previous?: SubjectBank): SubjectBank {
@@ -61,6 +62,6 @@ export function generateJhsPack(classId: "b7" | "b8" | "b9", subject: string, se
   const fresh = shuffle(unique.filter((q) => !old.has(q.q)));
   const objectives = shuffle([...fresh, ...shuffle(unique.filter((q) => old.has(q.q)))].slice(0, JHS_OBJECTIVE_COUNT)).map((q, i) => ({ ...q, id: `${classId}-${subject}-${seed}-o${i}` }));
   const written = shuffle(content.written).slice(0, JHS_THEORY_COUNT);
-  const theory = written.map(([topic, q, a, b, c], i) => ({ id: `${classId}-${subject}-${seed}-t${i}`, topic, q, marks: THEORY_MARKS, scheme: [`(a) ${a} [6 marks]`, `(b) ${b} [6 marks]`, `(c) ${c} [8 marks]`] }));
+  const theory = subject === "English Language" ? englishWritten(seed) : written.map(([topic, q, a, b, c], i) => ({ id: `${classId}-${subject}-${seed}-t${i}`, topic, q, marks: THEORY_MARKS, scheme: [`(a) ${a} [6 marks]`, `(b) ${b} [6 marks]`, `(c) ${c} [8 marks]`] }));
   return { id: `${classId}-${subject}-${seed}`, classId, subject, objectives, theory };
 }

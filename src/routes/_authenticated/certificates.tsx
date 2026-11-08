@@ -12,8 +12,8 @@ import { useCloud } from "@/lib/cloud";
 import { getClassLevel, schoolClassIds, type ClassId } from "@/lib/ges";
 import {
   CERT_HEADINGS, AWARD_PRESETS, STAFF_AWARD_PRESETS, CERT_THEMES, POSITION_AWARD, DEFAULT_DISPLAY, DISPLAY_LABELS, SIGNER_PRESETS, MEDALLIONS,
-  PHOTO_FRAMES, FONT_CHOICES, PAPERS, defaultCitation, defaultStaffCitation, topLearners, signerTitles, paperSize, canMakeCertificates,
-  type CertTheme, type CertDisplay, type SignerPreset, type Medallion, type PhotoFrame, type PaperId, type CertFonts,
+  PHOTO_FRAMES, FONT_CHOICES, PAPERS, DEFAULT_MEDALLION, DEFAULT_TEXT_SIZES, TEXT_SIZE_CHOICES, defaultCitation, defaultStaffCitation, topLearners, signerTitles, paperSize, canMakeCertificates,
+  type CertTheme, type CertDisplay, type SignerPreset, type Medallion, type PhotoFrame, type PaperId, type CertFonts, type CertTextSizes,
 } from "@/lib/certificates";
 
 export const Route = createFileRoute("/_authenticated/certificates")({
@@ -52,11 +52,12 @@ function CertificatesPage() {
   const [display, setDisplay] = useState<CertDisplay>(DEFAULT_DISPLAY);
   const [signers, setSigners] = useState<SignerPreset>("ct_ht");
   const [customSigners, setCustomSigners] = useState({ left: "", right: "" });
-  const [medallion, setMedallion] = useState<Medallion>("trophy");
+  const [medallion, setMedallion] = useState<Medallion>(DEFAULT_MEDALLION);
   const [photoMode, setPhotoMode] = useState<PhotoMode>("none");
   const [frame, setFrame] = useState<PhotoFrame>("rect");
   const [photo, setPhoto] = useState<PhotoAdjust>({ src: "", zoom: 1, x: 0, y: 0 });
   const [fonts, setFonts] = useState<CertFonts>({ heading: "", name: "", award: "", citation: "" });
+  const [textSizes, setTextSizes] = useState<CertTextSizes>(DEFAULT_TEXT_SIZES);
   const [paper, setPaper] = useState<PaperId>("A4");
   const [orientation, setOrientation] = useState<"landscape" | "portrait">("landscape");
   const [customSize, setCustomSize] = useState({ w: 297, h: 210, unit: "mm" as "mm" | "in" });
@@ -103,10 +104,15 @@ function CertificatesPage() {
     setSigners(r === "staff" ? "prop_ht" : "ct_ht"); setPhoto({ src: "", zoom: 1, x: 0, y: 0 });
   };
   const presets = staff ? STAFF_AWARD_PRESETS : AWARD_PRESETS;
-  const fontField = (k: keyof CertFonts, label: string) => <label className="text-sm font-semibold">{label}
-    <select className={input} value={fonts[k]} onChange={(e) => setFonts({ ...fonts, [k]: e.target.value })}>
+  const fontField = (k: keyof CertFonts, label: string) => <div className="space-y-2">
+    <label className="block text-sm font-semibold">{label}
+    <select className={input} aria-label={`${label} font`} value={fonts[k]} onChange={(e) => setFonts({ ...fonts, [k]: e.target.value })}>
       {FONT_CHOICES.map((f) => <option key={f.label} value={f.id}>{f.label}</option>)}
-    </select></label>;
+    </select></label>
+    <div role="group" aria-label={`${label} size`} className="grid grid-cols-2 gap-1">
+      {TEXT_SIZE_CHOICES.map((s) => <Button key={s.value} size="sm" variant={textSizes[k] === s.value ? "default" : "outline"} aria-pressed={textSizes[k] === s.value} onClick={() => setTextSizes((old) => ({ ...old, [k]: s.value }))}>{s.label}</Button>)}
+    </div>
+  </div>;
 
   return <div className="min-h-screen bg-background pb-8">
     <style>{`@media print { @page certificate { size: ${size.w}mm ${size.h}mm; margin: 0; } }`}</style>
@@ -177,14 +183,14 @@ function CertificatesPage() {
             <label className="text-sm font-semibold">Left title<input className={input} value={customSigners.left} onChange={(e) => setCustomSigners({ ...customSigners, left: e.target.value })} /></label>
             <label className="text-sm font-semibold">Right title<input className={input} value={customSigners.right} onChange={(e) => setCustomSigners({ ...customSigners, right: e.target.value })} /></label>
           </div>}
-          <label className="text-sm font-semibold">Medallion
+          <label className="text-sm font-semibold">Award emblem
             <select className={input} value={medallion} onChange={(e) => setMedallion(e.target.value as Medallion)}>
               {MEDALLIONS.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
             </select></label>
         </div>
 
         <details className="rounded-md border border-border p-3">
-          <summary className="cursor-pointer font-semibold">Fonts</summary>
+          <summary className="cursor-pointer font-semibold">Fonts & text sizes</summary>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             {fontField("heading", "Heading")}{fontField("name", "Recipient name")}{fontField("award", "Award title")}{fontField("citation", "Citation")}
           </div>
@@ -244,7 +250,7 @@ function CertificatesPage() {
       </div>
       <CertificatePreview size={size}>
         {certs.map((c, i) => <CertificateSheet key={i} data={c} school={school} theme={theme} watermark={!lic.loading && !lic.canPrint}
-          photoMode={photoMode} size={size} display={display} medallion={medallion} frame={frame} fonts={fonts} />)}
+          photoMode={photoMode} size={size} display={display} medallion={medallion} frame={frame} fonts={fonts} textSizes={textSizes} />)}
       </CertificatePreview>
       </div>
     </main>
