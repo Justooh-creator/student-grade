@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { DEFAULT_DISPLAY, DISPLAY_LABELS, DEFAULT_MEDALLION, EMBLEM_HEIGHT_MM, MEDALLIONS, DEFAULT_TEXT_SIZES, certificateTextPoints, headerLines, signerTitles, canMakeCertificates, paperSize, certificateSession, certificatePresentation } from "./certificates";
+import { DEFAULT_DISPLAY, DISPLAY_LABELS, DEFAULT_MEDALLION, EMBLEM_HEIGHT_MM, MEDALLIONS, DEFAULT_TEXT_SIZES, certificateTextPoints, headerLines, signerTitles, certificateSignerDefaults, canMakeCertificates, paperSize, certificateSession, certificatePresentation } from "./certificates";
 
 const school = { name: "Awuyakope D/A Basic", motto: "Knowledge is power", district: "South Tongu", region: "Volta" };
 
 describe("academic emblem and independent sizing", () => {
   it("defaults to a star with crest, trophy and none alternatives", () => {
     expect(DEFAULT_MEDALLION).toBe("star");
-    expect(MEDALLIONS.map((m) => m.id)).toEqual(["star", "crest", "trophy", "none"]);
+    expect(MEDALLIONS.map((m) => m.id)).toEqual(["star", "rosette", "crest", "trophy", "none"]);
   });
   it("uses a delicate 24–26mm A4 emblem", () => {
     expect(EMBLEM_HEIGHT_MM).toBeGreaterThanOrEqual(24);
@@ -59,6 +59,17 @@ describe("independent academic details", () => {
 });
 
 describe("signature titles", () => {
+  it("uses the selected class teacher and saved headteacher as signer defaults", () => {
+    expect(certificateSignerDefaults({ classTeacher: "General Teacher", headTeacher: "Head Name", classTeachers: { b4: "Basic Four Teacher" }, classTeacherSignatures: { b4: "local-image" } }, "b4", "ct_ht")).toEqual({ leftName: "Basic Four Teacher", rightName: "Head Name", leftSignature: "local-image" });
+  });
+  it("does not label a proprietor or assistant with the class teacher's name or signature", () => {
+    for (const preset of ["prop_ht", "aht_ht"] as const) {
+      expect(certificateSignerDefaults({ classTeacher: "Teacher Name", headTeacher: "Head Name", classTeacherSignatures: { b4: "local-image" } }, "b4", preset)).toEqual({ leftName: "", rightName: "Head Name", leftSignature: undefined });
+    }
+  });
+  it("inherits the general teacher name when no class-specific name exists", () => {
+    expect(certificateSignerDefaults({ classTeacher: "General Teacher" }, "b4", "ct_ht").leftName).toBe("General Teacher");
+  });
   it("defaults and presets", () => {
     expect(signerTitles("ct_ht", { left: "", right: "" })).toEqual({ left: "Class Teacher", right: "Headteacher" });
     expect(signerTitles("ht_only", { left: "", right: "" }).left).toBeNull();

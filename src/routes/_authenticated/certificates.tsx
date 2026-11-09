@@ -12,7 +12,7 @@ import { useCloud } from "@/lib/cloud";
 import { getClassLevel, schoolClassIds, type ClassId } from "@/lib/ges";
 import {
   CERT_HEADINGS, AWARD_PRESETS, STAFF_AWARD_PRESETS, CERT_THEMES, POSITION_AWARD, DEFAULT_DISPLAY, DISPLAY_LABELS, SIGNER_PRESETS, MEDALLIONS,
-  PHOTO_FRAMES, FONT_CHOICES, PAPERS, DEFAULT_MEDALLION, DEFAULT_TEXT_SIZES, TEXT_SIZE_CHOICES, defaultCitation, defaultStaffCitation, topLearners, signerTitles, paperSize, canMakeCertificates,
+  PHOTO_FRAMES, FONT_CHOICES, PAPERS, DEFAULT_MEDALLION, DEFAULT_TEXT_SIZES, TEXT_SIZE_CHOICES, defaultCitation, defaultStaffCitation, topLearners, signerTitles, certificateSignerDefaults, paperSize, canMakeCertificates,
   type CertTheme, type CertDisplay, type SignerPreset, type Medallion, type PhotoFrame, type PaperId, type CertFonts, type CertTextSizes,
 } from "@/lib/certificates";
 
@@ -52,6 +52,7 @@ function CertificatesPage() {
   const [display, setDisplay] = useState<CertDisplay>(DEFAULT_DISPLAY);
   const [signers, setSigners] = useState<SignerPreset>("ct_ht");
   const [customSigners, setCustomSigners] = useState({ left: "", right: "" });
+  const [signerEdits, setSignerEdits] = useState<Record<string, { name?: string; signature?: string }>>({});
   const [medallion, setMedallion] = useState<Medallion>(DEFAULT_MEDALLION);
   const [photoMode, setPhotoMode] = useState<PhotoMode>("none");
   const [frame, setFrame] = useState<PhotoFrame>("rect");
@@ -78,11 +79,25 @@ function CertificatesPage() {
   const inClass = students.filter((s) => s.classId === classId);
   const awardTitle = award === "Custom Award" ? custom || "Special Award" : award;
   const titles = signerTitles(signers, customSigners);
+  const defaults = certificateSignerDefaults(school, classId, signers);
+  const leftKey = `${signers}:${classId}:left`;
+  const rightKey = `${signers}:right`;
+  const leftName = signerEdits[leftKey]?.name ?? defaults.leftName;
+  const rightName = signerEdits[rightKey]?.name ?? defaults.rightName;
+  const leftSignature = signerEdits[leftKey]?.signature ?? defaults.leftSignature;
+  const rightSignature = signerEdits[rightKey]?.signature ?? school.signature;
+  const editSigner = (key: string, value: { name?: string; signature?: string }) => setSignerEdits((old) => ({ ...old, [key]: { ...old[key], ...value } }));
+  const uploadSignature = (key: string, file?: File) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => editSigner(key, { signature: String(reader.result) });
+    reader.readAsDataURL(file);
+  };
   const occasion = `${school.term} · ${school.academicYear} Academic Year`;
   const size = paperSize(paper, orientation, customSize);
   const chosen = inClass.find((s) => s.id === studentId);
   const photoFor = (src?: string): PhotoAdjust | undefined => photo.src ? photo : src ? { src, zoom: photo.zoom, x: photo.x, y: photo.y } : undefined;
-  const base = { heading: heading === "Custom Heading" ? customHeading : heading, date, occasion, leftSigner: titles.left, rightSigner: titles.right, rightName: school.headTeacher || undefined };
+  const base = { heading: heading === "Custom Heading" ? customHeading : heading, date, occasion, leftSigner: titles.left, rightSigner: titles.right, leftName, rightName, leftSignature, rightSignature };
 
   const certs: CertData[] = staff
     ? [{ ...base, recipient: "staff", name: staffName, line1: staffPos, line2: staffDept, award: awardTitle, citation: citation || defaultStaffCitation(awardTitle), photo: photo.src ? photo : undefined }]
@@ -183,6 +198,15 @@ function CertificatesPage() {
             <label className="text-sm font-semibold">Left title<input className={input} value={customSigners.left} onChange={(e) => setCustomSigners({ ...customSigners, left: e.target.value })} /></label>
             <label className="text-sm font-semibold">Right title<input className={input} value={customSigners.right} onChange={(e) => setCustomSigners({ ...customSigners, right: e.target.value })} /></label>
           </div>}
+          {([{ side: "Left", key: leftKey, name: leftName, signature: leftSignature, show: !!titles.left }, { side: "Right", key: rightKey, name: rightName, signature: rightSignature, show: true }]).filter((s) => s.show).map((s) => <div key={s.key} className="space-y-2">
+            <label className="block text-sm font-semibold">{s.side} signer name
+              <input className={input} value={s.name} onChange={(e) => editSigner(s.key, { name: e.target.value })} />
+            </label>
+            <label className="block text-sm">{s.side} signature (optional)
+              <input aria-label={`${s.side} signature image`} type="file" accept="image/*" className="block w-full min-w-0 text-sm" onChange={(e) => uploadSignature(s.key, e.target.files?.[0])} />
+            </label>
+            {s.signature && <Button size="sm" variant="outline" onClick={() => editSigner(s.key, { signature: "" })}>Use manual signing</Button>}
+          </div>)}
           <label className="text-sm font-semibold">Award emblem
             <select className={input} value={medallion} onChange={(e) => setMedallion(e.target.value as Medallion)}>
               {MEDALLIONS.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}

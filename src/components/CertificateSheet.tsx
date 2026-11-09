@@ -1,4 +1,5 @@
 import type { School } from "@/lib/store";
+import { useId } from "react";
 import { DEFAULT_DISPLAY, DEFAULT_MEDALLION, EMBLEM_HEIGHT_MM, certificateTextPoints, headerLines, certificateSession, certificatePresentation, type CertTheme, type CertDisplay, type Medallion, type PhotoFrame, type CertFonts, type CertTextSizes } from "@/lib/certificates";
 
 export type PhotoAdjust = { src: string; zoom: number; x: number; y: number };
@@ -12,7 +13,8 @@ export type CertData = {
   award: string; citation: string; date: string;
   occasion: string;
   heading?: string;
-  leftSigner: string | null; leftSignature?: string;
+  leftSigner: string | null; leftName?: string; leftSignature?: string;
+  rightSignature?: string;
   rightSigner?: string | undefined; rightName?: string | undefined;
   photo?: PhotoAdjust | undefined;
 };
@@ -75,6 +77,60 @@ function Star({ cx, cy, r, fill }: { cx: number; cy: number; r: number; fill: st
     return `${cx + rr * Math.cos(a)},${cy + rr * Math.sin(a)}`;
   }).join(" ");
   return <polygon points={pts} fill={fill} />;
+}
+
+/** Fully vector artwork, including the curved name: no external image or font dependency. */
+function SchoolRosette({ name }: { name: string }) {
+  const id = useId().replace(/:/g, "");
+  const gold = `${id}-gold`, arc = `${id}-arc`;
+  const label = name.trim().toUpperCase() || "SCHOOL NAME";
+  const petals = Array.from({ length: 96 }, (_, i) => {
+    const a = i * Math.PI / 48 - Math.PI / 2;
+    const r = 43 + 3 * Math.cos(i * Math.PI / 2);
+    return `${50 + r * Math.cos(a)},${48 + r * Math.sin(a)}`;
+  }).join(" ");
+  return <svg data-cert="emblem" className="certificate-emblem" viewBox="0 0 100 125" width="32mm" height="40mm" role="img" aria-label={`Gold rosette with ${label}`}>
+    <defs>
+      <linearGradient id={gold} x1="0" y1="0" x2="1" y2="1">
+        <stop stopColor="var(--certificate-gold-shadow)" /><stop offset=".3" stopColor="var(--certificate-gold-light)" /><stop offset=".5" stopColor="var(--certificate-gold-shine)" /><stop offset=".7" stopColor="var(--certificate-gold)" /><stop offset="1" stopColor="var(--certificate-gold-shadow)" />
+      </linearGradient>
+      <path id={arc} d="M19 51 A31 31 0 0 1 81 51" />
+    </defs>
+    <g stroke="var(--certificate-gold-light)" strokeWidth="1.3">
+      <path d="M28 71 L13 119 L30 111 L39 124 L53 78Z" fill="var(--certificate-ribbon)" />
+      <path d="M49 78 L62 124 L71 111 L88 119 L73 71Z" fill="var(--certificate-ribbon-shadow)" />
+      <path d="M31 84 L23 111 M68 84 L77 111" fill="none" />
+    </g>
+    <polygon points={petals} fill={`url(#${gold})`} stroke="var(--certificate-gold-shadow)" strokeWidth=".65" />
+    <circle cx="50" cy="48" r="37" fill="var(--certificate-gold-light)" stroke="var(--certificate-gold-shine)" strokeWidth="1.2" />
+    <circle cx="50" cy="48" r="34" fill="var(--certificate-gold-shine)" stroke="var(--certificate-gold-shadow)" strokeWidth=".6" />
+    <text fill="var(--certificate-ribbon-shadow)" fontFamily="Georgia, serif" fontWeight="bold" fontSize={label.length > 42 ? 4 : label.length > 27 ? 5 : 6} letterSpacing="0">
+      <textPath href={`#${arc}`} startOffset="50%" textAnchor="middle" textLength={label.length > 27 ? 91 : undefined} lengthAdjust="spacingAndGlyphs">{label}</textPath>
+    </text>
+    <g fill="none" stroke="var(--certificate-gold-shadow)" strokeWidth="1">
+      <path d="M46 73 Q24 65 28 43 M54 73 Q76 65 72 43" />
+      {Array.from({ length: 5 }, (_, i) => <g key={i}><ellipse cx={30 + i * 2.4} cy={46 + i * 5} rx="2" ry="4" transform={`rotate(-40 ${30 + i * 2.4} ${46 + i * 5})`} fill="var(--certificate-gold)" /><ellipse cx={70 - i * 2.4} cy={46 + i * 5} rx="2" ry="4" transform={`rotate(40 ${70 - i * 2.4} ${46 + i * 5})`} fill="var(--certificate-gold)" /></g>)}
+      <path d="M36 49 Q43 46 50 50 Q57 46 64 49 V64 Q57 61 50 65 Q43 61 36 64Z M50 50 V65 M39 53 Q44 51 47 54 M53 54 Q58 51 61 53 M39 58 Q44 56 47 59 M53 59 Q58 56 61 58" />
+    </g>
+    <Star cx={50} cy={39} r={6} fill="var(--certificate-gold-shadow)" />
+  </svg>;
+}
+
+/** Edge-only additions preserve each template's original frame and content clearance. */
+function BorderAccents({ kind, t, w, h }: { kind: CertTheme | "executive"; t: T; w: number; h: number }) {
+  const x = 12, y = 12, right = w - 12, bottom = h - 12;
+  const geometric = ["modern", "minimal", "platinum", "executive"].includes(kind);
+  const ornament = <g fill="none" stroke="currentColor" strokeWidth=".35">
+    {geometric ? <><path d="M0 15 V4 L4 0 H15 M3 15 V6 L6 3 H15" /><path d="M1 1 L9 9 M9 1 L1 9" opacity=".45" /></>
+      : kind === "young" ? <><Star cx={5} cy={5} r={3} fill="currentColor" /><path d="M0 13 Q4 9 8 13 T16 13" /></>
+      : kind === "african" ? <><path d="M2 2 L9 2 L9 9 L2 9Z M4 4 L7 4 L7 7 L4 7Z M12 1 V12 H1" /><path d="M15 3 Q10 5 15 8 Q20 5 15 3 M3 15 Q5 10 8 15 Q5 20 3 15" /></>
+      : <><path d="M0 16 C8 13 1 5 8 5 S16 0 16 0 M0 0 C2 8 9 1 9 9 S17 12 17 17 M1 1 Q14 1 14 14 Q1 14 1 1Z" /><path d="M3 8 Q8 3 11 8 Q8 12 3 8Z" /><circle cx="8" cy="8" r="1" fill="currentColor" /></>}
+  </g>;
+  return <svg data-decoration="border-accents" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" className="pointer-events-none absolute inset-0 h-full w-full" style={{ color: t.accent2 }} aria-hidden>
+    <rect x="8.5" y="8.5" width={w - 17} height={h - 17} fill="none" stroke="currentColor" strokeWidth=".2" />
+    {[[x,y,0],[right,y,90],[right,bottom,180],[x,bottom,270]].map(([cx,cy,r], i) => <g key={i} transform={`translate(${cx} ${cy}) rotate(${r})`}>{ornament}</g>)}
+    {[y - 3, bottom + 3].map((cy, i) => <g key={i} transform={`translate(${w / 2} ${cy})`} fill="none" stroke="currentColor" strokeWidth=".3"><path d="M-20 0 H-5 M5 0 H20 M-3 0 L0 -1.6 L3 0 L0 1.6Z" />{!geometric && <path d="M-15 0 Q-10 -3 -5 0 M5 0 Q10 3 15 0" />}</g>)}
+  </svg>;
 }
 
 function AcademicEmblem({ medallion, crest }: { medallion: Medallion; crest?: string }) {
@@ -191,6 +247,7 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
       <div style={{ width: `${baseW}mm`, height: `${baseH}mm`, zoom, position: "relative" }}>
         <div aria-hidden style={{ position: "absolute", inset: "6mm", border: frame }} />
         <div aria-hidden style={{ position: "absolute", inset: "10mm", border: `0.4mm solid ${t.accent2}` }} />
+        <BorderAccents kind={kind} t={t} w={baseW} h={baseH} />
         {corner(0, { top: "4mm", left: "4mm" })}{corner(90, { top: "4mm", right: "4mm" })}
         {corner(270, { bottom: "4mm", left: "4mm" })}{corner(180, { bottom: "4mm", right: "4mm" })}
         {d.watermarkBg && <div aria-hidden style={{ position: "absolute", inset: "10mm", opacity: t.dark ? 0.08 : 0.06, backgroundImage: `repeating-radial-gradient(circle at 50% 50%, ${t.accent} 0 0.3mm, transparent 0.3mm 2.2mm)` }} />}
@@ -229,16 +286,21 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
           <div data-cert="footer" className="grid w-full shrink-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-[4mm] text-[11pt]" style={{ fontFamily: t.body }}>
             <div data-cert="left-signature" className="min-w-0">{d.leftSignature && data.leftSigner && <>
               {data.leftSignature ? <img src={data.leftSignature} alt="" className="mx-auto h-[14mm] object-contain" /> : <div className="h-[14mm]" />}
-              <p className="border-t pt-1" style={{ borderColor: t.ink }}>{data.leftSigner}</p></>}</div>
+              <div className="border-t pt-1" style={{ borderColor: t.ink }}>
+                {data.leftName && <p className="break-words font-bold leading-tight">{data.leftName}</p>}
+                <p className="mt-1 leading-tight">{data.leftSigner}</p>
+              </div></>}</div>
             <div data-cert="award-centre" className="flex flex-col items-center">
-              {d.seal && <AcademicEmblem medallion={medallion} crest={school.logo} />}
+              {d.seal && (medallion === "rosette" ? <SchoolRosette name={school.name} /> : <AcademicEmblem medallion={medallion} crest={school.logo} />)}
               {d.seal && school.stamp && <img data-cert="stamp" src={school.stamp} alt="School stamp" className="mt-[2mm] h-[18mm] max-w-[28mm] object-contain" />}
               {d.date && data.date && <p className="mt-1">{data.date}</p>}
             </div>
             <div data-cert="right-signature" className="min-w-0">{d.rightSignature && <>
-              {school.signature ? <img src={school.signature} alt="" className="mx-auto h-[14mm] object-contain" /> : <div className="h-[14mm]" />}
-              <p className="border-t pt-1" style={{ borderColor: t.ink }}>{data.rightSigner ?? "Headteacher"}</p>
-              {data.rightName && <p className="mt-1 break-words leading-tight">{data.rightName}</p>}</>}</div>
+              {(data.rightSignature ?? school.signature) ? <img src={data.rightSignature ?? school.signature} alt="" className="mx-auto h-[14mm] max-w-full object-contain" /> : <div className="h-[14mm]" />}
+              <div className="border-t pt-1" style={{ borderColor: t.ink }}>
+                {data.rightName && <p className="break-words font-bold leading-tight">{data.rightName}</p>}
+                <p className="mt-1 leading-tight">{data.rightSigner ?? "Headteacher"}</p>
+              </div></>}</div>
           </div>
         </div>
       </div>
