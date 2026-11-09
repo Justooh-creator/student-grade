@@ -67,6 +67,10 @@
   --rule: oklch(0.84 0.018 86);
   --certificate-gold: #b58a2e;
   --certificate-gold-light: #d8b65c;
+  --certificate-gold-shadow: #8c641b;
+  --certificate-gold-shine: #fff1b6;
+  --certificate-ribbon: #123f91;
+  --certificate-ribbon-shadow: #0a2558;
 }
 
 @layer base {
