@@ -13,8 +13,8 @@ export type CertData = {
   award: string; citation: string; date: string;
   occasion: string;
   heading?: string;
-  leftSigner: string | null; leftName?: string; leftSignature?: string;
-  rightSignature?: string;
+  leftSigner: string | null; leftName?: string; leftSignature?: string | undefined;
+  rightSignature?: string | undefined;
   rightSigner?: string | undefined; rightName?: string | undefined;
   photo?: PhotoAdjust | undefined;
 };
