@@ -75,15 +75,25 @@ export function signerTitles(p: SignerPreset, custom: { left: string; right: str
   }
 }
 
-export type Medallion = "trophy" | "star" | "crest" | "none";
+export type Medallion = "trophy" | "star" | "crest" | "rosette" | "none";
 export const DEFAULT_MEDALLION: Medallion = "star";
 export const EMBLEM_HEIGHT_MM = 25;
 export const MEDALLIONS: { id: Medallion; label: string }[] = [
   { id: "star", label: "Gold Laurel Wreath & Star" },
+  { id: "rosette", label: "Gold Rosette Ribbon & School Name" },
   { id: "crest", label: "School Crest in Laurel Wreath" },
   { id: "trophy", label: "Award Trophy in Laurel Wreath" },
   { id: "none", label: "None" },
 ];
+
+/** Saved names are inherited only for the corresponding role; edits stay in the studio. */
+export function certificateSignerDefaults(school: { classTeacher?: string; headTeacher?: string; classTeachers?: Record<string, string>; classTeacherSignatures?: Record<string, string> }, classId: string, preset: SignerPreset) {
+  return {
+    leftName: preset === "ct_ht" ? school.classTeachers?.[classId] || school.classTeacher || "" : "",
+    rightName: school.headTeacher || "",
+    leftSignature: preset === "ct_ht" ? school.classTeacherSignatures?.[classId] : undefined,
+  };
+}
 
 export type PhotoFrame = "circle" | "oval" | "rect";
 export const PHOTO_FRAMES: { id: PhotoFrame; label: string }[] = [

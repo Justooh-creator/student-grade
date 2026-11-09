@@ -35,3 +35,6 @@
 - [ ] Replace certificate coin seals with optional 25mm laurel emblems and separate school stamp across twelve designs.
 - [ ] Add independent certificate text sizes and verify A4/A3 output.
 - [ ] Add Q&A subject/language choices, upcoming notices and organised written questions.
+- [x] Package A: editable role-aware signer names and device-only signature images with manual signing space.
+- [x] Package A: optional circular school-name rosette and enhanced borders verified across twelve themes.
+- [x] Package A: EduReport biometric wording; authenticated names/emblem flow, mobile layout, centred footer, single-page A4/A3 PDFs and 25 tests verified. Package B excluded; physical OS prompts may retain the site address.
