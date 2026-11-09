@@ -70,7 +70,7 @@ export function FingerprintLock() {
         <h1 className="text-xl">Verify it is you</h1>
         <p className="text-muted-foreground">Use biometric for safe login</p>
       </div>
-      <Button variant="outline" onClick={unlock} aria-label="Unlock with fingerprint" className="h-28 w-28 rounded-full border-2 border-primary p-6 text-primary">
+      <Button variant="outline" onClick={unlock} aria-label="Unlock with fingerprint" className="h-28 w-28 rounded-full border-2 border-primary p-6 text-primary [&_svg]:size-14">
         <Fingerprint className="h-14 w-14" />
       </Button>
       {error && <p className="text-sm text-destructive">{error}</p>}
