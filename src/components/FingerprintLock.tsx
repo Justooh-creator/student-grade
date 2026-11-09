@@ -57,9 +57,9 @@ export function FingerprintLock() {
     };
   }, [user, activeKey, markActive]);
 
-  useEffect(() => {
-    if (locked && user) unlock();
-  }, [locked, user, unlock]);
+  // Option A: show the branded EduReport screen first; the phone's
+  // fingerprint dialog only opens when the teacher taps the button.
+  useEffect(() => { if (locked) setError(""); }, [locked]);
 
   if (!locked || !user) return null;
   return (
@@ -73,6 +73,7 @@ export function FingerprintLock() {
       <Button variant="outline" onClick={unlock} aria-label="Unlock with fingerprint" className="h-28 w-28 rounded-full border-2 border-primary p-6 text-primary [&_svg]:size-14">
         <Fingerprint className="h-14 w-14" />
       </Button>
+      <p className="text-sm text-muted-foreground">Tap the fingerprint to unlock</p>
       {error && <p className="text-sm text-destructive">{error}</p>}
       <Button variant="ghost" disabled={signingOut} onClick={async () => {
         if (signingOut) return;
