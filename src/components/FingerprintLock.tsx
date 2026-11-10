@@ -63,9 +63,10 @@ export function FingerprintLock() {
     if (!locked) { autoPrompted.current = false; return; }
     setError("");
     if (autoPrompted.current || document.hidden) return;
-    autoPrompted.current = true;
     const id = window.setTimeout(() => {
-      unlock().then(() => {}, () => {});
+      if (autoPrompted.current) return;
+      autoPrompted.current = true;
+      void unlock();
     }, 300);
     return () => window.clearTimeout(id);
   }, [locked, unlock]);
