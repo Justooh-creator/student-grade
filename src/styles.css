@@ -150,9 +150,9 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
 
 /* Normalised screen type scale (report card uses pt sizes, unaffected) */
 @theme {
-  --text-xs: 0.875rem;
+  --text-xs: 0.75rem;
   --text-xs--line-height: 1.4;
-  --text-sm: 0.9375rem;
+  --text-sm: 0.875rem;
   --text-sm--line-height: 1.5;
   --text-base: 1rem;
   --text-base--line-height: 1.55;
@@ -160,8 +160,7 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
 }
 @media screen {
   body { font-size: 1rem; }
-  :is(.text-\[10px\], .text-\[11px\], .text-\[12px\], .text-\[13px\]):not(.print-sheet, .print-sheet *) { font-size: 0.875rem !important; }
-  :is(input, select, textarea, button):not(.print-sheet *) { font-size: 1rem; }
+  :is(input, select, textarea):not(.print-sheet *) { font-size: 1rem; }
   :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select):not(.print-sheet *) { min-height: 2.75rem; }
 }
 
