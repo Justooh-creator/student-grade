@@ -59,8 +59,8 @@ function StudentsPage() {
             <div>
               <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">{level.name} teacher's signature</span>
               <p className="text-[13px] text-muted-foreground">Photo of the signature on white paper — only the ink is kept.</p>
-              <div className="mt-1 flex flex-wrap items-center gap-2">
-                <div className="flex h-12 w-32 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-background">
+              <div className="mt-1 flex flex-nowrap items-center gap-2">
+                <div className="flex h-12 w-24 shrink-0 sm:w-32 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-background">
                   {school.classTeacherSignatures?.[classId]
                     ? <img src={school.classTeacherSignatures[classId]} alt={`${level.name} teacher signature`} className="max-h-full max-w-full object-contain" />
                     : <span className="text-[12px] text-muted-foreground">No signature</span>}

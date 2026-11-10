@@ -46,7 +46,7 @@ function ClassReportPage() {
           ← Back to score entry
         </Link>
         <p className="text-sm font-semibold">{level?.name} · {list.length} report card(s)</p>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto [&>*]:shrink-0 max-sm:[&_button]:h-9 max-sm:[&_button]:px-2.5 max-sm:[&_button]:text-xs max-sm:[&_a]:h-9 max-sm:[&_a]:px-2.5 max-sm:[&_a]:text-xs">
           <ClassTransfer classId={classId} className={level.name} />
           <Button asChild variant="outline"><Link to="/broadsheet" search={{ class: classId as ClassId }}>Class Broadsheet</Link></Button>
           {list.length > 0 && <PrintButton classId={classId} />}

@@ -136,7 +136,7 @@ function CertificatesPage() {
       <div className="certificate-editor-grid grid min-w-0 gap-6 lg:grid-cols-[minmax(320px,380px)_minmax(0,1fr)]">
       <div className="certificate-controls no-print min-w-0 space-y-4 py-4">
         <h1 className="font-display text-2xl font-bold">Awards & Certificates</h1>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-2 gap-2 [&>button]:min-w-0 [&>button]:whitespace-normal [&>button]:px-2 [&>button]:text-xs sm:[&>button]:text-sm">
           <Button onClick={() => switchRecipient("learner")} variant={!staff ? "default" : "outline"}>Learner award</Button>
           <Button onClick={() => switchRecipient("staff")} variant={staff ? "default" : "outline"}>Teacher / Staff award</Button>
         </div>

@@ -87,8 +87,8 @@ function TimetablePage() {
       <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} />
       <main className="mx-auto max-w-5xl space-y-4 px-4 py-5">
         <h1 className="text-2xl font-bold">📅 Class Timetable</h1>
-        <div className="no-print flex flex-wrap items-center gap-2">
-          <select aria-label="Select class" className="h-11 rounded-md border border-border bg-card px-3 font-bold" value={classId} onChange={(e) => setClassId(e.target.value as ClassId)}>
+        <div className="no-print flex flex-wrap items-center gap-2 max-sm:[&_button]:px-2 max-sm:[&_button]:text-sm">
+          <select aria-label="Select class" className="h-10 min-w-0 rounded-md border border-border bg-card px-3 font-bold" value={classId} onChange={(e) => setClassId(e.target.value as ClassId)}>
             {schoolClassIds(school).map(getClassLevel).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
           <div className="flex overflow-hidden rounded-md border border-border">
