@@ -57,9 +57,29 @@ export function FingerprintLock() {
     };
   }, [user, activeKey, markActive]);
 
-  // Option A: show the branded EduReport screen first; the phone's
-  // fingerprint dialog only opens when the teacher taps the button.
-  useEffect(() => { if (locked) setError(""); }, [locked]);
+  // Auto-prompt once per lock event; failures/cancels stay locked and wait for a tap (no loops).
+  const autoPrompted = useRef(false);
+  useEffect(() => {
+    if (!locked) { autoPrompted.current = false; return; }
+    setError("");
+    if (autoPrompted.current || document.hidden) return;
+    const id = window.setTimeout(() => {
+      if (autoPrompted.current) return;
+      autoPrompted.current = true;
+      void unlock();
+    }, 300);
+    return () => window.clearTimeout(id);
+  }, [locked, unlock]);
+  useEffect(() => {
+    const onVis = () => {
+      if (!document.hidden && locked && !autoPrompted.current) {
+        autoPrompted.current = true;
+        void unlock();
+      }
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, [locked, unlock]);
 
   if (!locked || !user) return null;
   return (

@@ -279,10 +279,17 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
           </h1>
           {kind === "royalblue" && <Laurel color="#c8961e" flip />}
           </div>
-          <div data-cert="body" className={`my-[4mm] flex w-full flex-1 items-center gap-[6mm] ${portrait ? "flex-col justify-center" : "justify-center"}`}>
-            {photoMode !== "none" && <Photo p={data.photo} w={full ? portrait ? 68 : 62 : 35} h={full ? portrait ? 85 : 78 : 45} t={t} frame={photoFrame} />}
-            {text}
-          </div>
+          {portrait || photoMode === "none" ? (
+            <div data-cert="body" className={`my-[4mm] flex w-full flex-1 items-center gap-[6mm] ${portrait ? "flex-col justify-center" : "justify-center"}`}>
+              {photoMode !== "none" && <Photo p={data.photo} w={full ? 68 : 35} h={full ? 85 : 45} t={t} frame={photoFrame} />}
+              {text}
+            </div>
+          ) : (
+            <div data-cert="body" className="relative my-[4mm] flex w-full flex-1 items-center justify-center" style={{ paddingLeft: `${(full ? 62 : 35) + 6}mm`, paddingRight: `${(full ? 62 : 35) + 6}mm` }}>
+              <div className="absolute left-0 top-1/2 -translate-y-1/2"><Photo p={data.photo} w={full ? 62 : 35} h={full ? 78 : 45} t={t} frame={photoFrame} /></div>
+              {text}
+            </div>
+          )}
           <div data-cert="footer" className="grid w-full shrink-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-[4mm] text-[11pt]" style={{ fontFamily: t.body }}>
             <div data-cert="left-signature" className="min-w-0">{d.leftSignature && data.leftSigner && <>
               {data.leftSignature ? <img src={data.leftSignature} alt="" className="mx-auto h-[14mm] object-contain" /> : <div className="h-[14mm]" />}
