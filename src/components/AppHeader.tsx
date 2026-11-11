@@ -11,7 +11,7 @@ import { useAppData } from "@/lib/store";
 import { fmt12, useLessonAlerts } from "@/lib/timetable";
 
 
-const tabBase = "min-w-0 flex-1 text-center leading-tight border-b-2 px-1 py-2.5 text-[11px] font-semibold sm:flex-none sm:whitespace-nowrap sm:px-3 sm:text-sm";
+const tabBase = "min-w-0 flex-1 text-center leading-tight whitespace-nowrap overflow-hidden text-ellipsis border-b-2 px-0.5 py-2.5 text-[10.5px] font-semibold sm:flex-none sm:whitespace-nowrap sm:px-3 sm:text-sm";
 const tabIdle = `${tabBase} border-transparent text-primary-foreground/70 hover:text-primary-foreground`;
 const tabActive = `${tabBase} border-accent text-primary-foreground`;
 
@@ -179,15 +179,15 @@ export function AppHeader({
         <Button
           onClick={() => setOpen(true)}
           aria-label="Open quick navigation"
-          className="flex h-9 w-9 items-center justify-center rounded-md border border-primary-foreground/25 hover:bg-primary-foreground/10"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-primary-foreground/25 hover:bg-primary-foreground/10"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M3 12h18M3 18h18" /></svg>
         </Button>
-        <div className="flex-1">
-          <p className="font-display text-base font-bold leading-tight sm:text-lg">{schoolName || "SBA Report Cards"}</p>
-          <p className="num text-[12px] uppercase tracking-[0.18em] text-primary-foreground/60">GES · {term} · {year}</p>
+        <div className="min-w-0 flex-1">
+          <p className="font-display text-base font-bold leading-tight truncate sm:text-lg">{schoolName || "SBA Report Cards"}</p>
+          <p className="num truncate text-[11px] uppercase tracking-[0.06em] sm:text-[12px] sm:tracking-[0.18em] text-primary-foreground/60">GES · {term} · {year}</p>
         </div>
-        <Link to="/school-cloud" className="rounded-full border border-primary-foreground/25 px-2.5 py-1 text-[13px] font-bold">
+        <Link to="/school-cloud" className="shrink-0 whitespace-nowrap rounded-full border border-primary-foreground/25 px-2.5 py-1 text-[11.5px] sm:text-[13px] font-bold">
           {cloud.status === "synced" ? "● Cloud saved" : cloud.status === "saving" ? "○ Saving…" : cloud.status === "offline" ? "! Not saved" : cloud.status === "no-school" ? "Join school cloud" : cloud.status === "loading" ? "…" : "Offline mode"}
         </Link>
       </div>
