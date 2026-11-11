@@ -130,7 +130,8 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
         const parts = sample(grade === 1 ? [2] : grade === 2 ? [2, 4] : [2, 3, 4]);
         const whole = parts * int(1, grade === 1 ? 5 : grade === 2 ? 10 : 20);
         const name = parts === 2 ? "half" : parts === 3 ? "one-third" : "one-quarter";
-        return { topic: selected, q: `What is ${name} (1/${parts}) of ${whole} sweets?`, value: whole / parts, explain: `Share ${whole} into ${parts} equal groups: ${whole} ÷ ${parts} = ${whole / parts}.` };
+        const object = sample(["sweets", "oranges", "pencils", "beads", "mangoes", "buttons", "counters", "crayons"]);
+        return { topic: selected, q: `What is ${name} (1/${parts}) of ${whole} ${object}?`, value: whole / parts, explain: `Share ${whole} ${object} into ${parts} equal groups: ${whole} ÷ ${parts} = ${whole / parts}.` };
       }
       case "Algebra": {
         if (grade === 1) {
