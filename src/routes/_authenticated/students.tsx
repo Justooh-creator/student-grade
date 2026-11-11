@@ -44,6 +44,16 @@ function StudentsPage() {
   const [adm, setAdm] = useState("");
   const full = list.length >= MAX_STUDENTS_PER_CLASS;
   const cloud = useCloud();
+  const { user } = useUser();
+  const [myName, setMyName] = useState("");
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    supabase.from("profiles").select("display_name").eq("id", user.id).maybeSingle()
+      .then(({ data }) => { if (active) setMyName(data?.display_name ?? ""); });
+    return () => { active = false; };
+  }, [user]);
+  const headCanCustom = canCustomHeadRemark(myName, school.headTeacher);
   const [filling, setFilling] = useState(false);
   async function fillAttendance() {
     if (!cloud.schoolId) { toast.error("Join School Cloud to use Daily Attendance marks."); return; }
