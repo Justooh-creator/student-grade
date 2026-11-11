@@ -1,6 +1,6 @@
 import { CameraButton } from "@/components/CameraCapture";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ClassPicker, TextField } from "@/components/ClassPicker";
 import { PresetField } from "@/components/PresetField";
@@ -15,6 +15,8 @@ import { LearnerImport } from "@/components/LearnerImport";
 import { useCloud } from "@/lib/cloud";
 import { supabase } from "@/integrations/supabase/client";
 import { countPresentDays, parseTermDate, type DayRow } from "@/lib/attendanceFill";
+import { canCustomHeadRemark } from "@/lib/headteacher";
+import { useUser } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/students")({
   validateSearch: validateClassSearch,
@@ -42,6 +44,16 @@ function StudentsPage() {
   const [adm, setAdm] = useState("");
   const full = list.length >= MAX_STUDENTS_PER_CLASS;
   const cloud = useCloud();
+  const { user } = useUser();
+  const [myName, setMyName] = useState("");
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    supabase.from("profiles").select("display_name").eq("id", user.id).maybeSingle()
+      .then(({ data }) => { if (active) setMyName(data?.display_name ?? ""); });
+    return () => { active = false; };
+  }, [user]);
+  const headCanCustom = canCustomHeadRemark(myName, school.headTeacher);
   const [filling, setFilling] = useState(false);
   async function fillAttendance() {
     if (!cloud.schoolId) { toast.error("Join School Cloud to use Daily Attendance marks."); return; }
@@ -162,7 +174,12 @@ function StudentsPage() {
                 <PresetField label="Attitude / conduct" value={s.conduct} presets={CONDUCT_PRESETS} onChange={(v) => updateStudent(s.id, { conduct: v })} placeholder="Select conduct" />
                 <PresetField label="Interest / hobby" value={s.interest} presets={INTEREST_PRESETS} onChange={(v) => updateStudent(s.id, { interest: v })} placeholder="Select interest" />
                 <PresetField label="Class teacher's remark" value={s.remark ?? ""} presets={REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { remark: v })} placeholder="Auto remark from average" />
-                <PresetField label="Headteacher's remark" value={s.headRemark ?? ""} presets={HEAD_REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { headRemark: v })} placeholder="Select headteacher's remark" allowCustom={false} />
+                <PresetField label="Headteacher's remark" value={s.headRemark ?? ""} presets={HEAD_REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { headRemark: v })} placeholder="Select headteacher's remark" allowCustom={headCanCustom} />
+                {!headCanCustom && (
+                  <p className="-mt-1 text-[11px] text-muted-foreground">
+                    Only the headteacher named in School Details can type a custom remark.
+                  </p>
+                )}
               </div>
               <details className="mt-2 rounded-lg border border-border bg-background/50 px-3 py-2">
                 <summary className="cursor-pointer text-[13px] font-bold uppercase tracking-[0.12em] text-foreground">Fees / accounts (optional — only filled items print on the report card)</summary>
