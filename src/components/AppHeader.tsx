@@ -22,15 +22,6 @@ const rowCls = (active: boolean) =>
       : "border-transparent hover:border-border hover:bg-muted"
   }`;
 
-function SectionLabel({ children }: { children: ReactNode }) {
-  return (
-    <p className="mt-5 flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
-      <span aria-hidden className="h-px w-4 bg-accent" />
-      {children}
-    </p>
-  );
-}
-
 function Svg({ children }: { children: ReactNode }) {
   return (
     <svg
@@ -235,8 +226,7 @@ export function AppHeader({
                 </Button>
               </div>
 
-              <SectionLabel>Quick links</SectionLabel>
-              <nav className="mt-2 grid gap-1" onClick={() => setOpen(false)}>
+              <nav className="mt-3 grid gap-1" onClick={() => setOpen(false)}>
                 <Link to="/school-cloud" className={rowCls(pathname.startsWith("/school-cloud"))}>
                   <RowCell icon={ICON.cloud} title="School Cloud" desc="Join your school and sync records" />
                 </Link>
