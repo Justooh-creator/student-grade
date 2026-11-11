@@ -26,12 +26,12 @@ export function useTabSwipe(current: Tab | null, classId: string) {
     const start = (e: TouchEvent) => {
       if (e.touches.length !== 1) { ok = false; return; }
       ok = !blocked(e.target);
-      sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+      const f = e.touches[0]; if (!f) return; sx = f.clientX; sy = f.clientY;
     };
     const end = (e: TouchEvent) => {
       if (!ok) return;
       ok = false;
-      const t = e.changedTouches[0];
+      const t = e.changedTouches[0]; if (!t) return;
       const dx = t.clientX - sx, dy = t.clientY - sy;
       if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
       const i = ORDER.indexOf(current) + (dx < 0 ? 1 : -1);
