@@ -25,7 +25,7 @@ function printReports() {
   });
 }
 
-export function PrintButton({ label = "Print / Save whole class as PDF (A4)", classId }: { label?: string; classId?: string }) {
+export function PrintButton({ label = "Print / Save whole class as PDF (A4)", classId, reportCards = false }: { label?: string; classId?: string; reportCards?: boolean }) {
   const { user, ready } = useUser();
   const lic = useLicense(user?.id);
   const { school } = useAppData();
@@ -36,7 +36,7 @@ export function PrintButton({ label = "Print / Save whole class as PDF (A4)", cl
   const locked = ready && !lic.loading && !lic.canPrint;
   const inSchool = cloud.status === "synced" || cloud.status === "saving";
 
-  if (inSchool && !canPrintReports(true, cloud.role)) {
+  if (reportCards && inSchool && !canPrintReports(true, cloud.role)) {
     return (
       <p className="max-w-md rounded-md border border-border bg-muted p-3 text-sm text-muted-foreground">
         🔒 You can preview these report cards. Only the Headteacher, Assistant Headteacher or School Admin can print them.
