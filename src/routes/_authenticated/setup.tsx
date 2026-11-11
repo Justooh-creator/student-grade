@@ -352,8 +352,6 @@ function SetupPage() {
             Go to Student Details <span aria-hidden>→</span>
           </Link>
         </div>
-        <section hidden>
-        </section>
         {school.term === "Term 3" && <PromotionRollover year={school.academicYear} />}
       </main>
     </div>
