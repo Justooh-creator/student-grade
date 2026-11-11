@@ -26,7 +26,8 @@ export function generateLowerPrimaryPack(classId: LowerClass, subject: string, s
   const names = shuffle(["Ama", "Kofi", "Sena", "Esi", "Abena", "Yao", "Adzo", "Kwame"]);
   const ewe = subject.includes("Eʋegbe");
   facts.forEach(([answer, clue, topic, fromGrade = 1], index) => {
-    const peers = facts.filter((f) => f[2] === topic);
+    const sameTopic = facts.filter((f) => f[2] === topic);
+    const peers = sameTopic.length >= 4 ? sameTopic : facts;
     const answers = peers.map((f) => f[0]);
     const clues = peers.map((f) => f[1]);
     const explanation = ewe ? `${answer}: ${clue}.` : `${clue} Answer: ${answer}.`;
@@ -53,10 +54,11 @@ export function generateLowerPrimaryPack(classId: LowerClass, subject: string, s
   // Avoid testing the same fact twice in a paper, except distinct English sentence/word-form exercises.
   const selected: typeof pool = [];
   const used = new Set<string>();
+  const usedQuestions = new Set<string>();
   const take = (q: (typeof pool)[number]) => {
     const key = `${q.topic}:${q.explain}`;
-    if (used.has(key) || selected.length >= JHS_OBJECTIVE_COUNT) return;
-    used.add(key); selected.push(q);
+    if (used.has(key) || usedQuestions.has(q.q) || selected.length >= JHS_OBJECTIVE_COUNT) return;
+    used.add(key); usedQuestions.add(q.q); selected.push(q);
   };
   // Grade-specific ideas are guaranteed instead of being lost through random sampling.
   if (grade > 1) ranked.filter((q) => q.grade === grade).forEach(take);

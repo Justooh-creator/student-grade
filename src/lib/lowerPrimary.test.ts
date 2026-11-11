@@ -58,7 +58,7 @@ describe("Independent Basic 1–3 practice papers", () => {
         const grade = Number(classId.slice(1));
         const pack = generateJhsPack(classId, subject, 42);
         const advanced = facts.filter((f) => (f[3] ?? 1) > grade);
-        for (const fact of advanced) expect(pack.objectives.some((q) => q.topic === fact[2])).toBe(false);
+        for (const fact of advanced) expect(pack.objectives.some((q) => q.explain === `${fact[0]}: ${fact[1]}.` || q.explain === `${fact[1]} Answer: ${fact[0]}.`)).toBe(false);
         if (grade > 1) {
           const current = facts.filter((f) => f[3] === grade);
           expect(pack.objectives.filter((q) => current.some((f) => f[2] === q.topic)).length).toBeGreaterThanOrEqual(6);

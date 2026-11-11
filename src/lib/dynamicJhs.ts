@@ -56,7 +56,7 @@ export function generateJhsPack(classId: PackClass, subject: string, seed: numbe
       add("Grammar", `Choose the correct verb: ${name}${plural ? " and Kofi" : ""} ___ ${object} every day.`, plural ? base : singular, [plural ? singular : base, ing, other], `The subject is ${plural ? "plural, so use the base verb" : "singular, so use the third-person singular verb"}: ${plural ? base : singular}.`);
     } else if (subject === "Integrated Science") {
       const value = a * b;
-      add("Energy", `A ${name === "Ama" ? "pupil" : "worker"} applies a force of ${a} N to move a box ${b} m in the force's direction. How much work is done?`, `${value} J`, [`${a + b} J`, `${value + a} J`, `${value - 1} J`], `Work = force × distance = ${a} × ${b} = ${value} J.`);
+      add("Energy", `A ${name === "Ama" ? "pupil" : "worker"} applies a force of ${a} N to move a box ${b} m in the force's direction. How much work is done?`, `${value} J`, [`${a + b} J`, `${value + a} J`, `${value - 1} J`, `${value + 1} J`, `${value + 2} J`], `Work = force × distance = ${a} × ${b} = ${value} J.`);
     } else if (subject === "Computing") {
       const fn = i % 3;
       const value = fn === 0 ? a + b : fn === 1 ? Math.max(a, b) : (a + b) / 2;

@@ -237,7 +237,7 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
   const objectives: Objective[] = [];
   const seen = new Set<string>();
   const oldQuestions = new Set(previous?.objectives.map((q) => q.q) ?? []);
-  for (let i = 0; i < (isJhsClass(classId) || ["b4", "b5", "b6"].includes(classId) ? JHS_OBJECTIVE_COUNT : 20); i++) {
+  for (let i = 0; i < (isJhsClass(classId) || lower || ["b4", "b5", "b6"].includes(classId) ? JHS_OBJECTIVE_COUNT : 20); i++) {
     const selected = topics[i % topics.length];
     if (!selected) continue;
     let item = make(selected);
@@ -249,7 +249,7 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
 
   const theory: Theory[] = [];
   const oldTheory = new Set(previous?.theory.map((q) => q.q.replace(/ Show your working\.$/, "")) ?? []);
-  for (let i = 0; i < (isJhsClass(classId) ? JHS_THEORY_COUNT : 4); i++) {
+  for (let i = 0; i < (isJhsClass(classId) || lower ? JHS_THEORY_COUNT : 4); i++) {
     const selected = topics[i % topics.length];
     if (!selected) continue;
     let item = make(selected);
@@ -257,7 +257,7 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
     while ((seen.has(item.q) || oldTheory.has(item.q)) && tries++ < 200) item = make(selected);
     seen.add(item.q);
     const finalAnswer = item.unit === "GH₵" || item.unit === "x =" ? `${item.unit} ${fmt(item.value)}` : `${fmt(item.value)}${item.unit ? ` ${item.unit}` : ""}`;
-    if (isJhsClass(classId)) {
+    if (isJhsClass(classId) || lower) {
       const second = make(selected);
       const third = make(selected);
       const response = (value: Item) => `${value.explain} Final answer: ${value.unit ?? ""} ${fmt(value.value)}.`;
