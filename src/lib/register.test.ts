@@ -11,3 +11,12 @@ describe("monthly register", () => {
     expect(r[0]).toEqual({ id: "a", marks: ["P", "A", ""], present: 1, absent: 1 });
   });
 });
+
+import { registerDays as rd } from "./register";
+import { describe as d2, it as i2, expect as e2 } from "vitest";
+d2("registerDays split weeks", () => {
+  i2("Monday 30 Nov 2026 joins December", () => {
+    e2(rd(2026, 10).at(-1)).toBe("2026-11-27");
+    e2(rd(2026, 11)[0]).toBe("2026-11-30");
+  });
+});
