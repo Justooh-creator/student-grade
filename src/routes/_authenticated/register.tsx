@@ -121,9 +121,9 @@ function RegisterPage() {
               <tr className="font-bold"><td colSpan={3} className="reg-name">Daily present — Total</td>{dayCells((i) => <td>{show(i) ? daily[i]!.boys + daily[i]!.girls : ""}</td>, (_, wi) => <td key={"t" + wi} className="reg-wk">{blank ? "" : weekly[wi]!.total}</td>)}<td /><td /></tr>
             </tbody>
           </table>
-          <table className="register-table reg-summary mt-3">
-            <thead><tr><th>Weekly totals</th><th>Dates</th><th>Times open</th><th>Cumulative</th><th>Boys</th><th>Girls</th><th>Total attendance</th></tr></thead>
-            <tbody>{weekly.map((w, wi) => <tr key={wi}><td className="font-bold">Week {wi + 1}</td><td>{format(new Date(days[weeks[wi]![0]!] + "T00:00"), "d MMM")} – {format(new Date(days[weeks[wi]![weeks[wi]!.length - 1]!] + "T00:00"), "d MMM")}</td><td>{blank ? "" : w.open}</td><td>{blank ? "" : w.cumulative}</td><td>{blank ? "" : w.boys}</td><td>{blank ? "" : w.girls}</td><td className="font-bold">{blank ? "" : w.total}</td></tr>)}</tbody>
+          <table className="register-table reg-summary mt-3" style={{ tableLayout: "auto", width: "auto" }}>
+            <thead><tr><th style={{ minWidth: 80, whiteSpace: "nowrap" }}>Week</th><th style={{ minWidth: 110, whiteSpace: "nowrap" }}>Dates</th><th>Times open</th><th>Cumulative</th><th>Boys</th><th>Girls</th><th>Total attendance</th></tr></thead>
+            <tbody>{weekly.map((w, wi) => <tr key={wi}><td className="font-bold" style={{ whiteSpace: "nowrap" }}>Week {wi + 1}</td><td style={{ whiteSpace: "nowrap" }}>{format(new Date(days[weeks[wi]![0]!] + "T00:00"), "d MMM")} – {format(new Date(days[weeks[wi]![weeks[wi]!.length - 1]!] + "T00:00"), "d MMM")}</td><td>{blank ? "" : w.open}</td><td>{blank ? "" : w.cumulative}</td><td>{blank ? "" : w.boys}</td><td>{blank ? "" : w.girls}</td><td className="font-bold">{blank ? "" : w.total}</td></tr>)}</tbody>
           </table>
           <div className="mt-2 flex justify-between text-[10px]"><span>✓ Present &nbsp; ○ Absent</span><span>Class Teacher: ____________________ Sign: ________</span><span>Head Teacher: ____________________ Sign: ________</span></div>
         </div>
