@@ -279,6 +279,9 @@ html {
 .register-table th:nth-child(3) { width: 22px; }
 .register-table .reg-name { width: 140px; text-align: left; padding-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .register-table .reg-absent { color: #b91c1c; font-weight: 700; }
+.register-table .reg-wk { background: #eef2f7; font-weight: 700; }
+.register-table .reg-closed { color: #b91c1c; font-weight: 700; vertical-align: middle; }
+.register-table .reg-closed span { writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.25em; text-transform: uppercase; white-space: nowrap; }
 @media print {
   @page register { size: A4 landscape; margin: 8mm; }
   body:has(.register-page) main { max-width: none; padding: 0; }

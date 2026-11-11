@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState, Fragment, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Printer, ClipboardList } from "lucide-react";
 import { format } from "date-fns";
@@ -10,7 +10,7 @@ import { useCloud } from "@/lib/cloud";
 import { useAppData } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
 import { attendanceClasses, attendanceClassName, type AttendanceEntry } from "@/lib/attendance";
-import { schoolDays, registerMarks } from "@/lib/register";
+import { schoolDays, registerMarks, weekGroups, sexOf, dailySexTotals, weeklyTotals } from "@/lib/register";
 
 export const Route = createFileRoute("/_authenticated/register")({
   head: () => ({ meta: [
@@ -57,8 +57,22 @@ function RegisterPage() {
   });
   const learners = q.data?.learners ?? [];
   const rows = registerMarks(learners.map((l) => l.id), days, blank ? {} : q.data?.byDay ?? {});
-  const dayTotals = days.map((_, i) => rows.filter((r) => r.marks[i] === "P").length);
   const blankRows = Math.max(0, 35 - learners.length > 5 ? 5 : 35 - learners.length);
+  const weeks = weekGroups(days);
+  const closedKey = `edureport-register-closed:${cloud.schoolId ?? "local"}:${month}`;
+  const [closed, setClosed] = useState<Record<string, string>>({});
+  useEffect(() => { try { setClosed(JSON.parse(localStorage.getItem(closedKey) || "{}")); } catch { setClosed({}); } }, [closedKey]);
+  const [cDate, setCDate] = useState(""); const [cReason, setCReason] = useState("");
+  const saveClosed = (next: Record<string, string>) => { setClosed(next); localStorage.setItem(closedKey, JSON.stringify(next)); };
+  const sexes = learners.map((l) => sexOf(l.gender));
+  const daily = dailySexTotals(rows, sexes, days, closed);
+  const marked = new Set(Object.keys(q.data?.byDay ?? {}));
+  const weekly = weeklyTotals(weeks, days, daily, marked, closed);
+  const show = (i: number) => !blank && marked.has(days[i]!) && !closed[days[i]!];
+  const weekSum = (r: { marks: string[] }, w: number[]) => w.filter((i) => !closed[days[i]!]).filter((i) => r.marks[i] === "P").length;
+  const totalRows = learners.length + blankRows + 1;
+  const dayCells = (render: (i: number) => ReactNode, wkCell: (w: number[], wi: number) => ReactNode) => weeks.map((w, wi) => <Fragment key={wi}>{w.map((i) => <Fragment key={i}>{render(i)}</Fragment>)}{wkCell(w, wi)}</Fragment>);
+  const closedCell = (i: number, rowIdx: number) => closed[days[i]!] ? (rowIdx === 0 ? <td rowSpan={totalRows} className="reg-closed"><span>{closed[days[i]!]}</span></td> : null) : undefined;
 
   return <div className="min-h-screen bg-background pb-16">
     <div className="no-print"><AppHeader schoolName={school.name} term={school.term} year={school.academicYear} /></div>
@@ -75,6 +89,16 @@ function RegisterPage() {
             <Button onClick={() => { setBlank(false); setTimeout(() => window.print(), 50); }} disabled={!q.data}><Printer />Print filled</Button>
             <Button variant="outline" onClick={() => { setBlank(true); setTimeout(() => window.print(), 50); }} disabled={!q.data}><Printer />Print blank</Button>
           </div>
+          <div className="mt-4 rounded-md border border-border p-3">
+            <p className="text-sm font-semibold">School closed / incident days</p>
+            <p className="text-xs text-muted-foreground">e.g. Founders' Day, National CPD Day, Holiday. It is written down the day's column.</p>
+            <div className="mt-2 grid grid-cols-[1fr_1.4fr_auto] gap-2">
+              <Input type="date" min={days[0]} max={days[days.length - 1]} value={cDate} onChange={(e) => setCDate(e.target.value)} />
+              <Input placeholder="Reason" value={cReason} onChange={(e) => setCReason(e.target.value)} />
+              <Button type="button" disabled={!days.includes(cDate) || !cReason.trim()} onClick={() => { saveClosed({ ...closed, [cDate]: cReason.trim() }); setCDate(""); setCReason(""); }}>Add</Button>
+            </div>
+            {Object.keys(closed).length > 0 && <ul className="mt-2 space-y-1 text-sm">{Object.entries(closed).sort().map(([d, r]) => <li key={d} className="flex items-center justify-between"><span>{format(new Date(d + "T00:00"), "EEE d MMM")} — {r}</span><button className="text-destructive underline" onClick={() => { const n = { ...closed }; delete n[d]; saveClosed(n); }}>Remove</button></li>)}</ul>}
+          </div>
           <label className="mt-3 flex items-center gap-2 text-sm"><input type="checkbox" checked={blank} onChange={(e) => setBlank(e.target.checked)} /> Show blank sheet (to mark with pen)</label>
         </>}
       </div>
@@ -82,12 +106,23 @@ function RegisterPage() {
         <div className="register-page print-sheet-lite bg-white p-3 text-black">
           <div className="text-center"><p className="text-base font-bold uppercase">{school.name || "School"}</p><p className="text-xs">GHANA EDUCATION SERVICE · CLASS ATTENDANCE REGISTER</p><p className="text-xs font-semibold">{attendanceClassName(classId)} · {format(new Date(y, m - 1, 1), "MMMM yyyy")} · {school.term ? `Term ${school.term}` : ""} {school.academicYear}</p></div>
           <table className="register-table mt-2">
-            <thead><tr><th>No.</th><th className="reg-name">Name of Learner</th><th>Sex</th>{days.map((d) => <th key={d}><div>{format(new Date(d + "T00:00"), "EEEEE")}</div><div>{Number(d.slice(8))}</div></th>)}<th>P</th><th>A</th></tr></thead>
+            <thead>
+              <tr><th rowSpan={2}>No.</th><th rowSpan={2} className="reg-name">Name of Learner</th><th rowSpan={2}>Sex</th>{weeks.map((w, wi) => <th key={wi} colSpan={w.length + 1}>Week {wi + 1}</th>)}<th rowSpan={2}>P</th><th rowSpan={2}>A</th></tr>
+              <tr>{dayCells((i) => <th><div>{format(new Date(days[i] + "T00:00"), "EEEEE")}</div><div>{Number(days[i]!.slice(8))}</div></th>, (_, wi) => <th key={"t" + wi} className="reg-wk">Tot</th>)}</tr>
+            </thead>
             <tbody>
-              {learners.map((l, i) => { const r = rows[i]!; return <tr key={l.id}><td>{i + 1}</td><td className="reg-name">{l.name}</td><td>{l.gender ? l.gender[0]!.toUpperCase() : ""}</td>{r.marks.map((mk, j) => <td key={j} className={mk === "A" ? "reg-absent" : ""}>{mk === "P" ? "✓" : mk === "A" ? "○" : ""}</td>)}<td>{blank ? "" : r.present}</td><td>{blank ? "" : r.absent}</td></tr>; })}
-              {Array.from({ length: blankRows }, (_, i) => <tr key={"b" + i}><td>{learners.length + i + 1}</td><td className="reg-name" /><td />{days.map((d) => <td key={d} />)}<td /><td /></tr>)}
-              <tr className="font-bold"><td colSpan={3} className="reg-name">Total present</td>{dayTotals.map((t, i) => <td key={i}>{blank || !q.data.byDay[days[i]!] ? "" : t}</td>)}<td /><td /></tr>
+              {learners.map((l, k) => { const r = rows[k]!; return <tr key={l.id}><td>{k + 1}</td><td className="reg-name">{l.name}</td><td>{sexes[k]}</td>{dayCells((i) => { const c = closedCell(i, k); if (c !== undefined) return c; const mk = r.marks[i]; return <td className={mk === "A" ? "reg-absent" : ""}>{mk === "P" ? "✓" : mk === "A" ? "○" : ""}</td>; }, (w, wi) => <td key={"t" + wi} className="reg-wk">{blank ? "" : weekSum(r, w)}</td>)}<td>{blank ? "" : r.present}</td><td>{blank ? "" : r.absent}</td></tr>; })}
+              {Array.from({ length: blankRows }, (_, b) => <tr key={"b" + b}><td>{learners.length + b + 1}</td><td className="reg-name" /><td />{dayCells((i) => { const c = closedCell(i, learners.length + b); return c !== undefined ? c : <td />; }, (_, wi) => <td key={"t" + wi} className="reg-wk" />)}<td /><td /></tr>)}
+              <tr><td colSpan={3} className="reg-name" />{dayCells((i) => { const c = closedCell(i, totalRows - 1); return c !== undefined ? c : <td />; }, (_, wi) => <td key={"t" + wi} className="reg-wk" />)}<td /><td /></tr>
+              <tr className="font-bold"><td colSpan={3} className="reg-name">Daily present — Boys</td>{dayCells((i) => <td>{show(i) ? daily[i]!.boys : ""}</td>, (_, wi) => <td key={"t" + wi} className="reg-wk">{blank ? "" : weekly[wi]!.boys}</td>)}<td /><td /></tr>
+              <tr className="font-bold"><td colSpan={3} className="reg-name">Daily present — Girls</td>{dayCells((i) => <td>{show(i) ? daily[i]!.girls : ""}</td>, (_, wi) => <td key={"t" + wi} className="reg-wk">{blank ? "" : weekly[wi]!.girls}</td>)}<td /><td /></tr>
+              <tr className="font-bold"><td colSpan={3} className="reg-name">Daily present — Total</td>{dayCells((i) => <td>{show(i) ? daily[i]!.boys + daily[i]!.girls : ""}</td>, (_, wi) => <td key={"t" + wi} className="reg-wk">{blank ? "" : weekly[wi]!.total}</td>)}<td /><td /></tr>
             </tbody>
+          </table>
+          <table className="register-table mt-2">
+            <thead><tr><th className="reg-name" rowSpan={2}>Weekly totals</th>{weeks.map((_, wi) => <th key={wi} colSpan={5}>Week {wi + 1}</th>)}</tr>
+              <tr>{weeks.map((_, wi) => <Fragment key={wi}><th>Open</th><th>Cum.</th><th>Boys</th><th>Girls</th><th>Total</th></Fragment>)}</tr></thead>
+            <tbody><tr>{<td className="reg-name">Times open / attendance</td>}{weekly.map((w, wi) => <Fragment key={wi}><td>{blank ? "" : w.open}</td><td>{blank ? "" : w.cumulative}</td><td>{blank ? "" : w.boys}</td><td>{blank ? "" : w.girls}</td><td>{blank ? "" : w.total}</td></Fragment>)}</tr></tbody>
           </table>
           <div className="mt-2 flex justify-between text-[10px]"><span>✓ Present &nbsp; ○ Absent</span><span>Class Teacher: ____________________ Sign: ________</span><span>Head Teacher: ____________________ Sign: ________</span></div>
         </div>
