@@ -12,6 +12,9 @@ import { ClassLock } from "@/components/ClassLock";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { LearnerImport } from "@/components/LearnerImport";
+import { useCloud } from "@/lib/cloud";
+import { supabase } from "@/integrations/supabase/client";
+import { countPresentDays, parseTermDate, type DayRow } from "@/lib/attendanceFill";
 
 export const Route = createFileRoute("/_authenticated/students")({
   validateSearch: validateClassSearch,
@@ -38,6 +41,20 @@ function StudentsPage() {
   const [name, setName] = useState("");
   const [adm, setAdm] = useState("");
   const full = list.length >= MAX_STUDENTS_PER_CLASS;
+  const cloud = useCloud();
+  const [filling, setFilling] = useState(false);
+  async function fillAttendance() {
+    if (!cloud.schoolId) { toast.error("Join School Cloud to use Daily Attendance marks."); return; }
+    if (list.some((s) => s.attendance) && !window.confirm("Replace the days present already typed for this class with the Daily Attendance totals? You can still edit them after.")) return;
+    setFilling(true);
+    const { data, error } = await supabase.from("daily_attendance").select("attendance_date,entries").eq("school_id", cloud.schoolId).eq("class_id", classId);
+    setFilling(false);
+    if (error) { toast.error(error.message); return; }
+    const counts = countPresentDays((data ?? []) as unknown as DayRow[], parseTermDate(school.reopeningDate), parseTermDate(school.vacationDate));
+    if (!data?.length) { toast.error("No Daily Attendance saved for this class yet."); return; }
+    list.forEach((s) => updateStudent(s.id, { attendance: String(counts[s.id] ?? 0) }));
+    toast.success(`Days present filled for ${list.length} learner(s). You can still edit any number.`);
+  }
 
   return (
     <div className="min-h-screen bg-background pb-16">
@@ -100,6 +117,10 @@ function StudentsPage() {
           </div>
           <p className="num mt-2 text-[12px] text-muted-foreground">{list.length} / {MAX_STUDENTS_PER_CLASS} learners</p>
           <LearnerImport classId={classId} />
+          {list.length > 0 && <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border pt-3">
+            <Button type="button" variant="outline" size="sm" disabled={filling} onClick={fillAttendance}>{filling ? "Counting…" : "📅 Fill days present from Daily Attendance"}</Button>
+            <span className="text-xs text-muted-foreground">Counts marks between reopening and vacation dates. You can still type over any number.</span>
+          </div>}
         </section>
 
         <section className="mt-5 space-y-3">
