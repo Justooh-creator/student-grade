@@ -16,6 +16,7 @@ import { InstallBanner } from "@/components/InstallBanner";
 import { Toaster } from "@/components/ui/sonner";
 import { AccountProvider } from "@/lib/auth";
 import { FingerprintLock } from "@/components/FingerprintLock";
+import { initTheme } from "@/lib/theme";
 import { OfflineStatus } from "@/components/OfflineStatus";
 
 function NotFoundComponent() {
@@ -129,6 +130,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => initTheme(), []);
 
   return (
     <QueryClientProvider client={queryClient}>
