@@ -44,7 +44,13 @@ function QaHub() {
   const kindergarten = classId.startsWith("kg");
   const jhs = isJhsClass(classId) || isUpperPrimary(classId) || isEarlyClass(classId);
   const dynamic = !!bank && (math || jhs);
-  const english = (subject === "English Language" || subject === "Ghanaian Language") && jhs && bank?.theory.length === 5 && bank.theory[4]?.marks === 10;
+  const english = (subject === "English Language" || subject === "Ghanaian Language") && jhs && !!bank?.theory[0]?.topic.includes("Composition") && bank.theory[1]?.marks === 30;
+  const partHeader = (i: number): string | null => {
+    const t = bank?.theory[i]; if (!t || (i > 0 && bank?.theory[i - 1]?.topic === t.topic)) return null;
+    const parts = [...new Set(bank?.theory.map((x) => x.topic))]; const letter = "ABCD"[parts.indexOf(t.topic)] ?? "";
+    const label = t.topic.includes("Composition") ? `Composition (${t.marks} marks) · Answer ONE question` : `${t.topic.replace(/^Comprehension$|^Literature$/, (m) => m)} (${t.marks} marks) · Compulsory`;
+    return `PART ${letter} — ${label}`;
+  };
   const subjects = qaSubjects(classId);
   const result = scoreQuiz(bank?.objectives ?? [], answers);
   const answered = Object.keys(answers).length;
@@ -174,7 +180,7 @@ function QaHub() {
           <p className="text-sm">{school.term} · {school.academicYear} · {kindergarten ? "Teacher-guided practice" : "Time: 2 hours"}</p>
           {topic !== "all" && <p className="text-sm">{topic}</p>}
           <p className="mt-1 text-xs">Original revision practice · Not an official WAEC paper</p>
-          {mode === "paper" && <><p className="mt-2 text-left text-sm">Name: ______________________________ Class: __________ Date: __________</p><p className="mt-2 text-sm italic">{kindergarten ? "Teacher reads each question aloud. Learner may point, count or respond orally." : english ? "Answer ALL questions in Section A. In Section B, answer ONE composition question in Part A and ALL questions in Parts B and C." : jhs ? `Answer ALL questions in Section A. In Section B, answer Question 1 and any other ${THEORY_REQUIRED - 1} questions.` : "Answer all questions in Sections A and B. Show your working in Section B."}</p></>}
+          {mode === "paper" && <><p className="mt-2 text-left text-sm">Name: ______________________________ Class: __________ Date: __________</p><p className="mt-2 text-sm italic">{kindergarten ? "Teacher reads each question aloud. Learner may point, count or respond orally." : english ? `Answer ALL questions in Section A. In Section B, answer ONE composition question in Part A and ALL questions in the other parts.` : jhs ? `Answer ALL questions in Section A. In Section B, answer Question 1 and any other ${THEORY_REQUIRED - 1} questions.` : "Answer all questions in Sections A and B. Show your working in Section B."}</p></>}
         </header>
         <h3 className="mb-2 font-bold">SECTION A — Objective ({bank.objectives.length} marks)</h3>
         <ol className="mb-5 list-decimal space-y-3 pl-6">
@@ -187,7 +193,7 @@ function QaHub() {
         <h3 className="mb-2 font-bold">{kindergarten ? "SECTION B — Oral & Practical Observation" : english ? "SECTION B — Written Paper (70 marks)" : jhs ? `SECTION B — Subjective (${THEORY_REQUIRED * (bank.theory[0]?.marks ?? 20)} marks) · Question 1 is compulsory` : `SECTION B — Subjective (${bank.theory.reduce((sum, t) => sum + t.marks, 0)} marks)`}</h3>
         <ol className="space-y-4">
           {bank.theory.map((t, i) => <li key={t.id} className="break-inside-avoid">
-            {english && (i === 0 || i === 3 || i === 4) && <h4 className="mb-3 border-b border-border pb-2 font-bold">{i === 0 ? "PART A — Composition (30 marks) · Answer ONE question" : i === 3 ? "PART B — Comprehension (30 marks) · Compulsory" : "PART C — Literature (10 marks) · Compulsory"}</h4>}
+            {english && partHeader(i) && <h4 className="mb-3 border-b border-border pb-2 font-bold">{partHeader(i)}</h4>}
             <div className="flex items-start gap-3"><b className="shrink-0">{i + 1}.</b><div className="min-w-0 flex-1 space-y-2">{theoryParts(t.q).map((part, n) => <p key={n} className={`whitespace-pre-line ${/^\([a-z]\)/.test(part) ? "pl-4" : ""}`}>{part}</p>)}<b>{kindergarten ? "[Gold / Silver / Bronze]" : `[${t.marks} marks]`}</b></div></div>
             {mode === "scheme" ? <ul className="mt-1 list-disc pl-5 text-sm">{t.scheme.map((s) => <li key={s}>{s}</li>)}</ul> : <div className="mt-3 space-y-5" aria-label="Answer space"><div className="border-b border-border" /><div className="border-b border-border" /><div className="border-b border-border" /></div>}
           </li>)}

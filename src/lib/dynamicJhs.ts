@@ -77,7 +77,8 @@ export function generateJhsPack(classId: PackClass, subject: string, seed: numbe
   const unique = [...new Map(pool.map((q) => [q.q, q])).values()];
   const fresh = shuffle(unique.filter((q) => !old.has(q.q)));
   const objectives = shuffle([...fresh, ...shuffle(unique.filter((q) => old.has(q.q)))].slice(0, JHS_OBJECTIVE_COUNT)).map((q, i) => ({ ...q, id: `${classId}-${subject}-${seed}-o${i}` }));
-  const written = shuffle(content.written).slice(0, JHS_THEORY_COUNT);
-  const theory = subject === "English Language" ? englishWritten(seed) : ewe ? eweWritten(seed) : written.map(([topic, q, a, b, c], i) => ({ id: `${classId}-${subject}-${seed}-t${i}`, topic, q, marks: THEORY_MARKS, scheme: [`(a) ${a} [6 marks]`, `(b) ${b} [6 marks]`, `(c) ${c} [8 marks]`] }));
+  const oldWritten = new Set(previous?.theory.map((t) => t.q) ?? []);
+  const written = [...shuffle(content.written.filter((w) => !oldWritten.has(w[1]))), ...shuffle(content.written.filter((w) => oldWritten.has(w[1])))].slice(0, JHS_THEORY_COUNT);
+  const theory = subject === "English Language" ? englishWritten(seed, previous?.theory) : ewe ? eweWritten(seed, previous?.theory) : written.map(([topic, q, a, b, c], i) => ({ id: `${classId}-${subject}-${seed}-t${i}`, topic, q, marks: THEORY_MARKS, scheme: [`(a) ${a} [6 marks]`, `(b) ${b} [6 marks]`, `(c) ${c} [8 marks]`] }));
   return { id: `${classId}-${subject}-${seed}`, classId, subject, objectives, theory };
 }
