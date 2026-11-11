@@ -125,8 +125,8 @@ function StudentsPage() {
                         <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) { updateStudent(s.id, { photo: await passportPhoto(f) }); toast.success("Photo added to report card"); } }} />
                       </label>
                       </Button>
-                      <Button asChild variant="outline" className="px-2 text-[13px] font-semibold text-primary">
-                        <Link to="/sba-details" search={{ class: classId, student: s.id }}>Enter SBA</Link>
+                      <Button asChild variant="outline" className="h-9 whitespace-nowrap px-1 text-[12px] font-semibold text-primary sm:px-2 sm:text-[13px]">
+                        <Link to="/sba-details" search={{ class: classId, student: s.id }}>SBA</Link>
                       </Button>
                       {s.photo && <button onClick={() => updateStudent(s.id, { photo: "" })} className="col-span-3 text-left text-[12px] sm:col-span-1 sm:text-[13px] text-muted-foreground hover:text-destructive">Remove</button>}
                     </div>
