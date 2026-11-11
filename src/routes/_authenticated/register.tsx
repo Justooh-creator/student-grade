@@ -57,6 +57,7 @@ function RegisterPage() {
   });
   const learners = q.data?.learners ?? [];
   const rows = registerMarks(learners.map((l) => l.id), days, blank ? {} : q.data?.byDay ?? {});
+  const blankRows = Math.max(0, 35 - learners.length > 5 ? 5 : 35 - learners.length);
   const weeks = weekGroups(days);
   const closedKey = `edureport-register-closed:${cloud.schoolId ?? "local"}:${month}`;
   const [closed, setClosed] = useState<Record<string, string>>({});
@@ -72,7 +73,6 @@ function RegisterPage() {
   const totalRows = learners.length + blankRows + 1;
   const dayCells = (render: (i: number) => ReactNode, wkCell: (w: number[], wi: number) => ReactNode) => weeks.map((w, wi) => <Fragment key={wi}>{w.map((i) => <Fragment key={i}>{render(i)}</Fragment>)}{wkCell(w, wi)}</Fragment>);
   const closedCell = (i: number, rowIdx: number) => closed[days[i]!] ? (rowIdx === 0 ? <td rowSpan={totalRows} className="reg-closed"><span>{closed[days[i]!]}</span></td> : null) : undefined;
-  const blankRows = Math.max(0, 35 - learners.length > 5 ? 5 : 35 - learners.length);
 
   return <div className="min-h-screen bg-background pb-16">
     <div className="no-print"><AppHeader schoolName={school.name} term={school.term} year={school.academicYear} /></div>
