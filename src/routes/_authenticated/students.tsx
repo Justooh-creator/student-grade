@@ -117,18 +117,18 @@ function StudentsPage() {
                     <p className="text-sm font-bold"><span className="num text-muted-foreground">{i + 1}.</span> {s.name}</p>
                     <Button variant="ghost" size="icon" onClick={() => removeStudent(s.id)} className="shrink-0 text-muted-foreground hover:text-destructive" aria-label={`Remove ${s.name}`}>✕</Button>
                     </div>
-                    <div className="mt-1 flex flex-wrap items-center gap-2">
-                      <CameraButton className="inline-flex h-9 items-center rounded-md bg-primary px-2 text-[13px] font-bold text-primary-foreground hover:opacity-90" title="Learner passport photo" onFile={async (f) => { { updateStudent(s.id, { photo: await passportPhoto(f) }); toast.success("Photo added to report card"); } }}>📷 Snap photo</CameraButton>
-                      <Button asChild variant="outline" className="px-2 text-[13px] font-bold">
+                    <div className="mt-1 grid grid-cols-3 gap-1.5 sm:flex sm:flex-wrap sm:items-center sm:gap-2">
+                      <CameraButton className="inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md bg-primary px-1 text-[12px] sm:px-2 sm:text-[13px] font-bold text-primary-foreground hover:opacity-90" title="Learner passport photo" onFile={async (f) => { { updateStudent(s.id, { photo: await passportPhoto(f) }); toast.success("Photo added to report card"); } }}>📷 Snap</CameraButton>
+                      <Button asChild variant="outline" className="h-9 whitespace-nowrap px-1 text-[12px] font-bold sm:px-2 sm:text-[13px]">
                       <label>
-                        🖼 Upload photo
+                        🖼 Upload
                         <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) { updateStudent(s.id, { photo: await passportPhoto(f) }); toast.success("Photo added to report card"); } }} />
                       </label>
                       </Button>
                       <Button asChild variant="outline" className="px-2 text-[13px] font-semibold text-primary">
                         <Link to="/sba-details" search={{ class: classId, student: s.id }}>Enter SBA</Link>
                       </Button>
-                      {s.photo && <button onClick={() => updateStudent(s.id, { photo: "" })} className="text-[13px] text-muted-foreground hover:text-destructive">Remove</button>}
+                      {s.photo && <button onClick={() => updateStudent(s.id, { photo: "" })} className="col-span-3 text-left text-[12px] sm:col-span-1 sm:text-[13px] text-muted-foreground hover:text-destructive">Remove</button>}
                     </div>
                   </div>
               </div>
