@@ -148,6 +148,13 @@
       "when": 1794413239421,
       "tag": "0020_restrict_school_details_edits",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1794413732891,
+      "tag": "0021_undo_school_details_restriction",
+      "breakpoints": true
     }
   ]
 }

@@ -39,5 +39,4 @@
 - [x] Package A: optional circular school-name rosette and enhanced borders verified across twelve themes.
 - [x] Package A: EduReport biometric wording; authenticated names/emblem flow, mobile layout, centred footer, single-page A4/A3 PDFs and 25 tests verified. Package B excluded; physical OS prompts may retain the site address.
 - [x] Create independent, simpler Basic 1–3 subject banks and grade-specific language papers while retaining the existing layout.
-- [ ] Restrict School Details edits to headteachers/admins and verify teacher read-only access without affecting class work.
 - [x] Test Basic 1–3 counts, answers, freshness and isolation from Basic 4–6; 123 tests passed and signed-in quiz/exam/scheme flow verified on desktop and mobile. New Ewe wording still needs fluent-speaker review.
