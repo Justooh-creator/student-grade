@@ -5,19 +5,22 @@ import { englishWritten } from "./englishWritten";
 import { eweWritten } from "./eweWritten";
 import { UPPER_CONTENT } from "./upperContent";
 import { KG_CONTENT } from "./kgContent";
+import { LOWER_FACTS, isLowerPrimary } from "./lowerPrimaryContent";
+import { generateLowerPrimaryPack } from "./lowerPrimary";
 
 export const UPPER_IDS = ["b4", "b5", "b6"] as const;
 export const isUpperPrimary = (id: string): id is "b4" | "b5" | "b6" => (UPPER_IDS as readonly string[]).includes(id);
 export const EARLY_IDS = ["kg1", "kg2", "b1", "b2", "b3"] as const;
 export type PackClass = "kg1" | "kg2" | "b1" | "b2" | "b3" | "b4" | "b5" | "b6" | "b7" | "b8" | "b9";
 export const isEarlyClass = (id: string): id is (typeof EARLY_IDS)[number] => (EARLY_IDS as readonly string[]).includes(id);
-/** KG uses its own learning areas; Basic 1–3 reuse the simple primary banks; Basic 4–6 upper; JHS its own. */
-const contentFor = (id: string) => id.startsWith("kg") ? KG_CONTENT : isEarlyClass(id) || isUpperPrimary(id) ? UPPER_CONTENT : JHS_CONTENT;
-export const hasDynamicPack = (id: string, subject: string) => !!contentFor(id)[subject];
+/** KG, lower primary, upper primary and JHS each have separate age-appropriate banks. */
+const contentFor = (id: string) => id.startsWith("kg") ? KG_CONTENT : isUpperPrimary(id) ? UPPER_CONTENT : JHS_CONTENT;
+export const hasDynamicPack = (id: string, subject: string) => isLowerPrimary(id) ? !!LOWER_FACTS[subject] : !!contentFor(id)[subject];
 const levelOf = (id: string) => id === "kg1" ? 0 : id === "kg2" ? 1 : Number(id.slice(1)) + 1;
 
 export const JHS_SUBJECTS = ["Mathematics", "Integrated Science", "English Language", "Ghanaian Language (Eʋegbe)", "Social Studies", "Religious and Moral Education", "Computing", "Career Technology"] as const;
 export function generateJhsPack(classId: PackClass, subject: string, seed: number, previous?: SubjectBank): SubjectBank {
+  if (isLowerPrimary(classId)) return generateLowerPrimaryPack(classId, subject, seed, previous);
   const content = contentFor(classId)[subject];
   if (!content) throw new Error(`No content for ${subject}`);
   let state = (seed + levelOf(classId) * 997) >>> 0;
