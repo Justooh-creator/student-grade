@@ -15,7 +15,7 @@ describe("JHS packs", () => {
   it("maths JHS has 45 objectives and 5 theory", () => {
     const p = generateMathPack("b8", 5);
     expect(p.objectives).toHaveLength(45);
-    expect(p.theory).toHaveLength(s.includes("Eʋegbe") ? 6 : 5);
+    expect(p.theory).toHaveLength(5);
   });
   it("new seed gives different set", () => {
     const a = generateJhsPack("b8", "Integrated Science", 1), b = generateJhsPack("b8", "Integrated Science", 2, a);
