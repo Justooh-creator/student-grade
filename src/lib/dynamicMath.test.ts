@@ -3,11 +3,13 @@ import { generateMathPack, MATH_CLASSES, MATH_TOPICS } from "./dynamicMath";
 import { scoreQuiz } from "./questionBank";
 
 describe("offline dynamic Mathematics", () => {
-  it.each(MATH_CLASSES)("provides 20 objectives and 4 subjective questions for %s", (classId) => {
+  it.each(MATH_CLASSES)("provides the class-specific question counts for %s", (classId) => {
     const pack = generateMathPack(classId, 42);
-    expect(pack.objectives).toHaveLength(20);
-    expect(pack.theory).toHaveLength(4);
-    expect(new Set(pack.objectives.map((q) => q.q)).size).toBe(20);
+    const objectiveCount = classId.startsWith("kg") ? 20 : 45;
+    const theoryCount = classId.startsWith("kg") || ["b4", "b5", "b6"].includes(classId) ? 4 : 5;
+    expect(pack.objectives).toHaveLength(objectiveCount);
+    expect(pack.theory).toHaveLength(theoryCount);
+    expect(new Set(pack.objectives.map((q) => q.q)).size).toBe(objectiveCount);
     expect(new Set(pack.objectives.map((q) => q.topic))).toEqual(new Set(MATH_TOPICS));
   });
 
@@ -26,7 +28,7 @@ describe("offline dynamic Mathematics", () => {
       for (const classId of MATH_CLASSES.filter((c) => c.startsWith("b") && Number(c.slice(1)) >= 4)) {
         const pack = generateMathPack(classId, seed);
         const answers = Object.fromEntries(pack.objectives.map((q) => [q.id, q.answer]));
-        expect(scoreQuiz(pack.objectives, answers)).toEqual({ correct: 20, total: 20, percent: 100 });
+        expect(scoreQuiz(pack.objectives, answers)).toEqual({ correct: 45, total: 45, percent: 100 });
         for (const q of pack.objectives) {
           expect(new Set(q.options).size).toBe(4);
           const correct = q.options[q.answer];
