@@ -141,6 +141,13 @@
       "when": 1793671207289,
       "tag": "0019_individual_license_class_lock",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1794413239421,
+      "tag": "0020_restrict_school_details_edits",
+      "breakpoints": true
     }
   ]
 }
