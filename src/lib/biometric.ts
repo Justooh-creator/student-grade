@@ -14,11 +14,8 @@ function fromB64(s: string) {
 
 export async function fingerprintSupported(): Promise<boolean> {
   if (typeof window === "undefined" || !window.PublicKeyCredential) return false;
-  try {
-    return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-  } catch {
-    return false;
-  }
+  // Many Android phones wrongly report false here; let the phone decide when the teacher taps Enable.
+  return typeof navigator !== "undefined" && Boolean(navigator.credentials?.create) && window.isSecureContext;
 }
 
 export function fingerprintEnabled(userId: string) {

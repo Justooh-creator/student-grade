@@ -20,7 +20,7 @@ export function FingerprintSetting({ userId, email }: { userId: string; email: s
     setMsg("");
     if (on) { disableFingerprint(userId); setOn(false); setMsg("Fingerprint / face unlock turned off."); return; }
     try { await enableFingerprint(userId, email); setOn(true); setMsg("Fingerprint / face unlock is on for this phone."); }
-    catch { setMsg("Setup was cancelled or failed."); }
+    catch { setMsg("Setup was cancelled or this phone blocked it. Make sure a fingerprint or face is set up in phone Settings, then open EduReport in Chrome or the installed app and try again."); }
   }
 
   return (
