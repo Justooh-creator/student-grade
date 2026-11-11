@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAppData } from "@/lib/store";
 import { CLASS_LEVELS, classDisplayName, type ClassId } from "@/lib/ges";
 import { BANKS, scoreQuiz, type SubjectBank } from "@/lib/questionBank";
-import { generateJhsPack, hasDynamicPack, isUpperPrimary } from "@/lib/dynamicJhs";
+import { generateJhsPack, hasDynamicPack, isUpperPrimary, isEarlyClass } from "@/lib/dynamicJhs";
 import { isJhsClass, quizPageRange, THEORY_REQUIRED } from "@/lib/qaRules";
 import { freshMathSeed, generateMathPack, isMathClass, mathTopicLabel, MATH_TOPICS, type MathTopicChoice } from "@/lib/dynamicMath";
 import { qaSubjects, qaBankSubject, GHANAIAN_LANGUAGES, theoryParts } from "@/lib/qaSubjects";
@@ -42,7 +42,7 @@ function QaHub() {
   const [page, setPage] = useState(0);
   const math = (subject === "Mathematics" || subject === "Numeracy") && isMathClass(classId);
   const kindergarten = classId.startsWith("kg");
-  const jhs = isJhsClass(classId) || isUpperPrimary(classId);
+  const jhs = isJhsClass(classId) || isUpperPrimary(classId) || isEarlyClass(classId);
   const dynamic = !!bank && (math || jhs);
   const english = (subject === "English Language" || subject === "Ghanaian Language") && jhs && bank?.theory.length === 5 && bank.theory[4]?.marks === 10;
   const subjects = qaSubjects(classId);
@@ -51,7 +51,7 @@ function QaHub() {
 
   const reset = () => { setAnswers({}); setDone(false); setPage(0); };
   const makePack = (id: ClassId, name: string, prev?: SubjectBank): SubjectBank | null => {
-    if ((isJhsClass(id) || isUpperPrimary(id)) && name !== "Mathematics" && hasDynamicPack(id, name)) return generateJhsPack(id, name, freshMathSeed(), prev);
+    if ((isJhsClass(id) || isUpperPrimary(id) || isEarlyClass(id)) && name !== "Mathematics" && hasDynamicPack(id, name)) return generateJhsPack(id, name, freshMathSeed(), prev);
     if (name === "Mathematics" && isMathClass(id)) return generateMathPack(id, freshMathSeed(), "all", prev);
     return BANKS.find((b) => b.classId === id && b.subject === name) ?? null;
   };
@@ -89,9 +89,13 @@ function QaHub() {
             <SelectContent>{CLASS_LEVELS.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
           </Select>
         </section>
-        {subjects.length > 0 && <div className="flex flex-wrap gap-2" aria-label="Subjects">
-          {subjects.map((name) => <Button key={name} aria-pressed={name === subject} variant={name === subject ? "default" : "outline"} className="h-auto min-h-11 whitespace-normal" onClick={() => selectSubject(name)}>{name}</Button>)}
-        </div>}
+        {subjects.length > 0 && <section aria-label="Subject selection">
+          <h2 className="mb-2 text-sm font-bold text-muted-foreground">Subject</h2>
+          <Select value={subject} onValueChange={selectSubject}>
+            <SelectTrigger aria-label="Subject" className="h-11"><SelectValue /></SelectTrigger>
+            <SelectContent>{subjects.map((name) => <SelectItem key={name} value={name}>{name}</SelectItem>)}</SelectContent>
+          </Select>
+        </section>}
         {subject === "Ghanaian Language" && <div>
           <label id="ghanaian-language-label" className="mb-1 block text-sm font-semibold">Ghanaian language</label>
           <Select value={language} onValueChange={(value) => { setLanguage(value); setMode("menu"); reset(); setBank(makePack(classId, qaBankSubject(subject, value))); }}>
