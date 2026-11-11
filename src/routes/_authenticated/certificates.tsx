@@ -6,6 +6,8 @@ import { CertificatePreview } from "@/components/CertificatePreview";
 import { PrintButton } from "@/components/PaymentGate";
 import { CertificateSheet, type CertData, type PhotoMode, type PhotoAdjust } from "@/components/CertificateSheet";
 import { useAppData } from "@/lib/store";
+import { DesignElementsPanel } from "@/components/DesignElementsPanel";
+import { updateElement, type PlacedElement } from "@/lib/certElements";
 import { useUser } from "@/lib/auth";
 import { useLicense } from "@/lib/license";
 import { useCloud } from "@/lib/cloud";
@@ -57,6 +59,8 @@ function CertificatesPage() {
   const [photoMode, setPhotoMode] = useState<PhotoMode>("none");
   const [frame, setFrame] = useState<PhotoFrame>("rect");
   const [photo, setPhoto] = useState<PhotoAdjust>({ src: "", zoom: 1, x: 0, y: 0 });
+  const [placed, setPlaced] = useState<PlacedElement[]>([]);
+  const [selEl, setSelEl] = useState<string | undefined>();
   const [fonts, setFonts] = useState<CertFonts>({ heading: "", name: "", award: "", citation: "" });
   const [textSizes, setTextSizes] = useState<CertTextSizes>(DEFAULT_TEXT_SIZES);
   const [paper, setPaper] = useState<PaperId>("A4");
@@ -213,6 +217,8 @@ function CertificatesPage() {
             </select></label>
         </div>
 
+        <DesignElementsPanel placed={placed} setPlaced={setPlaced} selected={selEl} setSelected={setSelEl} />
+
         <details className="rounded-md border border-border p-3">
           <summary className="cursor-pointer font-semibold">Fonts & text sizes</summary>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -274,7 +280,9 @@ function CertificatesPage() {
       </div>
       <CertificatePreview size={size}>
         {certs.map((c, i) => <CertificateSheet key={i} data={c} school={school} theme={theme} watermark={!lic.loading && !lic.canPrint}
-          photoMode={photoMode} size={size} display={display} medallion={medallion} frame={frame} fonts={fonts} textSizes={textSizes} />)}
+          photoMode={photoMode} size={size} display={display} medallion={medallion} frame={frame} fonts={fonts} textSizes={textSizes}
+          elements={placed} selectedElement={selEl} onElementSelect={setSelEl}
+          onElementMove={(k, x, y) => setPlaced((ps) => ps.map((p) => p.key === k ? updateElement(p, { x, y }) : p))} />)}
       </CertificatePreview>
       </div>
     </main>
