@@ -162,7 +162,7 @@ function StudentsPage() {
                 <PresetField label="Attitude / conduct" value={s.conduct} presets={CONDUCT_PRESETS} onChange={(v) => updateStudent(s.id, { conduct: v })} placeholder="Select conduct" />
                 <PresetField label="Interest / hobby" value={s.interest} presets={INTEREST_PRESETS} onChange={(v) => updateStudent(s.id, { interest: v })} placeholder="Select interest" />
                 <PresetField label="Class teacher's remark" value={s.remark ?? ""} presets={REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { remark: v })} placeholder="Auto remark from average" />
-                <PresetField label="Headteacher's remark" value={s.headRemark ?? ""} presets={HEAD_REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { headRemark: v })} placeholder="Select headteacher's remark" />
+                <PresetField label="Headteacher's remark" value={s.headRemark ?? ""} presets={HEAD_REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { headRemark: v })} placeholder="Select headteacher's remark" allowCustom={false} />
               </div>
               <details className="mt-2 rounded-lg border border-border bg-background/50 px-3 py-2">
                 <summary className="cursor-pointer text-[13px] font-bold uppercase tracking-[0.12em] text-foreground">Fees / accounts (optional — only filled items print on the report card)</summary>

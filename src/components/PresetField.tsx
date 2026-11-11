@@ -4,12 +4,14 @@ export function PresetField({
   presets,
   onChange,
   placeholder,
+  allowCustom = true,
 }: {
   label: string;
   value: string;
   presets: string[];
   onChange: (v: string) => void;
   placeholder?: string;
+  allowCustom?: boolean;
 }) {
   const isPreset = presets.includes(value);
   return (
@@ -21,6 +23,7 @@ export function PresetField({
         value={value === "" ? "" : isPreset ? value : "__custom"}
         onChange={(e) => {
           const v = e.target.value;
+          if (v === "__custom" && !allowCustom) return;
           if (v === "__custom") onChange(isPreset || !value ? " " : value);
           else onChange(v);
         }}
@@ -30,9 +33,9 @@ export function PresetField({
         {presets.map((p) => (
           <option key={p} value={p}>{p}</option>
         ))}
-        <option value="__custom">Custom text…</option>
+        {allowCustom ? <option value="__custom">Custom text…</option> : value.trim() !== "" && !isPreset && <option value="__custom">{value.trim()}</option>}
       </select>
-      {value !== "" && !isPreset && (
+      {allowCustom && value !== "" && !isPreset && (
         <input
           autoFocus
           value={value.trimStart()}

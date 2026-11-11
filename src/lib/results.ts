@@ -20,7 +20,7 @@ export interface StudentResult {
   totalMarks: number;
   average: number;
   aggregate: number;
-  /** Basic 7–9 only: English + Maths + better of Science/Social + 3 best electives. */
+  /** Basic 7–9 only: English, Maths, Science, Social Studies + 2 best electives. */
   bestSix: { subjects: { subject: string; grade: number }[]; aggregate: number } | null;
 }
 
@@ -54,13 +54,11 @@ export function computeStudentResult(student: Student): StudentResult {
   if (isJhs(student.classId)) {
     const g = new Map(graded.map((r) => [r.subject, r.grade!]));
     const pick: { subject: string; grade: number }[] = [];
-    for (const c of ["English Language", "Mathematics"]) if (g.has(c)) pick.push({ subject: c, grade: g.get(c)! });
-    const sci = ["Integrated Science", "Social Studies"].filter((c) => g.has(c)).map((c) => ({ subject: c, grade: g.get(c)! }));
-    sci.sort((a, b) => a.grade - b.grade);
-    if (sci[0]) pick.push(sci[0]);
-    // Only 3 core subjects count: the weaker of Science/Social Studies is never reused as an elective.
-    const used = new Set([...pick.map((p) => p.subject), "Integrated Science", "Social Studies"]);
-    const electives = [...g.entries()].filter(([s]) => !used.has(s)).map(([subject, grade]) => ({ subject, grade })).sort((a, b) => a.grade - b.grade).slice(0, 3);
+    // BECE: all 4 core subjects + 2 best electives.
+    const CORES = ["English Language", "Mathematics", "Integrated Science", "Social Studies"];
+    for (const c of CORES) if (g.has(c)) pick.push({ subject: c, grade: g.get(c)! });
+    const used = new Set(CORES);
+    const electives = [...g.entries()].filter(([s]) => !used.has(s)).map(([subject, grade]) => ({ subject, grade })).sort((a, b) => a.grade - b.grade).slice(0, 2);
     pick.push(...electives);
     bestSix = { subjects: pick, aggregate: pick.reduce((a, p) => a + p.grade, 0) };
   }

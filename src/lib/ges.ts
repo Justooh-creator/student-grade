@@ -225,14 +225,18 @@ export const REMARK_PRESETS = [
 export const MAX_STUDENTS_PER_CLASS = 35;
 
 export const HEAD_REMARK_PRESETS = [
-  "Excellent results. Keep it up!",
-  "Very good performance. Well done.",
-  "Good work. Aim higher next term.",
-  "Satisfactory. Put in more effort.",
-  "Can do better with more seriousness.",
-  "Weak performance. Needs extra support at home.",
-  "Promoted. Keep working hard.",
-  "Has shown great improvement this term.",
+  "Outstanding performance! You make the school proud. Keep shining.",
+  "Excellent results. Your hard work is paying off. Keep it up!",
+  "Very good performance. Well done; aim even higher next term.",
+  "Good work. You have what it takes to reach the top. Keep pushing.",
+  "A commendable effort. With more focus you will excel.",
+  "Satisfactory performance. Believe in yourself and work harder.",
+  "You can do better. We believe in you; stay focused and determined.",
+  "Keep trying. With extra support and practice you will improve.",
+  "Has shown great improvement this term. Keep the momentum going.",
+  "Promoted. Congratulations! Keep working hard in your new class.",
+  "A disciplined and hardworking learner. Keep being a good example.",
+  "Every effort counts. Do not give up; brighter results are ahead.",
 ];
 
 export const INTEREST_PRESETS = [
