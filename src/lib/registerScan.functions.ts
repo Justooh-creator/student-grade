@@ -38,7 +38,7 @@ export const scanRegisterPhoto = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data }) => {
-    const apiKey = process.env.LOVABLE_API_KEY;
+    const apiKey = process.env['LOVABLE_API_KEY'];
     if (!apiKey) throw new Error("Register reading is not set up yet.");
     const { createOpenAI } = await import("@ai-sdk/openai");
     const { streamText, Output, jsonSchema } = await import("ai");
