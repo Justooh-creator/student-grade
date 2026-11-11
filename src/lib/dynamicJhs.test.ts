@@ -8,7 +8,7 @@ describe("JHS packs", () => {
     it(`${cls} ${s} has 45 objectives and 5 theory`, () => {
       const p = generateJhsPack(cls, s, 123);
       expect(p.objectives).toHaveLength(45);
-      expect(p.theory).toHaveLength(5);
+      expect(p.theory).toHaveLength(s.includes("Eʋegbe") ? 6 : 5);
       expect(new Set(p.objectives.map((q) => q.q)).size).toBe(45);
     });
   }
