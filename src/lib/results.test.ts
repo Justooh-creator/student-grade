@@ -39,7 +39,7 @@ describe("assessment by class level", () => {
       Computing: s, French: s, "Career Technology": s,
     }));
     expect(r.bestSix?.subjects.length).toBe(6);
-    expect(r.bestSix?.aggregate).toBe(6);
+    expect(r.bestSix?.aggregate).toBe(13); // weak Social Studies (8) now always counts
   });
 
   it("Basic 8 Best Six uses all 4 core subjects plus 2 best electives", () => {
