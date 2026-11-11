@@ -65,9 +65,9 @@ function SettingsPage() {
           <p className="mt-2 text-xs text-muted-foreground">Printed reports and certificates always stay on white paper.</p>
         </Section>
 
-        <Section title="Security & Fingerprint">
-          {user ? <FingerprintSetting userId={user.id} email={user.email ?? ""} /> : <p className="text-sm text-muted-foreground">Sign in to use fingerprint unlock.</p>}
-          <p className="mt-2 text-xs text-muted-foreground">Your fingerprint stays inside your phone. EduReport never receives or stores it.</p>
+        <Section title="Security: Fingerprint & Face Unlock">
+          {user ? <FingerprintSetting userId={user.id} email={user.email ?? ""} /> : <p className="text-sm text-muted-foreground">Sign in to use fingerprint or face unlock.</p>}
+          <p className="mt-2 text-xs text-muted-foreground">Uses your phone's own fingerprint or face recognition — whichever is set up. Your face and fingerprint stay inside your phone; EduReport never receives them.</p>
         </Section>
 
         <Section title="Account">

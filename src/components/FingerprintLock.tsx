@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Fingerprint, LogOut } from "lucide-react";
+import { Fingerprint, LogOut, ScanFace } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,7 +23,7 @@ export function FingerprintLock() {
     try {
       if (await verifyFingerprint(user.id)) { markActive(); setLocked(false); }
     } catch {
-      setError("Fingerprint not recognised. Try again.");
+      setError("Not recognised. Tap to try again.");
     }
   }, [user, markActive]);
 
@@ -90,10 +90,10 @@ export function FingerprintLock() {
         <h1 className="text-xl">Verify it is you</h1>
         <p className="text-muted-foreground">Use biometric for safe login</p>
       </div>
-      <Button variant="outline" onClick={unlock} aria-label="Unlock with fingerprint" className="h-28 w-28 rounded-full border-2 border-primary p-6 text-primary [&_svg]:size-14">
-        <Fingerprint className="h-14 w-14" />
+      <Button variant="outline" onClick={unlock} aria-label="Unlock with fingerprint or face" className="h-28 w-28 rounded-full border-2 border-primary p-6 text-primary [&_svg]:size-14">
+        <span className="flex gap-1"><Fingerprint className="h-10 w-10" /><ScanFace className="h-10 w-10" /></span>
       </Button>
-      <p className="text-sm text-muted-foreground">Tap the fingerprint to unlock</p>
+      <p className="text-sm text-muted-foreground">Look at your phone or touch the sensor. Tap here to try again.</p>
       {error && <p className="text-sm text-destructive">{error}</p>}
       <Button variant="ghost" disabled={signingOut} onClick={async () => {
         if (signingOut) return;
