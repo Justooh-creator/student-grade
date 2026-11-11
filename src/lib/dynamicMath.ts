@@ -237,7 +237,7 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
   const objectives: Objective[] = [];
   const seen = new Set<string>();
   const oldQuestions = new Set(previous?.objectives.map((q) => q.q) ?? []);
-  for (let i = 0; i < (isJhsClass(classId) ? JHS_OBJECTIVE_COUNT : 20); i++) {
+  for (let i = 0; i < (isJhsClass(classId) || ["b4", "b5", "b6"].includes(classId) ? JHS_OBJECTIVE_COUNT : 20); i++) {
     const selected = topics[i % topics.length];
     if (!selected) continue;
     let item = make(selected);

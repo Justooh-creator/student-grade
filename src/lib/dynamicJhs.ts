@@ -2,11 +2,17 @@ import { JHS_CONTENT } from "./jhsContent";
 import type { Objective, SubjectBank } from "./questionBank";
 import { JHS_OBJECTIVE_COUNT, JHS_THEORY_COUNT, THEORY_MARKS } from "./qaRules";
 import { englishWritten } from "./englishWritten";
+import { eweWritten } from "./eweWritten";
+import { UPPER_CONTENT } from "./upperContent";
+
+export const UPPER_IDS = ["b4", "b5", "b6"] as const;
+export const isUpperPrimary = (id: string): id is "b4" | "b5" | "b6" => (UPPER_IDS as readonly string[]).includes(id);
+export const hasDynamicPack = (id: string, subject: string) => isUpperPrimary(id) ? !!UPPER_CONTENT[subject] : !!JHS_CONTENT[subject];
 
 export const JHS_SUBJECTS = ["Mathematics", "Integrated Science", "English Language", "Ghanaian Language (Eʋegbe)", "Social Studies", "Religious and Moral Education", "Computing", "Career Technology"] as const;
-export function generateJhsPack(classId: "b7" | "b8" | "b9", subject: string, seed: number, previous?: SubjectBank): SubjectBank {
-  const content = JHS_CONTENT[subject];
-  if (!content) throw new Error(`No JHS content for ${subject}`);
+export function generateJhsPack(classId: "b4" | "b5" | "b6" | "b7" | "b8" | "b9", subject: string, seed: number, previous?: SubjectBank): SubjectBank {
+  const content = (isUpperPrimary(classId) ? UPPER_CONTENT : JHS_CONTENT)[subject];
+  if (!content) throw new Error(`No content for ${subject}`);
   let state = (seed + Number(classId.slice(1)) * 997) >>> 0;
   const random = () => {
     state += 0x6d2b79f5;
@@ -62,6 +68,6 @@ export function generateJhsPack(classId: "b7" | "b8" | "b9", subject: string, se
   const fresh = shuffle(unique.filter((q) => !old.has(q.q)));
   const objectives = shuffle([...fresh, ...shuffle(unique.filter((q) => old.has(q.q)))].slice(0, JHS_OBJECTIVE_COUNT)).map((q, i) => ({ ...q, id: `${classId}-${subject}-${seed}-o${i}` }));
   const written = shuffle(content.written).slice(0, JHS_THEORY_COUNT);
-  const theory = subject === "English Language" ? englishWritten(seed) : written.map(([topic, q, a, b, c], i) => ({ id: `${classId}-${subject}-${seed}-t${i}`, topic, q, marks: THEORY_MARKS, scheme: [`(a) ${a} [6 marks]`, `(b) ${b} [6 marks]`, `(c) ${c} [8 marks]`] }));
+  const theory = subject === "English Language" ? englishWritten(seed) : ewe ? eweWritten(seed) : written.map(([topic, q, a, b, c], i) => ({ id: `${classId}-${subject}-${seed}-t${i}`, topic, q, marks: THEORY_MARKS, scheme: [`(a) ${a} [6 marks]`, `(b) ${b} [6 marks]`, `(c) ${c} [8 marks]`] }));
   return { id: `${classId}-${subject}-${seed}`, classId, subject, objectives, theory };
 }
