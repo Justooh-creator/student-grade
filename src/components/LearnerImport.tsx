@@ -71,14 +71,16 @@ export function LearnerImport({ classId }: { classId: ClassId }) {
   }
 
   return <>
-    <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4">
-      <Button variant="outline" disabled={!canEdit || busy} onClick={() => input.current?.click()}><FileSpreadsheet />Import Excel / CSV</Button>
-      <CameraButton title="Snap class register" onFile={(f) => { if (canEdit) void readPhoto(f); }}>
-        <span className={`inline-flex h-9 items-center gap-2 rounded-md border border-input px-3 text-sm font-medium ${!canEdit || busy ? "pointer-events-none opacity-50" : ""}`}><Camera className="size-4" />Snap register</span>
-      </CameraButton>
-      <Button variant="outline" disabled={!canEdit || busy} onClick={() => photoInput.current?.click()}><ImageUp />Register photo</Button>
+    <div className="mt-4 border-t border-border pt-4">
+      <div className="grid grid-cols-3 gap-1.5 sm:flex sm:flex-wrap sm:gap-2">
+        <Button variant="outline" className="px-2 text-xs sm:px-4 sm:text-sm" disabled={!canEdit || busy} onClick={() => input.current?.click()}><FileSpreadsheet /><span className="sm:hidden">Excel / CSV</span><span className="hidden sm:inline">Import Excel / CSV</span></Button>
+        <CameraButton title="Snap class register" onFile={(f) => { if (canEdit) void readPhoto(f); }}>
+          <span className={`inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-md border border-input px-2 text-xs font-medium sm:w-auto sm:gap-2 sm:px-3 sm:text-sm ${!canEdit || busy ? "pointer-events-none opacity-50" : ""}`}><Camera className="size-4" /><span className="sm:hidden">Snap</span><span className="hidden sm:inline">Snap register</span></span>
+        </CameraButton>
+        <Button variant="outline" className="px-2 text-xs sm:px-4 sm:text-sm" disabled={!canEdit || busy} onClick={() => photoInput.current?.click()}><ImageUp /><span className="sm:hidden">Upload</span><span className="hidden sm:inline">Register photo</span></Button>
+      </div>
       <input ref={photoInput} type="file" accept="image/*" aria-label="Register photo" className="hidden" onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ""; if (file) void readPhoto(file); }} />
-      <Button asChild variant="ghost"><a href="/downloads/learner-register-template.csv" download="learner-register-template.csv"><Download />CSV template</a></Button>
+      <Button asChild variant="ghost" className="mt-1.5"><a href="/downloads/learner-register-template.csv" download="learner-register-template.csv"><Download />CSV template</a></Button>
       <input ref={input} type="file" accept=".csv,.xlsx" aria-label="Import learner register" className="hidden" onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ""; if (file) void read(file); }} />
     </div>
     <Dialog open={open} onOpenChange={setOpen}>
