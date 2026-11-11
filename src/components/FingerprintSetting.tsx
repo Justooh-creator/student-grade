@@ -14,11 +14,11 @@ export function FingerprintSetting({ userId, email }: { userId: string; email: s
   }, [userId]);
 
   if (supported === null) return null;
-  if (!supported) return <p className="text-sm text-muted-foreground">Fingerprint and face unlock are not available on this device.</p>;
 
   async function toggle() {
     setMsg("");
     if (on) { disableFingerprint(userId); setOn(false); setMsg("Fingerprint / face unlock turned off."); return; }
+    if (!supported) { setMsg("This app version blocks the phone's fingerprint and face sensor. Open edureportghana.com in Google Chrome, tap ⋮ → Install app, then turn this on from the installed EduReport app."); return; }
     try { await enableFingerprint(userId, email); setOn(true); setMsg("Fingerprint / face unlock is on for this phone."); }
     catch { setMsg("Setup was cancelled or this phone blocked it. Make sure a fingerprint or face is set up in phone Settings, then open EduReport in Chrome or the installed app and try again."); }
   }
