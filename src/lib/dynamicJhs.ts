@@ -4,16 +4,23 @@ import { JHS_OBJECTIVE_COUNT, JHS_THEORY_COUNT, THEORY_MARKS } from "./qaRules";
 import { englishWritten } from "./englishWritten";
 import { eweWritten } from "./eweWritten";
 import { UPPER_CONTENT } from "./upperContent";
+import { KG_CONTENT } from "./kgContent";
 
 export const UPPER_IDS = ["b4", "b5", "b6"] as const;
 export const isUpperPrimary = (id: string): id is "b4" | "b5" | "b6" => (UPPER_IDS as readonly string[]).includes(id);
-export const hasDynamicPack = (id: string, subject: string) => isUpperPrimary(id) ? !!UPPER_CONTENT[subject] : !!JHS_CONTENT[subject];
+export const EARLY_IDS = ["kg1", "kg2", "b1", "b2", "b3"] as const;
+export type PackClass = "kg1" | "kg2" | "b1" | "b2" | "b3" | "b4" | "b5" | "b6" | "b7" | "b8" | "b9";
+export const isEarlyClass = (id: string): id is (typeof EARLY_IDS)[number] => (EARLY_IDS as readonly string[]).includes(id);
+/** KG uses its own learning areas; Basic 1–3 reuse the simple primary banks; Basic 4–6 upper; JHS its own. */
+const contentFor = (id: string) => id.startsWith("kg") ? KG_CONTENT : isEarlyClass(id) || isUpperPrimary(id) ? UPPER_CONTENT : JHS_CONTENT;
+export const hasDynamicPack = (id: string, subject: string) => !!contentFor(id)[subject];
+const levelOf = (id: string) => id === "kg1" ? 0 : id === "kg2" ? 1 : Number(id.slice(1)) + 1;
 
 export const JHS_SUBJECTS = ["Mathematics", "Integrated Science", "English Language", "Ghanaian Language (Eʋegbe)", "Social Studies", "Religious and Moral Education", "Computing", "Career Technology"] as const;
-export function generateJhsPack(classId: "b4" | "b5" | "b6" | "b7" | "b8" | "b9", subject: string, seed: number, previous?: SubjectBank): SubjectBank {
-  const content = (isUpperPrimary(classId) ? UPPER_CONTENT : JHS_CONTENT)[subject];
+export function generateJhsPack(classId: PackClass, subject: string, seed: number, previous?: SubjectBank): SubjectBank {
+  const content = contentFor(classId)[subject];
   if (!content) throw new Error(`No content for ${subject}`);
-  let state = (seed + Number(classId.slice(1)) * 997) >>> 0;
+  let state = (seed + levelOf(classId) * 997) >>> 0;
   const random = () => {
     state += 0x6d2b79f5;
     let t = Math.imul(state ^ (state >>> 15), state | 1);
@@ -36,7 +43,7 @@ export function generateJhsPack(classId: "b4" | "b5" | "b6" | "b7" | "b8" | "b9"
   const names = ["Ama", "Kofi", "Akosua", "Kwame", "Abena", "Yao", "Adzo", "Sena", "Esi"];
   for (let i = 0; i < 18; i++) {
     const name = names[i % names.length] ?? "Ama";
-    const a = int(2, 20 + Number(classId.slice(1)) * 2), b = int(2, 12);
+    const a = int(2, 20 + levelOf(classId) * 2), b = int(2, 12);
     if (subject === "English Language") {
       const plural = i % 2 === 0;
       const actions = [["read", "reads", "reading", "readed", "a book"], ["play", "plays", "playing", "playeds", "football"], ["walk", "walks", "walking", "walked", "to school"], ["wash", "washes", "washing", "washs", "the plates"], ["write", "writes", "writing", "writed", "a letter"]];
