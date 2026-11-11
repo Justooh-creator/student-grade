@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import { useUser } from "@/lib/auth";
 import { recordPrint, useLicense } from "@/lib/license";
 import { useAppData } from "@/lib/store";
-import { useCloud } from "@/lib/cloud";
 
 type PrintBridge = { print?: () => void };
 
@@ -31,7 +30,6 @@ export function PrintButton({ label = "Print / Save whole class as PDF (A4)", cl
   const navigate = useNavigate();
   const [lockedClass, setLockedClass] = useState<string | null>(null);
 
-  const cloud = useCloud();
   const locked = ready && !lic.loading && !lic.canPrint;
 
   if (locked) {
