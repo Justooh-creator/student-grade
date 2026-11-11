@@ -9,6 +9,7 @@ import { useStaffNotices } from "@/lib/staffNotices";
 import { useDutyRosters } from "@/lib/dutyRoster";
 import { useAppData } from "@/lib/store";
 import { fmt12, useLessonAlerts } from "@/lib/timetable";
+import { useTabSwipe } from "@/hooks/useTabSwipe";
 
 
 const tabBase = "min-w-0 flex-1 text-center leading-tight whitespace-nowrap overflow-hidden text-ellipsis border-b-2 px-0.5 py-2.5 text-[10.5px] font-semibold sm:flex-none sm:whitespace-nowrap sm:px-3 sm:text-sm";
@@ -163,6 +164,7 @@ export function AppHeader({
     { key: "sba", label: "SBA Details", active: (pathname === "/" || pathname === "/sba-details") },
     { key: "report", label: "Report", active: pathname.startsWith("/class-report") || pathname.startsWith("/report") },
   ] as const;
+  useTabSwipe((tabs.find((t) => t.active)?.key ?? null) as "setup" | "students" | "sba" | "report" | null, navClass);
 
   return (
     <header className="no-print sticky top-0 z-40 border-b border-border bg-primary text-primary-foreground shadow-md">
