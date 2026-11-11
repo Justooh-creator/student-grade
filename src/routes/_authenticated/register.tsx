@@ -10,7 +10,7 @@ import { useCloud } from "@/lib/cloud";
 import { useAppData } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
 import { attendanceClasses, attendanceClassName, type AttendanceEntry } from "@/lib/attendance";
-import { schoolDays, registerMarks, weekGroups, sexOf, dailySexTotals, weeklyTotals } from "@/lib/register";
+import { registerDays, registerMarks, weekGroups, sexOf, dailySexTotals, weeklyTotals } from "@/lib/register";
 
 export const Route = createFileRoute("/_authenticated/register")({
   head: () => ({ meta: [
@@ -34,7 +34,8 @@ function RegisterPage() {
   const [month, setMonth] = useState(() => format(new Date(), "yyyy-MM"));
   const [blank, setBlank] = useState(false);
   const [y, m] = month.split("-").map(Number) as [number, number];
-  const days = schoolDays(y, m - 1);
+  const days = registerDays(y, m - 1);
+  const [paper, setPaper] = useState<"A4" | "A3">("A4");
   const q = useQuery({
     queryKey: ["register", cloud.schoolId, classId, month],
     enabled: Boolean(cloud.schoolId),
@@ -99,12 +100,13 @@ function RegisterPage() {
             </div>
             {Object.keys(closed).length > 0 && <ul className="mt-2 space-y-1 text-sm">{Object.entries(closed).sort().map(([d, r]) => <li key={d} className="flex items-center justify-between"><span>{format(new Date(d + "T00:00"), "EEE d MMM")} — {r}</span><button className="text-destructive underline" onClick={() => { const n = { ...closed }; delete n[d]; saveClosed(n); }}>Remove</button></li>)}</ul>}
           </div>
+          <div className="mt-3 flex items-center gap-2 text-sm"><span className="font-semibold">Paper</span>{(["A4", "A3"] as const).map((p) => <Button key={p} size="sm" type="button" variant={paper === p ? "default" : "outline"} onClick={() => setPaper(p)}>{p} landscape</Button>)}</div>
           <label className="mt-3 flex items-center gap-2 text-sm"><input type="checkbox" checked={blank} onChange={(e) => setBlank(e.target.checked)} /> Show blank sheet (to mark with pen)</label>
         </>}
       </div>
       {q.isPending && cloud.schoolId ? <p className="py-10">Loading register…</p> : q.error ? <p className="py-6 text-destructive">{q.error.message}</p> : q.data && <div className="mt-6 overflow-x-auto">
-        <div className="register-page print-sheet-lite bg-white p-3 text-black">
-          <div className="text-center"><p className="text-base font-bold uppercase">{school.name || "School"}</p><p className="text-xs">GHANA EDUCATION SERVICE · CLASS ATTENDANCE REGISTER</p><p className="text-xs font-semibold">{attendanceClassName(classId)} · {format(new Date(y, m - 1, 1), "MMMM yyyy")} · {school.term ? `Term ${school.term}` : ""} {school.academicYear}</p></div>
+        <div className={`register-page ${paper === "A3" ? "register-a3" : ""} print-sheet-lite bg-white p-3 text-black`}>
+          <div className="text-center"><p className="text-base font-bold uppercase">{school.name || "School"}</p><p className="text-xs">GHANA EDUCATION SERVICE · CLASS ATTENDANCE REGISTER</p><p className="text-xs font-semibold">{attendanceClassName(classId)} · {format(new Date(y, m - 1, 1), "MMMM yyyy")}{days.length ? ` (${format(new Date(days[0] + "T00:00"), "d MMM")} – ${format(new Date(days[days.length - 1] + "T00:00"), "d MMM")})` : ""} · {school.term ? `Term ${school.term}` : ""} {school.academicYear}</p></div>
           <table className="register-table mt-2">
             <thead>
               <tr><th rowSpan={2}>No.</th><th rowSpan={2} className="reg-name">Name of Learner</th><th rowSpan={2}>Sex</th>{weeks.map((w, wi) => <th key={wi} colSpan={w.length + 1}>Week {wi + 1}</th>)}<th rowSpan={2}>P</th><th rowSpan={2}>A</th></tr>
@@ -119,10 +121,9 @@ function RegisterPage() {
               <tr className="font-bold"><td colSpan={3} className="reg-name">Daily present — Total</td>{dayCells((i) => <td>{show(i) ? daily[i]!.boys + daily[i]!.girls : ""}</td>, (_, wi) => <td key={"t" + wi} className="reg-wk">{blank ? "" : weekly[wi]!.total}</td>)}<td /><td /></tr>
             </tbody>
           </table>
-          <table className="register-table mt-2">
-            <thead><tr><th className="reg-name" rowSpan={2}>Weekly totals</th>{weeks.map((_, wi) => <th key={wi} colSpan={5}>Week {wi + 1}</th>)}</tr>
-              <tr>{weeks.map((_, wi) => <Fragment key={wi}><th>Open</th><th>Cum.</th><th>Boys</th><th>Girls</th><th>Total</th></Fragment>)}</tr></thead>
-            <tbody><tr>{<td className="reg-name">Times open / attendance</td>}{weekly.map((w, wi) => <Fragment key={wi}><td>{blank ? "" : w.open}</td><td>{blank ? "" : w.cumulative}</td><td>{blank ? "" : w.boys}</td><td>{blank ? "" : w.girls}</td><td>{blank ? "" : w.total}</td></Fragment>)}</tr></tbody>
+          <table className="register-table reg-summary mt-3">
+            <thead><tr><th>Weekly totals</th><th>Dates</th><th>Times open</th><th>Cumulative</th><th>Boys</th><th>Girls</th><th>Total attendance</th></tr></thead>
+            <tbody>{weekly.map((w, wi) => <tr key={wi}><td className="font-bold">Week {wi + 1}</td><td>{format(new Date(days[weeks[wi]![0]!] + "T00:00"), "d MMM")} – {format(new Date(days[weeks[wi]![weeks[wi]!.length - 1]!] + "T00:00"), "d MMM")}</td><td>{blank ? "" : w.open}</td><td>{blank ? "" : w.cumulative}</td><td>{blank ? "" : w.boys}</td><td>{blank ? "" : w.girls}</td><td className="font-bold">{blank ? "" : w.total}</td></tr>)}</tbody>
           </table>
           <div className="mt-2 flex justify-between text-[10px]"><span>✓ Present &nbsp; ○ Absent</span><span>Class Teacher: ____________________ Sign: ________</span><span>Head Teacher: ____________________ Sign: ________</span></div>
         </div>

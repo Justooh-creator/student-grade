@@ -11,6 +11,20 @@ export function schoolDays(year: number, month: number): string[] {
   return days;
 }
 
+/** Register days for a month in whole Mon–Fri weeks: a week that runs past the month end joins the next month. */
+export function registerDays(year: number, month: number): string[] {
+  const iso = (d: Date) => d.toISOString().slice(0, 10);
+  const start = new Date(Date.UTC(year, month, 1));
+  const sw = start.getUTCDay();
+  start.setUTCDate(start.getUTCDate() + (sw === 0 ? 1 : sw === 6 ? 2 : 1 - sw));
+  const end = new Date(Date.UTC(year, month + 1, 0));
+  const ew = end.getUTCDay();
+  end.setUTCDate(end.getUTCDate() - (ew === 5 ? 0 : ew === 6 ? 1 : ew === 0 ? 2 : ew + 2));
+  const days: string[] = [];
+  for (const d = start; d <= end; d.setUTCDate(d.getUTCDate() + 1)) { const w = d.getUTCDay(); if (w !== 0 && w !== 6) days.push(iso(d)); }
+  return days;
+}
+
 export type Mark = "P" | "A" | "";
 /** Build per-learner marks: "P" present, "A" absent on a saved day, "" when the day was not marked. */
 export function registerMarks(learnerIds: string[], days: string[], saved: Record<string, AttendanceEntry[]>) {

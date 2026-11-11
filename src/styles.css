@@ -278,6 +278,9 @@ html {
 .register-table th:first-child { width: 22px; }
 .register-table th:nth-child(3) { width: 22px; }
 .register-table .reg-name { width: 140px; text-align: left; padding-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.register-table.reg-summary { width: 70%; font-size: 10px; }
+.register-table.reg-summary th, .register-table.reg-summary td { height: 18px; }
+.register-table.reg-summary th:nth-child(3) { width: auto; }
 .register-table .reg-absent { color: #b91c1c; font-weight: 700; }
 .register-table .reg-wk { background: #eef2f7; font-weight: 700; }
 .register-table .reg-closed { color: #b91c1c; font-weight: 700; vertical-align: middle; }
@@ -288,4 +291,11 @@ html {
   .register-page { page: register; min-width: 0; width: 281mm; padding: 0; }
   .register-table { font-size: 7pt; }
   .register-table th, .register-table td { height: 4.3mm; padding: 0 1px; }
+  .register-table.reg-summary { font-size: 8pt; }
+  @page register-a3 { size: A3 landscape; margin: 10mm; }
+  .register-page.register-a3 { page: register-a3; width: 400mm; }
+  .register-a3 .register-table { font-size: 9.5pt; }
+  .register-a3 .register-table th, .register-a3 .register-table td { height: 6mm; }
+  .register-a3 .register-table .reg-name { width: 60mm; }
+  .register-a3 .register-table.reg-summary { font-size: 10pt; }
 }
