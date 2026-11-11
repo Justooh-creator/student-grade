@@ -31,3 +31,4 @@
 - Certificate signer edits and uploaded signatures remain transient studio state; role-aware defaults read saved school details without changing report-card assets. Shared SVG rosettes use unique IDs per rendered sheet to keep batch printing independent.
 - Q&A selection maps displayed learning areas to exact available banks and leaves missing banks unavailable; English written packs keep composition choices, passage and literature together with their marking schemes.
 - Lower-primary Q&A uses an independent browser-safe seeded generator and grade-filtered original banks; never fall back to upper-primary or JHS content because younger learners need shorter, concrete tasks.
+- Certificate design elements are a static CDN catalogue (src/lib/certElements.ts) placed as transient % -positioned layers on CertificateSheet; they never touch licensing or school data.

@@ -1,5 +1,6 @@
 import type { School } from "@/lib/store";
-import { useId } from "react";
+import { useId, useRef } from "react";
+import type { PlacedElement } from "@/lib/certElements";
 import { DEFAULT_DISPLAY, DEFAULT_MEDALLION, EMBLEM_HEIGHT_MM, certificateTextPoints, headerLines, certificateSession, certificatePresentation, type CertTheme, type CertDisplay, type Medallion, type PhotoFrame, type CertFonts, type CertTextSizes } from "@/lib/certificates";
 
 export type PhotoAdjust = { src: string; zoom: number; x: number; y: number };
@@ -210,10 +211,19 @@ function Laurel({ color, flip }: { color: string; flip?: boolean }) {
 }
 
 /** One certificate at the given page size (mm). Artwork is designed at A4 width and scaled for larger paper. */
-export function CertificateSheet({ data, school, theme, watermark, photoMode = "none", size = { w: 297, h: 210 }, display = DEFAULT_DISPLAY, medallion = DEFAULT_MEDALLION, frame: photoFrame = "rect", fonts, textSizes }: {
+export function CertificateSheet({ data, school, theme, watermark, photoMode = "none", size = { w: 297, h: 210 }, display = DEFAULT_DISPLAY, medallion = DEFAULT_MEDALLION, frame: photoFrame = "rect", fonts, textSizes, elements = [], selectedElement, onElementSelect, onElementMove }: {
   data: CertData; school: School; theme: CertTheme; watermark: boolean; photoMode?: PhotoMode; size?: { w: number; h: number };
   display?: CertDisplay; medallion?: Medallion; frame?: PhotoFrame; fonts?: Partial<CertFonts>; textSizes?: Partial<CertTextSizes>;
+  elements?: PlacedElement[]; selectedElement?: string | undefined; onElementSelect?: (key: string) => void; onElementMove?: (key: string, x: number, y: number) => void;
 }) {
+  const pageRef = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ key: string; dx: number; dy: number } | null>(null);
+  const layer = (p: PlacedElement) => <img key={p.key} src={p.url} alt="" draggable={false} data-cert="element"
+    onPointerDown={onElementSelect ? (e) => { onElementSelect(p.key); if (p.locked || !pageRef.current) return; const r = pageRef.current.getBoundingClientRect(); drag.current = { key: p.key, dx: (e.clientX - r.left) / r.width * 100 - p.x, dy: (e.clientY - r.top) / r.height * 100 - p.y }; e.currentTarget.setPointerCapture(e.pointerId); e.preventDefault(); } : undefined}
+    onPointerMove={(e) => { const d = drag.current; if (!d || d.key !== p.key || !pageRef.current) return; const r = pageRef.current.getBoundingClientRect(); onElementMove?.(p.key, (e.clientX - r.left) / r.width * 100 - d.dx, (e.clientY - r.top) / r.height * 100 - d.dy); }}
+    onPointerUp={() => { drag.current = null; }}
+    className={`absolute ${p.behind ? "z-[5]" : "z-[15]"} ${selectedElement === p.key ? "cert-selected outline-dashed outline-2 outline-offset-2 outline-primary print:outline-none" : ""}`}
+    style={{ left: `${p.x}%`, top: `${p.y}%`, width: `${p.w}%`, aspectRatio: String(p.ratio), opacity: p.opacity, transform: `translate(-50%,-50%) rotate(${p.rotation}deg)`, touchAction: "none", cursor: onElementSelect && !p.locked ? "move" : undefined, objectFit: "contain" }} />;
   const d = display;
   const f = { heading: fonts?.heading || "", name: fonts?.name || "", award: fonts?.award || "", citation: fonts?.citation || "" };
   const lines = headerLines(school, d);
@@ -243,7 +253,7 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
     </div>);
 
   return (
-    <div className="certificate-page relative mx-auto overflow-hidden" style={{ width: `${size.w}mm`, height: `${size.h}mm`, background: t.bg, color: t.ink, breakAfter: "page" }}>
+    <div ref={pageRef} className="certificate-page relative mx-auto overflow-hidden" style={{ width: `${size.w}mm`, height: `${size.h}mm`, background: t.bg, color: t.ink, breakAfter: "page" }}>
       <div style={{ width: `${baseW}mm`, height: `${baseH}mm`, zoom, position: "relative" }}>
         <div aria-hidden style={{ position: "absolute", inset: "6mm", border: frame }} />
         <div aria-hidden style={{ position: "absolute", inset: "10mm", border: `0.4mm solid ${t.accent2}` }} />
@@ -311,6 +321,7 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
           </div>
         </div>
       </div>
+      {elements.map(layer)}
     </div>
   );
 }
