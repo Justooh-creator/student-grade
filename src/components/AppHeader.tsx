@@ -233,7 +233,7 @@ export function AppHeader({
                   <RowCell icon={ICON.cloud} title="School Cloud" desc="Join your school and sync records" />
                 </Link>
               </nav>
-              <Accordion type="single" collapsible defaultValue={pathname.startsWith("/qa-hub") || pathname.startsWith("/lesson-notes") ? "learning" : ["/staff-meeting", "/timetable", "/duty-roster", "/pta-announcement", "/attendance", "/fees"].some((p) => pathname.startsWith(p)) ? "staff" : pathname.startsWith("/auth") || pathname.startsWith("/feedback") || pathname.startsWith("/settings") ? "account" : "records"}>
+              <Accordion type="single" collapsible defaultValue={pathname.startsWith("/qa-hub") || pathname.startsWith("/lesson-notes") ? "learning" : ["/staff-meeting", "/timetable", "/duty-roster", "/pta-announcement", "/attendance", "/register", "/fees"].some((p) => pathname.startsWith(p)) ? "staff" : pathname.startsWith("/auth") || pathname.startsWith("/feedback") || pathname.startsWith("/settings") ? "account" : "records"}>
                 <AccordionItem value="records">
                   <AccordionTrigger className="font-bold text-primary">📘 Academic & Reports</AccordionTrigger>
                   <AccordionContent><nav className="grid gap-1" onClick={() => setOpen(false)}>
@@ -269,6 +269,9 @@ export function AppHeader({
                   <AccordionContent><nav className="grid gap-1" onClick={() => setOpen(false)}>
                 <Link to="/attendance" className={rowCls(pathname.startsWith("/attendance"))}>
                   <RowCell icon={ICON.people} title="Daily Attendance" desc="Daily class register and history" />
+                </Link>
+                <Link to="/register" className={rowCls(pathname.startsWith("/register"))}>
+                  <RowCell icon={ICON.people} title="Class Register" desc="Monthly register to print, filled or blank" />
                 </Link>
                 {cloud.role === "headteacher" && (
                   <Link to="/fees" className={rowCls(pathname.startsWith("/fees"))}>
