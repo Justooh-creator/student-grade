@@ -1,6 +1,6 @@
 import { CameraButton } from "@/components/CameraCapture";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ClassPicker, TextField } from "@/components/ClassPicker";
 import { PresetField } from "@/components/PresetField";
@@ -15,6 +15,8 @@ import { LearnerImport } from "@/components/LearnerImport";
 import { useCloud } from "@/lib/cloud";
 import { supabase } from "@/integrations/supabase/client";
 import { countPresentDays, parseTermDate, type DayRow } from "@/lib/attendanceFill";
+import { canCustomHeadRemark } from "@/lib/headteacher";
+import { useUser } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/students")({
   validateSearch: validateClassSearch,
