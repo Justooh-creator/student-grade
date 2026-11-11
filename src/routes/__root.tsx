@@ -141,6 +141,7 @@ function RootComponent() {
       <FingerprintLock />
       <InstallBanner />
       <OfflineStatus />
+      <div aria-hidden className="no-print pointer-events-none fixed inset-x-0 bottom-0 z-30 h-[calc(0.375rem+env(safe-area-inset-bottom))] bg-brand-green print:hidden" />
       <Toaster position="bottom-center" offset={24} />
       </AccountProvider>
     </QueryClientProvider>

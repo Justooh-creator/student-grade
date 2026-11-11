@@ -99,7 +99,7 @@ function SetupPage() {
   const search = Route.useSearch();
 
   return (
-    <div className="min-h-screen bg-background pb-32">
+    <div className="min-h-screen bg-background pb-16">
       <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={search.class} />
       <main className="mx-auto max-w-3xl px-4">
         <section className="mt-6 rounded-xl border border-border bg-card p-4 sm:p-6">
@@ -339,19 +339,18 @@ function SetupPage() {
             />
           </div>
 
-          <p className="num mt-6 border-t border-border pt-4 text-xs text-muted-foreground">
-            {students.length} learner{students.length === 1 ? "" : "s"} recorded
-          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+            <p className="num text-xs text-muted-foreground">
+              {students.length} learner{students.length === 1 ? "" : "s"} recorded
+            </p>
+            <Link
+              to="/students"
+              className="flex h-11 items-center justify-center rounded-md bg-primary px-5 text-sm font-bold text-primary-foreground hover:opacity-90"
+            >
+              Go to Student Details
+            </Link>
+          </div>
         </section>
-        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-          <Link
-            to="/students"
-            search={search.class ? { class: search.class } : {}}
-            className="pointer-events-auto mx-auto flex h-14 max-w-3xl items-center justify-center gap-2 rounded-2xl bg-primary px-6 text-base font-bold text-primary-foreground shadow-xl shadow-primary/30 ring-1 ring-primary-foreground/10 transition-transform active:scale-[0.98]"
-          >
-            Go to Student Details <span aria-hidden>→</span>
-          </Link>
-        </div>
         {school.term === "Term 3" && <PromotionRollover year={school.academicYear} />}
       </main>
     </div>
