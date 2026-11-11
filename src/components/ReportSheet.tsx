@@ -164,7 +164,7 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
               <p className="mt-0.5">
                 {result.bestSix.subjects.map((b) => `${b.subject} (${b.grade})`).join(" · ") || "—"}
               </p>
-              <p className="mt-0.5 text-[7.5pt] font-bold text-[#1b1a16]">School-computed aggregate: English, Mathematics, better of Science/Social Studies + 3 best other subjects.</p>
+              <p className="mt-0.5 text-[7.5pt] font-bold text-[#1b1a16]">School-computed aggregate: English, Mathematics, Integrated Science, Social Studies + 2 best electives.</p>
             </div>
           )}
 

@@ -42,15 +42,14 @@ describe("assessment by class level", () => {
     expect(r.bestSix?.aggregate).toBe(6);
   });
 
-  it("Basic 8 Best Six uses only 3 core subjects plus 3 best others", () => {
+  it("Basic 8 Best Six uses all 4 core subjects plus 2 best electives", () => {
     const top = { sba: 45, exam: 45 }; // grade 1
-    const mid = { sba: 30, exam: 30 }; // weaker grades
+    const mid = { sba: 30, exam: 30 };
     const r = computeStudentResult(base("b8", {
-      "English Language": top, Mathematics: top, "Integrated Science": top, "Social Studies": top,
-      Computing: mid, French: mid, "Career Technology": mid,
+      "English Language": mid, Mathematics: mid, "Integrated Science": mid, "Social Studies": mid,
+      Computing: top, French: top, "Career Technology": mid,
     }));
     const names = r.bestSix!.subjects.map((s) => s.subject);
-    expect(names).toHaveLength(6);
-    expect(names.includes("Integrated Science") && names.includes("Social Studies")).toBe(false);
+    expect(names).toEqual(["English Language", "Mathematics", "Integrated Science", "Social Studies", "Computing", "French"]);
   });
 });
