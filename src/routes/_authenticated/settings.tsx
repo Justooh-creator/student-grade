@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
 import { useCloud } from "@/lib/cloud";
-import { getTheme, setTheme, type ThemeChoice } from "@/lib/theme";
+import { getTheme, setTheme, getFontSize, setFontSize, type ThemeChoice, type FontSizeChoice } from "@/lib/theme";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
@@ -28,6 +28,12 @@ const THEMES: { id: ThemeChoice; label: string; desc: string }[] = [
   { id: "system", label: "📱 Phone default", desc: "Follow your phone setting" },
 ];
 
+const SIZES: { id: FontSizeChoice; label: string; desc: string }[] = [
+  { id: "compact", label: "A− Compact", desc: "Fits more on screen" },
+  { id: "standard", label: "A Standard", desc: "Recommended" },
+  { id: "large", label: "A+ Large", desc: "Easier to read" },
+];
+
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
@@ -42,7 +48,9 @@ function SettingsPage() {
   const { user } = useUser();
   const cloud = useCloud();
   const [theme, setChoice] = useState<ThemeChoice>("light");
-  useEffect(() => setChoice(getTheme()), []);
+  const [size, setSize] = useState<FontSizeChoice>("standard");
+  useEffect(() => { setChoice(getTheme()); setSize(getFontSize()); }, []);
+  const chooseSize = (f: FontSizeChoice) => { setFontSize(f); setSize(f); };
 
   const choose = (t: ThemeChoice) => { setTheme(t); setChoice(t); };
 
@@ -63,6 +71,20 @@ function SettingsPage() {
             ))}
           </div>
           <p className="mt-2 text-xs text-muted-foreground">Printed reports and certificates always stay on white paper.</p>
+        </Section>
+
+        <Section title="Text Size">
+          <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Text size">
+            {SIZES.map((f) => (
+              <button key={f.id} type="button" role="radio" aria-checked={size === f.id} onClick={() => chooseSize(f.id)}
+                className={`rounded-lg border-2 p-2 text-left transition-colors ${size === f.id ? "border-primary bg-primary/10" : "border-border hover:bg-muted"}`}>
+                <span className="block text-sm font-bold">{f.label}</span>
+                <span className="block text-xs text-muted-foreground">{f.desc}</span>
+              </button>
+            ))}
+          </div>
+          <p className="mt-3 rounded-md bg-muted p-3 text-base">Preview: Kofi Mensah scored 85 in Mathematics.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Printed reports and certificates keep their official size.</p>
         </Section>
 
         <Section title="Security: Fingerprint & Face Unlock">

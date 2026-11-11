@@ -185,6 +185,8 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
   --text-lg: 1.125rem;
 }
 @media screen {
+  html.text-scale-compact { font-size: 93.75%; }
+  html.text-scale-large { font-size: 112.5%; }
   body { font-size: 1rem; }
   :is(input, select, textarea):not(.print-sheet *) { font-size: 1rem; }
   :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select):not(.print-sheet *) { min-height: 2.75rem; }
