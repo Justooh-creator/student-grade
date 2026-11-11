@@ -4,7 +4,12 @@ import { AppHeader } from "@/components/AppHeader";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
 import { ReopenPicker } from "@/components/DatePicker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useUser } from "@/lib/auth";
+import { getCloud, useCloud } from "@/lib/cloud";
+import { supabase } from "@/integrations/supabase/client";
+import { canEditSchoolDetails } from "@/lib/schoolDetailsAccess";
+import type { School } from "@/lib/store";
 import { format, parse, isValid } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
@@ -95,7 +100,27 @@ const ACADEMIC_YEARS = Array.from({ length: 8 }, (_, i) => {
 });
 
 function SetupPage() {
-  const { school, setSchool, students, updateStudent } = useAppData();
+  const { school, setSchool: saveSchool, students, updateStudent } = useAppData();
+  const { user } = useUser();
+  const cloud = useCloud();
+  const [adminUserId, setAdminUserId] = useState<string>();
+  useEffect(() => {
+    let active = true;
+    setAdminUserId(undefined);
+    if (user) {
+      supabase.rpc("is_developer").then(({ data, error }) => {
+        if (active && !error && data === true) setAdminUserId(user.id);
+      });
+    }
+    return () => { active = false; };
+  }, [user]);
+  const isAdmin = !!user && adminUserId === user.id;
+  const canEdit = !!user && canEditSchoolDetails(cloud.userId === user.id ? cloud.role : undefined, isAdmin);
+  const setSchool = (patch: Partial<School>) => {
+    const current = getCloud();
+    if (!user || !canEditSchoolDetails(current.userId === user.id ? current.role : undefined, isAdmin)) return;
+    saveSchool(patch);
+  };
   const search = Route.useSearch();
 
   return (
@@ -107,7 +132,8 @@ function SetupPage() {
           <p className="mt-1 text-sm text-muted-foreground">
             Saved on this device and printed on every report card.
           </p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          {!canEdit && <p role="status" className="mt-3 text-sm font-semibold text-muted-foreground">View only — only the headteacher or an admin can change School Details.</p>}
+          <fieldset disabled={!canEdit} className="mt-5 grid min-w-0 gap-3 disabled:opacity-70 sm:grid-cols-2">
             <Field
               label="School name"
               value={school.name}
@@ -337,7 +363,7 @@ function SetupPage() {
               onChange={(v) => setSchool({ totalAttendance: v })}
               placeholder="60"
             />
-          </div>
+          </fieldset>
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <p className="num text-xs text-muted-foreground">
@@ -351,7 +377,7 @@ function SetupPage() {
             </Link>
           </div>
         </section>
-        {school.term === "Term 3" && <PromotionRollover year={school.academicYear} />}
+        {canEdit && school.term === "Term 3" && <PromotionRollover year={school.academicYear} />}
       </main>
     </div>
   );

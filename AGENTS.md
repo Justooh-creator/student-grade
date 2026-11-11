@@ -9,6 +9,7 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 - School data syncs via school_students/schools tables (one JSON row per learner); store.ts onLocalChange/applyRemote drive SyncListener — cloud is source of truth once a teacher joins a school.
+- School Details edits require verified school-admin/developer privileges and a database update trigger; exempt existing class-teacher/timetable fields so ordinary class workflows remain unchanged.
 - Private app screens live under the client-only _authenticated layout; the SSR public index renders the shared account form and sends authenticated users to the shared accountHome destination (School Details), preserving legacy / links and search parameters; keep payment checks separate from account access.
 - A single root AccountProvider owns session transitions and cache invalidation; useUser consumes it so page mounts cannot create competing auth listeners.
 - Spreadsheet reader libraries are dynamically loaded from the learner-upload action; imports are append-only and recheck class permissions, duplicates and capacity against current store data before one update.
