@@ -27,6 +27,7 @@ import { Route as AuthenticatedPtaAnnouncementRouteImport } from './routes/_auth
 import { Route as AuthenticatedQaHubRouteImport } from './routes/_authenticated/qa-hub'
 import { Route as AuthenticatedSbaDetailsRouteImport } from './routes/_authenticated/sba-details'
 import { Route as AuthenticatedSchoolCloudRouteImport } from './routes/_authenticated/school-cloud'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedSetupRouteImport } from './routes/_authenticated/setup'
 import { Route as AuthenticatedStaffMeetingRouteImport } from './routes/_authenticated/staff-meeting'
 import { Route as AuthenticatedStudentsRouteImport } from './routes/_authenticated/students'
@@ -128,6 +129,11 @@ const AuthenticatedSchoolCloudRoute =
     path: '/school-cloud',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSetupRoute = AuthenticatedSetupRouteImport.update({
   id: '/setup',
   path: '/setup',
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/qa-hub': typeof AuthenticatedQaHubRoute
   '/sba-details': typeof AuthenticatedSbaDetailsRoute
   '/school-cloud': typeof AuthenticatedSchoolCloudRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/setup': typeof AuthenticatedSetupRoute
   '/staff-meeting': typeof AuthenticatedStaffMeetingRoute
   '/students': typeof AuthenticatedStudentsRoute
@@ -205,6 +212,7 @@ export interface FileRoutesByTo {
   '/qa-hub': typeof AuthenticatedQaHubRoute
   '/sba-details': typeof AuthenticatedSbaDetailsRoute
   '/school-cloud': typeof AuthenticatedSchoolCloudRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/setup': typeof AuthenticatedSetupRoute
   '/staff-meeting': typeof AuthenticatedStaffMeetingRoute
   '/students': typeof AuthenticatedStudentsRoute
@@ -232,6 +240,7 @@ export interface FileRoutesById {
   '/_authenticated/qa-hub': typeof AuthenticatedQaHubRoute
   '/_authenticated/sba-details': typeof AuthenticatedSbaDetailsRoute
   '/_authenticated/school-cloud': typeof AuthenticatedSchoolCloudRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/setup': typeof AuthenticatedSetupRoute
   '/_authenticated/staff-meeting': typeof AuthenticatedStaffMeetingRoute
   '/_authenticated/students': typeof AuthenticatedStudentsRoute
@@ -259,6 +268,7 @@ export interface FileRouteTypes {
     | '/qa-hub'
     | '/sba-details'
     | '/school-cloud'
+    | '/settings'
     | '/setup'
     | '/staff-meeting'
     | '/students'
@@ -284,6 +294,7 @@ export interface FileRouteTypes {
     | '/qa-hub'
     | '/sba-details'
     | '/school-cloud'
+    | '/settings'
     | '/setup'
     | '/staff-meeting'
     | '/students'
@@ -310,6 +321,7 @@ export interface FileRouteTypes {
     | '/_authenticated/qa-hub'
     | '/_authenticated/sba-details'
     | '/_authenticated/school-cloud'
+    | '/_authenticated/settings'
     | '/_authenticated/setup'
     | '/_authenticated/staff-meeting'
     | '/_authenticated/students'
@@ -455,6 +467,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSchoolCloudRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/setup': {
       id: '/_authenticated/setup'
       path: '/setup'
@@ -513,6 +532,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedQaHubRoute: typeof AuthenticatedQaHubRoute
   AuthenticatedSbaDetailsRoute: typeof AuthenticatedSbaDetailsRoute
   AuthenticatedSchoolCloudRoute: typeof AuthenticatedSchoolCloudRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedSetupRoute: typeof AuthenticatedSetupRoute
   AuthenticatedStaffMeetingRoute: typeof AuthenticatedStaffMeetingRoute
   AuthenticatedStudentsRoute: typeof AuthenticatedStudentsRoute
@@ -534,6 +554,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedQaHubRoute: AuthenticatedQaHubRoute,
   AuthenticatedSbaDetailsRoute: AuthenticatedSbaDetailsRoute,
   AuthenticatedSchoolCloudRoute: AuthenticatedSchoolCloudRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedSetupRoute: AuthenticatedSetupRoute,
   AuthenticatedStaffMeetingRoute: AuthenticatedStaffMeetingRoute,
   AuthenticatedStudentsRoute: AuthenticatedStudentsRoute,
