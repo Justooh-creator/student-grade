@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, Fragment, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Printer, ClipboardList } from "lucide-react";
 import { format } from "date-fns";
@@ -70,7 +70,7 @@ function RegisterPage() {
   const show = (i: number) => !blank && marked.has(days[i]!) && !closed[days[i]!];
   const weekSum = (r: { marks: string[] }, w: number[]) => w.filter((i) => !closed[days[i]!]).filter((i) => r.marks[i] === "P").length;
   const totalRows = learners.length + blankRows + 1;
-  const dayCells = (render: (i: number) => React.ReactNode, wkCell: (w: number[], wi: number) => React.ReactNode) => weeks.map((w, wi) => <Fragment key={wi}>{w.map((i) => <Fragment key={i}>{render(i)}</Fragment>)}{wkCell(w, wi)}</Fragment>);
+  const dayCells = (render: (i: number) => ReactNode, wkCell: (w: number[], wi: number) => ReactNode) => weeks.map((w, wi) => <Fragment key={wi}>{w.map((i) => <Fragment key={i}>{render(i)}</Fragment>)}{wkCell(w, wi)}</Fragment>);
   const closedCell = (i: number, rowIdx: number) => closed[days[i]!] ? (rowIdx === 0 ? <td rowSpan={totalRows} className="reg-closed"><span>{closed[days[i]!]}</span></td> : null) : undefined;
   const blankRows = Math.max(0, 35 - learners.length > 5 ? 5 : 35 - learners.length);
 
@@ -113,7 +113,7 @@ function RegisterPage() {
             <tbody>
               {learners.map((l, k) => { const r = rows[k]!; return <tr key={l.id}><td>{k + 1}</td><td className="reg-name">{l.name}</td><td>{sexes[k]}</td>{dayCells((i) => { const c = closedCell(i, k); if (c !== undefined) return c; const mk = r.marks[i]; return <td className={mk === "A" ? "reg-absent" : ""}>{mk === "P" ? "✓" : mk === "A" ? "○" : ""}</td>; }, (w, wi) => <td key={"t" + wi} className="reg-wk">{blank ? "" : weekSum(r, w)}</td>)}<td>{blank ? "" : r.present}</td><td>{blank ? "" : r.absent}</td></tr>; })}
               {Array.from({ length: blankRows }, (_, b) => <tr key={"b" + b}><td>{learners.length + b + 1}</td><td className="reg-name" /><td />{dayCells((i) => { const c = closedCell(i, learners.length + b); return c !== undefined ? c : <td />; }, (_, wi) => <td key={"t" + wi} className="reg-wk" />)}<td /><td /></tr>)}
-              <tr><td colSpan={3} className="reg-name" /> {dayCells((i) => { const c = closedCell(i, totalRows - 1); return c !== undefined ? c : <td />; }, (_, wi) => <td key={"t" + wi} className="reg-wk" />)}<td /><td /></tr>
+              <tr><td colSpan={3} className="reg-name" />{dayCells((i) => { const c = closedCell(i, totalRows - 1); return c !== undefined ? c : <td />; }, (_, wi) => <td key={"t" + wi} className="reg-wk" />)}<td /><td /></tr>
               <tr className="font-bold"><td colSpan={3} className="reg-name">Daily present — Boys</td>{dayCells((i) => <td>{show(i) ? daily[i]!.boys : ""}</td>, (_, wi) => <td key={"t" + wi} className="reg-wk">{blank ? "" : weekly[wi]!.boys}</td>)}<td /><td /></tr>
               <tr className="font-bold"><td colSpan={3} className="reg-name">Daily present — Girls</td>{dayCells((i) => <td>{show(i) ? daily[i]!.girls : ""}</td>, (_, wi) => <td key={"t" + wi} className="reg-wk">{blank ? "" : weekly[wi]!.girls}</td>)}<td /><td /></tr>
               <tr className="font-bold"><td colSpan={3} className="reg-name">Daily present — Total</td>{dayCells((i) => <td>{show(i) ? daily[i]!.boys + daily[i]!.girls : ""}</td>, (_, wi) => <td key={"t" + wi} className="reg-wk">{blank ? "" : weekly[wi]!.total}</td>)}<td /><td /></tr>
