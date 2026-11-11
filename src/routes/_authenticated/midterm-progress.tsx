@@ -62,11 +62,12 @@ function MidtermPage() {
             const sms = midtermSmsLink(s, school, note);
             return (
               <div key={s.id} className="border-t border-border px-2 py-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="min-w-0 flex-1">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <div className="min-w-0 sm:flex-1">
                     <p className="truncate text-sm font-bold">{s.name}</p>
                     <p className="num text-xs text-muted-foreground">{s.parentPhone || "No parent phone"}</p>
                   </div>
+                  <div className="flex shrink-0 flex-wrap items-center gap-2">
                   <button onClick={() => setPreview(preview === s.id ? null : s.id)} className="h-8 rounded-md border border-border px-3 text-xs font-bold hover:bg-muted">
                     {preview === s.id ? "Hide" : "Preview"}
                   </button>
@@ -84,6 +85,7 @@ function MidtermPage() {
                   ) : (
                     <Link to="/students" search={{ class: classId }} className="text-xs font-bold text-primary hover:underline">Add phone</Link>
                   )}
+                  </div>
                 </div>
                 {preview === s.id && (
                   <pre className="mt-2 whitespace-pre-wrap rounded-md bg-muted p-2 text-xs">{buildMidtermSummary(s, school, note)}</pre>
