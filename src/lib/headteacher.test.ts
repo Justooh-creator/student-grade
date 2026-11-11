@@ -19,3 +19,9 @@ describe("canCustomHeadRemark", () => {
     expect(canCustomHeadRemark("", "Ama Serwaa")).toBe(false);
   });
 });
+
+import { test as t2, expect as e2 } from "vitest";
+t2("school admin role can always type custom remark", () => {
+  e2(canCustomHeadRemark("Anyone", "", "headteacher")).toBe(true);
+  e2(canCustomHeadRemark("Anyone", "Mr Mensah", "teacher")).toBe(false);
+});

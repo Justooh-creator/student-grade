@@ -53,7 +53,7 @@ function StudentsPage() {
       .then(({ data }) => { if (active) setMyName(data?.display_name ?? ""); });
     return () => { active = false; };
   }, [user]);
-  const headCanCustom = canCustomHeadRemark(myName, school.headTeacher);
+  const headCanCustom = canCustomHeadRemark(myName, school.headTeacher, cloud.role);
   const [filling, setFilling] = useState(false);
   async function fillAttendance() {
     if (!cloud.schoolId) { toast.error("Join School Cloud to use Daily Attendance marks."); return; }
@@ -177,7 +177,7 @@ function StudentsPage() {
                 <PresetField label="Headteacher's remark" value={s.headRemark ?? ""} presets={HEAD_REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { headRemark: v })} placeholder="Select headteacher's remark" allowCustom={headCanCustom} />
                 {!headCanCustom && (
                   <p className="-mt-1 text-[11px] text-muted-foreground">
-                    Only the headteacher named in School Details can type a custom remark.
+                    Only the school admin/headteacher can type a custom remark.
                   </p>
                 )}
               </div>
