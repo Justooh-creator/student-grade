@@ -25,6 +25,7 @@ import { Route as AuthenticatedLessonNotesRouteImport } from './routes/_authenti
 import { Route as AuthenticatedMidtermProgressRouteImport } from './routes/_authenticated/midterm-progress'
 import { Route as AuthenticatedPtaAnnouncementRouteImport } from './routes/_authenticated/pta-announcement'
 import { Route as AuthenticatedQaHubRouteImport } from './routes/_authenticated/qa-hub'
+import { Route as AuthenticatedRegisterRouteImport } from './routes/_authenticated/register'
 import { Route as AuthenticatedSbaDetailsRouteImport } from './routes/_authenticated/sba-details'
 import { Route as AuthenticatedSchoolCloudRouteImport } from './routes/_authenticated/school-cloud'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
@@ -118,6 +119,11 @@ const AuthenticatedQaHubRoute = AuthenticatedQaHubRouteImport.update({
   path: '/qa-hub',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedRegisterRoute = AuthenticatedRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSbaDetailsRoute = AuthenticatedSbaDetailsRouteImport.update({
   id: '/sba-details',
   path: '/sba-details',
@@ -184,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
   '/qa-hub': typeof AuthenticatedQaHubRoute
+  '/register': typeof AuthenticatedRegisterRoute
   '/sba-details': typeof AuthenticatedSbaDetailsRoute
   '/school-cloud': typeof AuthenticatedSchoolCloudRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
   '/qa-hub': typeof AuthenticatedQaHubRoute
+  '/register': typeof AuthenticatedRegisterRoute
   '/sba-details': typeof AuthenticatedSbaDetailsRoute
   '/school-cloud': typeof AuthenticatedSchoolCloudRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -238,6 +246,7 @@ export interface FileRoutesById {
   '/_authenticated/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/_authenticated/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
   '/_authenticated/qa-hub': typeof AuthenticatedQaHubRoute
+  '/_authenticated/register': typeof AuthenticatedRegisterRoute
   '/_authenticated/sba-details': typeof AuthenticatedSbaDetailsRoute
   '/_authenticated/school-cloud': typeof AuthenticatedSchoolCloudRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -266,6 +275,7 @@ export interface FileRouteTypes {
     | '/midterm-progress'
     | '/pta-announcement'
     | '/qa-hub'
+    | '/register'
     | '/sba-details'
     | '/school-cloud'
     | '/settings'
@@ -292,6 +302,7 @@ export interface FileRouteTypes {
     | '/midterm-progress'
     | '/pta-announcement'
     | '/qa-hub'
+    | '/register'
     | '/sba-details'
     | '/school-cloud'
     | '/settings'
@@ -319,6 +330,7 @@ export interface FileRouteTypes {
     | '/_authenticated/midterm-progress'
     | '/_authenticated/pta-announcement'
     | '/_authenticated/qa-hub'
+    | '/_authenticated/register'
     | '/_authenticated/sba-details'
     | '/_authenticated/school-cloud'
     | '/_authenticated/settings'
@@ -453,6 +465,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedQaHubRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/register': {
+      id: '/_authenticated/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof AuthenticatedRegisterRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/sba-details': {
       id: '/_authenticated/sba-details'
       path: '/sba-details'
@@ -530,6 +549,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMidtermProgressRoute: typeof AuthenticatedMidtermProgressRoute
   AuthenticatedPtaAnnouncementRoute: typeof AuthenticatedPtaAnnouncementRoute
   AuthenticatedQaHubRoute: typeof AuthenticatedQaHubRoute
+  AuthenticatedRegisterRoute: typeof AuthenticatedRegisterRoute
   AuthenticatedSbaDetailsRoute: typeof AuthenticatedSbaDetailsRoute
   AuthenticatedSchoolCloudRoute: typeof AuthenticatedSchoolCloudRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -552,6 +572,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMidtermProgressRoute: AuthenticatedMidtermProgressRoute,
   AuthenticatedPtaAnnouncementRoute: AuthenticatedPtaAnnouncementRoute,
   AuthenticatedQaHubRoute: AuthenticatedQaHubRoute,
+  AuthenticatedRegisterRoute: AuthenticatedRegisterRoute,
   AuthenticatedSbaDetailsRoute: AuthenticatedSbaDetailsRoute,
   AuthenticatedSchoolCloudRoute: AuthenticatedSchoolCloudRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,

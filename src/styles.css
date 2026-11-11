@@ -271,3 +271,18 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
+
+.register-page { min-width: 900px; }
+.register-table { width: 100%; border-collapse: collapse; font-size: 9px; table-layout: fixed; }
+.register-table th, .register-table td { border: 1px solid #333; padding: 2px 1px; text-align: center; height: 16px; }
+.register-table th:first-child { width: 22px; }
+.register-table th:nth-child(3) { width: 22px; }
+.register-table .reg-name { width: 140px; text-align: left; padding-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.register-table .reg-absent { color: #b91c1c; font-weight: 700; }
+@media print {
+  @page register { size: A4 landscape; margin: 8mm; }
+  body:has(.register-page) main { max-width: none; padding: 0; }
+  .register-page { page: register; min-width: 0; width: 281mm; padding: 0; }
+  .register-table { font-size: 7pt; }
+  .register-table th, .register-table td { height: 4.3mm; padding: 0 1px; }
+}
