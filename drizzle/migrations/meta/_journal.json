@@ -162,6 +162,13 @@
       "when": 1794456292914,
       "tag": "0022_field_level_student_sync",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1794456604453,
+      "tag": "0023_tighten_sync_conflict_grants",
+      "breakpoints": true
     }
   ]
 }
