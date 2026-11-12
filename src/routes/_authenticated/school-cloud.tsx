@@ -30,7 +30,7 @@ function SchoolCloudPage() {
   const { user, ready } = useUser();
   const cloud = useCloud();
   const lic = useLicense(user?.id);
-  const [name, setName] = useState(school.name);
+  const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const backupCount = cloud.status === "synced" ? hasLocalBackup() : 0;
@@ -54,6 +54,17 @@ function SchoolCloudPage() {
     setBusy(true);
     try { const n = await uploadLocalBackup(user.id); toast.success(`Uploaded ${n} learner(s) to the school cloud.`); }
     catch (e) { toast.error((e as Error).message); }
+    setBusy(false);
+  }
+  async function switchSchool() {
+    if (!user || code.trim().length < 6) return;
+    if (!confirm("Leave this school and join the school with this code? Records stay in the current school cloud.")) return;
+    setBusy(true);
+    await supabase.from("school_members").delete().eq("user_id", user.id);
+    const { error } = await supabase.rpc("join_school", { _code: code.trim() });
+    if (error) toast.error(error.message); else toast.success("You joined the school.");
+    await loadSchool(user.id);
+    setCode("");
     setBusy(false);
   }
   async function leave() {
@@ -104,25 +115,34 @@ function SchoolCloudPage() {
               </div>
             )}
             <BackupRestore canRestore={cloud.role === "headteacher"} schoolId={cloud.schoolId} />
+            <div className={card}>
+              <p className="font-bold">Joined the wrong school?</p>
+              <p className="text-sm text-muted-foreground">Enter your headteacher's School Code to switch to the right school.</p>
+              <label className="mt-3 block text-sm font-bold">School Code
+                <input className={`${input} num uppercase tracking-widest`} maxLength={6} value={code} onChange={(e) => setCode(e.target.value)} placeholder="e.g. 4A9F2C" />
+              </label>
+              <button onClick={switchSchool} disabled={busy || code.trim().length < 6} className={`${btn} mt-3`}>Switch school</button>
+            </div>
             <button onClick={leave} className="text-sm font-semibold text-destructive underline">Leave school</button>
           </>
         ) : (
           <>
             <LicenseCard lic={lic} onActivated={() => lic.refresh()} />
             <div className={card}>
-              <p className="font-bold">Register a new school</p>
-              <p className="text-sm text-muted-foreground">For the headteacher. You get a School Code to give teachers.</p>
-              <label className="mt-3 block text-sm font-bold">School name
-                <input className={input} value={name} onChange={(e) => setName(e.target.value)} />
-              </label>
-              <button onClick={create} disabled={busy || !name.trim()} className={`${btn} mt-3`}>Create school</button>
-            </div>
-            <div className={card}>
-              <p className="font-bold">Join an existing school</p>
+              <p className="font-bold">Join your school (teachers start here)</p>
+              <p className="text-sm text-muted-foreground">Ask your headteacher for the 6-character School Code.</p>
               <label className="mt-3 block text-sm font-bold">School Code
                 <input className={`${input} num uppercase tracking-widest`} maxLength={6} value={code} onChange={(e) => setCode(e.target.value)} placeholder="e.g. 4A9F2C" />
               </label>
               <button onClick={join} disabled={busy || code.trim().length < 6} className={`${btn} mt-3`}>Join school</button>
+            </div>
+            <div className={card}>
+              <p className="font-bold">Register a new school</p>
+              <p className="text-sm text-muted-foreground">Only for a headteacher setting up a brand-new school. Teachers should join above instead.</p>
+              <label className="mt-3 block text-sm font-bold">School name
+                <input className={input} value={name} onChange={(e) => setName(e.target.value)} />
+              </label>
+              <button onClick={create} disabled={busy || !name.trim()} className={`${btn} mt-3`}>Create school</button>
             </div>
             <BackupRestore canRestore />
           </>
