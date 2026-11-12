@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
+import { useAppData } from "@/lib/store";
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
@@ -47,12 +48,13 @@ const SECTIONS: { title: string; items: QA[] }[] = [
 ];
 
 function HelpPage() {
+  const { school } = useAppData();
   const [term, setTerm] = useState("");
   const t = term.trim().toLowerCase();
   const sections = SECTIONS.map((s) => ({ ...s, items: s.items.filter((i) => !t || (i.q + i.a).toLowerCase().includes(t)) })).filter((s) => s.items.length);
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader />
+      <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} />
       <main className="mx-auto max-w-3xl space-y-4 p-4">
         <div>
           <h1 className="text-2xl font-bold text-primary">Help & FAQs</h1>
