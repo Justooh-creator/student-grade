@@ -31,7 +31,7 @@ class FakeServer {
       this.details = res.data;
       res.conflicts.forEach((c) => this.conflicts.push({ ...c, by: user }));
       if (this.loseNextReply) { this.loseNextReply = false; throw new Error("Network lost"); }
-      return clone({ data: res.data, name: String(res.data.name ?? ""), conflicts: res.conflicts, invalid: res.invalid }) as SchoolSyncResult;
+      return clone({ data: res.data, name: String(res.data["name"] ?? ""), conflicts: res.conflicts, invalid: res.invalid }) as SchoolSyncResult;
     };
   }
 }
