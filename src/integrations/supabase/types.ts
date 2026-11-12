@@ -565,6 +565,56 @@ export type Database = {
           },
         ]
       }
+      school_sync_conflicts: {
+        Row: {
+          base_value: Json
+          cloud_value: Json
+          id: string
+          local_value: Json
+          path: string[]
+          raised_at: string
+          raised_by: string
+          resolution: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          school_id: string
+        }
+        Insert: {
+          base_value?: Json
+          cloud_value?: Json
+          id?: string
+          local_value?: Json
+          path?: string[]
+          raised_at?: string
+          raised_by?: string
+          resolution?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          school_id: string
+        }
+        Update: {
+          base_value?: Json
+          cloud_value?: Json
+          id?: string
+          local_value?: Json
+          path?: string[]
+          raised_at?: string
+          raised_by?: string
+          resolution?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          school_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_sync_conflicts_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       schools: {
         Row: {
           created_by: string
@@ -818,6 +868,7 @@ export type Database = {
         Args: { _path: string[]; _target: Json; _value: Json }
         Returns: Json
       }
+      merge_school_ops: { Args: { _details: Json; _ops: Json }; Returns: Json }
       merge_student_ops: { Args: { _data: Json; _ops: Json }; Returns: Json }
       print_window_closed: {
         Args: { _first: string; _key: string; _terms: number }
@@ -885,6 +936,10 @@ export type Database = {
       }
       shares_school_with: { Args: { _other: string }; Returns: boolean }
       sync_norm: { Args: { _v: Json }; Returns: Json }
+      sync_school_changes: {
+        Args: { _ops: Json; _school: string }
+        Returns: Json
+      }
       sync_student_changes: {
         Args: { _changes: Json; _school: string }
         Returns: Json

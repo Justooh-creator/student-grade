@@ -14,7 +14,7 @@ export type SyncTransport = (changes: WireChange[]) => Promise<SyncResult[]>;
 
 const memory = new Map<string, string>();
 const memoryStore: KeyValueStore = { getItem: (k) => memory.get(k) ?? null, setItem: (k, v) => void memory.set(k, v), removeItem: (k) => void memory.delete(k) };
-function defaultStore(): KeyValueStore {
+export function defaultStore(): KeyValueStore {
   try { if (typeof window !== "undefined" && window.localStorage) return window.localStorage; } catch { /* blocked */ }
   return memoryStore;
 }

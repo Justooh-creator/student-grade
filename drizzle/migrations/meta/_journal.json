@@ -169,6 +169,13 @@
       "when": 1794456604453,
       "tag": "0023_tighten_sync_conflict_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1794457778239,
+      "tag": "0024_field_level_school_sync",
+      "breakpoints": true
     }
   ]
 }

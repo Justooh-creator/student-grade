@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { applyRemote, getData, DEFAULT_SCHOOL, stripSchoolImages, stripStudentImages, keepLocalSchoolImages, keepLocalStudentPhoto, type Student, type School } from "./store";
 import { queueKey, readMembership, readQueue, writeMembership } from "./syncQueue";
 import { rebase, type SyncQueue } from "./syncMerge";
+import { readSchoolQueue, rebaseSchool, schoolQueueKey } from "./schoolSync";
 
 export interface CloudState {
   status: "signed-out" | "loading" | "no-school" | "synced" | "saving" | "offline";
@@ -75,7 +76,8 @@ export async function loadSchool(userId: string) {
   if (!localStorage.getItem(BACKUP_KEY)) {
     localStorage.setItem(BACKUP_KEY, JSON.stringify(getData()));
   }
-  const details = (school.details ?? {}) as Partial<School>;
+  // Unsent School Details edits on this device stay on top of the cloud copy after a refresh.
+  const details = rebaseSchool(school.details as Record<string, unknown>, readSchoolQueue(schoolQueueKey(userId, school.id))) as Partial<School>;
   const pending = readQueue(queueKey(userId, school.id));
   applyRemote((cur) => ({
     school: keepLocalSchoolImages(cur.school, { ...DEFAULT_SCHOOL, ...details, name: details.name || school.name }),
