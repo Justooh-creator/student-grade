@@ -11,6 +11,14 @@ const TASKS: Record<string, readonly Task[]> = {
     ["Healthy habits", "Name two fruits you can eat.", "Any two fruits (3 each).", "Why do we need sleep?", "To rest and stay healthy.", "Write two ways to keep your body clean.", "Any two: bathe, brush teeth, wash hands, wear clean clothes (4 each)."],
     ["Our surroundings", "Name two things you see in the daytime sky.", "Any two: sun, clouds, birds, aeroplane (3 each).", "What falls from clouds when it rains?", "Water/rain drops.", "Draw a tree and write one way to care for it.", "Drawing (4); water it or avoid damaging it (4)."],
   ],
+  History: [
+    ["My past", "Write two things you could do as a baby.", "Any two: cry, crawl, drink milk, sleep (3 each).", "What is the day you were born called?", "Birthday.", "Draw yourself as a baby and now, and write one change.", "Two drawings (4); correct change e.g. taller, can walk (4)."],
+    ["My family history", "Name two older people in your family.", "Any two: grandmother, grandfather, aunt, uncle (3 each).", "Where does your family come from?", "Correct hometown named.", "Write two things elders can tell us about long ago.", "Any two: stories, how they lived, games, food, festivals (4 each)."],
+    ["Our country", "Write the name of our country and its capital.", "Ghana; Accra (3 each).", "Name the star on Ghana's flag.", "Black star.", "Draw Ghana's flag and name its three colours.", "Drawing (4); red, gold, green (2 each, max 4)."],
+    ["Our community", "Name two traditional leaders in a town.", "Chief and queen mother (3 each).", "Name one festival in Ghana.", "Any correct festival e.g. Homowo, Hogbetsotso.", "Write two things people do during a festival.", "Any two: drumming, dancing, eating, durbar, remembering the past (4 each)."],
+    ["Independence", "Who was Ghana's first President?", "Dr Kwame Nkrumah (6).", "On what date is Independence Day?", "6th March.", "Write two things children do on Independence Day.", "Any two: march, sing the National Anthem, wave flags, wear national colours (4 each)."],
+    ["Sources of history", "Name two ways we learn about the past.", "Any two: elders' stories, old photographs, museums, old objects (3 each).", "Where are old objects kept for people to see?", "Museum.", "Draw one old object and write what it was used for.", "Drawing (4); suitable use (4)."],
+  ],
   "Our World Our People": [
     ["My family", "Name two people who care for children at home.", "Any two appropriate family members or carers (3 each).", "Write one safe way you help at home.", "Any suitable age-appropriate chore.", "Draw your home and name one room or space.", "Drawing (4); correct room or space (4)."],
     ["My school", "Name two things you use in class.", "Any two: book, pencil, ruler, crayon (3 each).", "Who helps you learn at school?", "Teacher.", "Write two ways to keep your classroom clean.", "Any two: sweep, use a bin, put things away (4 each)."],

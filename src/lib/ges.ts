@@ -85,12 +85,13 @@ const LOWER_PRIMARY_SUBJECTS = [
   "English Language",
   "Mathematics",
   "Science",
-  "Our World Our People",
+  "History",
   "Religious and Moral Education",
   "Creative Arts",
   "Ghanaian Language",
   "Physical Education",
   "Computing",
+  "Our World Our People",
 ];
 
 const UPPER_PRIMARY_SUBJECTS = [
@@ -98,12 +99,12 @@ const UPPER_PRIMARY_SUBJECTS = [
   "Mathematics",
   "Science",
   "History",
-  "Our World Our People",
   "Religious and Moral Education",
   "Creative Arts",
   "Ghanaian Language",
   "Physical Education",
   "Computing",
+  "Our World Our People",
 ];
 
 const JHS_SUBJECTS = [
