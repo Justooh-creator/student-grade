@@ -164,7 +164,8 @@ export function acknowledge(queue: SyncQueue, sent: SyncQueue, results: SyncResu
       else q.students[s.id] = { ...cur, create: true, ops: Object.fromEntries(diffStudent(undefined, cur.snapshot).map((o) => [opKey(o.p), { ...o, b: null, seq: ++q.seq }])) };
       continue;
     }
-    const conflicted = new Set((r.conflicts ?? []).map((c) => opKey(c.p)));
+    // Conflicts are kept on the server for review; invalid values can never succeed.
+    const conflicted = new Set([...(r.conflicts ?? []), ...(r.invalid ?? [])].map((c) => opKey(c.p)));
     const ops = { ...cur.ops };
     for (const [key, op] of Object.entries(s.ops)) {
       const now = ops[key];
