@@ -143,3 +143,17 @@ describe("School Details outbox survives refreshes and offline periods", () => {
     expect(r.data).toEqual({});
   });
 });
+
+describe("App merge matches the database merge (public.merge_school_ops)", () => {
+  // Expected values were produced by running public.merge_school_ops on the same inputs.
+  const cases: [Record<string, unknown>, { p: string[]; b: Json; v: Json }[], Record<string, unknown>][] = [
+    [{ address: "x" }, [{ p: ["address"], b: "x", v: null }], {}],
+    [{ address: "x" }, [{ p: ["address"], b: "x", v: "" }], { address: "" }],
+    [{ classAssignments: { b4: ["u1"], b5: ["u2"] } }, [{ p: ["classAssignments", "b4"], b: ["u1"], v: null }], { classAssignments: { b5: ["u2"] } }],
+    [{ classAssignments: ["bad"] }, [{ p: ["classAssignments", "0"], b: "bad", v: null }], { classAssignments: ["bad"] }],
+    [{ subjectAssignments: { b7: "str" } }, [{ p: ["subjectAssignments", "b7", "Maths"], b: null, v: ["u"] }], { subjectAssignments: { b7: { Maths: ["u"] } } }],
+  ];
+  it.each(cases)("merges %j identically", (d, ops, expected) => {
+    expect(mergeSchoolOps(d, ops).data).toEqual(expected);
+  });
+});
