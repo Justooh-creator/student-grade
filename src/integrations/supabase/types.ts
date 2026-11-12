@@ -683,6 +683,65 @@ export type Database = {
           },
         ]
       }
+      student_sync_conflicts: {
+        Row: {
+          base_value: Json
+          cloud_value: Json
+          id: string
+          kind: string
+          local_value: Json
+          path: string[]
+          raised_at: string
+          raised_by: string
+          resolution: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          school_id: string
+          student_id: string
+          student_name: string
+        }
+        Insert: {
+          base_value?: Json
+          cloud_value?: Json
+          id?: string
+          kind?: string
+          local_value?: Json
+          path?: string[]
+          raised_at?: string
+          raised_by?: string
+          resolution?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          school_id: string
+          student_id: string
+          student_name?: string
+        }
+        Update: {
+          base_value?: Json
+          cloud_value?: Json
+          id?: string
+          kind?: string
+          local_value?: Json
+          path?: string[]
+          raised_at?: string
+          raised_by?: string
+          resolution?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          school_id?: string
+          student_id?: string
+          student_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_sync_conflicts_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_licenses: {
         Row: {
           expires_at: string | null
@@ -755,10 +814,16 @@ export type Database = {
       is_school_admin: { Args: { _school: string }; Returns: boolean }
       is_school_member: { Args: { _school: string }; Returns: boolean }
       join_school: { Args: { _code: string }; Returns: string }
+      jsonb_set_deep: {
+        Args: { _path: string[]; _target: Json; _value: Json }
+        Returns: Json
+      }
+      merge_student_ops: { Args: { _data: Json; _ops: Json }; Returns: Json }
       print_window_closed: {
         Args: { _first: string; _key: string; _terms: number }
         Returns: boolean
       }
+      recalc_cat_entry: { Args: { _e: Json }; Returns: Json }
       record_print: { Args: { _term_key: string }; Returns: Json }
       record_print_class: {
         Args: { _class_id: string; _term_key: string }
@@ -819,6 +884,11 @@ export type Database = {
         Returns: undefined
       }
       shares_school_with: { Args: { _other: string }; Returns: boolean }
+      sync_norm: { Args: { _v: Json }; Returns: Json }
+      sync_student_changes: {
+        Args: { _changes: Json; _school: string }
+        Returns: Json
+      }
       valid_fee_rate_overrides: { Args: { _rates: Json }; Returns: boolean }
     }
     Enums: {
