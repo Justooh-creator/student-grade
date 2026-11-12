@@ -42,3 +42,5 @@
 - [x] Test Basic 1–3 counts, answers, freshness and isolation from Basic 4–6; 123 tests passed and signed-in quiz/exam/scheme flow verified on desktop and mobile. New Ewe wording still needs fluent-speaker review.
 - [x] Issue 2: field-level offline sync with same-field conflict review; 15 sync tests, SQL merge parity and RPC school-isolation checks verified.
 - [ ] Issue 3: waiting for approval.
+
+- [x] Durable field-level School Details sync queue (survives refresh/offline; clashes go to review).
