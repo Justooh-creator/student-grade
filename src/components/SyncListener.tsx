@@ -97,7 +97,7 @@ export function SyncListener() {
     });
 
     // Back online: send pending edits, then pull anything other teachers changed meanwhile.
-    const onOnline = () => { void flush().then(() => { if (getCloud().cached || getCloud().status !== "offline") void loadSchool(user.id); }); };
+    const onOnline = () => { void flush().then(() => { if (getCloud().status !== "offline") void loadSchool(user.id); }); };
     window.addEventListener("online", onOnline);
     // Edits left from an earlier session (app closed or no internet) are retried right away.
     if (pendingCount(readQueue(key))) { setCloud({ status: "saving" }); schedule(300); }
