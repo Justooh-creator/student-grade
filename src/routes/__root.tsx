@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SyncListener } from "@/components/SyncListener";
+import { SyncConflicts } from "@/components/SyncConflicts";
 import { InstallBanner } from "@/components/InstallBanner";
 import { Toaster } from "@/components/ui/sonner";
 import { AccountProvider } from "@/lib/auth";
@@ -138,6 +139,7 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <SyncListener />
+      <SyncConflicts />
       <FingerprintLock />
       <InstallBanner />
       <OfflineStatus />

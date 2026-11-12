@@ -40,3 +40,5 @@
 - [x] Package A: EduReport biometric wording; authenticated names/emblem flow, mobile layout, centred footer, single-page A4/A3 PDFs and 25 tests verified. Package B excluded; physical OS prompts may retain the site address.
 - [x] Create independent, simpler Basic 1–3 subject banks and grade-specific language papers while retaining the existing layout.
 - [x] Test Basic 1–3 counts, answers, freshness and isolation from Basic 4–6; 123 tests passed and signed-in quiz/exam/scheme flow verified on desktop and mobile. New Ewe wording still needs fluent-speaker review.
+- [x] Issue 2: field-level offline sync with same-field conflict review; 15 sync tests, SQL merge parity and RPC school-isolation checks verified.
+- [ ] Issue 3: waiting for approval.
