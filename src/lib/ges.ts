@@ -170,9 +170,29 @@ export const GRADE_BANDS: GradeBand[] = [
 export const SBA_MAX = 30;
 export const EXAM_MAX = 70;
 
+export type ScoreCheck = { ok: true; value: number | null } | { ok: false; message: string };
+
+/** Validates one mark. Empty input means "not entered" (null). Rejects negatives, values above max, NaN/Infinity and non-numbers. */
+export function parseScore(input: unknown, max: number): ScoreCheck {
+  if (input === null || input === undefined) return { ok: true, value: null };
+  const text = typeof input === "string" ? input.trim() : input;
+  if (text === "") return { ok: true, value: null };
+  if (typeof text === "string" && !/^-?\d+(\.\d+)?$/.test(text)) return { ok: false, message: `"${text}" is not a valid mark. Enter a number from 0 to ${max}.` };
+  const n = typeof text === "number" ? text : Number(text);
+  if (typeof n !== "number" || !Number.isFinite(n)) return { ok: false, message: `Invalid mark. Enter a number from 0 to ${max}.` };
+  if (n < 0 || n > max) return { ok: false, message: `${n} is outside the allowed range 0–${max}.` };
+  return { ok: true, value: n };
+}
+
+export function isValidTotal(total: unknown): total is number {
+  return typeof total === "number" && Number.isFinite(total) && total >= 0 && total <= 100;
+}
+
+/** Grade for a final total out of 100. Throws RangeError for invalid totals instead of silently returning Grade 9. */
 export function gradeFor(total: number): GradeBand {
+  if (!isValidTotal(total)) throw new RangeError(`Invalid total score ${String(total)}: must be between 0 and 100.`);
   const rounded = Math.round(total);
-  return GRADE_BANDS.find((b) => rounded >= b.min && rounded <= b.max) ?? GRADE_BANDS[GRADE_BANDS.length - 1]!;
+  return GRADE_BANDS.find((b) => rounded >= b.min && rounded <= b.max)!;
 }
 
 export function ordinal(n: number): string {

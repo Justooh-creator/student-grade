@@ -1,4 +1,4 @@
-import { getClassLevel, gradeFor, isJhs, isKg, kgLevelByName, type ClassId } from "./ges";
+import { getClassLevel, gradeFor, isValidTotal, isJhs, isKg, kgLevelByName, type ClassId } from "./ges";
 import type { Student } from "./store";
 
 export interface SubjectResult {
@@ -41,6 +41,9 @@ export function computeStudentResult(student: Student): StudentResult {
       return { subject, sba, exam, sbaRaw, examRaw, total: null, grade: null, remark: "—" };
     }
     const total = Math.round(((sba ?? 0) + (exam ?? 0)) * 10) / 10;
+    if (!isValidTotal(total)) {
+      return { subject, sba, exam, sbaRaw, examRaw, total: null, grade: null, remark: `Invalid score (${total}) — must be 0–100` };
+    }
     const band = gradeFor(total);
     return { subject, sba, exam, sbaRaw, examRaw, total, grade: band.grade, remark: band.remark };
   });

@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ClassPicker } from "@/components/ClassPicker";
-import { CAT_PARTS, GRADE_BANDS, KG_LEVELS, getClassLevel, isKg, ordinal, usesCat } from "@/lib/ges";
+import { CAT_PARTS, GRADE_BANDS, parseScore, KG_LEVELS, getClassLevel, isKg, ordinal, usesCat } from "@/lib/ges";
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
@@ -252,30 +252,33 @@ function ScoreInput({
   max: number;
   onChange: (v: number | null) => void;
 }) {
-  const [invalid, setInvalid] = useState(false);
+  const [invalid, setInvalid] = useState<string | null>(null);
+  const [draft, setDraft] = useState<string | null>(null);
   return (
+    <>
     <input
-      inputMode="numeric"
+      inputMode="decimal"
       disabled={disabled}
-      value={value === null ? "" : String(value)}
+      value={draft ?? (value === null ? "" : String(value))}
+      onBlur={() => { if (!invalid) setDraft(null); }}
       onChange={(e) => {
-        const raw = e.target.value.replace(/[^0-9]/g, "");
-        if (raw === "") {
-          setInvalid(false);
-          return onChange(null);
+        const text = e.target.value;
+        setDraft(text);
+        if (/^\d+\.$/.test(text.trim())) return; // still typing a decimal
+        const r = parseScore(text, max);
+        if (!r.ok) {
+          setInvalid(r.message);
+          return;
         }
-        const n = Number(raw);
-        if (n > max) {
-          setInvalid(true);
-          return onChange(null);
-        }
-        setInvalid(false);
-        onChange(n);
+        setInvalid(null);
+        onChange(r.value);
       }}
-      aria-invalid={invalid}
-      title={invalid ? `Maximum is ${max}` : undefined}
+      aria-invalid={!!invalid}
+      title={invalid ?? undefined}
       className={`num h-9 w-16 rounded-md border bg-background text-center text-sm outline-none focus:ring-2 ${invalid ? "border-2 border-destructive focus:border-destructive focus:ring-destructive/30" : "border-border focus:border-primary focus:ring-primary/20"}`}
-      placeholder={invalid ? `≤${max}` : "—"}
+      placeholder="—"
     />
+    {invalid && <p role="alert" className="mt-0.5 max-w-24 text-[11px] leading-tight text-destructive">{invalid}</p>}
+    </>
   );
 }
