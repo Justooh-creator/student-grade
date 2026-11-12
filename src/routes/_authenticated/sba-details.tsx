@@ -260,14 +260,17 @@ function ScoreInput({
       inputMode="decimal"
       disabled={disabled}
       value={draft ?? (value === null ? "" : String(value))}
-      onBlur={() => { if (!invalid) setDraft(null); }}
+      onBlur={() => setDraft(null)}
       onChange={(e) => {
         const text = e.target.value;
         setDraft(text);
         if (/^\d+\.$/.test(text.trim())) return; // still typing a decimal
         const r = parseScore(text, max);
         if (!r.ok) {
+          // Clear the box instead of keeping the bad mark; the warning stays visible.
           setInvalid(r.message);
+          setDraft("");
+          if (value !== null) onChange(null);
           return;
         }
         setInvalid(null);
