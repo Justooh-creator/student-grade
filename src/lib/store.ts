@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import type { ClassId } from "./ges";
+import { CAT_PARTS, type ClassId } from "./ges";
+
+const CAT_MAX = Object.fromEntries(CAT_PARTS.map((p) => [p.key, p.max])) as Record<"test1" | "test2" | "project" | "group", number>;
 
 export interface School {
   name: string;
@@ -274,6 +276,8 @@ export function useAppData() {
         ...current,
         students: current.students.map((s) => {
           if (s.id !== id) return s;
+          const max = field === "examRaw" ? 100 : CAT_MAX[field];
+          if (value !== null && !(Number.isFinite(value) && value >= 0 && value <= max)) return s;
           const e = { ...(s.scores[subject] ?? { sba: null, exam: null }), [field]: value };
           const parts = [e.test1, e.test2, e.project, e.group];
           const any = parts.some((v) => v !== null && v !== undefined);
