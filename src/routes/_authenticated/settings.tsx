@@ -110,6 +110,7 @@ function SettingsPage() {
         </Section>
 
         <Section title="Help & About">
+          <Button asChild variant="outline" className="mb-2 w-full"><Link to="/help">❓ Help & FAQs</Link></Button>
           <p className="text-sm">🇬🇭 EduReport Ghana — A Product of <strong>JA EduTech Solutions</strong></p>
           <p className="mt-1 text-sm">
             <a href="https://wa.me/233530887628" target="_blank" rel="noreferrer" className="font-bold text-primary underline">Chat on WhatsApp</a>{" • "}
