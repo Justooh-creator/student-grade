@@ -267,9 +267,9 @@ describe("Test J — existing records", () => {
     await a.sync();
     const row = server.get("L1")!;
     expect(row).toMatchObject({ remark: "Hardworking", conduct: "Respectful", attendance: "58", parentPhone: "0241234567" });
-    expect(row.scores.Mathematics).toEqual(existing.scores.Mathematics);
+    expect(row.scores["Mathematics"]).toEqual(existing.scores["Mathematics"]);
     expect(row.scores["English Language"]).toEqual(existing.scores["English Language"]);
-    expect(row.scores.Science).toMatchObject({ test1: 9, sba: 4.5 });
+    expect(row.scores["Science"]).toMatchObject({ test1: 9, sba: 4.5 });
   });
 
   it("keeps an offline teacher's copy for review when another teacher removed the learner", async () => {
@@ -279,7 +279,7 @@ describe("Test J — existing records", () => {
     const res = await a.sync();
     expect(res?.[0]?.status).toBe("missing");
     expect(server.conflicts[0]).toMatchObject({ id: "L1", kind: "deleted" });
-    expect((server.conflicts[0]!.local as unknown as Student).scores.Mathematics?.test1).toBe(15);
+    expect((server.conflicts[0]!.local as unknown as Student).scores["Mathematics"]?.test1).toBe(15);
   });
 });
 
@@ -287,7 +287,7 @@ describe("merge rules", () => {
   it("refuses out-of-range marks on the server side", () => {
     const r = mergeStudentOps(learner(), [{ p: ["scores", "Mathematics", "test1"], b: null, v: 25 }]);
     expect(r.invalid).toHaveLength(1);
-    expect(r.data.scores.Mathematics).toBeUndefined();
+    expect(r.data.scores["Mathematics"]).toBeUndefined();
   });
   it("uses the same SBA/exam arithmetic as score entry", () => {
     expect(recalcCat({ test1: 15.5, test2: 17, project: 26, group: 28.5, examRaw: 77 })).toMatchObject({ sbaRaw: 87, sba: 43.5, exam: 38.5 });

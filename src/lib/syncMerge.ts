@@ -72,11 +72,11 @@ export function diffStudent(prev: Student | undefined, next: Student | undefined
     if (SKIP_TOP.has(k)) continue;
     if (!jsonEqual(a[k], z[k])) out.push({ p: [k], b: norm(clone(a[k])), v: norm(clone(z[k])) });
   }
-  const fa = isObj(a.fees) ? a.fees : {}, fz = isObj(z.fees) ? z.fees : {};
+  const fa = isObj(a["fees"]) ? a["fees"] : {}, fz = isObj(z["fees"]) ? z["fees"] : {};
   for (const k of new Set([...Object.keys(fa), ...Object.keys(fz)])) {
     if (!jsonEqual(fa[k], fz[k])) out.push({ p: ["fees", k], b: norm(clone(fa[k])), v: norm(clone(fz[k])) });
   }
-  const sa = isObj(a.scores) ? a.scores : {}, sz = isObj(z.scores) ? z.scores : {};
+  const sa = isObj(a["scores"]) ? a["scores"] : {}, sz = isObj(z["scores"]) ? z["scores"] : {};
   for (const subj of new Set([...Object.keys(sa), ...Object.keys(sz)])) {
     const ea = isObj(sa[subj]) ? (sa[subj] as Record<string, unknown>) : {};
     const ez = isObj(sz[subj]) ? (sz[subj] as Record<string, unknown>) : {};
@@ -182,8 +182,9 @@ export function acknowledge(queue: SyncQueue, sent: SyncQueue, results: SyncResu
 }
 
 /** The app's setCatScore arithmetic for Basic 1–9 (kept identical to store.ts). */
+interface CatEntry { test1?: number | null; test2?: number | null; project?: number | null; group?: number | null; examRaw?: number | null; sbaRaw?: number | null; sba?: number | null; exam?: number | null; [k: string]: unknown }
 export function recalcCat(entry: Record<string, unknown>): Record<string, unknown> {
-  const e = { ...entry } as Record<string, number | null | undefined>;
+  const e = { ...entry } as CatEntry;
   const parts = [e.test1, e.test2, e.project, e.group];
   const any = parts.some((v) => v !== null && v !== undefined);
   const raw = parts.reduce<number>((a, v) => a + (v ?? 0), 0);
@@ -229,7 +230,7 @@ export function mergeStudentOps(data: Student | Record<string, unknown> | undefi
       if (op.p[0] === "scores" && CAT_SET.has(op.p[2]!)) recalc.add(op.p[1]!);
     } else conflicts.push({ p: op.p, base: b, local: v, cloud: cur });
   }
-  const scores = d.scores as Record<string, Record<string, unknown>> | undefined;
+  const scores = d["scores"] as Record<string, Record<string, unknown>> | undefined;
   for (const s of recalc) if (scores) scores[s] = recalcCat(scores[s] ?? {});
   return { data: d as unknown as Student, conflicts, invalid };
 }
@@ -243,7 +244,7 @@ export function rebase(remote: Student, change: StudentChange | undefined): Stud
     setPath(d, op.p, op.v);
     if (op.p[0] === "scores" && CAT_SET.has(op.p[2]!)) recalc.add(op.p[1]!);
   }
-  const scores = d.scores as Record<string, Record<string, unknown>> | undefined;
+  const scores = d["scores"] as Record<string, Record<string, unknown>> | undefined;
   for (const s of recalc) if (scores) scores[s] = recalcCat(scores[s] ?? {});
   return d as unknown as Student;
 }
@@ -253,7 +254,7 @@ export function withField(s: Student, p: string[], v: Json): Student {
   const d = clone(s) as unknown as Record<string, unknown>;
   setPath(d, p, v);
   if (p[0] === "scores" && CAT_SET.has(p[2]!)) {
-    const scores = d.scores as Record<string, Record<string, unknown>>;
+    const scores = d["scores"] as Record<string, Record<string, unknown>>;
     scores[p[1]!] = recalcCat(scores[p[1]!] ?? {});
   }
   if (s.photo) (d as unknown as Student).photo = s.photo;
