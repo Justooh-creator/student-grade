@@ -316,6 +316,9 @@ export function AppHeader({
                 <Link to="/feedback" className={rowCls(pathname.startsWith("/feedback"))}>
                   <RowCell icon={ICON.bulb} title="Help & Support" desc="Suggestions and support from JA EduTech Solutions" />
                 </Link>
+                <Link to="/help" className={rowCls(pathname.startsWith("/help"))}>
+                  <RowCell icon={ICON.bulb} title="Help & FAQs" desc="Answers to common questions" />
+                </Link>
                 <Link to="/settings" className={rowCls(pathname.startsWith("/settings"))}>
                   <RowCell icon={ICON.user} title="Settings" desc="Dark mode, fingerprint, default class" />
                 </Link>

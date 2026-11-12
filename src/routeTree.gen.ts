@@ -21,6 +21,7 @@ import { Route as AuthenticatedCertificatesRouteImport } from './routes/_authent
 import { Route as AuthenticatedDutyRosterRouteImport } from './routes/_authenticated/duty-roster'
 import { Route as AuthenticatedFeedbackRouteImport } from './routes/_authenticated/feedback'
 import { Route as AuthenticatedFeesRouteImport } from './routes/_authenticated/fees'
+import { Route as AuthenticatedHelpRouteImport } from './routes/_authenticated/help'
 import { Route as AuthenticatedLessonNotesRouteImport } from './routes/_authenticated/lesson-notes'
 import { Route as AuthenticatedMidtermProgressRouteImport } from './routes/_authenticated/midterm-progress'
 import { Route as AuthenticatedPtaAnnouncementRouteImport } from './routes/_authenticated/pta-announcement'
@@ -94,6 +95,11 @@ const AuthenticatedFeedbackRoute = AuthenticatedFeedbackRouteImport.update({
 const AuthenticatedFeesRoute = AuthenticatedFeesRouteImport.update({
   id: '/fees',
   path: '/fees',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHelpRoute = AuthenticatedHelpRouteImport.update({
+  id: '/help',
+  path: '/help',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedLessonNotesRoute =
@@ -186,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/duty-roster': typeof AuthenticatedDutyRosterRoute
   '/feedback': typeof AuthenticatedFeedbackRoute
   '/fees': typeof AuthenticatedFeesRoute
+  '/help': typeof AuthenticatedHelpRoute
   '/lesson-notes': typeof AuthenticatedLessonNotesRoute
   '/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
@@ -213,6 +220,7 @@ export interface FileRoutesByTo {
   '/duty-roster': typeof AuthenticatedDutyRosterRoute
   '/feedback': typeof AuthenticatedFeedbackRoute
   '/fees': typeof AuthenticatedFeesRoute
+  '/help': typeof AuthenticatedHelpRoute
   '/lesson-notes': typeof AuthenticatedLessonNotesRoute
   '/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
@@ -242,6 +250,7 @@ export interface FileRoutesById {
   '/_authenticated/duty-roster': typeof AuthenticatedDutyRosterRoute
   '/_authenticated/feedback': typeof AuthenticatedFeedbackRoute
   '/_authenticated/fees': typeof AuthenticatedFeesRoute
+  '/_authenticated/help': typeof AuthenticatedHelpRoute
   '/_authenticated/lesson-notes': typeof AuthenticatedLessonNotesRoute
   '/_authenticated/midterm-progress': typeof AuthenticatedMidtermProgressRoute
   '/_authenticated/pta-announcement': typeof AuthenticatedPtaAnnouncementRoute
@@ -271,6 +280,7 @@ export interface FileRouteTypes {
     | '/duty-roster'
     | '/feedback'
     | '/fees'
+    | '/help'
     | '/lesson-notes'
     | '/midterm-progress'
     | '/pta-announcement'
@@ -298,6 +308,7 @@ export interface FileRouteTypes {
     | '/duty-roster'
     | '/feedback'
     | '/fees'
+    | '/help'
     | '/lesson-notes'
     | '/midterm-progress'
     | '/pta-announcement'
@@ -326,6 +337,7 @@ export interface FileRouteTypes {
     | '/_authenticated/duty-roster'
     | '/_authenticated/feedback'
     | '/_authenticated/fees'
+    | '/_authenticated/help'
     | '/_authenticated/lesson-notes'
     | '/_authenticated/midterm-progress'
     | '/_authenticated/pta-announcement'
@@ -437,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFeesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/help': {
+      id: '/_authenticated/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof AuthenticatedHelpRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/lesson-notes': {
       id: '/_authenticated/lesson-notes'
       path: '/lesson-notes'
@@ -545,6 +564,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDutyRosterRoute: typeof AuthenticatedDutyRosterRoute
   AuthenticatedFeedbackRoute: typeof AuthenticatedFeedbackRoute
   AuthenticatedFeesRoute: typeof AuthenticatedFeesRoute
+  AuthenticatedHelpRoute: typeof AuthenticatedHelpRoute
   AuthenticatedLessonNotesRoute: typeof AuthenticatedLessonNotesRoute
   AuthenticatedMidtermProgressRoute: typeof AuthenticatedMidtermProgressRoute
   AuthenticatedPtaAnnouncementRoute: typeof AuthenticatedPtaAnnouncementRoute
@@ -568,6 +588,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDutyRosterRoute: AuthenticatedDutyRosterRoute,
   AuthenticatedFeedbackRoute: AuthenticatedFeedbackRoute,
   AuthenticatedFeesRoute: AuthenticatedFeesRoute,
+  AuthenticatedHelpRoute: AuthenticatedHelpRoute,
   AuthenticatedLessonNotesRoute: AuthenticatedLessonNotesRoute,
   AuthenticatedMidtermProgressRoute: AuthenticatedMidtermProgressRoute,
   AuthenticatedPtaAnnouncementRoute: AuthenticatedPtaAnnouncementRoute,
