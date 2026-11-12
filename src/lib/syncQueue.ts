@@ -7,6 +7,8 @@
 import { acknowledge, emptyQueue, enqueue, toWire, type SyncQueue, type SyncResult, type WireChange } from "./syncMerge";
 import type { Student } from "./store";
 
+export const SYNC_CONFLICTS_EVENT = "edureport:sync-conflicts";
+
 export interface KeyValueStore { getItem(k: string): string | null; setItem(k: string, v: string): void; removeItem(k: string): void }
 export type SyncTransport = (changes: WireChange[]) => Promise<SyncResult[]>;
 

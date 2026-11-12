@@ -6,9 +6,7 @@ import { useUser } from "@/lib/auth";
 import { applyRemote, onLocalChange, DEFAULT_SCHOOL, stripSchoolImages, keepLocalSchoolImages, keepLocalStudentPhoto, type Student, type School } from "@/lib/store";
 import { loadSchool, setCloud, useCloud, getCloud } from "@/lib/cloud";
 import { rebase, type SyncResult } from "@/lib/syncMerge";
-import { flushQueue, pendingCount, queueKey, readQueue, recordLocalChange, type SyncTransport } from "@/lib/syncQueue";
-
-export const SYNC_CONFLICTS_EVENT = "edureport:sync-conflicts";
+import { flushQueue, pendingCount, queueKey, readQueue, recordLocalChange, SYNC_CONFLICTS_EVENT, type SyncTransport } from "@/lib/syncQueue";
 
 /**
  * Centralized school cloud. Learner edits are queued on this device box-by-box and sent to the

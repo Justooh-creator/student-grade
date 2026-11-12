@@ -6,7 +6,7 @@ import { useCloud } from "@/lib/cloud";
 import { useUser } from "@/lib/auth";
 import { getData, updateData, type Student } from "@/lib/store";
 import { fieldLabel, withField, type Json } from "@/lib/syncMerge";
-import { SYNC_CONFLICTS_EVENT } from "@/components/SyncListener";
+import { SYNC_CONFLICTS_EVENT } from "@/lib/syncQueue";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
