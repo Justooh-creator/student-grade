@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { applyRemote, getData, DEFAULT_SCHOOL, stripSchoolImages, stripStudentImages, keepLocalSchoolImages, keepLocalStudentPhoto, type Student, type School } from "./store";
+import { queueKey, readMembership, readQueue, writeMembership } from "./syncQueue";
+import { rebase, type SyncQueue } from "./syncMerge";
 
 export interface CloudState {
   status: "signed-out" | "loading" | "no-school" | "synced" | "saving" | "offline";
@@ -9,6 +11,8 @@ export interface CloudState {
   joinCode?: string;
   role?: string;
   userId?: string;
+  /** School taken from this device's last successful sign-in because the cloud could not be reached. */
+  cached?: boolean;
 }
 
 let state: CloudState = { status: "signed-out" };
@@ -32,28 +36,52 @@ export function useCloud() {
 
 const BACKUP_KEY = "sba-local-backup";
 
+/**
+ * Combine cloud learner rows with this device's unsent edits: pending marks are shown on top of
+ * the cloud copy, pending removals stay removed and learners not yet uploaded stay on the list.
+ */
+export function withPendingEdits(local: Student[], remote: Student[], q: SyncQueue): Student[] {
+  const byId = new Map(local.map((s) => [s.id, s]));
+  const merged = remote
+    .filter((s) => !q.students[s.id]?.delete)
+    .map((s) => keepLocalStudentPhoto(byId.get(s.id), rebase(s, q.students[s.id])));
+  const have = new Set(merged.map((s) => s.id));
+  for (const c of Object.values(q.students)) {
+    if (!c.create || have.has(c.id)) continue;
+    const keep = byId.get(c.id) ?? c.snapshot;
+    if (keep) merged.push(keep);
+  }
+  return merged;
+}
+
 /** Load the teacher's school membership and pull all records from the cloud. */
 export async function loadSchool(userId: string) {
   setCloud({ status: "loading" }, true);
-  const { data: m } = await supabase.from("school_members").select("school_id, role").eq("user_id", userId).maybeSingle();
-  if (!m) { setCloud({ status: "no-school" }, true); return null; }
-  const [{ data: school }, { data: rows }] = await Promise.all([
+  // No internet: keep working with the school remembered on this device so edits are still queued.
+  const offline = () => {
+    const cached = readMembership(userId);
+    setCloud(cached ? { status: "offline", ...cached, userId, cached: true } : { status: "offline" }, true);
+    return cached?.schoolId ?? null;
+  };
+  const { data: m, error: mErr } = await supabase.from("school_members").select("school_id, role").eq("user_id", userId).maybeSingle();
+  if (mErr) return offline();
+  if (!m) { writeMembership(userId, null); setCloud({ status: "no-school" }, true); return null; }
+  const [{ data: school, error: sErr }, { data: rows, error: rErr }] = await Promise.all([
     supabase.from("schools").select("*").eq("id", m.school_id).single(),
     supabase.from("school_students").select("data").eq("school_id", m.school_id),
   ]);
-  if (!school) { setCloud({ status: "offline" }, true); return null; }
+  if (!school || sErr || rErr) return offline();
   // Keep a one-time backup of what was on this phone before joining the cloud.
   if (!localStorage.getItem(BACKUP_KEY)) {
     localStorage.setItem(BACKUP_KEY, JSON.stringify(getData()));
   }
   const details = (school.details ?? {}) as Partial<School>;
+  const pending = readQueue(queueKey(userId, school.id));
   applyRemote((cur) => ({
     school: keepLocalSchoolImages(cur.school, { ...DEFAULT_SCHOOL, ...details, name: details.name || school.name }),
-    students: (rows ?? []).map((r) => {
-      const remote = r.data as unknown as Student;
-      return keepLocalStudentPhoto(cur.students.find((s) => s.id === remote.id), remote);
-    }),
+    students: withPendingEdits(cur.students, (rows ?? []).map((r) => r.data as unknown as Student), pending),
   }));
+  writeMembership(userId, { schoolId: school.id, schoolName: school.name, joinCode: school.join_code, role: m.role });
   setCloud({ status: "synced", schoolId: school.id, schoolName: school.name, joinCode: school.join_code, role: m.role, userId }, true);
   return school.id;
 }
