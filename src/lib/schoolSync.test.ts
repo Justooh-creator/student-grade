@@ -65,7 +65,7 @@ describe("School Details outbox survives refreshes and offline periods", () => {
     expect(reopened.pending()).toBe(1);
     server.down = false;
     await reopened.sync();
-    expect(server.details.term).toBe("Term 2");
+    expect(server.details["term"]).toBe("Term 2");
     expect(reopened.pending()).toBe(0);
   });
 
@@ -83,7 +83,7 @@ describe("School Details outbox survives refreshes and offline periods", () => {
     a.edit({ classTeachers: { b4: "Mr Mensah" } });
     b.edit({ classTeachers: { b5: "Ms Owusu" } });
     await a.sync(); await b.sync();
-    expect(server.details.classTeachers).toEqual({ b4: "Mr Mensah", b5: "Ms Owusu" });
+    expect(server.details["classTeachers"]).toEqual({ b4: "Mr Mensah", b5: "Ms Owusu" });
   });
 
   it("does not overwrite the same field changed by another teacher; records it for review", async () => {
@@ -91,7 +91,7 @@ describe("School Details outbox survives refreshes and offline periods", () => {
     a.edit({ term: "Term 2" });
     b.edit({ term: "Term 3" });
     await a.sync(); await b.sync();
-    expect(server.details.term).toBe("Term 2");
+    expect(server.details["term"]).toBe("Term 2");
     expect(server.conflicts).toEqual([{ p: ["term"], base: "Term 1", local: "Term 3", cloud: "Term 2", by: "B" }]);
     expect(b.pending()).toBe(0);
     expect(b.school.term).toBe("Term 2");
@@ -113,7 +113,7 @@ describe("School Details outbox survives refreshes and offline periods", () => {
     await send;
     expect(a.pending()).toBe(1);
     await a.sync();
-    expect(server.details.district).toBe("Ho West");
+    expect(server.details["district"]).toBe("Ho West");
     expect(a.pending()).toBe(0);
   });
 
@@ -124,7 +124,7 @@ describe("School Details outbox survives refreshes and offline periods", () => {
     await expect(a.sync()).rejects.toThrow();
     expect(a.pending()).toBe(1);
     await a.sync();
-    expect(server.details.region).toBe("Volta");
+    expect(server.details["region"]).toBe("Volta");
     expect(server.conflicts).toHaveLength(0);
   });
 
@@ -134,7 +134,7 @@ describe("School Details outbox survives refreshes and offline periods", () => {
     await a.sync();
     a.edit({ classAssignments: { b5: ["u2"] } });
     await a.sync();
-    expect(server.details.classAssignments).toEqual({ b5: ["u2"] });
+    expect(server.details["classAssignments"]).toEqual({ b5: ["u2"] });
   });
 
   it("rejects streams other than 1, 2 or 3", () => {
