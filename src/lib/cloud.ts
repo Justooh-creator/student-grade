@@ -1,3 +1,4 @@
+import { normalizeStudent } from "./store";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { applyRemote, getData, DEFAULT_SCHOOL, stripSchoolImages, stripStudentImages, keepLocalSchoolImages, keepLocalStudentPhoto, type Student, type School } from "./store";
@@ -81,7 +82,7 @@ export async function loadSchool(userId: string) {
   const pending = readQueue(queueKey(userId, school.id));
   applyRemote((cur) => ({
     school: keepLocalSchoolImages(cur.school, { ...DEFAULT_SCHOOL, ...details, name: details.name || school.name }),
-    students: withPendingEdits(cur.students, (rows ?? []).map((r) => r.data as unknown as Student), pending),
+    students: withPendingEdits(cur.students, (rows ?? []).map((r) => normalizeStudent(r.data as unknown as Student)), pending),
   }));
   writeMembership(userId, { schoolId: school.id, schoolName: school.name, joinCode: school.join_code, role: m.role });
   setCloud({ status: "synced", schoolId: school.id, schoolName: school.name, joinCode: school.join_code, role: m.role, userId }, true);

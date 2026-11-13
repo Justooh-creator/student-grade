@@ -38,7 +38,7 @@ export function PresetField({
       {allowCustom && value !== "" && !isPreset && (
         <input
           autoFocus
-          value={value.trimStart()}
+          value={(value ?? "").trimStart()}
           onChange={(e) => onChange(e.target.value || " ")}
           placeholder="Type your own text"
           className="mt-1.5 h-10 w-full rounded-md border border-border bg-card px-3 text-sm outline-none focus:border-primary"

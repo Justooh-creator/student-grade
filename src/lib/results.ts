@@ -28,7 +28,7 @@ export function computeStudentResult(student: Student): StudentResult {
   const level = getClassLevel(student.classId);
   const kg = isKg(student.classId);
   const subjects: SubjectResult[] = level.subjects.map((subject) => {
-    const entry = student.scores[subject];
+    const entry = student.scores?.[subject];
     if (kg) {
       const l = kgLevelByName(entry?.level);
       return { subject, sba: null, exam: null, sbaRaw: null, examRaw: null, total: null, grade: null, level: l?.level, remark: l?.descriptor ?? "—" };
