@@ -1,7 +1,7 @@
 import { ArrowDownToLine, ArrowUpToLine } from "lucide-react";
 
 /** Floating buttons to jump to the first or last learner on long lists. */
-export function ScrollJump({ firstId, lastId }: { firstId?: string; lastId?: string }) {
+export function ScrollJump({ firstId, lastId }: { firstId?: string | undefined; lastId?: string | undefined }) {
   if (!firstId || !lastId) return null;
   const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   const cls = "flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:opacity-90";
