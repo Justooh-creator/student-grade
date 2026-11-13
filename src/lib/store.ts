@@ -127,7 +127,7 @@ function persist() {
 
 /** Fill missing fields so incomplete records never crash pages. */
 export function normalizeStudent<T>(st: T): T {
-  const x = (st ?? {}) as Record<string, unknown>;
+  const x = (st ?? {}) as { scores?: unknown; conduct?: unknown; interest?: unknown; attendance?: unknown; remark?: unknown };
   return {
     ...x,
     scores: x.scores && typeof x.scores === "object" ? x.scores : {},
