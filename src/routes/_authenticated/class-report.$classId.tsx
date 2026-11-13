@@ -10,6 +10,7 @@ import { useAppData } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/lib/auth";
 import { useLicense } from "@/lib/license";
+import { ScrollJump } from "@/components/ScrollJump";
 
 export const Route = createFileRoute("/_authenticated/class-report/$classId")({
   head: () => ({
@@ -53,10 +54,11 @@ function ClassReportPage() {
           <ClassWhatsAppShare classId={classId} className={level.name} />
         </div>
       </div>
+      <ScrollJump firstId={list[0] && `report-${list[0].id}`} lastId={list.at(-1) && `report-${list.at(-1)!.id}`} />
       <div className="overflow-x-auto px-4 pb-10">
         {list.length === 0 && <p className="text-center text-sm text-muted-foreground">No learners in this class yet.</p>}
         {list.map((s) => (
-          <ReportSheet key={s.id} student={s} students={students} school={school} watermark={!lic.loading && !lic.canPrint} />
+          <div key={s.id} id={`report-${s.id}`} className="scroll-mt-24"><ReportSheet student={s} students={students} school={school} watermark={!lic.loading && !lic.canPrint} /></div>
         ))}
       </div>
     </div>
