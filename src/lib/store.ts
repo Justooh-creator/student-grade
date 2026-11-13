@@ -125,6 +125,19 @@ function persist() {
   }
 }
 
+/** Fill missing fields so incomplete records never crash pages. */
+export function normalizeStudent<T>(st: T): T {
+  const x = (st ?? {}) as Record<string, unknown>;
+  return {
+    ...x,
+    scores: x.scores && typeof x.scores === "object" ? x.scores : {},
+    conduct: typeof x.conduct === "string" ? x.conduct : "",
+    interest: typeof x.interest === "string" ? x.interest : "",
+    attendance: typeof x.attendance === "string" ? x.attendance : (x.attendance ?? ""),
+    remark: typeof x.remark === "string" ? x.remark : "",
+  } as T;
+}
+
 function hydrate() {
   if (hydrated || typeof window === "undefined") return;
   hydrated = true;
@@ -134,7 +147,7 @@ function hydrate() {
       const parsed = JSON.parse(raw) as Partial<AppData>;
       data = {
         school: { ...DEFAULT_SCHOOL, ...(parsed.school ?? {}) },
-        students: parsed.students ?? [],
+        students: (parsed.students ?? []).map(normalizeStudent),
       };
     }
   } catch {
