@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { countPresentDays, parseTermDate, type DayRow } from "@/lib/attendanceFill";
 import { canCustomHeadRemark } from "@/lib/headteacher";
 import { useUser } from "@/lib/auth";
+import { ScrollJump } from "@/components/ScrollJump";
 
 export const Route = createFileRoute("/_authenticated/students")({
   validateSearch: validateClassSearch,
@@ -39,7 +40,10 @@ function StudentsPage() {
   const navigate = useNavigate();
   const classId = search.class ?? "b4";
   const level = getClassLevel(classId);
-  const list = useMemo(() => students.filter((s) => s.classId === classId), [students, classId]);
+  const list = useMemo(() => {
+    const rank = (g?: string) => { const v = (g ?? "").trim().toLowerCase(); return v.startsWith("m") || v === "boy" ? 0 : v.startsWith("f") || v === "girl" ? 1 : 2; };
+    return students.filter((s) => s.classId === classId).map((s, i) => ({ s, i })).sort((a, b) => rank(a.s.gender) - rank(b.s.gender) || a.i - b.i).map((x) => x.s);
+  }, [students, classId]);
   const [name, setName] = useState("");
   const [adm, setAdm] = useState("");
   const full = list.length >= MAX_STUDENTS_PER_CLASS;
@@ -135,12 +139,13 @@ function StudentsPage() {
           </div>}
         </section>
 
+        <ScrollJump firstId={list[0] && `learner-${list[0].id}`} lastId={list.at(-1) && `learner-${list.at(-1)!.id}`} />
         <section className="mt-5 space-y-3">
           {list.length === 0 && (
             <p className="rounded-xl border border-dashed border-border py-10 text-center text-sm text-muted-foreground">No learners in {level.name} yet.</p>
           )}
           {list.map((s, i) => (
-            <div key={s.id} className="rounded-xl border border-border bg-card p-4">
+            <div key={s.id} id={`learner-${s.id}`} className="scroll-mt-24 rounded-xl border border-border bg-card p-4">
               <div className="flex items-start gap-3">
                   <div className="flex h-16 w-14 shrink-0 items-center justify-center overflow-hidden rounded border border-dashed border-border bg-background text-center text-[11px] font-bold text-muted-foreground">
                     {s.photo ? <img src={s.photo} alt={`${s.name} passport`} className="h-full w-full object-cover" /> : "No photo"}
