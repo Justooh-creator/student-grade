@@ -96,11 +96,11 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
       </div>
       <div className={card}>
         <p className="font-bold">Who can edit each class</p>
-        <p className="mt-1 text-sm text-muted-foreground">Tick the teachers allowed to enter marks. Other teachers can only view. A class with nobody ticked stays open to all. Headteachers can edit every class. Basic 7–9 are assigned by subject — each subject teacher enters marks for their own subject only.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Tick the teachers allowed to enter marks. Other teachers can only view. A class with nobody ticked stays open to all. Headteachers can edit every class and may also tick themselves when covering a class or subject. Basic 7–9 are assigned by subject — each subject teacher enters marks for their own subject only.</p>
         <div className="mt-3 space-y-3">
           {visibleClassIds.map(getClassLevel).map((c) => {
             const list = school.classAssignments?.[c.id] ?? [];
-            const teachers = members.filter((m) => m.role !== "headteacher");
+            const teachers = members;
             const jhs = isJhs(c.id);
             const subMap = school.subjectAssignments?.[c.id] ?? {};
             const anySubject = Object.values(subMap).some((l) => l.length > 0);
@@ -121,7 +121,7 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
                                   const next = e.target.checked ? [...subList, m.user_id] : subList.filter((x) => x !== m.user_id);
                                   setSchool({ subjectAssignments: { ...(school.subjectAssignments ?? {}), [c.id]: { ...subMap, [sub]: next } } });
                                 }} />
-                              {m.name}
+                              {m.name}{m.role === "headteacher" && <span className="text-xs font-bold text-primary"> (Headteacher)</span>}
                             </label>
                           ))}
                         </div>
@@ -137,7 +137,7 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
                             const next = e.target.checked ? [...list, m.user_id] : list.filter((x) => x !== m.user_id);
                             setSchool({ classAssignments: { ...(school.classAssignments ?? {}), [c.id]: next } });
                           }} />
-                        {m.name}
+                        {m.name}{m.role === "headteacher" && <span className="text-xs font-bold text-primary"> (Headteacher)</span>}
                       </label>
                     ))}
                   </div>
