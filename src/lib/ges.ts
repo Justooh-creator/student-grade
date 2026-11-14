@@ -89,8 +89,8 @@ const LOWER_PRIMARY_SUBJECTS = [
   "Religious and Moral Education",
   "Creative Arts",
   "Ghanaian Language",
-  "Physical Education",
   "Computing",
+  "Physical Education",
   "Our World Our People",
 ];
 
@@ -102,8 +102,8 @@ const UPPER_PRIMARY_SUBJECTS = [
   "Religious and Moral Education",
   "Creative Arts",
   "Ghanaian Language",
-  "Physical Education",
   "Computing",
+  "Physical Education",
   "Our World Our People",
 ];
 
