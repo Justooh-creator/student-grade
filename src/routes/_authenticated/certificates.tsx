@@ -194,7 +194,10 @@ function CertificatesPage() {
           <label className="text-sm font-semibold">Date<input className={input} value={date} onChange={(e) => setDate(e.target.value)} /></label>
           <label className="text-sm font-semibold sm:col-span-2 lg:col-span-1">Citation (optional)
             <input className={input} value={citation} onChange={(e) => setCitation(e.target.value)} placeholder="Leave blank to use the standard wording" /></label>
-          <label className="text-sm font-semibold">Signatures
+          <details className="rounded-md border border-border p-3 sm:col-span-2 lg:col-span-1">
+          <summary className="cursor-pointer font-semibold">Signatures: {SIGNER_PRESETS.find((p) => p.id === signers)?.label}</summary>
+          <div className="mt-3 space-y-3">
+          <label className="block text-sm font-semibold">Who signs
             <select className={input} value={signers} onChange={(e) => setSigners(e.target.value as SignerPreset)}>
               {SIGNER_PRESETS.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
             </select></label>
@@ -211,6 +214,8 @@ function CertificatesPage() {
             </label>
             {s.signature && <Button size="sm" variant="outline" onClick={() => editSigner(s.key, { signature: "" })}>Use manual signing</Button>}
           </div>)}
+          </div>
+          </details>
           <label className="text-sm font-semibold">Award emblem
             <select className={input} value={medallion} onChange={(e) => setMedallion(e.target.value as Medallion)}>
               {MEDALLIONS.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
