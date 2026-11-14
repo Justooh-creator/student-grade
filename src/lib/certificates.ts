@@ -56,11 +56,13 @@ export function headerLines(school: { name?: string; motto?: string; district?: 
   return out;
 }
 
-export type SignerPreset = "ct_ht" | "aht_ht" | "prop_ht" | "ht_only" | "custom";
+export type SignerPreset = "ct_ht" | "aht_ht" | "prop_ht" | "siso_ht" | "siso_only" | "ht_only" | "custom";
 export const SIGNER_PRESETS: { id: SignerPreset; label: string }[] = [
   { id: "ct_ht", label: "Class Teacher & Headteacher" },
   { id: "aht_ht", label: "Assistant Headteacher & Headteacher" },
   { id: "prop_ht", label: "Proprietor & Headteacher" },
+  { id: "siso_ht", label: "SISO & Headteacher" },
+  { id: "siso_only", label: "SISO only" },
   { id: "ht_only", label: "Headteacher only" },
   { id: "custom", label: "Custom titles" },
 ];
@@ -70,6 +72,8 @@ export function signerTitles(p: SignerPreset, custom: { left: string; right: str
     case "ct_ht": return { left: "Class Teacher", right: "Headteacher" };
     case "aht_ht": return { left: "Assistant Headteacher", right: "Headteacher" };
     case "prop_ht": return { left: "Proprietor", right: "Headteacher" };
+    case "siso_ht": return { left: "School Improvement Support Officer (SISO)", right: "Headteacher" };
+    case "siso_only": return { left: null, right: "School Improvement Support Officer (SISO)" };
     case "ht_only": return { left: null, right: "Headteacher" };
     default: return { left: custom.left.trim() || null, right: custom.right.trim() || "Headteacher" };
   }
@@ -90,7 +94,7 @@ export const MEDALLIONS: { id: Medallion; label: string }[] = [
 export function certificateSignerDefaults(school: { classTeacher?: string; headTeacher?: string; classTeachers?: Record<string, string>; classTeacherSignatures?: Record<string, string> }, classId: string, preset: SignerPreset) {
   return {
     leftName: preset === "ct_ht" ? school.classTeachers?.[classId] || school.classTeacher || "" : "",
-    rightName: school.headTeacher || "",
+    rightName: preset === "siso_only" ? "" : school.headTeacher || "",
     leftSignature: preset === "ct_ht" ? school.classTeacherSignatures?.[classId] : undefined,
   };
 }
