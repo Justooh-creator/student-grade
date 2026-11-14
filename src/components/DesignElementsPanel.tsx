@@ -33,7 +33,7 @@ export function DesignElementsPanel({ placed, setPlaced, selected, setSelected }
         </button>)}
         {list.length === 0 && <p className="col-span-full text-sm text-muted-foreground">No elements match.</p>}
       </div>
-      <p className="text-xs text-muted-foreground">Tap an element to add it, then drag it on the certificate or use the controls below.</p>
+      <p className="text-xs text-muted-foreground">Tap an element to add it, drag it to move, and pull its corner squares to resize.</p>
       {sel ? <div className="space-y-2 rounded-md bg-muted/50 p-2">
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {slider("Size", "w", 3, 110)}{slider("Rotate", "rotation", 0, 359)}{slider("Opacity", "opacity", 0.05, 1, 0.05)}
