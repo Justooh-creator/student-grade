@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import { CertificatePreview } from "@/components/CertificatePreview";
@@ -66,6 +66,43 @@ function CertificatesPage() {
   const [paper, setPaper] = useState<PaperId>("A4");
   const [orientation, setOrientation] = useState<"landscape" | "portrait">("landscape");
   const [customSize, setCustomSize] = useState({ w: 297, h: 210, unit: "mm" as "mm" | "in" });
+
+  // Auto-save the certificate draft on this device until it is printed / saved as PDF.
+  const DRAFT_KEY = `edureport_cert_draft:${user?.id ?? "local"}`;
+  const restored = useRef(false);
+  const draft = { recipient, classId, theme, mode, studentId, award, custom, heading, customHeading, citation, staffName, staffPos, staffDept, date, display, signers, customSigners, signerEdits, medallion, photoMode, frame, photo, placed, fonts, textSizes, paper, orientation, customSize };
+  useEffect(() => {
+    if (restored.current || !user) return;
+    restored.current = true;
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const d = JSON.parse(raw) as Partial<typeof draft>;
+      const set = <T,>(v: T | undefined, f: (x: T) => void) => { if (v !== undefined) f(v); };
+      set(d.recipient, setRecipient); set(d.classId, setClassId); set(d.theme, setTheme); set(d.mode, setMode);
+      set(d.studentId, setStudentId); set(d.award, setAward); set(d.custom, setCustom); set(d.heading, setHeading);
+      set(d.customHeading, setCustomHeading); set(d.citation, setCitation); set(d.staffName, setStaffName);
+      set(d.staffPos, setStaffPos); set(d.staffDept, setStaffDept); set(d.date, setDate); set(d.display, setDisplay);
+      set(d.signers, setSigners); set(d.customSigners, setCustomSigners); set(d.signerEdits, setSignerEdits);
+      set(d.medallion, setMedallion); set(d.photoMode, setPhotoMode); set(d.frame, setFrame); set(d.photo, setPhoto);
+      set(d.placed, setPlaced); set(d.fonts, setFonts); set(d.textSizes, setTextSizes); set(d.paper, setPaper);
+      set(d.orientation, setOrientation); set(d.customSize, setCustomSize);
+    } catch { /* ignore broken draft */ }
+  }, [user, DRAFT_KEY]);
+  const draftJson = JSON.stringify(draft);
+  useEffect(() => {
+    if (!restored.current) return;
+    const t = setTimeout(() => {
+      try { localStorage.setItem(DRAFT_KEY, draftJson); }
+      catch { try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...draft, photo: { ...photo, src: "" }, signerEdits: {} })); } catch { /* storage full */ } }
+    }, 400);
+    return () => clearTimeout(t);
+  }, [draftJson, DRAFT_KEY]);
+  useEffect(() => {
+    const done = () => { try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ } };
+    window.addEventListener("afterprint", done);
+    return () => window.removeEventListener("afterprint", done);
+  }, [DRAFT_KEY]);
 
   const inSchool = !!cloud.schoolId;
   if (cloud.status !== "loading" && !canMakeCertificates(inSchool, cloud.role)) {
