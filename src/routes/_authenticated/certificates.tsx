@@ -167,14 +167,19 @@ function CertificatesPage() {
         </>}
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-          <label className="text-sm font-semibold">Certificate heading
+          <details className="rounded-md border border-border p-3 sm:col-span-2 lg:col-span-1">
+          <summary className="cursor-pointer font-semibold">Heading: {heading === "Custom Heading" ? (customHeading || "Custom") : heading}</summary>
+          <div className="mt-3 space-y-3">
+          <label className="block text-sm font-semibold">Certificate heading
             <select className={input} value={heading} onChange={(e) => setHeading(e.target.value)}>
               {CERT_HEADINGS.map((h) => <option key={h}>{h}</option>)}
             </select>
           </label>
-          {heading === "Custom Heading" && <label className="text-sm font-semibold">Custom heading
+          {heading === "Custom Heading" && <label className="block text-sm font-semibold">Custom heading
             <input className={input} value={customHeading} onChange={(e) => setCustomHeading(e.target.value)} />
           </label>}
+          </div>
+          </details>
           {staff && <>
             <label className="text-sm font-semibold">Staff name<input className={input} value={staffName} onChange={(e) => setStaffName(e.target.value)} /></label>
             <label className="text-sm font-semibold">Position / designation<input className={input} value={staffPos} onChange={(e) => setStaffPos(e.target.value)} placeholder="e.g. Class Teacher, Basic 4" /></label>
@@ -287,7 +292,8 @@ function CertificatesPage() {
         {certs.map((c, i) => <CertificateSheet key={i} data={c} school={school} theme={theme} watermark={!lic.loading && !lic.canPrint}
           photoMode={photoMode} size={size} display={display} medallion={medallion} frame={frame} fonts={fonts} textSizes={textSizes}
           elements={placed} selectedElement={selEl} onElementSelect={setSelEl}
-          onElementMove={(k, x, y) => setPlaced((ps) => ps.map((p) => p.key === k ? updateElement(p, { x, y }) : p))} />)}
+          onElementMove={(k, x, y) => setPlaced((ps) => ps.map((p) => p.key === k ? updateElement(p, { x, y }) : p))}
+          onElementResize={(k, w) => setPlaced((ps) => ps.map((p) => p.key === k ? updateElement(p, { w }) : p))} />)}
       </CertificatePreview>
       </div>
     </main>

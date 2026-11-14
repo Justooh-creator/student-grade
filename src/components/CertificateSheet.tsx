@@ -211,10 +211,10 @@ function Laurel({ color, flip }: { color: string; flip?: boolean }) {
 }
 
 /** One certificate at the given page size (mm). Artwork is designed at A4 width and scaled for larger paper. */
-export function CertificateSheet({ data, school, theme, watermark, photoMode = "none", size = { w: 297, h: 210 }, display = DEFAULT_DISPLAY, medallion = DEFAULT_MEDALLION, frame: photoFrame = "rect", fonts, textSizes, elements = [], selectedElement, onElementSelect, onElementMove }: {
+export function CertificateSheet({ data, school, theme, watermark, photoMode = "none", size = { w: 297, h: 210 }, display = DEFAULT_DISPLAY, medallion = DEFAULT_MEDALLION, frame: photoFrame = "rect", fonts, textSizes, elements = [], selectedElement, onElementSelect, onElementMove, onElementResize }: {
   data: CertData; school: School; theme: CertTheme; watermark: boolean; photoMode?: PhotoMode; size?: { w: number; h: number };
   display?: CertDisplay; medallion?: Medallion; frame?: PhotoFrame; fonts?: Partial<CertFonts>; textSizes?: Partial<CertTextSizes>;
-  elements?: PlacedElement[]; selectedElement?: string | undefined; onElementSelect?: (key: string) => void; onElementMove?: (key: string, x: number, y: number) => void;
+  elements?: PlacedElement[]; selectedElement?: string | undefined; onElementSelect?: (key: string) => void; onElementMove?: (key: string, x: number, y: number) => void; onElementResize?: (key: string, w: number) => void;
 }) {
   const pageRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ key: string; dx: number; dy: number } | null>(null);
@@ -224,6 +224,23 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
     onPointerUp={() => { drag.current = null; }}
     className={`absolute ${p.behind ? "z-[5]" : "z-[15]"} ${selectedElement === p.key ? "cert-selected outline-dashed outline-2 outline-offset-2 outline-primary print:outline-none" : ""}`}
     style={{ left: `${p.x}%`, top: `${p.y}%`, width: `${p.w}%`, aspectRatio: String(p.ratio), opacity: p.opacity, transform: `translate(-50%,-50%) rotate(${p.rotation}deg)`, touchAction: "none", cursor: onElementSelect && !p.locked ? "move" : undefined, objectFit: "contain" }} />;
+  const handles = (p: PlacedElement) => {
+    if (!onElementResize || selectedElement !== p.key || p.locked) return null;
+    const hPct = p.w * size.w / (p.ratio * size.h);
+    const box = { left: `${p.x - p.w / 2}%`, top: `${p.y - hPct / 2}%`, width: `${p.w}%`, height: `${hPct}%` };
+    const start = (e: React.PointerEvent<HTMLDivElement>) => { e.stopPropagation(); e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); };
+    const move = (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!e.currentTarget.hasPointerCapture(e.pointerId) || !pageRef.current) return;
+      const r = pageRef.current.getBoundingClientRect();
+      const cx = (e.clientX - r.left) / r.width * 100;
+      onElementResize(p.key, Math.min(110, Math.max(3, Math.abs(cx - p.x) * 2)));
+    };
+    return <div key={`${p.key}-box`} className="pointer-events-none absolute z-[16] border-2 border-dashed border-primary print:hidden" style={box}>
+      {["-left-2 -top-2", "-right-2 -top-2", "-left-2 -bottom-2", "-right-2 -bottom-2"].map((c) => <div key={c} aria-label="Resize element"
+        onPointerDown={start} onPointerMove={move}
+        className={`pointer-events-auto absolute ${c} h-4 w-4 rounded-sm border-2 border-primary bg-background`} style={{ touchAction: "none", cursor: "nwse-resize" }} />)}
+    </div>;
+  };
   const d = display;
   const f = { heading: fonts?.heading || "", name: fonts?.name || "", award: fonts?.award || "", citation: fonts?.citation || "" };
   const lines = headerLines(school, d);
@@ -322,6 +339,7 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
         </div>
       </div>
       {elements.map(layer)}
+      {elements.map(handles)}
     </div>
   );
 }
