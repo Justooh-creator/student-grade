@@ -14,7 +14,7 @@ import { useCloud } from "@/lib/cloud";
 import { getClassLevel, schoolClassIds, type ClassId } from "@/lib/ges";
 import {
   CERT_HEADINGS, AWARD_PRESETS, STAFF_AWARD_PRESETS, CERT_THEMES, POSITION_AWARD, DEFAULT_DISPLAY, DISPLAY_LABELS, SIGNER_PRESETS, MEDALLIONS,
-  PHOTO_FRAMES, FONT_CHOICES, PAPERS, DEFAULT_MEDALLION, DEFAULT_TEXT_SIZES, TEXT_SIZE_CHOICES, defaultCitation, defaultStaffCitation, topLearners, signerTitles, certificateSignerDefaults, paperSize, canMakeCertificates,
+  PHOTO_FRAMES, FONT_CHOICES, PAPERS, DEFAULT_MEDALLION, DEFAULT_TEXT_SIZES, TEXT_SIZE_CHOICES, defaultCitation, defaultStaffCitation, topLearners, signerTitles, certificateSignerDefaults, rightSignerUsesHeadteacher, paperSize, canMakeCertificates,
   type CertTheme, type CertDisplay, type SignerPreset, type Medallion, type PhotoFrame, type PaperId, type CertFonts, type CertTextSizes,
 } from "@/lib/certificates";
 
@@ -126,7 +126,7 @@ function CertificatesPage() {
   const leftName = signerEdits[leftKey]?.name ?? defaults.leftName;
   const rightName = signerEdits[rightKey]?.name ?? defaults.rightName;
   const leftSignature = signerEdits[leftKey]?.signature ?? defaults.leftSignature;
-  const rightSignature = signerEdits[rightKey]?.signature ?? school.signature;
+  const rightSignature = signerEdits[rightKey]?.signature ?? (rightSignerUsesHeadteacher(signers) ? school.signature : "");
   const editSigner = (key: string, value: { name?: string; signature?: string }) => setSignerEdits((old) => ({ ...old, [key]: { ...old[key], ...value } }));
   const uploadSignature = (key: string, file?: File) => {
     if (!file) return;
