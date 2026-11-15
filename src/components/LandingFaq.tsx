@@ -10,7 +10,7 @@ export const LANDING_FAQ: { q: string; a: string }[] = [
   { q: "How much does it cost?", a: "Creating an account is free. An independent teacher pays GH₵30 for one term or GH₵75 for three terms. A whole school pays GH₵150 for one term or GH₵350 for three terms, covering all its teachers. A license is needed to print or save report PDFs." },
   { q: "I'm a subject teacher, not a whole school. Can I still use it?", a: "Yes. You can use EduReport on your own as an independent teacher, or join your school with its School Code so the headteacher can assign you your classes and subjects." },
   { q: "Does it work without internet?", a: "Yes. Teachers can keep entering scores and marking attendance offline. Everything saves to the school cloud once the phone is back online." },
-  { q: "Is our school's data safe?", a: "Your records are stored in your school's own cloud space and only teachers who have joined your school can see them. Headteachers can also download backups at any time." },
+  { q: "Is our school's data safe?", a: "Your records are stored in your school's own cloud space and only teachers who have joined your school can see them. You can also download a backup copy of your records at any time." },
 ];
 
 export function LandingFaq() {
