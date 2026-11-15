@@ -33,3 +33,5 @@
 - Q&A selection maps displayed learning areas to exact available banks and leaves missing banks unavailable; English written packs keep composition choices, passage and literature together with their marking schemes.
 - Lower-primary Q&A uses an independent browser-safe seeded generator and grade-filtered original banks; never fall back to upper-primary or JHS content because younger learners need shorter, concrete tasks.
 - Certificate design elements are a static CDN catalogue (src/lib/certElements.ts) placed as transient % -positioned layers on CertificateSheet; they never touch licensing or school data.
+- Report-card spacing comes from src/lib/reportLayout.ts (roomy without fees, compact with fees) with signatures pinned to the sheet bottom, so every card fills exactly one A4 page without changing scoring or print licensing.
+- The public sign-in page carries the feature slideshow and headteacher FAQ as static components (FeatureShowcase, LandingFaq) so SSR stays data-free.

@@ -8,7 +8,7 @@ describe("dynamic A4 report spacing", () => {
   });
   it("spreads rows out to fill the page when there are no fees", () => {
     expect(reportSpacing(false).compact).toBe(false);
-    expect(reportSpacing(false).rowPad).toBe("py-[5px]");
+    expect(reportSpacing(false).rowPad).toBe("py-[7px]");
   });
   it("only counts filled fee fields", () => {
     expect(filledFeeLines(undefined)).toEqual([]);

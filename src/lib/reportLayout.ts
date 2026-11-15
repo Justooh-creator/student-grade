@@ -4,7 +4,7 @@ export interface ReportSpacing { rowPad: string; gap: string; remarkGap: string;
 export function reportSpacing(hasFees: boolean): ReportSpacing {
   return hasFees
     ? { rowPad: "py-[2px]", gap: "mt-2", remarkGap: "space-y-1", compact: true }
-    : { rowPad: "py-[5px]", gap: "mt-4", remarkGap: "space-y-2", compact: false };
+    : { rowPad: "py-[7px]", gap: "mt-5", remarkGap: "space-y-2", compact: false };
 }
 
 export interface FeeLine { label: string; value: string; n: number | null }
