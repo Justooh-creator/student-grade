@@ -3,6 +3,7 @@ import {
   KG_LEVELS, getClassLevel, usesCat, nextClassName, ordinal, teacherRemarkFor,
 } from "@/lib/ges";
 import { classRanking, computeStudentResult } from "@/lib/results";
+import { filledFeeLines, reportSpacing } from "@/lib/reportLayout";
 import type { School, Student } from "@/lib/store";
 
 export function ReportSheet({ student, students, school, watermark = false }: { student: Student; students: Student[]; school: School; watermark?: boolean }) {
@@ -13,8 +14,10 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
   const cat = usesCat(student.classId);
   const kg = !cat;
   const remark = student.remark?.trim() || (kg ? "—" : teacherRemarkFor(result.average));
+  const feeLines = filledFeeLines(student.fees);
+  const { rowPad, gap, remarkGap } = reportSpacing(feeLines.length > 0);
   return (
-        <div style={{ breakAfter: "page", pageBreakAfter: "always" }} className="print-sheet sheet-a4 relative overflow-hidden mx-auto mb-6 border border-rule px-[11mm] py-[8mm] text-[#1b1a16] shadow-[0_20px_50px_-30px_rgba(0,0,0,0.5)]">
+        <div style={{ breakAfter: "page", pageBreakAfter: "always" }} className="print-sheet sheet-a4 relative flex flex-col overflow-hidden mx-auto mb-6 border border-rule px-[11mm] py-[8mm] text-[#1b1a16] shadow-[0_20px_50px_-30px_rgba(0,0,0,0.5)]">
           {watermark && (
             <div aria-hidden className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
               <span className="-rotate-[35deg] whitespace-nowrap border-4 border-destructive/30 px-6 py-2 text-[20pt] font-black tracking-wider text-destructive/30">
@@ -53,7 +56,7 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
             </div>
           </div>
 
-          <div className="mt-2 grid grid-cols-2 gap-x-6 gap-y-0.5 text-[9.5pt]">
+          <div className={`${gap} grid grid-cols-2 gap-x-6 gap-y-0.5 text-[9.5pt]`}>
             <p>
               <span className="font-bold text-[#1b1a16]">Name: </span>
               <span className="font-bold">{student.name}</span>
@@ -87,13 +90,17 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
               </p>
             ) : <p />}
             <p>
+              <span className="font-bold text-[#1b1a16]">Vacation date: </span>
+              <span className="font-bold">{school.vacationDate || "—"}</span>
+            </p>
+            <p>
               <span className="font-bold text-[#1b1a16]">Reopening date: </span>
               <span className="font-bold">{school.reopeningDate || "—"}</span>
             </p>
           </div>
 
           {kg ? (
-          <table className="mt-2 w-full border-collapse text-[8.5pt]">
+          <table className={`${gap} w-full border-collapse text-[8.5pt]`}>
             <thead>
               <tr className="bg-[#1b1a16] text-white">
                 <th className="border border-[#1b1a16] px-2 py-1 text-left font-bold">Learning area</th>
@@ -104,15 +111,15 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
             <tbody>
               {result.subjects.map((row) => (
                 <tr key={row.subject}>
-                  <td className="border border-rule px-2 py-[2px] font-bold">{row.subject}</td>
-                  <td className="border border-rule px-1 py-[2px] text-center font-bold">{row.level ?? "—"}</td>
-                  <td className="border border-rule px-2 py-[2px]">{row.remark}</td>
+                  <td className={`border border-rule px-2 ${rowPad} font-bold`}>{row.subject}</td>
+                  <td className={`border border-rule px-1 ${rowPad} text-center font-bold`}>{row.level ?? "—"}</td>
+                  <td className={`border border-rule px-2 ${rowPad}`}>{row.remark}</td>
                 </tr>
               ))}
             </tbody>
           </table>
           ) : (
-          <table className="mt-2 w-full border-collapse text-[8.5pt]">
+          <table className={`${gap} w-full border-collapse text-[8.5pt]`}>
             <thead>
               <tr className="bg-[#1b1a16] text-white">
                 <th className="border border-[#1b1a16] px-2 py-1 text-left font-bold">Subject</th>
@@ -128,14 +135,14 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
             <tbody>
               {result.subjects.map((row) => (
                 <tr key={row.subject}>
-                  <td className="border border-rule px-2 py-[2px] font-bold">{row.subject}</td>
-                  <td className="num border border-rule px-1 py-[2px] text-center">{row.sbaRaw ?? "—"}</td>
-                  <td className="num border border-rule px-1 py-[2px] text-center">{row.sba ?? "—"}</td>
-                  <td className="num border border-rule px-1 py-[2px] text-center">{row.examRaw ?? "—"}</td>
-                  <td className="num border border-rule px-1 py-[2px] text-center">{row.exam ?? "—"}</td>
-                  <td className="num border border-rule px-1 py-[2px] text-center font-bold">{row.total ?? "—"}</td>
-                  <td className="num border border-rule px-1 py-[2px] text-center font-bold">{row.grade ?? "—"}</td>
-                  <td className="border border-rule px-2 py-[2px]">{row.remark}</td>
+                  <td className={`border border-rule px-2 ${rowPad} font-bold`}>{row.subject}</td>
+                  <td className={`num border border-rule px-1 ${rowPad} text-center`}>{row.sbaRaw ?? "—"}</td>
+                  <td className={`num border border-rule px-1 ${rowPad} text-center`}>{row.sba ?? "—"}</td>
+                  <td className={`num border border-rule px-1 ${rowPad} text-center`}>{row.examRaw ?? "—"}</td>
+                  <td className={`num border border-rule px-1 ${rowPad} text-center`}>{row.exam ?? "—"}</td>
+                  <td className={`num border border-rule px-1 ${rowPad} text-center font-bold`}>{row.total ?? "—"}</td>
+                  <td className={`num border border-rule px-1 ${rowPad} text-center font-bold`}>{row.grade ?? "—"}</td>
+                  <td className={`border border-rule px-2 ${rowPad}`}>{row.remark}</td>
                 </tr>
               ))}
               <tr className="bg-[#1b1a16]/[0.06] font-bold">
@@ -157,7 +164,7 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
           )}
 
           {result.bestSix && (
-            <div className="mt-2 border border-[#1b1a16] px-2 py-1 text-[8.5pt]">
+            <div className={`${gap} border border-[#1b1a16] px-2 py-1 text-[8.5pt]`}>
               <p className="font-bold uppercase tracking-[0.12em]">
                 Best Six aggregate: <span className="num">{result.bestSix.subjects.length === 6 ? result.bestSix.aggregate : "—"}</span>
               </p>
@@ -168,7 +175,7 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
             </div>
           )}
 
-          {!kg && <div className="mt-2 grid grid-cols-3 gap-2 text-[9pt]">
+          {!kg && <div className={`${gap} grid grid-cols-3 gap-2 text-[9pt]`}>
             <div className="border border-rule px-2 py-0.5 text-center">
               <p className="text-[7.5pt] uppercase tracking-[0.12em] font-bold text-[#1b1a16]">Subjects marked</p>
               <p className="num text-[11pt] font-bold">{result.gradedCount}</p>
@@ -183,7 +190,7 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
             </div>
           </div>}
 
-          <div className="mt-2 space-y-1 text-[9pt]">
+          <div className={`${gap} ${remarkGap} text-[9pt]`}>
             <p>
               <span className="font-bold text-[#1b1a16]">Attitude / Conduct: </span>
               {student.conduct || "—"}
@@ -202,23 +209,8 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
             </p>
           </div>
 
-          {(() => {
-            const f = student.fees;
-            if (!f) return null;
-            const num = (v?: string) => {
-              const n = parseFloat((v ?? "").replace(/[^\d.]/g, ""));
-              return Number.isFinite(n) ? n : null;
-            };
-            // Only filled items print — empty fee fields never appear on the report card.
-            const filled: { label: string; value: string; n: number | null }[] = [];
-            if (f.arrears?.trim()) filled.push({ label: "Fees owed", value: f.arrears, n: num(f.arrears) });
-            if (f.levies?.trim()) filled.push({ label: "Levies", value: f.levies, n: num(f.levies) });
-            if (f.nextTerm?.trim()) filled.push({ label: "Next-term fees", value: f.nextTerm, n: num(f.nextTerm) });
-            for (const it of f.items ?? []) {
-              if (it.label.trim() && it.amount.trim()) filled.push({ label: it.label.trim(), value: it.amount, n: num(it.amount) });
-            }
-            if (!filled.length) return null;
-            const total = filled.reduce<number>((a, p) => a + (p.n ?? 0), 0);
+          {feeLines.length > 0 && (() => {
+            const total = feeLines.reduce<number>((a, p) => a + (p.n ?? 0), 0);
             const cell = (label: string, value: string) => (
               <div className="border border-rule px-2 py-0.5">
                 <p className="text-[7.5pt] font-bold uppercase tracking-[0.1em] text-[#1b1a16]">{label}</p>
@@ -226,10 +218,10 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
               </div>
             );
             return (
-              <div className="mt-2 border border-[#1b1a16] text-[8.5pt]">
+              <div className={`${gap} border border-[#1b1a16] text-[8.5pt]`}>
                 <p className="border-b border-[#1b1a16] bg-[#1b1a16] px-2 py-1 text-[8pt] font-bold uppercase tracking-[0.14em] text-white">Fees / Accounts</p>
                 <div className="grid grid-cols-4">
-                  {filled.map((p, i) => <Fragment key={i}>{cell(p.label, p.value)}</Fragment>)}
+                  {feeLines.map((p, i) => <Fragment key={i}>{cell(p.label, p.value)}</Fragment>)}
                   <div className="border border-rule px-2 py-0.5">
                     <p className="text-[7.5pt] font-bold uppercase tracking-[0.1em] text-[#1b1a16]">Total</p>
                     <p className="num font-bold">GH₵ {total.toFixed(2).replace(/\.00$/, "")}</p>
@@ -239,7 +231,7 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
             );
           })()}
 
-          <div className="mt-3 flex items-end justify-between gap-4 text-[8.5pt]">
+          <div className="mt-auto flex items-end justify-between gap-4 pt-3 text-[8.5pt]">
             <div className="w-[60mm] text-left">
               <div className="flex h-[13mm] items-end justify-center">
                 {school.classTeacherSignatures?.[student.classId] && (
