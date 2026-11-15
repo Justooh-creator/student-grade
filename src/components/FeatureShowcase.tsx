@@ -30,7 +30,7 @@ export function FeatureShowcase() {
     return () => window.clearInterval(id);
   }, [paused, count]);
 
-  const slide = FEATURE_SLIDES[index];
+  const slide = (FEATURE_SLIDES[index] ?? FEATURE_SLIDES[0]) as Slide;
   const Icon = slide.icon;
   const manual = (i: number) => { setPaused(true); go(i); };
 
