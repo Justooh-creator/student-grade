@@ -56,13 +56,15 @@ export function headerLines(school: { name?: string; motto?: string; district?: 
   return out;
 }
 
-export type SignerPreset = "ct_ht" | "aht_ht" | "prop_ht" | "siso_ht" | "siso_only" | "ht_only" | "custom";
+export type SignerPreset = "ct_ht" | "aht_ht" | "prop_ht" | "siso_ht" | "siso_only" | "dde_ht" | "dde_only" | "ht_only" | "custom";
 export const SIGNER_PRESETS: { id: SignerPreset; label: string }[] = [
   { id: "ct_ht", label: "Class Teacher & Headteacher" },
   { id: "aht_ht", label: "Assistant Headteacher & Headteacher" },
   { id: "prop_ht", label: "Proprietor & Headteacher" },
   { id: "siso_ht", label: "SISO & Headteacher" },
   { id: "siso_only", label: "SISO only" },
+  { id: "dde_ht", label: "District Director of Education & Headteacher" },
+  { id: "dde_only", label: "District Director of Education only" },
   { id: "ht_only", label: "Headteacher only" },
   { id: "custom", label: "Custom titles" },
 ];
@@ -74,6 +76,8 @@ export function signerTitles(p: SignerPreset, custom: { left: string; right: str
     case "prop_ht": return { left: "Proprietor", right: "Headteacher" };
     case "siso_ht": return { left: "School Improvement Support Officer (SISO)", right: "Headteacher" };
     case "siso_only": return { left: null, right: "School Improvement Support Officer (SISO)" };
+    case "dde_ht": return { left: "District Director of Education", right: "Headteacher" };
+    case "dde_only": return { left: null, right: "District Director of Education" };
     case "ht_only": return { left: null, right: "Headteacher" };
     default: return { left: custom.left.trim() || null, right: custom.right.trim() || "Headteacher" };
   }
@@ -90,11 +94,17 @@ export const MEDALLIONS: { id: Medallion; label: string }[] = [
   { id: "none", label: "None" },
 ];
 
+/** Single-official presets sign on the right without the headteacher's saved name or signature. */
+const NON_HEAD_RIGHT: SignerPreset[] = ["siso_only", "dde_only"];
+export function rightSignerUsesHeadteacher(preset: SignerPreset) {
+  return !NON_HEAD_RIGHT.includes(preset);
+}
+
 /** Saved names are inherited only for the corresponding role; edits stay in the studio. */
 export function certificateSignerDefaults(school: { classTeacher?: string; headTeacher?: string; classTeachers?: Record<string, string>; classTeacherSignatures?: Record<string, string> }, classId: string, preset: SignerPreset) {
   return {
     leftName: preset === "ct_ht" ? school.classTeachers?.[classId] || school.classTeacher || "" : "",
-    rightName: preset === "siso_only" ? "" : school.headTeacher || "",
+    rightName: rightSignerUsesHeadteacher(preset) ? school.headTeacher || "" : "",
     leftSignature: preset === "ct_ht" ? school.classTeacherSignatures?.[classId] : undefined,
   };
 }

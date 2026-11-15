@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { DEFAULT_DISPLAY, DISPLAY_LABELS, DEFAULT_MEDALLION, EMBLEM_HEIGHT_MM, MEDALLIONS, DEFAULT_TEXT_SIZES, certificateTextPoints, headerLines, signerTitles, certificateSignerDefaults, canMakeCertificates, paperSize, certificateSession, certificatePresentation } from "./certificates";
+import { DEFAULT_DISPLAY, DISPLAY_LABELS, DEFAULT_MEDALLION, EMBLEM_HEIGHT_MM, MEDALLIONS, DEFAULT_TEXT_SIZES, certificateTextPoints, headerLines, signerTitles, certificateSignerDefaults, rightSignerUsesHeadteacher, canMakeCertificates, paperSize, certificateSession, certificatePresentation } from "./certificates";
 
 const school = { name: "Awuyakope D/A Basic", motto: "Knowledge is power", district: "South Tongu", region: "Volta" };
 
@@ -66,6 +66,16 @@ describe("signature titles", () => {
     for (const preset of ["prop_ht", "aht_ht"] as const) {
       expect(certificateSignerDefaults({ classTeacher: "Teacher Name", headTeacher: "Head Name", classTeacherSignatures: { b4: "local-image" } }, "b4", preset)).toEqual({ leftName: "", rightName: "Head Name", leftSignature: undefined });
     }
+  });
+  it("leaves single-official SISO and District Director signatures free of the headteacher's details", () => {
+    for (const preset of ["siso_only", "dde_only"] as const) {
+      expect(certificateSignerDefaults({ headTeacher: "Head Name" }, "b4", preset).rightName).toBe("");
+      expect(rightSignerUsesHeadteacher(preset)).toBe(false);
+      expect(signerTitles(preset, { left: "", right: "" }).left).toBeNull();
+    }
+    expect(signerTitles("dde_only", { left: "", right: "" }).right).toBe("District Director of Education");
+    expect(signerTitles("dde_ht", { left: "", right: "" })).toEqual({ left: "District Director of Education", right: "Headteacher" });
+    expect(rightSignerUsesHeadteacher("dde_ht")).toBe(true);
   });
   it("inherits the general teacher name when no class-specific name exists", () => {
     expect(certificateSignerDefaults({ classTeacher: "General Teacher" }, "b4", "ct_ht").leftName).toBe("General Teacher");
