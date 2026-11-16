@@ -112,12 +112,6 @@ function CertificatesPage() {
       <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={classId} />
       <main className="mx-auto max-w-xl px-4 py-10 text-center">
         <h1 className="font-display text-2xl font-bold">Awards & Certificates</h1>
-        <div role="tablist" aria-label="Certificate settings" className="sticky top-0 z-20 grid grid-cols-4 gap-1 rounded-lg bg-muted p-1">
-          {([["award", "Award"], ["text", "Text"], ["design", "Design"], ["more", "Signs & paper"]] as const).map(([id, label]) =>
-            <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)}
-              className={`min-w-0 rounded-md px-1 py-2 text-xs font-semibold sm:text-sm ${tab === id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}>{label}</button>)}
-        </div>
-        {tab === "award" && <>
         <p className="mt-3 text-muted-foreground">Only the Headteacher, Assistant Headteacher or School Admin can create certificates for this school. Please ask them to issue the award.</p>
       </main>
     </div>;
@@ -185,6 +179,12 @@ function CertificatesPage() {
       <div className="certificate-editor-grid grid min-w-0 gap-6 lg:grid-cols-[minmax(320px,380px)_minmax(0,1fr)]">
       <div className="certificate-controls no-print min-w-0 space-y-4 py-4">
         <h1 className="font-display text-2xl font-bold">Awards & Certificates</h1>
+        <div role="tablist" aria-label="Certificate settings" className="sticky top-0 z-20 grid grid-cols-4 gap-1 rounded-lg bg-muted p-1">
+          {([["award", "Award"], ["text", "Text"], ["design", "Design"], ["more", "Signs & paper"]] as const).map(([id, label]) =>
+            <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)}
+              className={`min-w-0 rounded-md px-1 py-2 text-xs font-semibold sm:text-sm ${tab === id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}>{label}</button>)}
+        </div>
+        {tab === "award" && <>
         <div className="grid grid-cols-2 gap-2 [&>button]:min-w-0 [&>button]:whitespace-normal [&>button]:px-2 [&>button]:text-xs sm:[&>button]:text-sm">
           <Button onClick={() => switchRecipient("learner")} variant={!staff ? "default" : "outline"}>Learner award</Button>
           <Button onClick={() => switchRecipient("staff")} variant={staff ? "default" : "outline"}>Teacher / Staff award</Button>
