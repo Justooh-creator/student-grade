@@ -300,3 +300,8 @@ html {
   .register-a3 .register-table .reg-name { width: 60mm; }
   .register-a3 .register-table.reg-summary { font-size: 10pt; }
 }
+
+@keyframes showcase-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}

@@ -1,3 +1,4 @@
+import { shareApp } from "@/lib/shareApp";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Link, useRouterState } from "@tanstack/react-router";
@@ -260,7 +261,7 @@ export function AppHeader({
                   <RowCell icon={ICON.file} title="Class Broadsheet" desc="Master marks, grades and positions" />
                 </Link>
                 <Link to="/certificates" className={rowCls(pathname.startsWith("/certificates"))}>
-                  <RowCell icon={ICON.file} title="Awards & Certificates" desc="A4 award certificates for learners" />
+                  <RowCell icon={ICON.file} title="Awards & Certificates" desc="Certificates in A4, A3, A2 or custom sizes" />
                 </Link>
                   </nav></AccordionContent>
                 </AccordionItem>
@@ -322,6 +323,9 @@ export function AppHeader({
                 <Link to="/settings" className={rowCls(pathname.startsWith("/settings"))}>
                   <RowCell icon={ICON.user} title="Settings" desc="Dark mode, fingerprint, default class" />
                 </Link>
+                <button type="button" onClick={() => { void shareApp(); }} className={`${rowCls(false)} w-full text-left`}>
+                  <RowCell icon={ICON.chat} title="📲 Share with Teachers" desc="Send EduReport to colleagues on WhatsApp" />
+                </button>
                 <Link to="/auth" className={rowCls(pathname.startsWith("/auth"))}>
                   <RowCell
                     icon={ICON.user}

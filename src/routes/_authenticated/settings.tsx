@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
+import { ShareAppButtons } from "@/components/ShareAppButtons";
 import { FingerprintSetting } from "@/components/FingerprintSetting";
 import { Button } from "@/components/ui/button";
 import { useAppData } from "@/lib/store";
@@ -107,6 +108,10 @@ function SettingsPage() {
         <Section title="App">
           <Button variant="outline" className="w-full" onClick={() => window.location.reload()}>🔄 Refresh app</Button>
           <p className="mt-2 text-xs text-muted-foreground">Use this if something looks out of date. Your saved records are not affected.</p>
+        </Section>
+
+        <Section title="Tell a Colleague / Headteacher">
+          <ShareAppButtons />
         </Section>
 
         <Section title="Help & About">
