@@ -13,9 +13,9 @@ import { useLicense } from "@/lib/license";
 import { useCloud } from "@/lib/cloud";
 import { getClassLevel, schoolClassIds, type ClassId } from "@/lib/ges";
 import {
-  CERT_HEADINGS, AWARD_PRESETS, STAFF_AWARD_PRESETS, CERT_THEMES, POSITION_AWARD, DEFAULT_DISPLAY, DISPLAY_LABELS, SIGNER_PRESETS, MEDALLIONS,
+  CERT_HEADINGS, CERT_TEXT_LINES, CERT_INK_COLOURS, clampTextScale, AWARD_PRESETS, STAFF_AWARD_PRESETS, CERT_THEMES, POSITION_AWARD, DEFAULT_DISPLAY, DISPLAY_LABELS, SIGNER_PRESETS, MEDALLIONS,
   PHOTO_FRAMES, FONT_CHOICES, PAPERS, DEFAULT_MEDALLION, DEFAULT_TEXT_SIZES, TEXT_SIZE_CHOICES, defaultCitation, defaultStaffCitation, topLearners, signerTitles, certificateSignerDefaults, rightSignerUsesHeadteacher, paperSize, canMakeCertificates,
-  type CertTheme, type CertDisplay, type SignerPreset, type Medallion, type PhotoFrame, type PaperId, type CertFonts, type CertTextSizes,
+  type CertTheme, type CertDisplay, type SignerPreset, type Medallion, type PhotoFrame, type PaperId, type CertFonts, type CertTextSizes, type CertTextStyles, type CertTextKey,
 } from "@/lib/certificates";
 
 export const Route = createFileRoute("/_authenticated/certificates")({
@@ -66,11 +66,13 @@ function CertificatesPage() {
   const [paper, setPaper] = useState<PaperId>("A4");
   const [orientation, setOrientation] = useState<"landscape" | "portrait">("landscape");
   const [customSize, setCustomSize] = useState({ w: 297, h: 210, unit: "mm" as "mm" | "in" });
+  const [textStyles, setTextStyles] = useState<CertTextStyles>({});
+  const [tab, setTab] = useState<"award" | "text" | "design" | "more">("award");
 
   // Auto-save the certificate draft on this device until it is printed / saved as PDF.
   const DRAFT_KEY = `edureport_cert_draft:${user?.id ?? "local"}`;
   const restored = useRef(false);
-  const draft = { recipient, classId, theme, mode, studentId, award, custom, heading, customHeading, citation, staffName, staffPos, staffDept, date, display, signers, customSigners, signerEdits, medallion, photoMode, frame, photo, placed, fonts, textSizes, paper, orientation, customSize };
+  const draft = { recipient, classId, theme, mode, studentId, award, custom, heading, customHeading, citation, staffName, staffPos, staffDept, date, display, signers, customSigners, signerEdits, medallion, photoMode, frame, photo, placed, fonts, textSizes, paper, orientation, customSize, textStyles };
   useEffect(() => {
     if (restored.current || !user) return;
     restored.current = true;
@@ -86,7 +88,7 @@ function CertificatesPage() {
       set(d.signers, setSigners); set(d.customSigners, setCustomSigners); set(d.signerEdits, setSignerEdits);
       set(d.medallion, setMedallion); set(d.photoMode, setPhotoMode); set(d.frame, setFrame); set(d.photo, setPhoto);
       set(d.placed, setPlaced); set(d.fonts, setFonts); set(d.textSizes, setTextSizes); set(d.paper, setPaper);
-      set(d.orientation, setOrientation); set(d.customSize, setCustomSize);
+      set(d.orientation, setOrientation); set(d.customSize, setCustomSize); set(d.textStyles, setTextStyles);
     } catch { /* ignore broken draft */ }
   }, [user, DRAFT_KEY]);
   const draftJson = JSON.stringify(draft);
@@ -110,6 +112,12 @@ function CertificatesPage() {
       <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={classId} />
       <main className="mx-auto max-w-xl px-4 py-10 text-center">
         <h1 className="font-display text-2xl font-bold">Awards & Certificates</h1>
+        <div role="tablist" aria-label="Certificate settings" className="sticky top-0 z-20 grid grid-cols-4 gap-1 rounded-lg bg-muted p-1">
+          {([["award", "Award"], ["text", "Text"], ["design", "Design"], ["more", "Signs & paper"]] as const).map(([id, label]) =>
+            <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)}
+              className={`min-w-0 rounded-md px-1 py-2 text-xs font-semibold sm:text-sm ${tab === id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}>{label}</button>)}
+        </div>
+        {tab === "award" && <>
         <p className="mt-3 text-muted-foreground">Only the Headteacher, Assistant Headteacher or School Admin can create certificates for this school. Please ask them to issue the award.</p>
       </main>
     </div>;
@@ -182,16 +190,21 @@ function CertificatesPage() {
           <Button onClick={() => switchRecipient("staff")} variant={staff ? "default" : "outline"}>Teacher / Staff award</Button>
         </div>
 
-        <section className="space-y-2">
+        </>}
+        {tab === "design" && <section className="space-y-2">
           <h2 className="font-semibold">Design</h2>
           <label className="block text-sm font-semibold">Certificate design
             <select className={input} value={theme} onChange={(e) => setTheme(e.target.value as CertTheme)}>
               {CERT_THEMES.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
             </select>
           </label>
-        </section>
+          <label className="block text-sm font-semibold">Award emblem
+            <select className={input} value={medallion} onChange={(e) => setMedallion(e.target.value as Medallion)}>
+              {MEDALLIONS.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
+            </select></label>
+        </section>}
 
-        {!staff && <>
+        {tab === "award" && !staff && <>
           <label className="block text-sm font-semibold">Class
             <select className={input} value={classId} onChange={(e) => { setClassId(e.target.value as ClassId); setStudentId(""); }}>
               {schoolClassIds(school).map((id) => <option key={id} value={id}>{getClassLevel(id).name}</option>)}
@@ -203,8 +216,8 @@ function CertificatesPage() {
           </div>
         </>}
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-          <details className="rounded-md border border-border p-3 sm:col-span-2 lg:col-span-1">
+        {tab !== "design" && <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+          {tab === "text" && <details className="rounded-md border border-border p-3 sm:col-span-2 lg:col-span-1">
           <summary className="cursor-pointer font-semibold">Heading: {heading === "Custom Heading" ? (customHeading || "Custom") : heading}</summary>
           <div className="mt-3 space-y-3">
           <label className="block text-sm font-semibold">Certificate heading
@@ -216,7 +229,9 @@ function CertificatesPage() {
             <input className={input} value={customHeading} onChange={(e) => setCustomHeading(e.target.value)} />
           </label>}
           </div>
-          </details>
+          </details>}
+          {tab === "text" && <TextLinesEditor styles={textStyles} setStyles={setTextStyles} />}
+          {tab === "award" && <>
           {staff && <>
             <label className="text-sm font-semibold">Staff name<input className={input} value={staffName} onChange={(e) => setStaffName(e.target.value)} /></label>
             <label className="text-sm font-semibold">Position / designation<input className={input} value={staffPos} onChange={(e) => setStaffPos(e.target.value)} placeholder="e.g. Class Teacher, Basic 4" /></label>
@@ -236,7 +251,8 @@ function CertificatesPage() {
           <label className="text-sm font-semibold">Date<input className={input} value={date} onChange={(e) => setDate(e.target.value)} /></label>
           <label className="text-sm font-semibold sm:col-span-2 lg:col-span-1">Citation (optional)
             <input className={input} value={citation} onChange={(e) => setCitation(e.target.value)} placeholder="Leave blank to use the standard wording" /></label>
-          <details className="rounded-md border border-border p-3 sm:col-span-2 lg:col-span-1">
+          </>}
+          {tab === "more" && <details className="rounded-md border border-border p-3 sm:col-span-2 lg:col-span-1">
           <summary className="cursor-pointer font-semibold">Signatures: {SIGNER_PRESETS.find((p) => p.id === signers)?.label}</summary>
           <div className="mt-3 space-y-3">
           <label className="block text-sm font-semibold">Who signs
@@ -257,23 +273,19 @@ function CertificatesPage() {
             {s.signature && <Button size="sm" variant="outline" onClick={() => editSigner(s.key, { signature: "" })}>Use manual signing</Button>}
           </div>)}
           </div>
-          </details>
-          <label className="text-sm font-semibold">Award emblem
-            <select className={input} value={medallion} onChange={(e) => setMedallion(e.target.value as Medallion)}>
-              {MEDALLIONS.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
-            </select></label>
-        </div>
+          </details>}
+        </div>}
 
-        <DesignElementsPanel placed={placed} setPlaced={setPlaced} selected={selEl} setSelected={setSelEl} />
+        {tab === "design" && <DesignElementsPanel placed={placed} setPlaced={setPlaced} selected={selEl} setSelected={setSelEl} />}
 
-        <details className="rounded-md border border-border p-3">
+        {tab === "text" && <details className="rounded-md border border-border p-3">
           <summary className="cursor-pointer font-semibold">Fonts & text sizes</summary>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             {fontField("heading", "Heading")}{fontField("name", "Recipient name")}{fontField("award", "Award title")}{fontField("citation", "Citation")}
           </div>
-        </details>
+        </details>}
 
-        <details className="rounded-md border border-border p-3">
+        {tab === "more" && <details className="rounded-md border border-border p-3">
           <summary className="cursor-pointer font-semibold">Photograph</summary>
           <div className="mt-3 space-y-3">
             <div className="flex flex-wrap gap-2">
@@ -297,18 +309,18 @@ function CertificatesPage() {
               </div>
             </>}
           </div>
-        </details>
+        </details>}
 
-        <details className="rounded-md border border-border p-3">
+        {tab === "design" && <details className="rounded-md border border-border p-3">
           <summary className="cursor-pointer font-semibold">Show / hide details</summary>
           <div className="mt-3 grid gap-2 sm:grid-cols-3">
             {DISPLAY_LABELS.map((o) => <label key={o.key} className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={display[o.key]} onChange={(e) => setDisplay({ ...display, [o.key]: e.target.checked })} />{o.label}
             </label>)}
           </div>
-        </details>
+        </details>}
 
-        <details className="rounded-md border border-border p-3">
+        {tab === "more" && <details className="rounded-md border border-border p-3">
           <summary className="cursor-pointer font-semibold">Paper size: {paper === "custom" ? "Custom" : paper} {orientation}</summary>
           <div className="mt-3 flex flex-wrap gap-2">
             {([...Object.keys(PAPERS), "custom"] as PaperId[]).map((p) => <Button key={p} onClick={() => setPaper(p)} variant={paper === p ? "default" : "outline"}>{p === "custom" ? "Custom" : p}</Button>)}
@@ -320,7 +332,7 @@ function CertificatesPage() {
             <label className="text-sm">Height<input type="number" className={input} value={customSize.h} onChange={(e) => setCustomSize({ ...customSize, h: +e.target.value })} /></label>
             <label className="text-sm">Unit<select className={input} value={customSize.unit} onChange={(e) => setCustomSize({ ...customSize, unit: e.target.value as "mm" | "in" })}><option value="mm">mm</option><option value="in">inches</option></select></label>
           </div>}
-        </details>
+        </details>}
 
         {!staff && mode === "top3" && certs.length === 0 && <p className="text-sm text-muted-foreground">No marks entered for this class yet, so positions can't be worked out.</p>}
         {staff ? <PrintButton label="Print / Save certificates as PDF" /> : <PrintButton label="Print / Save certificates as PDF" classId={classId} />}
@@ -330,9 +342,44 @@ function CertificatesPage() {
           photoMode={photoMode} size={size} display={display} medallion={medallion} frame={frame} fonts={fonts} textSizes={textSizes}
           elements={placed} selectedElement={selEl} onElementSelect={setSelEl}
           onElementMove={(k, x, y) => setPlaced((ps) => ps.map((p) => p.key === k ? updateElement(p, { x, y }) : p))}
-          onElementResize={(k, w) => setPlaced((ps) => ps.map((p) => p.key === k ? updateElement(p, { w }) : p))} />)}
+          onElementResize={(k, w) => setPlaced((ps) => ps.map((p) => p.key === k ? updateElement(p, { w }) : p))} textStyles={textStyles} />)}
       </CertificatePreview>
       </div>
     </main>
+  </div>;
+}
+
+/** Every certificate line: type over it, clear it to remove it, resize and colour it. */
+function TextLinesEditor({ styles, setStyles }: { styles: CertTextStyles; setStyles: (s: CertTextStyles) => void }) {
+  const [open, setOpen] = useState<CertTextKey>("heading");
+  const patch = (k: CertTextKey, v: CertTextStyles[CertTextKey]) => setStyles({ ...styles, [k]: { ...styles[k], ...v } });
+  const reset = (k: CertTextKey) => { const n = { ...styles }; delete n[k]; setStyles(n); };
+  const cur = styles[open] ?? {};
+  const scale = clampTextScale(cur.scale);
+  return <div className="space-y-3 rounded-md border border-border p-3 sm:col-span-2 lg:col-span-1">
+    <p className="font-semibold">Edit any text</p>
+    <select className={input} aria-label="Text line" value={open} onChange={(e) => setOpen(e.target.value as CertTextKey)}>
+      {CERT_TEXT_LINES.map((l) => <option key={l.key} value={l.key}>{l.label}{styles[l.key]?.text === "" ? " (removed)" : styles[l.key] ? " (edited)" : ""}</option>)}
+    </select>
+    <label className="block text-sm font-semibold">Text
+      <textarea className="min-h-16 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={cur.text ?? ""}
+        placeholder="Leave empty to use the automatic wording" onChange={(e) => patch(open, { text: e.target.value })} />
+    </label>
+    <div className="flex flex-wrap gap-2">
+      <Button size="sm" variant="outline" onClick={() => patch(open, { text: "" })}>Remove from certificate</Button>
+      <Button size="sm" variant="ghost" onClick={() => reset(open)}>Reset</Button>
+    </div>
+    <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 text-sm">
+      <Button size="sm" variant="outline" aria-label="Smaller" onClick={() => patch(open, { scale: clampTextScale(scale - 0.1) })}>A−</Button>
+      <input type="range" aria-label="Text size" min={0.4} max={2.5} step={0.05} value={scale} onChange={(e) => patch(open, { scale: +e.target.value })} className="w-full" />
+      <Button size="sm" variant="outline" aria-label="Bigger" onClick={() => patch(open, { scale: clampTextScale(scale + 0.1) })}>A+</Button>
+    </div>
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-sm font-semibold">Colour</span>
+      {CERT_INK_COLOURS.map((c) => <button key={c} type="button" aria-label={`Colour ${c}`} onClick={() => patch(open, { color: c })}
+        className={`h-7 w-7 rounded-full border-2 ${cur.color === c ? "border-primary" : "border-border"}`} style={{ background: c }} />)}
+      <input type="color" aria-label="Custom colour" value={cur.color ?? "#0a2558"} onChange={(e) => patch(open, { color: e.target.value })} className="h-8 w-10" />
+    </div>
+    <p className="text-xs text-muted-foreground">An empty box keeps the automatic wording. "Remove" hides the line completely.</p>
   </div>;
 }

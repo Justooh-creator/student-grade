@@ -97,3 +97,11 @@ describe("permissions and paper", () => {
     expect(paperSize("A3", "portrait", { w: 0, h: 0, unit: "mm" })).toEqual({ w: 297, h: 420 });
   });
 });
+
+import { certLineText, clampTextScale } from "./certificates";
+describe("certificate text overrides", () => {
+  it("empty override removes the line", () => { expect(certLineText({ heading: { text: "" } }, "heading", "Certificate of Award")).toBe(""); });
+  it("no override keeps generated text", () => { expect(certLineText({}, "heading", "Certificate of Award")).toBe("Certificate of Award"); });
+  it("custom text replaces it", () => { expect(certLineText({ award: { text: "Best Reader" } }, "award", "X")).toBe("Best Reader"); });
+  it("clamps size", () => { expect(clampTextScale(9)).toBe(2.5); expect(clampTextScale(0.1)).toBe(0.4); expect(clampTextScale(undefined)).toBe(1); });
+});

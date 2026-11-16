@@ -228,3 +228,23 @@ export function topLearners(students: Student[], classId: ClassId, count = 3) {
 }
 
 export const POSITION_AWARD = ["", "First Position in Class", "Second Position in Class", "Third Position in Class"];
+
+/** Per-line text overrides: text "" removes the line; scale and colour are display-only. */
+export type CertTextKey = "presentation" | "heading" | "name" | "classLine" | "award" | "citation" | "session" | "date";
+export type CertTextStyle = { text?: string; scale?: number; color?: string };
+export type CertTextStyles = Partial<Record<CertTextKey, CertTextStyle>>;
+export const CERT_TEXT_LINES: { key: CertTextKey; label: string }[] = [
+  { key: "presentation", label: "Presentation line" }, { key: "heading", label: "Heading" },
+  { key: "name", label: "Recipient name" }, { key: "classLine", label: "Class / designation" },
+  { key: "award", label: "Award title" }, { key: "citation", label: "Citation" },
+  { key: "session", label: "Term & year" }, { key: "date", label: "Date" },
+];
+export const CERT_INK_COLOURS = ["#0a2558", "#b8860b", "#0f5c3f", "#7a1f2b", "#111827", "#ffffff"];
+export function clampTextScale(s: number | undefined) {
+  return Math.max(0.4, Math.min(2.5, s !== undefined && Number.isFinite(s) ? s : 1));
+}
+/** Override text wins (empty string hides the line); otherwise the generated text. */
+export function certLineText(styles: CertTextStyles | undefined, key: CertTextKey, fallback: string) {
+  const o = styles?.[key]?.text;
+  return o === undefined ? fallback : o;
+}

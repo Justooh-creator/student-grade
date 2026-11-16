@@ -1,7 +1,7 @@
 import type { School } from "@/lib/store";
 import { useId, useRef } from "react";
 import type { PlacedElement } from "@/lib/certElements";
-import { DEFAULT_DISPLAY, DEFAULT_MEDALLION, EMBLEM_HEIGHT_MM, certificateTextPoints, headerLines, certificateSession, certificatePresentation, type CertTheme, type CertDisplay, type Medallion, type PhotoFrame, type CertFonts, type CertTextSizes } from "@/lib/certificates";
+import { DEFAULT_DISPLAY, DEFAULT_MEDALLION, EMBLEM_HEIGHT_MM, certificateTextPoints, headerLines, certificateSession, certificatePresentation, certLineText, clampTextScale, type CertTextStyles, type CertTextKey, type CertTheme, type CertDisplay, type Medallion, type PhotoFrame, type CertFonts, type CertTextSizes } from "@/lib/certificates";
 
 export type PhotoAdjust = { src: string; zoom: number; x: number; y: number };
 export type CertData = {
@@ -211,10 +211,10 @@ function Laurel({ color, flip }: { color: string; flip?: boolean }) {
 }
 
 /** One certificate at the given page size (mm). Artwork is designed at A4 width and scaled for larger paper. */
-export function CertificateSheet({ data, school, theme, watermark, photoMode = "none", size = { w: 297, h: 210 }, display = DEFAULT_DISPLAY, medallion = DEFAULT_MEDALLION, frame: photoFrame = "rect", fonts, textSizes, elements = [], selectedElement, onElementSelect, onElementMove, onElementResize }: {
+export function CertificateSheet({ data, school, theme, watermark, photoMode = "none", size = { w: 297, h: 210 }, display = DEFAULT_DISPLAY, medallion = DEFAULT_MEDALLION, frame: photoFrame = "rect", fonts, textSizes, elements = [], selectedElement, onElementSelect, onElementMove, onElementResize, textStyles }: {
   data: CertData; school: School; theme: CertTheme; watermark: boolean; photoMode?: PhotoMode; size?: { w: number; h: number };
   display?: CertDisplay; medallion?: Medallion; frame?: PhotoFrame; fonts?: Partial<CertFonts>; textSizes?: Partial<CertTextSizes>;
-  elements?: PlacedElement[]; selectedElement?: string | undefined; onElementSelect?: (key: string) => void; onElementMove?: (key: string, x: number, y: number) => void; onElementResize?: (key: string, w: number) => void;
+  elements?: PlacedElement[]; selectedElement?: string | undefined; onElementSelect?: (key: string) => void; onElementMove?: (key: string, x: number, y: number) => void; onElementResize?: (key: string, w: number) => void; textStyles?: CertTextStyles;
 }) {
   const pageRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ key: string; dx: number; dy: number } | null>(null);
@@ -259,14 +259,31 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
   const cornerSize = theme === "young" ? "30mm" : "26mm";
   const corner = (r: number, pos: React.CSSProperties) => <Corner t={t} kind={kind} style={{ position: "absolute", width: cornerSize, height: cornerSize, transform: `rotate(${r}deg)`, ...pos }} />;
 
+  const ts = textStyles;
+  const line = (k: CertTextKey, fallback: string) => certLineText(ts, k, fallback);
+  const sty = (k: CertTextKey, base: React.CSSProperties, basePt?: number): React.CSSProperties => {
+    const o = ts?.[k]; const out: React.CSSProperties = { ...base };
+    const sc = clampTextScale(o?.scale);
+    if (o?.color) out.color = o.color;
+    if (sc !== 1) { if (typeof base.fontSize === "string") out.fontSize = `calc(${base.fontSize} * ${sc})`; else if (basePt) out.fontSize = `${basePt * sc}pt`; }
+    return out;
+  };
+  const presentationText = line("presentation", certificatePresentation(heading));
+  const nameText = line("name", data.name || (staff ? "Staff Name" : "Learner Name"));
+  const classText = d.className ? line("classLine", staff ? [data.line1, data.line2].filter(Boolean).join(" · ") : data.line1 ? `of ${data.line1}` : "") : "";
+  const awardText = line("award", data.award);
+  const citationText = d.citation ? line("citation", data.citation) : "";
+  const sessionText = line("session", session);
+  const dateText = d.date ? line("date", data.date) : "";
+  const headingText = line("heading", heading);
   const text = (
     <div className="flex flex-1 flex-col items-center text-center" style={{ minWidth: 0 }}>
-      <p style={{ fontFamily: t.body }} className="text-[14pt] italic">{certificatePresentation(heading)}</p>
-      <p data-cert="recipient" style={{ fontFamily: f.name || t.name, fontSize: points("name"), borderColor: t.accent2, color: kind === "royalblue" ? "#0a2558" : undefined }} className={`mt-[2mm] max-w-full break-words border-b-2 px-2 leading-tight ${t.name.includes("cursive") ? "font-normal" : "font-bold"}`}>{data.name || (staff ? "Staff Name" : "Learner Name")}</p>
-      {d.className && <p style={{ fontFamily: t.body }} className="mt-[2mm] text-[13pt]">{staff ? [data.line1, data.line2].filter(Boolean).join(" · ") : data.line1 ? `of ${data.line1}` : ""}</p>}
-      <p data-cert="award" style={{ fontFamily: f.award || (kind === "modern" || kind === "young" || kind === "minimal" ? t.title : "'Cinzel', serif"), fontSize: points("award"), color: kind === "royalblue" ? "#b8860b" : t.accent }} className="mt-[4mm] max-w-full break-words font-extrabold uppercase">{data.award}</p>
-      {d.citation && data.citation && <p data-cert="citation" style={{ fontFamily: f.citation || t.body, fontSize: points("citation") }} className="mt-[2mm] max-w-[200mm] italic">{data.citation}</p>}
-      {session && <p data-cert="session" style={{ fontFamily: t.body }} className="mt-[1mm] text-[12pt]">{session}</p>}
+      {presentationText && <p data-cert="presentation" style={sty("presentation", { fontFamily: t.body }, 14)} className="text-[14pt] italic">{presentationText}</p>}
+      {nameText && <p data-cert="recipient" style={sty("name", { fontFamily: f.name || t.name, fontSize: points("name"), borderColor: t.accent2, ...(kind === "royalblue" ? { color: "#0a2558" } : {}) })} className={`mt-[2mm] max-w-full break-words border-b-2 px-2 leading-tight ${t.name.includes("cursive") ? "font-normal" : "font-bold"}`}>{nameText}</p>}
+      {classText && <p style={sty("classLine", { fontFamily: t.body }, 13)} className="mt-[2mm] text-[13pt]">{classText}</p>}
+      {awardText && <p data-cert="award" style={sty("award", { fontFamily: f.award || (kind === "modern" || kind === "young" || kind === "minimal" ? t.title : "'Cinzel', serif"), fontSize: points("award"), color: kind === "royalblue" ? "#b8860b" : t.accent })} className="mt-[4mm] max-w-full break-words font-extrabold uppercase">{awardText}</p>}
+      {citationText && <p data-cert="citation" style={sty("citation", { fontFamily: f.citation || t.body, fontSize: points("citation") })} className="mt-[2mm] max-w-[200mm] italic">{citationText}</p>}
+      {sessionText && <p data-cert="session" style={sty("session", { fontFamily: t.body }, 12)} className="mt-[1mm] text-[12pt]">{sessionText}</p>}
     </div>);
 
   return (
@@ -301,9 +318,9 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
           </div>}
           <div className="mt-[4mm] flex w-full shrink-0 items-center justify-center gap-3">
           {kind === "royalblue" && <Laurel color="#c8961e" />}
-          <h1 data-cert="heading" style={{ fontFamily: f.heading || t.title, fontSize: points("heading"), color: t.accent, letterSpacing: 0 }} className="min-w-0 break-words leading-tight">
-            {heading}
-          </h1>
+          {headingText && <h1 data-cert="heading" style={sty("heading", { fontFamily: f.heading || t.title, fontSize: points("heading"), color: t.accent, letterSpacing: 0 })} className="min-w-0 break-words leading-tight">
+            {headingText}
+          </h1>}
           {kind === "royalblue" && <Laurel color="#c8961e" flip />}
           </div>
           {portrait || photoMode === "none" ? (
@@ -327,7 +344,7 @@ export function CertificateSheet({ data, school, theme, watermark, photoMode = "
             <div data-cert="award-centre" className="flex flex-col items-center">
               {d.seal && (medallion === "rosette" ? <SchoolRosette name={school.name} /> : <AcademicEmblem medallion={medallion} crest={school.logo} />)}
               {d.seal && school.stamp && <img data-cert="stamp" src={school.stamp} alt="School stamp" className="mt-[2mm] h-[18mm] max-w-[28mm] object-contain" />}
-              {d.date && data.date && <p className="mt-1">{data.date}</p>}
+              {dateText && <p data-cert="date" className="mt-1" style={sty("date", {}, 11)}>{dateText}</p>}
             </div>
             <div data-cert="right-signature" className="min-w-0">{d.rightSignature && <>
               {(data.rightSignature ?? school.signature) ? <img src={data.rightSignature ?? school.signature} alt="" className="mx-auto h-[14mm] max-w-full object-contain" /> : <div className="h-[14mm]" />}
