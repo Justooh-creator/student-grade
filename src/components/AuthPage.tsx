@@ -8,6 +8,7 @@ import { accountHome, signupNextStep } from "@/lib/accountAccess";
 import { Button } from "@/components/ui/button";
 import { signOutWithFingerprint } from "@/lib/biometric";
 import { FeatureShowcase } from "@/components/FeatureShowcase";
+import { ShareAppButtons } from "@/components/ShareAppButtons";
 import { LandingFaq } from "@/components/LandingFaq";
 
 export function AuthPage() {
@@ -184,6 +185,11 @@ export function AuthPage() {
         <div className="space-y-12 border-t border-border bg-muted/40 py-10">
           <FeatureShowcase />
           <LandingFaq />
+          <section aria-labelledby="share-app" className="mx-auto w-full max-w-md px-5 text-center">
+            <h2 id="share-app" className="font-display text-xl font-bold text-foreground">Know a teacher who needs this?</h2>
+            <p className="mb-3 mt-1 text-sm text-muted-foreground">Share EduReport Ghana with your colleagues in one tap.</p>
+            <ShareAppButtons />
+          </section>
         </div>
       )}
       <div className="mx-auto w-full max-w-md px-5 pb-8">

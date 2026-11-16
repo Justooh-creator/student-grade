@@ -75,10 +75,10 @@ export interface ClassLevel {
 const KG_SUBJECTS = [
   "Language and Literacy",
   "Numeracy",
-  "Our World Our People",
   "Creative Arts",
-  "Physical Development",
   "Music and Movement",
+  "Physical Development",
+  "Our World Our People",
 ];
 
 const LOWER_PRIMARY_SUBJECTS = [

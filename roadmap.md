@@ -45,3 +45,4 @@
 
 - [x] Durable field-level School Details sync queue (survives refresh/offline; clashes go to review).
 - [x] Bundle: sign-in feature slideshow (8 slides), headteacher FAQ, © 2026 footer, dynamic A4 report spacing, vacation date on reports, District Director of Education signer presets.
+- [x] Bundle 2: 13 reordered sign-in FAQs, 9-slide animated showcase with timer bar and promotion slide, certificate sizes, KG subject order, Share App (menu, Settings, sign-in).
