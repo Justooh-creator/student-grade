@@ -144,7 +144,7 @@ export function AuthPage() {
         {!user && <p className="font-display text-3xl font-black tracking-tight text-primary sm:text-4xl">EduReport Ghana</p>}
         <h1 className="mt-1 font-display text-2xl font-bold text-foreground">{user ? "Your account" : mode === "up" ? "Create Free Account" : "Welcome back"}</h1>
         {!user && <p className="mt-3 text-base text-muted-foreground">{mode === "up" ? "Official GES terminal report cards and SBA for KG 1 to Basic 9." : "Sign in to access your school records, SBA, and report cards."}</p>}
-        {!user && (() => { const pill = "rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-primary whitespace-nowrap"; return <div className="mt-4 space-y-2 text-sm font-semibold"><div className="flex justify-between gap-2"><span className={pill}>🇬🇭 GES Standard</span><span className={pill}>⚡ Works Offline</span></div><div className="flex justify-center"><span className={pill}>📱 Phone &amp; Laptop</span></div></div>; })()}
+        {!user && <FeatureBadges />}
         {!user && pendingEmail ? (
           <div className="mt-7 rounded-lg border border-primary/30 bg-primary/5 p-5 text-center" role="status">
             <p className="text-5xl" aria-hidden>✉️</p>
@@ -198,5 +198,36 @@ export function AuthPage() {
         <p className="mt-4 border-t border-border pt-4 text-center text-xs text-muted-foreground">© 2026 JA EduTech Solutions. All rights reserved.</p>
       </div>
     </div>
+  );
+}
+
+const BADGES = [
+  { label: "🇬🇭 GES Standard", text: "Built to GES and NaCCA standards: 50% class SBA and 50% exam, the 1–9 grading scale, BECE Best Six (four core subjects plus two best electives) and the official KG learning areas." },
+  { label: "⚡ Works Offline", text: "No data bundle needed in class. Enter marks, learner details and attendance offline. Everything saves on your device and syncs to the cloud once you are online." },
+  { label: "☁️ School Cloud", text: "The headteacher registers the school and shares a School Code. Every teacher joins with it, so all classes, marks and reports are kept safely in one shared school record." },
+  { label: "📲 WhatsApp Sharing", text: "Send report cards straight to parents on WhatsApp in one tap. Free and unlimited for licensed users, with no SMS or printing costs." },
+];
+
+function FeatureBadges() {
+  const [open, setOpen] = useState<number | null>(null);
+  const pill = "rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-primary whitespace-nowrap hover:bg-primary/20 active:scale-95 transition";
+  const b = open === null ? null : BADGES[open];
+  return (
+    <>
+      <div className="mt-4 grid grid-cols-2 gap-2 text-sm font-semibold">
+        {BADGES.map((x, i) => (
+          <button key={x.label} type="button" className={pill} onClick={() => setOpen(i)}>{x.label}</button>
+        ))}
+      </div>
+      {b && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-5" onClick={() => setOpen(null)} role="dialog" aria-modal="true">
+          <div className="w-full max-w-sm rounded-xl bg-card p-5 text-card-foreground shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-display text-lg font-bold text-primary">{b.label}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{b.text}</p>
+            <button type="button" className="mt-4 w-full rounded-lg bg-primary py-2 font-semibold text-primary-foreground" onClick={() => setOpen(null)}>Got it</button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
