@@ -118,7 +118,14 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
               ))}
             </tbody>
           </table>
-          ) : (
+          ) : null}
+          {kg && result.physical && (
+            <div className={`${gap} border border-rule px-2 py-1 text-[8.5pt]`}>
+              <span className="font-bold">Physical Development (observation): </span>
+              {result.physical.level} — {result.physical.descriptor}
+            </div>
+          )}
+          {kg ? null : (
           <table className={`${gap} w-full border-collapse text-[8.5pt]`}>
             <thead>
               <tr className="bg-[#1b1a16] text-white">

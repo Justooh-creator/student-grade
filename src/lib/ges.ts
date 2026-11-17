@@ -76,10 +76,12 @@ const KG_SUBJECTS = [
   "Language and Literacy",
   "Numeracy",
   "Creative Arts",
-  "Music and Movement",
-  "Physical Development",
   "Our World Our People",
 ];
+
+/** KG legacy learning areas kept for data: Music and Movement folds into Creative Arts; Physical Development is a separate observation. */
+export const KG_LEGACY_CREATIVE = "Music and Movement";
+export const KG_PHYSICAL = "Physical Development";
 
 const LOWER_PRIMARY_SUBJECTS = [
   "English Language",
@@ -291,9 +293,9 @@ export function isKg(id: ClassId): boolean {
 
 /** KG 1–2 authentic continuous assessment (NaCCA): teacher selects a level per learning area. No SBA/Exam formula, no numeric grade or aggregate. */
 export const KG_LEVELS = [
-  { level: "Gold", code: "G", descriptor: "High level of proficiency; transfers learning confidently and flexibly" },
-  { level: "Silver", code: "S", descriptor: "Sufficient fundamental knowledge and skills; transfers learning independently" },
-  { level: "Bronze", code: "B", descriptor: "Approaching proficiency; may need guidance or support" },
+  { level: "Gold", code: "G", descriptor: "High level of proficiency; demonstrates skills confidently and independently" },
+  { level: "Silver", code: "S", descriptor: "Sufficient fundamental knowledge and skills; demonstrates expected skills with occasional support" },
+  { level: "Bronze", code: "B", descriptor: "Developing foundational knowledge and skills; requires additional guidance and practice" },
 ] as const;
 export type KgLevel = (typeof KG_LEVELS)[number];
 export type KgLevelName = KgLevel["level"];

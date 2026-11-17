@@ -42,6 +42,10 @@ export const KG_CONTENT: Record<string, Content> = {
       ...f("Shapes", [["circle", "a round shape like a ball"], ["square", "a shape with four equal sides"], ["triangle", "a shape with three sides"], ["rectangle", "a shape like a door"], ["star", "a shape with five points"]]),
       ...f("Materials", [["crayon", "a coloured stick for drawing and colouring"], ["clay", "soft earth we can mould into shapes"], ["paper", "what we draw and write on"], ["scissors", "a tool for cutting paper"], ["glue", "what we use to stick things together"], ["paint brush", "a tool for painting"], ["pencil", "a tool for drawing lines"]]),
       ...f("Activities", [["drawing", "making pictures with lines"], ["colouring", "filling a picture with colours"], ["moulding", "making shapes with clay"], ["weaving", "crossing strips over and under"], ["collage", "a picture made by sticking pieces of paper"]]),
+      ...f("Instruments", [["drum", "an instrument we beat with hands or sticks"], ["rattle", "an instrument we shake to make a sound"], ["gong-gong", "a metal bell beaten with a stick"], ["xylophone", "an instrument with wooden bars we strike"], ["flute", "an instrument we blow"], ["guitar", "an instrument with strings"], ["castanets", "small instruments we click together"]]),
+      ...f("Sounds", [["loud", "a sound that is very strong"], ["soft", "a sound that is quiet"], ["fast", "music that moves quickly"], ["slow", "music that moves gently"], ["high", "a sound like a bird's whistle"], ["low", "a deep sound like a big drum"]]),
+      ...f("Music", [["song", "words we sing with a tune"], ["clap", "hitting our hands together to keep the beat"], ["beat", "the steady pulse in music"], ["dance", "moving our body to music"], ["rhyme", "a short poem we say or sing"], ["singer", "a person who sings"]]),
+      ...f("Movement", [["march", "walking in step to music"], ["sway", "moving gently from side to side"], ["stamp", "hitting the ground hard with the feet"], ["spin", "turning round and round"], ["stretch", "making the body long and tall"]]),
     ],
     written: [
       W("Colours", "(a) Name three colours. (b) What colour is a ripe banana? (c) Colour a leaf green.", "red, blue, yellow", "yellow", "a leaf coloured green"),
@@ -49,6 +53,11 @@ export const KG_CONTENT: Record<string, Content> = {
       W("Materials", "(a) Name two things we use for drawing. (b) What do we use to cut paper? (c) What can we mould with clay?", "pencil, crayon", "scissors", "a pot, a ball, a fruit"),
       W("Activities", "(a) Draw your house. (b) Colour your drawing. (c) Say one thing you drew.", "a simple house drawing", "neat colouring", "door, window, roof"),
       W("Craft", "(a) Make a ball with clay. (b) Stick paper pieces to make a collage. (c) Show your work to a friend.", "a round clay ball", "a neat collage", "the child presents the work"),
+      W("Instruments", "(a) Name two instruments we beat. (b) Which instrument do we shake? (c) Play a steady beat on a drum.", "drum, gong-gong", "rattle", "a steady beat"),
+      W("Sounds", "(a) Clap loudly, then softly. (b) Sing a song slowly, then fast. (c) Make a high sound and a low sound.", "loud and soft claps", "slow and fast singing", "high and low voices"),
+      W("Music", "(a) Sing your favourite song. (b) Clap to the beat. (c) Say a nursery rhyme.", "a complete song", "claps on the beat", "a complete rhyme"),
+      W("Movement", "(a) March to the music. (b) Sway from side to side. (c) Spin and stop when the music stops.", "marching in time", "gentle swaying", "stopping on cue"),
+      W("Culture", "(a) Name one Ghanaian dance. (b) Name a song we sing at school. (c) Dance to a drum beat.", "Adowa, Kpanlogo, Borborbor", "the National Anthem", "moving to the beat"),
     ],
   },
   "Physical Development": {
@@ -64,21 +73,6 @@ export const KG_CONTENT: Record<string, Content> = {
       W("Health", "(a) What should we drink after playing? (b) Name one healthy food. (c) Why do we sleep?", "water", "fruit, vegetables, beans", "to rest and grow"),
       W("Body Parts", "(a) Touch your knees. (b) Wiggle your fingers. (c) Stand on your feet and stretch your arms.", "touches knees", "moves fingers", "stands and stretches"),
       W("Safety", "(a) Why do we warm up? (b) Where should we play? (c) What should you do when a friend falls?", "to prepare the body", "in a safe open place", "help and tell the teacher"),
-    ],
-  },
-  "Music and Movement": {
-    facts: [
-      ...f("Instruments", [["drum", "an instrument we beat with hands or sticks"], ["rattle", "an instrument we shake to make a sound"], ["gong-gong", "a metal bell beaten with a stick"], ["xylophone", "an instrument with wooden bars we strike"], ["flute", "an instrument we blow"], ["guitar", "an instrument with strings"], ["castanets", "small instruments we click together"]]),
-      ...f("Sounds", [["loud", "a sound that is very strong"], ["soft", "a sound that is quiet"], ["fast", "music that moves quickly"], ["slow", "music that moves gently"], ["high", "a sound like a bird's whistle"], ["low", "a deep sound like a big drum"]]),
-      ...f("Music", [["song", "words we sing with a tune"], ["clap", "hitting our hands together to keep the beat"], ["beat", "the steady pulse in music"], ["dance", "moving our body to music"], ["rhyme", "a short poem we say or sing"], ["singer", "a person who sings"]]),
-      ...f("Movement", [["march", "walking in step to music"], ["sway", "moving gently from side to side"], ["stamp", "hitting the ground hard with the feet"], ["spin", "turning round and round"], ["stretch", "making the body long and tall"]]),
-    ],
-    written: [
-      W("Instruments", "(a) Name two instruments we beat. (b) Which instrument do we shake? (c) Play a steady beat on a drum.", "drum, gong-gong", "rattle", "a steady beat"),
-      W("Sounds", "(a) Clap loudly, then softly. (b) Sing a song slowly, then fast. (c) Make a high sound and a low sound.", "loud and soft claps", "slow and fast singing", "high and low voices"),
-      W("Music", "(a) Sing your favourite song. (b) Clap to the beat. (c) Say a nursery rhyme.", "a complete song", "claps on the beat", "a complete rhyme"),
-      W("Movement", "(a) March to the music. (b) Sway from side to side. (c) Spin and stop when the music stops.", "marching in time", "gentle swaying", "stopping on cue"),
-      W("Culture", "(a) Name one Ghanaian dance. (b) Name a song we sing at school. (c) Dance to a drum beat.", "Adowa, Kpanlogo, Borborbor", "the National Anthem", "moving to the beat"),
     ],
   },
 };

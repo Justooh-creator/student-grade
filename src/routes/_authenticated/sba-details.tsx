@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ClassPicker } from "@/components/ClassPicker";
-import { CAT_PARTS, GRADE_BANDS, parseScore, KG_LEVELS, getClassLevel, isKg, ordinal, usesCat } from "@/lib/ges";
+import { CAT_PARTS, GRADE_BANDS, parseScore, KG_LEVELS, KG_PHYSICAL, getClassLevel, isKg, ordinal, usesCat } from "@/lib/ges";
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
@@ -180,6 +180,13 @@ function Index() {
                     ))}
                   </tbody>
                 </table>
+                <label className="flex flex-wrap items-center gap-2 border-t border-border px-3 py-2 text-xs">
+                  <span className="font-bold">Physical Development observation (not a subject)</span>
+                  <select aria-label="Physical Development observation" value={selected.scores?.[KG_PHYSICAL]?.level ?? ""} onChange={(e) => setKgLevel(selected.id, KG_PHYSICAL, e.target.value || null)} className="h-9 rounded-md border border-border bg-background px-2 text-sm font-semibold">
+                    <option value="">—</option>
+                    {KG_LEVELS.map((l) => (<option key={l.level} value={l.level}>{l.level} ({l.code})</option>))}
+                  </select>
+                </label>
               </div>
               )}
 

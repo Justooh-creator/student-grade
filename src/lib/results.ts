@@ -1,4 +1,4 @@
-import { getClassLevel, gradeFor, isValidTotal, isJhs, isKg, kgLevelByName, type ClassId } from "./ges";
+import { getClassLevel, gradeFor, isValidTotal, isJhs, isKg, kgLevelByName, KG_LEGACY_CREATIVE, KG_PHYSICAL, type ClassId } from "./ges";
 import type { Student } from "./store";
 
 export interface SubjectResult {
@@ -22,6 +22,8 @@ export interface StudentResult {
   aggregate: number;
   /** Basic 7–9 only: English, Maths, Science, Social Studies + 2 best electives. */
   bestSix: { subjects: { subject: string; grade: number }[]; aggregate: number } | null;
+  /** KG only: separate Physical Development observation (not a compulsory learning area). */
+  physical?: { level: string; descriptor: string } | null;
 }
 
 export function computeStudentResult(student: Student): StudentResult {
@@ -30,7 +32,7 @@ export function computeStudentResult(student: Student): StudentResult {
   const subjects: SubjectResult[] = level.subjects.map((subject) => {
     const entry = student.scores?.[subject];
     if (kg) {
-      const l = kgLevelByName(entry?.level);
+      const l = kgLevelByName(entry?.level) ?? (subject === "Creative Arts" ? kgLevelByName(student.scores?.[KG_LEGACY_CREATIVE]?.level) : null);
       return { subject, sba: null, exam: null, sbaRaw: null, examRaw: null, total: null, grade: null, level: l?.level, remark: l?.descriptor ?? "—" };
     }
     const sba = entry?.sba ?? null;
@@ -66,7 +68,9 @@ export function computeStudentResult(student: Student): StudentResult {
     bestSix = { subjects: pick, aggregate: pick.reduce((a, p) => a + p.grade, 0) };
   }
 
+  const pd = kg ? kgLevelByName(student.scores?.[KG_PHYSICAL]?.level) : null;
   return {
+    physical: pd ? { level: pd.level, descriptor: pd.descriptor } : null,
     bestSix,
     subjects,
     gradedCount: graded.length,
