@@ -64,6 +64,8 @@ function Field({
   placeholder,
   type = "text",
   maxLength,
+  inputMode,
+  pattern,
 }: {
   label: string;
   value: string;
@@ -71,6 +73,8 @@ function Field({
   placeholder?: string;
   type?: "text" | "tel";
   maxLength?: number;
+  inputMode?: "numeric" | "decimal" | "tel" | "text";
+  pattern?: string;
 }) {
   return (
     <label className="block">
@@ -79,6 +83,8 @@ function Field({
       </span>
       <input
         type={type}
+        inputMode={inputMode ?? (type === "tel" ? "tel" : undefined)}
+        pattern={pattern}
         maxLength={maxLength}
         value={value}
         placeholder={placeholder}
@@ -335,6 +341,8 @@ function SetupPage() {
               label="Total attendance days"
               value={school.totalAttendance}
               onChange={(v) => setSchool({ totalAttendance: v })}
+              inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="60"
             />
           </div>

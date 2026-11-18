@@ -328,8 +328,8 @@ function CertificatesPage() {
             <Button onClick={() => setOrientation("portrait")} variant={orientation === "portrait" ? "default" : "outline"}>Portrait</Button>
           </div>
           {paper === "custom" && <div className="mt-3 grid grid-cols-3 gap-2">
-            <label className="text-sm">Width<input type="number" className={input} value={customSize.w} onChange={(e) => setCustomSize({ ...customSize, w: +e.target.value })} /></label>
-            <label className="text-sm">Height<input type="number" className={input} value={customSize.h} onChange={(e) => setCustomSize({ ...customSize, h: +e.target.value })} /></label>
+            <label className="text-sm">Width<input type="number" inputMode="numeric" className={input} value={customSize.w} onChange={(e) => setCustomSize({ ...customSize, w: +e.target.value })} /></label>
+            <label className="text-sm">Height<input type="number" inputMode="numeric" className={input} value={customSize.h} onChange={(e) => setCustomSize({ ...customSize, h: +e.target.value })} /></label>
             <label className="text-sm">Unit<select className={input} value={customSize.unit} onChange={(e) => setCustomSize({ ...customSize, unit: e.target.value as "mm" | "in" })}><option value="mm">mm</option><option value="in">inches</option></select></label>
           </div>}
         </details>}

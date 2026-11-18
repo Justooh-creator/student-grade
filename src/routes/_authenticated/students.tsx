@@ -117,7 +117,7 @@ function StudentsPage() {
           <h1 className="text-sm font-bold">Add learner to {level.name}</h1>
           <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
             <TextField label="Learner name" value={name} onChange={setName} placeholder="Full name" />
-            <TextField label="Admission no." value={adm} onChange={setAdm} placeholder="Optional" />
+            <TextField label="Admission no." value={adm} onChange={setAdm} placeholder="Optional" inputMode="numeric" />
             <button
               disabled={full}
               onClick={() => {
@@ -172,10 +172,10 @@ function StudentsPage() {
               </div>
               <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 <TextField label="Name" value={s.name} onChange={(v) => updateStudent(s.id, { name: v })} />
-                <TextField label="Admission no." value={s.admissionNo} onChange={(v) => updateStudent(s.id, { admissionNo: v })} />
+                <TextField label="Admission no." value={s.admissionNo} onChange={(v) => updateStudent(s.id, { admissionNo: v })} inputMode="numeric" />
                 <label className="block text-sm font-bold">Gender (optional)<select value={s.gender ?? ""} onChange={(e) => updateStudent(s.id, { gender: e.target.value })} className="mt-1 w-full rounded-md border border-border bg-card px-3 py-2 font-normal"><option value="">Not specified</option><option>Female</option><option>Male</option></select></label>
-                <TextField label="Days present" value={s.attendance} onChange={(v) => updateStudent(s.id, { attendance: v })} placeholder={`out of ${school.totalAttendance || "—"}`} />
-                <TextField label="Parent / guardian phone" value={s.parentPhone ?? ""} onChange={(v) => updateStudent(s.id, { parentPhone: v })} placeholder="e.g. 0241234567" />
+                <TextField label="Days present" value={s.attendance} onChange={(v) => updateStudent(s.id, { attendance: v })} placeholder={`out of ${school.totalAttendance || "—"}`} inputMode="numeric" pattern="[0-9]*" />
+                <TextField label="Parent / guardian phone" value={s.parentPhone ?? ""} onChange={(v) => updateStudent(s.id, { parentPhone: v })} placeholder="e.g. 0241234567" type="tel" inputMode="tel" maxLength={15} />
                 <PresetField label="Attitude / conduct" value={s.conduct} presets={CONDUCT_PRESETS} onChange={(v) => updateStudent(s.id, { conduct: v })} placeholder="Select conduct" />
                 <PresetField label="Interest / hobby" value={s.interest} presets={INTEREST_PRESETS} onChange={(v) => updateStudent(s.id, { interest: v })} placeholder="Select interest" />
                 <PresetField label="Class teacher's remark" value={s.remark ?? ""} presets={REMARK_PRESETS} onChange={(v) => updateStudent(s.id, { remark: v })} placeholder="Auto remark from average" />

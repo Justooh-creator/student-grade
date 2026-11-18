@@ -158,7 +158,7 @@ function LearnerFees({ d, overrides, enrolled, phones, balances, sid, schoolName
         const custom = overrides[l.id]?.[f.id];
         return <label key={f.id} className="text-sm font-medium">{f.name} · GH₵/day
           <div className="mt-1 flex items-center gap-2">
-            <Input key={`${l.id}-${f.id}-${custom ?? "general"}`} aria-label={`${f.name} rate for ${l.name}`} type="number" min="0" max="100000" step="0.01" placeholder={String(f.daily_rate)} defaultValue={custom ?? ""} disabled={saveProfile.isPending} className="h-9 w-28" onBlur={(e) => {
+            <Input key={`${l.id}-${f.id}-${custom ?? "general"}`} aria-label={`${f.name} rate for ${l.name}`} type="number" inputMode="decimal" min="0" max="100000" step="0.01" placeholder={String(f.daily_rate)} defaultValue={custom ?? ""} disabled={saveProfile.isPending} className="h-9 w-28" onBlur={(e) => {
               const text = e.target.value.trim();
               const rates = { ...(overrides[l.id] ?? {}) };
               if (!text) { if (custom === undefined) return; delete rates[f.id]; }
@@ -179,7 +179,7 @@ function LearnerFees({ d, overrides, enrolled, phones, balances, sid, schoolName
         <select aria-label="Fee" className="h-9 rounded-md border border-input bg-background px-2" value={pay.fee} onChange={(e) => setPay({ ...pay, fee: e.target.value })}>{d.fees.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}</select>
         <select aria-label="Payment type" className="h-9 rounded-md border border-input bg-background px-2" value={pay.kind} onChange={(e) => setPay({ ...pay, kind: e.target.value as "arrears" | "advance" })}><option value="arrears">Paying debt</option><option value="advance">Advance (weekly/monthly)</option></select>
         <select aria-label="Method" className="h-9 rounded-md border border-input bg-background px-2" value={pay.method} onChange={(e) => setPay({ ...pay, method: e.target.value as "cash" | "momo" })}><option value="cash">Cash</option><option value="momo">MoMo</option></select>
-        <Input aria-label="Amount" type="number" min="0.01" step="0.01" placeholder="GH₵" className="h-9" value={pay.amount} onChange={(e) => setPay({ ...pay, amount: e.target.value })} required />
+        <Input aria-label="Amount" type="number" inputMode="decimal" min="0.01" step="0.01" placeholder="GH₵" className="h-9" value={pay.amount} onChange={(e) => setPay({ ...pay, amount: e.target.value })} required />
         <div className="flex gap-1"><Button size="sm" type="submit" disabled={savePay.isPending}>Save</Button><Button size="sm" type="button" variant="ghost" onClick={() => setPay(null)}>Cancel</Button></div>
       </form>}
     </div>; })}</div>
@@ -194,12 +194,12 @@ function FeeSettings({ d, sid, onDone }: { d: Data; sid: string; onDone: () => v
   return <div className="mt-4 space-y-6">
     <div><p className="font-semibold">Daily fee rates</p><div className="mt-2 divide-y divide-border border-y border-border">{d.fees.map((f) => <div key={f.id} className="flex items-center gap-2 py-2">
       <span className="flex-1 font-semibold">{f.name}</span><span className="text-sm">GH₵</span>
-      <Input aria-label={`${f.name} daily rate`} type="number" min="0" step="0.5" className="h-9 w-24" defaultValue={f.daily_rate} onBlur={(e) => { const v = Number(e.target.value); if (v >= 0 && v !== f.daily_rate) run.mutate(() => supabase.from("fee_items").update({ daily_rate: v }).eq("id", f.id)); }} />
+      <Input aria-label={`${f.name} daily rate`} type="number" inputMode="decimal" min="0" step="0.5" className="h-9 w-24" defaultValue={f.daily_rate} onBlur={(e) => { const v = Number(e.target.value); if (v >= 0 && v !== f.daily_rate) run.mutate(() => supabase.from("fee_items").update({ daily_rate: v }).eq("id", f.id)); }} />
       <Button size="icon" variant="ghost" aria-label={`Delete ${f.name}`} onClick={() => { if (window.confirm(`Delete ${f.name} and its payment records?`)) run.mutate(() => supabase.from("fee_items").delete().eq("id", f.id)); }}><Trash2 /></Button>
     </div>)}</div>
       <form className="mt-3 flex flex-wrap gap-2" onSubmit={(e) => { e.preventDefault(); run.mutate(() => supabase.from("fee_items").insert({ school_id: sid, name: name.trim().slice(0, 60), daily_rate: Number(rate) || 0, sort: d.fees.length })); setName(""); setRate(""); }}>
         <Input aria-label="New fee name" placeholder="e.g. Extra Classes" className="h-9 max-w-[200px]" value={name} onChange={(e) => setName(e.target.value)} required />
-        <Input aria-label="New fee rate" type="number" min="0" step="0.5" placeholder="GH₵/day" className="h-9 w-28" value={rate} onChange={(e) => setRate(e.target.value)} />
+        <Input aria-label="New fee rate" type="number" inputMode="decimal" min="0" step="0.5" placeholder="GH₵/day" className="h-9 w-28" value={rate} onChange={(e) => setRate(e.target.value)} />
         <Button size="sm" type="submit"><Plus />Add custom fee</Button>
       </form></div>
     <div><p className="font-semibold">School Mobile Money (shown on WhatsApp reminders)</p>

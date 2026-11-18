@@ -54,16 +54,28 @@ export function TextField({
   value,
   onChange,
   placeholder,
+  type = "text",
+  inputMode,
+  pattern,
+  maxLength,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
+  type?: "text" | "tel";
+  inputMode?: "numeric" | "decimal" | "tel" | "text";
+  pattern?: string;
+  maxLength?: number;
 }) {
   return (
     <label className="block">
       <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">{label}</span>
       <input
+        type={type}
+        inputMode={inputMode}
+        pattern={pattern}
+        maxLength={maxLength}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
