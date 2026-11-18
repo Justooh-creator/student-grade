@@ -141,10 +141,10 @@ function SetupPage() {
               placeholder="e.g. Knowledge and Discipline"
             />
             <Field
-              label="EMIS code"
+              label="School code"
               value={school.emisCode ?? ""}
               onChange={(v) => setSchool({ emisCode: v })}
-              placeholder="School EMIS code"
+              placeholder="School code"
             />
             <label className="block">
               <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">

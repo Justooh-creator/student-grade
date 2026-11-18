@@ -239,7 +239,7 @@ export function AppHeader({
                   <AccordionTrigger className="font-bold text-primary">📘 Academic & Reports</AccordionTrigger>
                   <AccordionContent><nav className="grid gap-1" onClick={() => setOpen(false)}>
                 <Link to="/setup" search={{ class: navClass }} className={rowCls(pathname.startsWith("/setup"))}>
-                  <RowCell icon={ICON.school} title="School Details" desc="Name, motto, EMIS code, logo" />
+                  <RowCell icon={ICON.school} title="School Details" desc="Name, motto, school code, logo" />
                 </Link>
                 <Link to="/students" search={{ class: navClass }} className={rowCls(pathname.startsWith("/students"))}>
                   <RowCell icon={ICON.cap} title="Student Details" desc="Learners, photos, parent numbers" />

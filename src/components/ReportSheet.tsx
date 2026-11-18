@@ -88,7 +88,12 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
                   {student.promotion === "promoted" ? `Promoted to ${nextClassName(student.classId)}` : student.promotion === "retained" ? `Retained in ${level.name}` : "To be decided"}
                 </span>
               </p>
-            ) : <p />}
+            ) : (
+              <p>
+                <span className="font-bold text-[#1b1a16]">Promoted to: </span>
+                <span className="font-bold">—</span>
+              </p>
+            )}
             <p>
               <span className="font-bold text-[#1b1a16]">Vacation date: </span>
               <span className="font-bold">{school.vacationDate || "—"}</span>

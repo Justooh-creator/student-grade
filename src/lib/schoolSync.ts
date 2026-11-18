@@ -142,7 +142,7 @@ export function withSchoolField(s: School, p: string[], v: Json): School {
 const LABELS: Record<string, string> = {
   name: "School name", address: "Address", contactPhone: "Contact phone", term: "Term", academicYear: "Academic year",
   reopeningDate: "Reopening date", vacationDate: "Vacation date", classTeacher: "Class teacher", headTeacher: "Headteacher",
-  totalAttendance: "Total attendance", region: "Region", district: "District", motto: "Motto", emisCode: "EMIS code",
+  totalAttendance: "Total attendance", region: "Region", district: "District", motto: "Motto", emisCode: "School code",
   streams: "Class streams", classTeachers: "Class teacher", classAssignments: "Class access", subjectAssignments: "Subject access", timetables: "Timetable",
 };
 export function schoolFieldLabel(p: string[]): string {
