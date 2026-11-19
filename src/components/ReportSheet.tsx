@@ -9,7 +9,7 @@ import { dobWithAge } from "@/lib/age";
 import { KgReportSheet } from "./KgReportSheet";
 
 export function ReportSheet(props: { student: Student; students: Student[]; school: School; watermark?: boolean }) {
-  return usesCat(props.student.classId) ? <TerminalReportSheet {...props} /> : <KgReportSheet student={props.student} school={props.school} watermark={props.watermark} />;
+  return usesCat(props.student.classId) ? <TerminalReportSheet {...props} /> : <KgReportSheet student={props.student} school={props.school} watermark={props.watermark ?? false} />;
 }
 
 function TerminalReportSheet({ student, students, school, watermark = false }: { student: Student; students: Student[]; school: School; watermark?: boolean }) {
