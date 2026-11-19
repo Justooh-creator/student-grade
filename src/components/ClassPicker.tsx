@@ -43,7 +43,7 @@ export function ClassPicker({
         })}
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
-        {level.stage} · {level.subjects.length} subjects · {usesCat(value) ? "SBA 50 (Tests, Project, Group) + Exam 50 = 100" : "Performance levels: Gold · Silver · Bronze"}
+        {level.stage} · {level.subjects.length} subjects · {usesCat(value) ? "SBA 50 (Tests, Project, Group) + Exam 50 = 100" : "Term progress checklist: VG · G · NI · NSA"}
       </p>
     </section>
   );

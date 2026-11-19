@@ -5,8 +5,14 @@ import {
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { filledFeeLines, reportSpacing } from "@/lib/reportLayout";
 import type { School, Student } from "@/lib/store";
+import { dobWithAge } from "@/lib/age";
+import { KgReportSheet } from "./KgReportSheet";
 
-export function ReportSheet({ student, students, school, watermark = false }: { student: Student; students: Student[]; school: School; watermark?: boolean }) {
+export function ReportSheet(props: { student: Student; students: Student[]; school: School; watermark?: boolean }) {
+  return usesCat(props.student.classId) ? <TerminalReportSheet {...props} /> : <KgReportSheet student={props.student} school={props.school} watermark={props.watermark} />;
+}
+
+function TerminalReportSheet({ student, students, school, watermark = false }: { student: Student; students: Student[]; school: School; watermark?: boolean }) {
   const level = getClassLevel(student.classId);
   const result = computeStudentResult(student);
   const ranking = classRanking(students, student.classId);
@@ -74,6 +80,10 @@ export function ReportSheet({ student, students, school, watermark = false }: { 
               <span className="num font-bold">
                 {kg ? "—" : `${ordinal(position)} of ${ranking.classSize}`}
               </span>
+            </p>
+            <p>
+              <span className="font-bold text-[#1b1a16]">Date of birth: </span>
+              <span className="num font-bold">{dobWithAge(student.dob)}</span>
             </p>
             <p>
               <span className="font-bold text-[#1b1a16]">Attendance: </span>

@@ -2,7 +2,9 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ClassPicker } from "@/components/ClassPicker";
-import { CAT_PARTS, GRADE_BANDS, parseScore, KG_LEVELS, KG_PHYSICAL, getClassLevel, isKg, ordinal, usesCat } from "@/lib/ges";
+import { CAT_PARTS, GRADE_BANDS, parseScore, getClassLevel, isKg, ordinal, usesCat } from "@/lib/ges";
+import { KG_RATINGS, kgProgress } from "@/lib/kgMilestones";
+import { KgChecklist } from "@/components/KgChecklist";
 import { classRanking, computeStudentResult } from "@/lib/results";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
@@ -13,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/sba-details")({
   head: () => ({
     meta: [
       { title: "SBA Details — EduReport Ghana" },
-      { name: "description", content: "Enter KG performance levels and Basic 1–9 SBA and exam marks using GES curriculum subjects." },
+      { name: "description", content: "Rate KG progress checklists and Basic 1–9 SBA and exam marks using GES curriculum subjects." },
       { property: "og:title", content: "SBA Details — EduReport Ghana" },
       { property: "og:description", content: "GES subjects roll out automatically by class. Grades 1 to 9, printable A4 report cards." },
       { property: "og:type", content: "website" },
@@ -24,7 +26,7 @@ export const Route = createFileRoute("/_authenticated/sba-details")({
 });
 
 function Index() {
-  const { school, students, setCatScore, setKgLevel, updateStudent } = useAppData();
+  const { school, students, setCatScore, setKgLevels, updateStudent } = useAppData();
   const search = Route.useSearch();
   const navigate = useNavigate();
   const classId = search.class ?? "b4";
@@ -91,6 +93,12 @@ function Index() {
                     <button disabled={idx >= classStudents.length - 1} onClick={() => go(classStudents[idx + 1]!.id)} aria-label="Next learner" className="h-10 w-10 rounded-md border border-border disabled:opacity-40">›</button>
                   </div>
                 </label>
+                {!cat ? (
+                <div className="text-right">
+                  <p className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">Rated</p>
+                  <p className="num text-lg font-semibold text-primary">{(() => { const p = kgProgress(selected, school.term); return `${p.rated} / ${p.rows.length}`; })()}</p>
+                </div>
+                ) : (
                 <div className="flex gap-4 text-right">
                   <div>
                     <p className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">Average</p>
@@ -101,6 +109,7 @@ function Index() {
                     <p className="num text-lg font-semibold text-accent">{result.gradedCount ? ordinal(ranking.positions.get(selected.id) ?? 1) : "—"}</p>
                   </div>
                 </div>
+                )}
               </div>
 
               <ClassLock classId={classId}>
@@ -151,43 +160,7 @@ function Index() {
                 </table>
               </div>
               ) : (
-              <div className="mt-4 overflow-x-auto rounded-lg border border-border">
-                <table className="w-full min-w-[480px] text-sm">
-                  <thead>
-                    <tr className="bg-muted text-[13px] uppercase tracking-[0.1em] text-foreground">
-                      <th className="px-3 py-2 text-left font-bold">Learning area</th>
-                      <th className="px-2 py-2 text-center font-bold">Level</th>
-                      <th className="px-2 py-2 text-left font-bold">Descriptor</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {result.subjects.map((row) => (
-                      <tr key={row.subject} className="border-t border-border">
-                        <td className="px-3 py-1.5 font-bold">{row.subject}</td>
-                        <td className="px-2 py-1.5 text-center">
-                          <select
-                            aria-label={`${row.subject} level`}
-                            value={row.level ?? ""}
-                            onChange={(e) => setKgLevel(selected.id, row.subject, e.target.value || null)}
-                            className="h-9 rounded-md border border-border bg-background px-2 text-sm font-semibold"
-                          >
-                            <option value="">—</option>
-                            {KG_LEVELS.map((l) => (<option key={l.level} value={l.level}>{l.level} ({l.code})</option>))}
-                          </select>
-                        </td>
-                        <td className="px-2 py-1.5 text-xs text-muted-foreground">{row.remark}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <label className="flex flex-wrap items-center gap-2 border-t border-border px-3 py-2 text-xs">
-                  <span className="font-bold">Physical Development observation (not a subject)</span>
-                  <select aria-label="Physical Development observation" value={selected.scores?.[KG_PHYSICAL]?.level ?? ""} onChange={(e) => setKgLevel(selected.id, KG_PHYSICAL, e.target.value || null)} className="h-9 rounded-md border border-border bg-background px-2 text-sm font-semibold">
-                    <option value="">—</option>
-                    {KG_LEVELS.map((l) => (<option key={l.level} value={l.level}>{l.level} ({l.code})</option>))}
-                  </select>
-                </label>
-              </div>
+                <KgChecklist student={selected} term={school.term} onSet={(levels) => setKgLevels(selected.id, levels)} />
               )}
 
               {school.term === "Term 3" && (
@@ -216,14 +189,13 @@ function Index() {
 
         {isKg(classId) ? (
         <section className="mt-6 rounded-xl border border-border bg-card p-4">
-          <h2 className="text-sm font-bold">KG performance levels</h2>
-          <p className="mt-1 text-xs text-muted-foreground">KG 1–2 use continuous assessment (observation, portfolio, oral and practical activities). No SBA/Exam marks, grades 1–9 or aggregate.</p>
-          <div className="mt-3 grid grid-cols-3 gap-1.5">
-            {KG_LEVELS.map((l) => (
-              <div key={l.level} className="rounded-md border border-border px-2 py-2 text-center">
-                <p className="text-base font-bold text-primary">{l.level}</p>
-                <p className="text-[12px] text-muted-foreground">({l.code})</p>
-                <p className="mt-0.5 text-[12px] leading-tight">{l.descriptor}</p>
+          <h2 className="text-sm font-bold">KG rating scale</h2>
+          <p className="mt-1 text-xs text-muted-foreground">KG 1–2 are rated on the term's progress checklist. No SBA/Exam marks, grades 1–9 or position.</p>
+          <div className="mt-3 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+            {KG_RATINGS.map((r) => (
+              <div key={r.code} className="rounded-md border border-border px-2 py-2 text-center">
+                <p className="text-base font-bold text-primary">{r.code}</p>
+                <p className="mt-0.5 text-[12px] leading-tight">{r.label}</p>
               </div>
             ))}
           </div>

@@ -18,6 +18,7 @@ import { countPresentDays, parseTermDate, type DayRow } from "@/lib/attendanceFi
 import { canCustomHeadRemark } from "@/lib/headteacher";
 import { useUser } from "@/lib/auth";
 import { ScrollJump } from "@/components/ScrollJump";
+import { ageLabel } from "@/lib/age";
 
 export const Route = createFileRoute("/_authenticated/students")({
   validateSearch: validateClassSearch,
@@ -174,6 +175,10 @@ function StudentsPage() {
                 <TextField label="Name" value={s.name} onChange={(v) => updateStudent(s.id, { name: v })} />
                 <TextField label="Admission no." value={s.admissionNo} onChange={(v) => updateStudent(s.id, { admissionNo: v })} inputMode="numeric" />
                 <label className="block text-sm font-bold">Gender (optional)<select value={s.gender ?? ""} onChange={(e) => updateStudent(s.id, { gender: e.target.value })} className="mt-1 w-full rounded-md border border-border bg-card px-3 py-2 font-normal"><option value="">Not specified</option><option>Female</option><option>Male</option></select></label>
+                <label className="block text-sm font-bold">Date of birth (optional)
+                  <input type="date" value={s.dob ?? ""} min="1990-01-01" max={new Date().toISOString().slice(0, 10)} onChange={(e) => updateStudent(s.id, { dob: e.target.value })} className="mt-1 w-full rounded-md border border-border bg-card px-3 py-2 font-normal" />
+                  <span className="mt-0.5 block text-[12px] font-normal text-muted-foreground">Age: {ageLabel(s.dob)}</span>
+                </label>
                 <TextField label="Days present" value={s.attendance} onChange={(v) => updateStudent(s.id, { attendance: v })} placeholder={`out of ${school.totalAttendance || "—"}`} inputMode="numeric" pattern="[0-9]*" />
                 <TextField label="Parent / guardian phone" value={s.parentPhone ?? ""} onChange={(v) => updateStudent(s.id, { parentPhone: v })} placeholder="e.g. 0241234567" type="tel" inputMode="tel" maxLength={15} />
                 <PresetField label="Attitude / conduct" value={s.conduct} presets={CONDUCT_PRESETS} onChange={(v) => updateStudent(s.id, { conduct: v })} placeholder="Select conduct" />

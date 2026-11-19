@@ -43,6 +43,8 @@ export interface Student {
   name: string;
   admissionNo: string;
   gender?: string;
+  /** Optional date of birth, ISO "YYYY-MM-DD". Age is calculated, never stored. */
+  dob?: string;
   classId: ClassId;
   attendance: string;
   /** subject name -> { sba, exam } */
@@ -317,6 +319,19 @@ export function useAppData() {
     }));
   }, []);
 
+  /** KG checklist: set several milestone ratings for one learner in a single save. */
+  const setKgLevels = useCallback((id: string, levels: Record<string, string | null>) => {
+    updateData((current) => ({
+      ...current,
+      students: current.students.map((s) => {
+        if (s.id !== id) return s;
+        const scores = { ...s.scores };
+        for (const [key, level] of Object.entries(levels)) scores[key] = { ...(scores[key] ?? { sba: null, exam: null }), level };
+        return { ...s, scores };
+      }),
+    }));
+  }, []);
+
   const importStudents = useCallback((incoming: Student[]) => {
     updateData((current) => {
       const map = new Map(current.students.map((s) => [s.id, s]));
@@ -337,5 +352,6 @@ export function useAppData() {
     setRawScore,
     setCatScore,
     setKgLevel,
+    setKgLevels,
   };
 }

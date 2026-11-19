@@ -194,7 +194,7 @@ function QaHub() {
         <ol className="space-y-4">
           {bank.theory.map((t, i) => <li key={t.id} className="break-inside-avoid">
             {english && partHeader(i) && <h4 className="mb-3 border-b border-border pb-2 font-bold">{partHeader(i)}</h4>}
-            <div className="flex items-start gap-3"><b className="shrink-0">{i + 1}.</b><div className="min-w-0 flex-1 space-y-2">{theoryParts(t.q).map((part, n) => <p key={n} className={`whitespace-pre-line ${/^\([a-z]\)/.test(part) ? "pl-4" : ""}`}>{part}</p>)}<b>{kindergarten ? "[Gold / Silver / Bronze]" : `[${t.marks} marks]`}</b></div></div>
+            <div className="flex items-start gap-3"><b className="shrink-0">{i + 1}.</b><div className="min-w-0 flex-1 space-y-2">{theoryParts(t.q).map((part, n) => <p key={n} className={`whitespace-pre-line ${/^\([a-z]\)/.test(part) ? "pl-4" : ""}`}>{part}</p>)}<b>{kindergarten ? "[VG / G / NI / NSA]" : `[${t.marks} marks]`}</b></div></div>
             {mode === "scheme" ? <ul className="mt-1 list-disc pl-5 text-sm">{t.scheme.map((s) => <li key={s}>{s}</li>)}</ul> : <div className="mt-3 space-y-5" aria-label="Answer space"><div className="border-b border-border" /><div className="border-b border-border" /><div className="border-b border-border" /></div>}
           </li>)}
         </ol>

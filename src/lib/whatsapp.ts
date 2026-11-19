@@ -1,6 +1,8 @@
 import { getClassLevel, isJhs, isKg, ordinal, teacherRemarkFor } from "./ges";
 import { classRanking, computeStudentResult } from "./results";
 import type { School, Student } from "./store";
+import { kgProgress } from "./kgMilestones";
+import { dobWithAge } from "./age";
 
 /** Normalise a Ghana phone number to WhatsApp international digits (e.g. 0241234567 -> 233241234567). */
 export function normalizeGhanaPhone(raw: string | undefined | null): string | null {
@@ -23,11 +25,18 @@ export function buildWhatsAppSummary(student: Student, students: Student[], scho
   lines.push("");
   lines.push(`Learner: *${student.name}*`);
   lines.push(`Class: ${level.name}`);
+  if (student.dob) lines.push(`Date of birth: ${dobWithAge(student.dob)}`);
   if (student.attendance) lines.push(`Attendance: ${student.attendance}${school.totalAttendance ? ` / ${school.totalAttendance}` : ""}`);
   lines.push("");
   if (kg) {
-    lines.push("*Learning areas*");
-    for (const s of result.subjects) lines.push(`• ${s.subject}: ${s.level || "—"}`);
+    const p = kgProgress(student, school.term);
+    lines.push("*Progress checklist*");
+    lines.push(`Very Good: ${p.counts.VG} · Good: ${p.counts.G} · Needs Improvement: ${p.counts.NI} · Needs Special Attention: ${p.counts.NSA}`);
+    const focus = p.rows.filter((r) => r.rating === "NI" || r.rating === "NSA");
+    if (focus.length) {
+      lines.push("Areas to practise at home:");
+      for (const r of focus) lines.push(`• ${r.text}`);
+    }
   } else {
     const ranking = classRanking(students, student.classId);
     const pos = ranking.positions.get(student.id);
@@ -106,10 +115,7 @@ export function buildMidtermSummary(student: Student, school: School, note?: str
   lines.push("");
   const rows: string[] = [];
   for (const [subject, sc] of Object.entries(student.scores ?? {})) {
-    if (kg) {
-      if (sc.level) rows.push(`• ${subject}: ${sc.level}`);
-      continue;
-    }
+    if (kg) continue;
     const parts: string[] = [];
     if (sc.test1 != null) parts.push(`Test 1 ${sc.test1}/20`);
     if (sc.test2 != null) parts.push(`Test 2 ${sc.test2}/20`);
@@ -117,8 +123,12 @@ export function buildMidtermSummary(student: Student, school: School, note?: str
     if (sc.project != null) parts.push(`Project ${sc.project}/30`);
     if (parts.length) rows.push(`• ${subject}: ${parts.join(", ")}`);
   }
+  if (kg) {
+    const p = kgProgress(student, school.term);
+    if (p.rated) rows.push(`• ${p.rated} of ${p.rows.length} checklist items rated — Very Good ${p.counts.VG}, Good ${p.counts.G}, Needs Improvement ${p.counts.NI}, Needs Special Attention ${p.counts.NSA}`);
+  }
   if (rows.length) {
-    lines.push(kg ? "*Learning areas*" : "*Class assessments so far*");
+    lines.push(kg ? "*Progress checklist so far*" : "*Class assessments so far*");
     lines.push(...rows);
   } else {
     lines.push("Class assessments are still in progress.");

@@ -265,9 +265,11 @@ const FIELD_LABELS: Record<string, string> = {
   test1: "Class Test 1", test2: "Class Test 2", project: "Project Work", group: "Group Work", examRaw: "Exam",
   level: "Level", attendance: "Days present", conduct: "Conduct", interest: "Interest", remark: "Class teacher's remark",
   headRemark: "Headteacher's remark", name: "Name", admissionNo: "Admission number", gender: "Gender",
-  classId: "Class", parentPhone: "Parent phone", promotion: "Promotion", arrears: "Arrears", levies: "Levies", nextTerm: "Next term fees", items: "Other fees",
+  classId: "Class", dob: "Date of birth", parentPhone: "Parent phone", promotion: "Promotion", arrears: "Arrears", levies: "Levies", nextTerm: "Next term fees", items: "Other fees",
 };
 export function fieldLabel(p: string[]): string {
+  const kgm = p[0] === "scores" ? /^kgm:t([123]):(\d{2})$/.exec(p[1] ?? "") : null;
+  if (kgm) return `KG checklist Term ${kgm[1]} · item ${Number(kgm[2])}`;
   if (p[0] === "scores") return `${p[1]} · ${FIELD_LABELS[p[2]!] ?? p[2]}`;
   if (p[0] === "fees") return `Fees · ${FIELD_LABELS[p[1]!] ?? p[1]}`;
   return FIELD_LABELS[p[0]!] ?? p[0] ?? "";
