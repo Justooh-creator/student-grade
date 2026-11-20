@@ -33,7 +33,7 @@ const kgEntries: CatalogEntry[] = kgNumeracyRows.map(([classId, term, week, stra
     competencies: "Communication and Collaboration; Critical Thinking and Problem Solving; Creativity and Innovation", newWords: "count, number, more, less, same", reference: kgRef,
     duration: "30", starterMinutes: "5", mainMinutes: "20", reflectionMinutes: "5",
     starter: `Sing a number song or rhyme linked to the theme "${strand}".\nShare today's activity with learners.`,
-    main: exemplar, assessment: "Observe each learner during the activity and record Gold / Silver / Bronze.\nAsk learners to show or count with real objects.",
+    main: exemplar, assessment: "Observe each learner during the activity and record VG / G / NI / NSA.\nAsk learners to show or count with real objects.",
     reflection: "Learners show and tell what they did.\nRecap the key idea with a song or game.",
     resources: "Real objects, counters, bottle tops, picture cards, number cards", progression: text,
     homework: "Count similar objects at home with a family member.", crossCurriculum: "Language & Literacy; Creative Arts; Our World Our People", misconceptions: "None noted",

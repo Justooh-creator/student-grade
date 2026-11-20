@@ -1,11 +1,9 @@
 import { Fragment } from "react";
 import { getClassLevel, nextClassName } from "@/lib/ges";
 import { KG_RATINGS, kgProgress } from "@/lib/kgMilestones";
-import { ageLabel, dobWithAge } from "@/lib/age";
-import { filledFeeLines, reportSpacing } from "@/lib/reportLayout";
+import { ageLabel, formatDob } from "@/lib/age";
+import { filledFeeLines } from "@/lib/reportLayout";
 import type { School, Student } from "@/lib/store";
-
-const today = () => new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 
 /** KG 1–2 "Kindergarten Learners Progress Report": term checklist rated VG / G / NI / NSA on one A4 page. */
 export function KgReportSheet({ student, school, watermark = false }: { student: Student; school: School; watermark?: boolean }) {
@@ -13,8 +11,11 @@ export function KgReportSheet({ student, school, watermark = false }: { student:
   const progress = kgProgress(student, school.term);
   const feeLines = filledFeeLines(student.fees);
   const compact = feeLines.length > 0;
-  const { gap, remarkGap } = reportSpacing(compact);
-  const rowPad = compact || progress.rows.length > 20 ? "py-[1.2mm]" : "py-[1.6mm]";
+  // KG sheets carry up to 21 checklist rows, so spacing stays tight enough that the signatures always
+  // fit on one printed page (A4, and Letter on phones that default to it).
+  const gap = compact ? "mt-1.5" : "mt-2";
+  const remarkGap = "space-y-0.5";
+  const rowPad = compact || progress.rows.length > 20 ? "py-[0.5mm]" : "py-[0.8mm]";
   const termWord = ({ 1: "One", 2: "Two", 3: "Three" } as const)[(Number(/[123]/.exec(school.term)?.[0]) || 1) as 1 | 2 | 3];
   const promotion = school.term === "Term 3"
     ? student.promotion === "promoted" ? nextClassName(student.classId) : student.promotion === "retained" ? `Retained in ${level.name}` : "To be decided"
@@ -23,7 +24,7 @@ export function KgReportSheet({ student, school, watermark = false }: { student:
     <p className="min-w-0"><span className="font-bold">{label}: </span><span className={bold ? "font-bold" : ""}>{value || "—"}</span></p>
   );
   return (
-    <div style={{ breakAfter: "page", pageBreakAfter: "always" }} className="print-sheet sheet-a4 relative mx-auto mb-6 flex flex-col overflow-hidden border border-rule px-[11mm] py-[8mm] text-[#1b1a16] shadow-[0_20px_50px_-30px_rgba(0,0,0,0.5)]">
+    <div style={{ breakAfter: "page", pageBreakAfter: "always" }} className="print-sheet sheet-a4 relative mx-auto mb-6 flex flex-col overflow-hidden border border-rule px-[11mm] py-[7mm] text-[#1b1a16] shadow-[0_20px_50px_-30px_rgba(0,0,0,0.5)]">
       {watermark && (
         <div aria-hidden className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
           <span className="-rotate-[35deg] whitespace-nowrap border-4 border-destructive/30 px-6 py-2 text-[20pt] font-black tracking-wider text-destructive/30">UNOFFICIAL PREVIEW • LICENSE REQUIRED TO PRINT</span>
@@ -49,9 +50,9 @@ export function KgReportSheet({ student, school, watermark = false }: { student:
         {field("Term", `${termWord} · ${school.academicYear}`)}
         {field("Class", level.name)}
         {field("Sex", student.gender ?? "")}
-        {field("Date of birth", dobWithAge(student.dob))}
+        {field("Date of birth", formatDob(student.dob))}
         {field("Age", ageLabel(student.dob))}
-        {field("Date", school.vacationDate || today())}
+        {field("Vacation date", school.vacationDate ?? "")}
         {field("Next term begins", school.reopeningDate)}
       </div>
 
@@ -70,8 +71,8 @@ export function KgReportSheet({ student, school, watermark = false }: { student:
         <tbody>
           {progress.rows.map((row) => (
             <tr key={row.key}>
-              <td className={`border border-rule px-2 ${rowPad} leading-snug`}><span className="num font-bold">{row.n}.</span> {row.text}</td>
-              {KG_RATINGS.map((r) => <td key={r.code} className={`border border-rule text-center ${rowPad} text-[10pt] font-bold`}>{row.rating === r.code ? "✓" : ""}</td>)}
+              <td className={`border border-rule px-2 ${rowPad} leading-tight`}><span className="num font-bold">{row.n}.</span> {row.text}</td>
+              {KG_RATINGS.map((r) => <td key={r.code} className={`border border-rule text-center ${rowPad} text-[9pt] font-bold leading-none`}>{row.rating === r.code ? "✓" : ""}</td>)}
             </tr>
           ))}
         </tbody>
@@ -107,10 +108,10 @@ export function KgReportSheet({ student, school, watermark = false }: { student:
         );
       })()}
 
-      <div className="mt-auto flex items-end justify-between gap-4 pt-3 text-[8.5pt]">
+      <div className="mt-auto flex shrink-0 items-end justify-between gap-4 pt-2 text-[8.5pt]">
         <div className="w-[60mm]">
-          <div className="flex h-[13mm] items-end justify-center">
-            {school.classTeacherSignatures?.[student.classId] && <img src={school.classTeacherSignatures[student.classId]} alt="Facilitator signature" className="max-h-[13mm] max-w-[55mm] object-contain" />}
+          <div className="flex h-[12mm] items-end justify-center">
+            {school.classTeacherSignatures?.[student.classId] && <img src={school.classTeacherSignatures[student.classId]} alt="Facilitator signature" className="max-h-[12mm] max-w-[55mm] object-contain" />}
           </div>
           <div className="border-t border-[#1b1a16] pt-1 font-bold">Facilitator — {school.classTeachers?.[student.classId]?.trim() || school.classTeacher || "—"}</div>
         </div>
@@ -118,8 +119,8 @@ export function KgReportSheet({ student, school, watermark = false }: { student:
           {school.stamp && <img src={school.stamp} alt="School stamp" className="max-h-[16mm] max-w-[34mm] object-contain" />}
         </div>
         <div className="w-[60mm] text-center">
-          <div className="flex h-[13mm] items-end justify-center">
-            {school.signature && <img src={school.signature} alt="Head teacher signature" className="max-h-[13mm] max-w-[55mm] object-contain" />}
+          <div className="flex h-[12mm] items-end justify-center">
+            {school.signature && <img src={school.signature} alt="Head teacher signature" className="max-h-[12mm] max-w-[55mm] object-contain" />}
           </div>
           <div className="border-t border-[#1b1a16] pt-1 font-bold">Head Teacher{school.headTeacher ? ` — ${school.headTeacher}` : ""}</div>
         </div>

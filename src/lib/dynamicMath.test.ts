@@ -81,15 +81,38 @@ describe("offline dynamic Mathematics", () => {
     for (let seed = 0; seed < 40; seed++) {
       const pack = generateMathPack(classId, seed);
       for (const q of pack.objectives) {
+        if (q.q.includes("Which sign goes in the box")) { expect(["> (more than)", "< (less than)"]).toContain(q.options[q.answer]); continue; }
         const value = Number(q.options[q.answer]);
         expect(Number.isInteger(value)).toBe(true);
         expect(value).toBeGreaterThanOrEqual(0);
         expect(value).toBeLessThanOrEqual(classId === "kg1" ? 10 : 20);
-        if (q.q.includes("stars:")) expect(value).toBe((q.q.match(/⭐/g) ?? []).length);
-        if (q.q.startsWith("Count the") && !q.q.includes("stars:")) expect(value).toBe((q.q.match(/[●▲■▰]/g) ?? []).length);
+        // Every counting question's answer equals the number of pictures shown.
+        if (/^Count (the|and match)/.test(q.q)) expect(value).toBe((q.q.match(/[●▲■▰⭐🏠🎒🧺⚽🍃🥚🥣]/gu) ?? []).length);
       }
-      expect(pack.theory.every((q) => q.marks === 0 && q.scheme.length === 4)).toBe(true);
+      expect(pack.theory.every((q) => q.marks === 0 && q.scheme.length === 5)).toBe(true);
       expect(scoreQuiz(pack.objectives, Object.fromEntries(pack.objectives.map((q) => [q.id, q.answer]))).percent).toBe(100);
     }
+  });
+});
+
+import { generateMathPack as gen } from "./dynamicMath";
+describe("KG numeracy papers", () => {
+  it("compare-using-> or < questions always mark the correct sign", () => {
+    let found = 0;
+    for (let seed = 1; seed <= 40; seed++) {
+      for (const q of gen("kg2", seed, "Statistics & Probability").objectives) {
+        const m = /: (\S+?) ▢ (\S+?)\. Which sign/u.exec(q.q);
+        if (!m) continue;
+        found++;
+        const left = [...(m[1] ?? "")].length, right = [...(m[2] ?? "")].length;
+        expect(q.options[q.answer]).toBe(left > right ? "> (more than)" : "< (less than)");
+      }
+    }
+    expect(found).toBeGreaterThan(0);
+  });
+  it("KG marking guides use the VG / G / NI / NSA scale", () => {
+    const pack = gen("kg1", 7);
+    expect(pack.theory[0]?.scheme.join(" ")).toContain("NSA");
+    expect(pack.theory[0]?.scheme.join(" ")).not.toContain("Gold");
   });
 });

@@ -56,17 +56,34 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
     return values;
   };
 
-  type Item = { topic: MathTopic; q: string; value: number; unit?: string; explain: string };
+  /** `choices` + `answerText` give a word answer (e.g. the > / < sign) instead of a number. */
+  type Item = { topic: MathTopic; q: string; value: number; unit?: string; explain: string; choices?: readonly [string, string, string, string]; answerText?: string };
   // Kindergarten (KG 1–2): NaCCA Early Childhood numeracy — counting, comparing, shapes, patterns.
   const kg = classId === "kg1" || classId === "kg2" ? (classId === "kg1" ? 1 : 2) : 0;
+  // Everyday objects from the KG test papers (houses, bags, baskets, footballs, leaves, eggs, bowls).
+  const KG_THINGS = [["🏠", "houses"], ["🎒", "bags"], ["🧺", "baskets"], ["⚽", "footballs"], ["🍃", "leaves"], ["🥚", "eggs"], ["🥣", "bowls"], ["⭐", "stars"]] as const;
+  const SIGNS = ["> (more than)", "< (less than)", "= (equal to)", "+ (add)"] as const;
   const makeKg = (selected: MathTopic): Item => {
     const max = kg === 1 ? 10 : 20;
+    // Pictures stay small enough for young learners to count one by one.
+    const picMax = kg === 1 ? 10 : 12;
     switch (selected) {
       case "Number": {
-        const kind = int(0, 2);
+        const kind = int(0, 4);
         if (kind === 0) {
-          const n = int(2, max);
-          return { topic: selected, q: `Count the stars: ${"⭐".repeat(n)}. How many stars are there?`, value: n, explain: `Count one by one: there are ${n} stars.` };
+          const [icon, name] = sample(KG_THINGS);
+          const n = int(2, picMax);
+          return { topic: selected, q: `Count the ${name}: ${icon.repeat(n)}. How many ${name} are there?`, value: n, explain: `Count one by one: there are ${n} ${name}.` };
+        }
+        if (kind === 3) {
+          const [icon, name] = sample(KG_THINGS);
+          const n = int(2, picMax);
+          return { topic: selected, q: `Count and match: ${icon.repeat(n)}. Which numeral matches the number of ${name}?`, value: n, explain: `Touch and count each one: ${n} ${name}, so the numeral is ${n}.` };
+        }
+        if (kind === 4) {
+          const [icon, name] = sample(KG_THINGS);
+          const n = int(2, picMax);
+          return { topic: selected, q: `Count the ${name} and write the numeral in the box: ${icon.repeat(n)} → ▢`, value: n, explain: `There are ${n} ${name}, so write ${n} in the box.` };
         }
         if (kind === 1) {
           const n = int(1, max - 1);
@@ -93,12 +110,30 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
         return { topic: selected, q: `What number comes next in the pattern: ${seq.join(", ")}, …?`, value: start + 3 * step, explain: `The pattern adds ${step} each time: ${start + 2 * step} + ${step} = ${start + 3 * step}.` };
       }
       case "Geometry & Mensuration": {
+        const kind = int(0, 2);
+        if (kind === 1) {
+          const a = int(1, kg === 1 ? 3 : 5), b = int(1, kg === 1 ? 3 : 4);
+          return { topic: selected, q: `Draw ${a} circle${a === 1 ? "" : "s"} and ${b} triangle${b === 1 ? "" : "s"}. How many shapes did you draw altogether?`, value: a + b, explain: `${a} circle${a === 1 ? "" : "s"} and ${b} triangle${b === 1 ? "" : "s"} make ${a + b} shapes.` };
+        }
+        if (kind === 2) {
+          const [name, sides] = sample([["triangle", 3], ["square", 4], ["rectangle", 4]] as const);
+          return { topic: selected, q: `Draw a ${name}. How many sides does a ${name} have?`, value: sides, explain: `A ${name} has ${sides} sides. Count them as you draw.` };
+        }
         const shape = sample([["circle", 0], ["triangle", 3], ["square", 4], ["rectangle", 4]] as const);
         const n = int(1, max);
         const symbol = ({ circle: "●", triangle: "▲", square: "■", rectangle: "▰" } as const)[shape[0]];
         return { topic: selected, q: `Count the ${shape[0]}s: ${symbol.repeat(n)}. How many are there?`, value: n, explain: `Count each shape once. There are ${n} ${shape[0]}s.` };
       }
       case "Statistics & Probability": {
+        if (int(0, 1) === 0) {
+          // Compare using > or <, as on the KG test papers (e.g. leaves and balls, bowls and eggs).
+          const [left, right] = sample([[KG_THINGS[4], KG_THINGS[3]], [KG_THINGS[6], KG_THINGS[5]], [KG_THINGS[0], KG_THINGS[1]], [KG_THINGS[2], KG_THINGS[7]]] as const);
+          const a = int(1, kg === 1 ? 6 : 9);
+          let b = int(1, kg === 1 ? 6 : 9);
+          if (b === a) b = a === 1 ? 2 : a - 1;
+          const sign = a > b ? SIGNS[0] : SIGNS[1];
+          return { topic: selected, q: `Compare using > or <: ${left[0].repeat(a)} ▢ ${right[0].repeat(b)}. Which sign goes in the box?`, value: a, choices: SIGNS, answerText: sign, explain: `${a} ${left[1]} and ${b} ${right[1]}. ${a} is ${a > b ? "more" : "less"} than ${b}, so the sign is ${sign}.` };
+        }
         {
           const a = int(2, max), b = int(1, a - 1);
           return { topic: selected, q: `Which is more: ${a} apples or ${b} apples?`, value: a, explain: `${a} is greater than ${b}, so ${a} apples is more.` };
@@ -219,6 +254,10 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
   };
 
   const objective = (item: Item, id: string): Objective => {
+    if (item.choices && item.answerText) {
+      const options = shuffle([...item.choices]) as [string, string, string, string];
+      return { id, topic: item.topic, q: item.q, options, answer: options.indexOf(item.answerText) as 0 | 1 | 2 | 3, explain: item.explain };
+    }
     const format = (value: number) => item.unit === "GH₵" || item.unit === "x =" ? `${item.unit} ${fmt(value)}` : `${fmt(value)}${item.unit ? ` ${item.unit}` : ""}`;
     const candidates = new Set<string>([format(item.value)]);
     const step = item.value > 0 && item.value < 1 ? 0.05 : Math.max(1, Math.round(Math.abs(item.value) / 10));
@@ -257,7 +296,7 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
     let tries = 0;
     while ((seen.has(item.q) || oldTheory.has(item.q)) && tries++ < 200) item = make(selected);
     seen.add(item.q);
-    const finalAnswer = item.unit === "GH₵" || item.unit === "x =" ? `${item.unit} ${fmt(item.value)}` : `${fmt(item.value)}${item.unit ? ` ${item.unit}` : ""}`;
+    const finalAnswer = item.answerText ?? (item.unit === "GH₵" || item.unit === "x =" ? `${item.unit} ${fmt(item.value)}` : `${fmt(item.value)}${item.unit ? ` ${item.unit}` : ""}`);
     if (isJhsClass(classId) || lower) {
       const second = make(selected);
       const third = make(selected);
@@ -266,7 +305,7 @@ export function generateMathPack(classId: MathClass, seed: number, topic: MathTo
       continue;
     }
     theory.push(kg
-      ? { id: `${classId}-${seed}-t${i}`, topic: selected, q: `${item.q} Use counters, point or say your answer.`, marks: 0, scheme: [`Expected response: ${finalAnswer}. ${item.explain}`, "Gold: completes independently.", "Silver: completes with a verbal prompt.", "Bronze: needs guided practical support."] }
+      ? { id: `${classId}-${seed}-t${i}`, topic: selected, q: `${item.q} Use counters, point or say your answer.`, marks: 0, scheme: [`Expected response: ${finalAnswer}. ${item.explain}`, "VG: completes independently and correctly.", "G: completes with a little prompting.", "NI: completes with guided practical support.", "NSA: not yet able — plan one-to-one support."] }
       : { id: `${classId}-${seed}-t${i}`, topic: selected, q: `${item.q} Show your working.`, marks: 5, scheme: ["Correct formula or method — 1 mark", "Correct substitution or setup — 1 mark", `Correct working — 2 marks: ${item.explain}`, `Correct final answer: ${finalAnswer} — 1 mark`] });
   }
   return { id: `${classId}-math`, classId, subject: "Mathematics", seed, topic, objectives: shuffle(objectives), theory };

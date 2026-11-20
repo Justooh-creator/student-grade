@@ -1,2 +1,2 @@
-Name,Admission Number,Gender
-Example Learner,001,Female
+Name,Admission Number,Gender,Date of Birth
+Example Learner,001,Female,14/05/2019

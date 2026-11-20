@@ -10,7 +10,7 @@ import { useCloud } from "@/lib/cloud";
 import { useAppData } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
 import { attendanceClasses, attendanceClassName, type AttendanceEntry } from "@/lib/attendance";
-import { registerDays, registerMarks, weekGroups, sexOf, dailySexTotals, weeklyTotals } from "@/lib/register";
+import { registerDays, registerMarks, weekGroups, sexOf, dailySexTotals, weeklyTotals, registerOrder } from "@/lib/register";
 
 export const Route = createFileRoute("/_authenticated/register")({
   head: () => ({ meta: [
@@ -50,15 +50,18 @@ function RegisterPage() {
       const learners: Learner[] = [
         ...(pupils.data ?? []).map((p) => { const d = p.data as { name?: string; admissionNo?: string; gender?: string }; return { id: p.id, name: d.name ?? "", admissionNo: d.admissionNo ?? "", gender: d.gender ?? "" }; }),
         ...(early.data ?? []).map((p) => ({ id: p.id, name: p.name, admissionNo: p.admission_no, gender: "" })),
-      ].sort((a, b) => a.name.localeCompare(b.name));
+      ];
       const byDay: Record<string, AttendanceEntry[]> = {};
       for (const row of saved.data ?? []) byDay[row.attendance_date] = row.entries as unknown as AttendanceEntry[];
       return { learners, byDay };
     },
   });
-  const learners = q.data?.learners ?? [];
+  // Boys A–Z, three blank rows, then girls A–Z; numbering runs on continuously past the gap.
+  const order = registerOrder(q.data?.learners ?? []);
+  const learners = order.filter((l): l is Learner => l !== null);
   const rows = registerMarks(learners.map((l) => l.id), days, blank ? {} : q.data?.byDay ?? {});
-  const blankRows = Math.max(0, 35 - learners.length > 5 ? 5 : 35 - learners.length);
+  const gapRows = order.length - learners.length;
+  const blankRows = Math.max(0, Math.min(5, 35 - learners.length) - gapRows);
   const weeks = weekGroups(days);
   const closedKey = `edureport-register-closed:${cloud.schoolId ?? "local"}:${month}`;
   const [closed, setClosed] = useState<Record<string, string>>({});
@@ -71,7 +74,7 @@ function RegisterPage() {
   const weekly = weeklyTotals(weeks, days, daily, marked, closed);
   const show = (i: number) => !blank && marked.has(days[i]!) && !closed[days[i]!];
   const weekSum = (r: { marks: string[] }, w: number[]) => w.filter((i) => !closed[days[i]!]).filter((i) => r.marks[i] === "P").length;
-  const totalRows = learners.length + blankRows + 1;
+  const totalRows = order.length + blankRows + 1;
   const dayCells = (render: (i: number) => ReactNode, wkCell: (w: number[], wi: number) => ReactNode) => weeks.map((w, wi) => <Fragment key={wi}>{w.map((i) => <Fragment key={i}>{render(i)}</Fragment>)}{wkCell(w, wi)}</Fragment>);
   const closedCell = (i: number, rowIdx: number) => closed[days[i]!] ? (rowIdx === 0 ? <td rowSpan={totalRows} className="reg-closed"><span>{closed[days[i]!]}</span></td> : null) : undefined;
 
@@ -113,8 +116,8 @@ function RegisterPage() {
               <tr>{dayCells((i) => <th><div>{format(new Date(days[i] + "T00:00"), "EEEEE")}</div><div>{Number(days[i]!.slice(8))}</div></th>, (_, wi) => <th key={"t" + wi} className="reg-wk">Tot</th>)}</tr>
             </thead>
             <tbody>
-              {learners.map((l, k) => { const r = rows[k]!; return <tr key={l.id}><td>{k + 1}</td><td className="reg-name">{l.name}</td><td>{sexes[k]}</td>{dayCells((i) => { const c = closedCell(i, k); if (c !== undefined) return c; const mk = r.marks[i]; return <td className={mk === "A" ? "reg-absent" : ""}>{mk === "P" ? "✓" : mk === "A" ? "○" : ""}</td>; }, (w, wi) => <td key={"t" + wi} className="reg-wk">{blank ? "" : weekSum(r, w)}</td>)}<td>{blank ? "" : r.present}</td><td>{blank ? "" : r.absent}</td></tr>; })}
-              {Array.from({ length: blankRows }, (_, b) => <tr key={"b" + b}><td>{learners.length + b + 1}</td><td className="reg-name" /><td />{dayCells((i) => { const c = closedCell(i, learners.length + b); return c !== undefined ? c : <td />; }, (_, wi) => <td key={"t" + wi} className="reg-wk" />)}<td /><td /></tr>)}
+              {(() => { let k = -1; return order.map((l, rowIdx) => { if (!l) return <tr key={"g" + rowIdx} className="reg-gap"><td /><td className="reg-name" /><td />{dayCells((i) => { const c = closedCell(i, rowIdx); return c !== undefined ? c : <td />; }, (_, wi) => <td key={"t" + wi} className="reg-wk" />)}<td /><td /></tr>; k++; const r = rows[k]!; return <tr key={l.id}><td>{k + 1}</td><td className="reg-name">{l.name}</td><td>{sexes[k]}</td>{dayCells((i) => { const c = closedCell(i, rowIdx); if (c !== undefined) return c; const mk = r.marks[i]; return <td className={mk === "A" ? "reg-absent" : ""}>{mk === "P" ? "✓" : mk === "A" ? "○" : ""}</td>; }, (w, wi) => <td key={"t" + wi} className="reg-wk">{blank ? "" : weekSum(r, w)}</td>)}<td>{blank ? "" : r.present}</td><td>{blank ? "" : r.absent}</td></tr>; }); })()}
+              {Array.from({ length: blankRows }, (_, b) => <tr key={"b" + b}><td>{learners.length + b + 1}</td><td className="reg-name" /><td />{dayCells((i) => { const c = closedCell(i, order.length + b); return c !== undefined ? c : <td />; }, (_, wi) => <td key={"t" + wi} className="reg-wk" />)}<td /><td /></tr>)}
               <tr><td colSpan={3} className="reg-name" />{dayCells((i) => { const c = closedCell(i, totalRows - 1); return c !== undefined ? c : <td />; }, (_, wi) => <td key={"t" + wi} className="reg-wk" />)}<td /><td /></tr>
               <tr className="font-bold"><td colSpan={3} className="reg-name">Daily present — Boys</td>{dayCells((i) => <td>{show(i) ? daily[i]!.boys : ""}</td>, (_, wi) => <td key={"t" + wi} className="reg-wk">{blank ? "" : weekly[wi]!.boys}</td>)}<td /><td /></tr>
               <tr className="font-bold"><td colSpan={3} className="reg-name">Daily present — Girls</td>{dayCells((i) => <td>{show(i) ? daily[i]!.girls : ""}</td>, (_, wi) => <td key={"t" + wi} className="reg-wk">{blank ? "" : weekly[wi]!.girls}</td>)}<td /><td /></tr>

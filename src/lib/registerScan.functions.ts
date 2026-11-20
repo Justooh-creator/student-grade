@@ -1,10 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { parseDob } from "@/lib/studentImport";
 
 const PROMPT = `This is a photo of a Ghanaian school class register (handwritten or printed).
 Extract every learner listed, in order from top to bottom. For each, return the full name exactly as written
 (fix only obvious letter casing, e.g. "KOFI mensah" -> "Kofi Mensah"), the admission number if shown (else ""),
-and gender as "Male", "Female" or "" if not shown. Ignore headings, dates, ticks, totals and teacher names.
+gender as "Male", "Female" or "" if not shown, and the date of birth exactly as written if a birth-date column is shown (else "").
+If there is no sex column but boys are listed first and girls follow after a gap of blank rows, give those above the gap
+"Male" and those below it "Female". Ignore headings, dates, ticks, totals and teacher names.
 If a name is hard to read, give your best guess. Return an empty list if no register is visible.`;
 
 const schema = {
@@ -17,18 +20,19 @@ const schema = {
       items: {
         type: "object",
         additionalProperties: false,
-        required: ["name", "admissionNo", "gender"],
+        required: ["name", "admissionNo", "gender", "dob"],
         properties: {
           name: { type: "string" },
           admissionNo: { type: "string" },
           gender: { type: "string", enum: ["Male", "Female", ""] },
+          dob: { type: "string" },
         },
       },
     },
   },
 } as const;
 
-type Learner = { name: string; admissionNo: string; gender: string };
+type Learner = { name: string; admissionNo: string; gender: string; dob: string };
 
 export const scanRegisterPhoto = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -58,7 +62,10 @@ export const scanRegisterPhoto = createServerFn({ method: "POST" })
         providerOptions: { openai: { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] } },
       });
       const out = await result.output;
-      return { learners: (out?.learners ?? []).map((l) => ({ name: l.name.trim().replace(/\s+/g, " "), admissionNo: l.admissionNo.trim(), gender: l.gender })).filter((l) => l.name) };
+      return { learners: (out?.learners ?? []).map((l) => {
+        const dob = parseDob(l.dob ?? "");
+        return { name: l.name.trim().replace(/\s+/g, " "), admissionNo: l.admissionNo.trim(), gender: l.gender, ...(dob ? { dob } : {}) };
+      }).filter((l) => l.name) };
     } catch (e) {
       const msg = e instanceof Error ? e.message : "";
       if (/402|credit/i.test(msg)) throw new Error("Register reading is paused right now. Please try again later.");

@@ -20,3 +20,16 @@ d2("registerDays split weeks", () => {
     e2(rd(2026, 11)[0]).toBe("2026-11-30");
   });
 });
+
+import { registerOrder } from "./register";
+d2("GES register order", () => {
+  const l = (name: string, gender: string) => ({ name, gender });
+  i2("lists boys A–Z, leaves three blank rows, then girls A–Z", () => {
+    const out = registerOrder([l("Esi", "Female"), l("Yaw", "Male"), l("Ama", "F"), l("Kofi", "M"), l("Abla", "")]);
+    e2(out.map((x) => x?.name ?? null)).toEqual(["Kofi", "Yaw", null, null, null, "Ama", "Esi", "Abla"]);
+  });
+  i2("adds no gap when the class has only boys or only girls", () => {
+    e2(registerOrder([l("Yaw", "Male"), l("Kofi", "Male")]).includes(null)).toBe(false);
+    e2(registerOrder([l("Esi", "Female")]).includes(null)).toBe(false);
+  });
+});

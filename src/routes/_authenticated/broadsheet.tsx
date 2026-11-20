@@ -7,6 +7,7 @@ import { useAppData } from "@/lib/store";
 import { validateClassSearch } from "@/lib/classSearch";
 import { getClassLevel, isKg, isJhs } from "@/lib/ges";
 import { buildBroadsheet } from "@/lib/broadsheet";
+import { KG_RATINGS, kgMilestones, kgProgress } from "@/lib/kgMilestones";
 
 export const Route = createFileRoute("/_authenticated/broadsheet")({
   validateSearch: validateClassSearch,
@@ -31,6 +32,7 @@ function BroadsheetPage() {
   const kg = isKg(classId);
   const jhs = isJhs(classId);
   const rows = buildBroadsheet(students, classId);
+  const kgItems = kg ? kgMilestones(classId, school.term) : [];
   const groups = kg ? [level.subjects] : Array.from({ length: Math.ceil(level.subjects.length / 3) }, (_, i) => level.subjects.slice(i * 3, i * 3 + 3));
   const fields = ["Raw SBA /100", "SBA /50", "Raw Exam /100", "Exam /50", "Total /100", "Grade"];
 
@@ -42,14 +44,19 @@ function BroadsheetPage() {
       </div>
       {!rows.length ? <p className="py-10 text-center text-muted-foreground">No learners in {level.name} yet.</p> : <div className="broadsheet-pages space-y-6 overflow-x-auto">{groups.map((subjects, index) => <section className="broadsheet-page bg-paper text-foreground" key={index}>
         <div className="mb-2 flex items-end justify-between gap-4"><div><h2 className="font-display text-base font-bold">{school.name || "EduReport Ghana"}</h2><p className="text-xs">{level.name} · {school.academicYear} · {school.term} · {rows.length} learners</p></div><p className="text-xs">Master Score Sheet · {index + 1} / {groups.length}</p></div>
-        <table className="broadsheet-table"><thead><tr><th rowSpan={kg ? 1 : 2}>No.</th><th rowSpan={kg ? 1 : 2} className="learner-name">Learner / Admission no.</th>{subjects.map((subject) => <th key={subject} colSpan={kg ? 1 : 6}>{subject}</th>)}{!kg && <><th rowSpan={2}>Total</th><th rowSpan={2}>Average</th><th rowSpan={2}>Position</th>{jhs && <th rowSpan={2}>Best Six</th>}</>}</tr>{!kg && <tr>{subjects.flatMap((subject) => fields.map((field) => <th key={subject + field}>{field}</th>))}</tr>}</thead>
+        {kg ? <>
+          <table className="broadsheet-table"><thead><tr><th>No.</th><th className="learner-name">Learner / Admission no.</th>{kgItems.map((m) => <th key={m.key}>{m.n}</th>)}{KG_RATINGS.map((r) => <th key={r.code}>{r.code}</th>)}<th>Rated</th></tr></thead>
+            <tbody>{rows.map(({ student }, i) => { const p = kgProgress(student, school.term); return <tr key={student.id}><td>{i + 1}</td><th className="learner-name">{student.name}{student.admissionNo && <span className="block font-normal">{student.admissionNo}</span>}</th>{p.rows.map((r) => <td key={r.key}>{r.rating ?? "—"}</td>)}{KG_RATINGS.map((r) => <td key={r.code}>{p.counts[r.code]}</td>)}<td>{p.rated}/{p.rows.length}</td></tr>; })}</tbody>
+          </table>
+          <p className="mt-2 text-xs font-bold">{KG_RATINGS.map((r) => `${r.code} – ${r.label}`).join(" · ")}</p>
+          <ul className="mt-1 columns-2 gap-6 text-[7.5pt] leading-tight">{kgItems.map((m) => <li key={m.key} className="break-inside-avoid"><b>{m.n}.</b> {m.text}</li>)}</ul>
+        </> : <table className="broadsheet-table"><thead><tr><th rowSpan={kg ? 1 : 2}>No.</th><th rowSpan={kg ? 1 : 2} className="learner-name">Learner / Admission no.</th>{subjects.map((subject) => <th key={subject} colSpan={kg ? 1 : 6}>{subject}</th>)}{!kg && <><th rowSpan={2}>Total</th><th rowSpan={2}>Average</th><th rowSpan={2}>Position</th>{jhs && <th rowSpan={2}>Best Six</th>}</>}</tr>{!kg && <tr>{subjects.flatMap((subject) => fields.map((field) => <th key={subject + field}>{field}</th>))}</tr>}</thead>
           <tbody>{rows.map(({ student, result, position }, i) => <tr key={student.id}><td>{i + 1}</td><th className="learner-name">{student.name}{student.admissionNo && <span className="block font-normal">{student.admissionNo}</span>}</th>{subjects.flatMap((subject) => {
             const r = result.subjects.find((s) => s.subject === subject);
             if (kg) return [<td key={subject}>{r?.level ?? "—"}</td>];
             return [r?.sbaRaw, r?.sba, r?.examRaw, r?.exam, r?.total, r?.grade].map((v, n) => <td key={subject + n}>{mark(v)}</td>);
           })}{!kg && <><td>{result.gradedCount ? mark(result.totalMarks) : "—"}</td><td>{result.gradedCount ? mark(result.average) : "—"}</td><td>{position ?? "—"}</td>{jhs && <td>{result.bestSix?.subjects.length === 6 ? result.bestSix.aggregate : "—"}</td>}</>}</tr>)}</tbody>
-        </table>
-        {kg && <p className="mt-2 text-xs">Gold · Silver · Bronze</p>}
+        </table>}
         <div className="mt-3 flex justify-between text-xs"><span>Class teacher: {school.classTeachers?.[classId] || "________________"}</span><span>Headteacher: {school.headTeacher || "________________"}</span></div>
       </section>)}</div>}
     </main>

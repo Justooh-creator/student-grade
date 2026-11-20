@@ -46,6 +46,11 @@ export const KG_CONTENT: Record<string, Content> = {
       ...f("Sounds", [["loud", "a sound that is very strong"], ["soft", "a sound that is quiet"], ["fast", "music that moves quickly"], ["slow", "music that moves gently"], ["high", "a sound like a bird's whistle"], ["low", "a deep sound like a big drum"]]),
       ...f("Music", [["song", "words we sing with a tune"], ["clap", "hitting our hands together to keep the beat"], ["beat", "the steady pulse in music"], ["dance", "moving our body to music"], ["rhyme", "a short poem we say or sing"], ["singer", "a person who sings"]]),
       ...f("Movement", [["march", "walking in step to music"], ["sway", "moving gently from side to side"], ["stamp", "hitting the ground hard with the feet"], ["spin", "turning round and round"], ["stretch", "making the body long and tall"]]),
+      // Modelled on KG end-of-year Creative Arts papers (colouring, drawing God's creation, community places, cleaning objects).
+      ...f("National Symbols", [["Dr. Kwame Nkrumah", "the first President of Ghana whose picture we colour"], ["red, gold and green", "the three stripe colours of the Ghana flag"], ["black star", "the star in the middle of the Ghana flag"]]),
+      ...f("God's Creation", [["sun", "a thing created by God that gives us light in the day"], ["moon", "a thing created by God that shines at night"], ["tree", "a thing created by God that gives us shade and fruit"], ["river", "flowing water created by God"], ["bird", "a creature created by God that flies"]]),
+      ...f("Special Places", [["market", "a special place in the community where we buy and sell"], ["clinic", "a special place where sick people are cared for"], ["church", "a special place where Christians worship"], ["mosque", "a special place where Muslims pray"]]),
+      ...f("Keeping Clean", [["broom", "an object we use to sweep our rooms clean"], ["dustpan", "what we use to pick up dirt after sweeping"], ["mop", "what we use to clean the floor with water"], ["duster", "a cloth we use to wipe tables and chairs"]]),
     ],
     written: [
       W("Colours", "(a) Name three colours. (b) What colour is a ripe banana? (c) Colour a leaf green.", "red, blue, yellow", "yellow", "a leaf coloured green"),
@@ -58,6 +63,10 @@ export const KG_CONTENT: Record<string, Content> = {
       W("Music", "(a) Sing your favourite song. (b) Clap to the beat. (c) Say a nursery rhyme.", "a complete song", "claps on the beat", "a complete rhyme"),
       W("Movement", "(a) March to the music. (b) Sway from side to side. (c) Spin and stop when the music stops.", "marching in time", "gentle swaying", "stopping on cue"),
       W("Culture", "(a) Name one Ghanaian dance. (b) Name a song we sing at school. (c) Dance to a drum beat.", "Adowa, Kpanlogo, Borborbor", "the National Anthem", "moving to the beat"),
+      W("National Symbols", "(a) Colour the picture of Dr. Kwame Nkrumah. (b) Colour the flag of Ghana. (c) Say the colours of the flag.", "neat colouring within the lines", "red, gold and green stripes with a black star in the middle", "red, gold, green and black"),
+      W("God's Creation", "(a) Draw one thing created by God. (b) Colour your drawing. (c) Say the name of what you drew.", "a clear drawing, e.g. the sun, a tree, a river or a bird", "suitable colours used neatly", "names the thing drawn"),
+      W("Special Places", "(a) Draw one special place in your community. (b) Colour it. (c) Say what people do there.", "a market, clinic, church, mosque or school", "neat colouring", "e.g. people buy and sell at the market"),
+      W("Keeping Clean", "(a) Draw one object that keeps our rooms clean. (b) Colour it. (c) Say how we use it.", "a broom, dustpan, mop or duster", "neat colouring", "e.g. we sweep the room with a broom"),
     ],
   },
   "Physical Development": {

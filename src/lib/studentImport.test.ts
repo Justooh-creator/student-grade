@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { appendLearnerImport, parseLearnerRows, planLearnerImport, type LearnerImportRow } from "./studentImport";
+import { appendLearnerImport, parseDob, parseLearnerRows, planLearnerImport, type LearnerImportRow } from "./studentImport";
 import type { Student } from "./store";
 
 const learner = (i: number, classId: Student["classId"] = "b1a"): Student => ({ id: String(i), name: `Learner ${i}`, admissionNo: String(i), classId, scores: {}, attendance: "", conduct: "", interest: "", remark: "" });
@@ -33,5 +33,23 @@ describe("learner register import", () => {
     const imported = appendLearnerImport([], parsed.rows, "kg1", true);
     expect(imported[0]?.scores).toEqual({});
     expect(imported[0]?.gender).toBe("Female");
+  });
+  it("reads a Date of Birth column day-first and saves it on the learner", () => {
+    const parsed = parseLearnerRows([["Name", "Admission Number", "Gender", "Date of Birth"], ["Ama", "001", "F", "14/05/2019"], ["Kofi", "002", "M", ""], ["Esi", "003", "F", "31/02/2019"]]);
+    expect(parsed.rows[0]?.dob).toBe("2019-05-14");
+    expect(parsed.rows[1]).not.toHaveProperty("dob");
+    expect(parsed.rows[2]).not.toHaveProperty("dob");
+    expect(parsed.notes).toHaveLength(1);
+    expect(appendLearnerImport([], parsed.rows, "kg1", true)[0]?.dob).toBe("2019-05-14");
+  });
+  it("accepts the common register date formats", () => {
+    const today = new Date("2026-11-20T00:00:00Z");
+    expect(parseDob("2018-11-29", today)).toBe("2018-11-29");
+    expect(parseDob("3-7-2019", today)).toBe("2019-07-03");
+    expect(parseDob("14 May 2018", today)).toBe("2018-05-14");
+    expect(parseDob(new Date(Date.UTC(2019, 0, 9)), today)).toBe("2019-01-09");
+    expect(parseDob(43474, today)).toBe("2019-01-09");
+    expect(parseDob("01/01/2030", today)).toBeNull();
+    expect(parseDob("soon", today)).toBeNull();
   });
 });

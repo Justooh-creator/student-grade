@@ -11,12 +11,13 @@ import { getData, updateData, useAppData } from "@/lib/store";
 import { getCloud } from "@/lib/cloud";
 import { canEditClass } from "@/lib/classAccess";
 import { getClassLevel, type ClassId } from "@/lib/ges";
+import { formatDob } from "@/lib/age";
 
 export function LearnerImport({ classId }: { classId: ClassId }) {
   const input = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [parsed, setParsed] = useState<{ rows: LearnerImportRow[]; issues: ImportIssue[] } | null>(null);
+  const [parsed, setParsed] = useState<{ rows: LearnerImportRow[]; issues: ImportIssue[]; notes?: ImportIssue[] } | null>(null);
   const [sourceClass, setSourceClass] = useState<ClassId>(classId);
   const [filename, setFilename] = useState("");
   const { students } = useAppData();
@@ -87,20 +88,21 @@ export function LearnerImport({ classId }: { classId: ClassId }) {
       <DialogContent className="max-h-[85dvh] max-w-2xl overflow-y-auto">
         <DialogHeader><DialogTitle>Import into {getClassLevel(sourceClass).name}</DialogTitle><DialogDescription className="break-all">{filename}</DialogDescription></DialogHeader>
         {busy ? <p role="status">Reading register… this can take up to a minute.</p> : parsed && plan && <>
-          <div className="flex flex-wrap gap-3 text-sm font-semibold"><span>{plan.accepted.length} new learners</span><span>{plan.skipped.length} duplicates skipped</span><span>{parsed.issues.length} invalid rows</span><span>{plan.remaining} spaces available</span></div>
+          <div className="flex flex-wrap gap-3 text-sm font-semibold"><span>{plan.accepted.length} new learners</span><span>{plan.skipped.length} duplicates skipped</span><span>{parsed.issues.length} invalid rows</span>{plan.accepted.some((r) => r.dob) && <span>{plan.accepted.filter((r) => r.dob).length} with date of birth</span>}<span>{plan.remaining} spaces available</span></div>
           {sourceClass !== classId && <p role="alert" className="text-destructive">The selected class changed. Close this window and choose the register again.</p>}
           {plan.overCapacity && <p role="alert" className="text-destructive">35 learners maximum per class. This register exceeds the {plan.remaining} remaining spaces. Reduce the register and try again; nothing will be imported.</p>}
           {editable ? <div className="space-y-2">
             <p className="text-sm text-muted-foreground">Check each name and fix any spelling before adding.</p>
-            <div className="max-h-80 space-y-2 overflow-auto">{parsed.rows.map((r, i) => <div key={i} className="grid grid-cols-[1fr_auto] gap-1.5 rounded-md border border-border p-2 sm:grid-cols-[2fr_1fr_7rem_auto]">
+            <div className="max-h-80 space-y-2 overflow-auto">{parsed.rows.map((r, i) => <div key={i} className="grid grid-cols-[1fr_auto] gap-1.5 rounded-md border border-border p-2 sm:grid-cols-[2fr_1fr_7rem_9.5rem_auto]">
               <input aria-label={`Learner ${i + 1} name`} value={r.name} onChange={(e) => editRow(i, { name: e.target.value })} className="col-span-1 rounded border border-input bg-background px-2" placeholder="Full name" />
               <button type="button" aria-label="Remove" onClick={() => removeRow(i)} className="row-span-1 px-2 text-destructive sm:order-last"><Trash2 className="size-4" /></button>
               <input aria-label="Admission no." value={r.admissionNo} onChange={(e) => editRow(i, { admissionNo: e.target.value })} className="rounded border border-input bg-background px-2" placeholder="Adm. no." />
               <select aria-label="Gender" value={r.gender} onChange={(e) => editRow(i, { gender: e.target.value })} className="rounded border border-input bg-background px-2"><option value="">Gender</option><option>Male</option><option>Female</option></select>
+              <input type="date" aria-label="Date of birth" title="Date of birth" value={r.dob ?? ""} min="1990-01-01" max={new Date().toISOString().slice(0, 10)} onChange={(e) => { const v = e.target.value; setParsed((p) => p && { ...p, rows: p.rows.map((x, j) => { if (j !== i) return x; const { dob: _old, ...rest } = x; return v ? { ...rest, dob: v } : rest; }) }); }} className="col-span-2 rounded border border-input bg-background px-2 sm:col-span-1" />
             </div>)}</div>
             <Button variant="ghost" size="sm" onClick={addRow}><Plus />Add a name</Button>
-          </div> : <div className="max-h-72 overflow-auto border border-border"><table className="w-full text-left text-sm"><thead className="bg-muted"><tr><th className="p-2">Row</th><th className="p-2">Name</th><th className="p-2">Admission no.</th><th className="p-2">Gender</th></tr></thead><tbody>{plan.accepted.map((r) => <tr key={r.row} className="border-t border-border"><td className="p-2">{r.row}</td><td className="p-2">{r.name}</td><td className="p-2">{r.admissionNo || "—"}</td><td className="p-2">{r.gender || "—"}</td></tr>)}</tbody></table></div>}
-          {[...parsed.issues, ...plan.skipped].length > 0 && <ul className="max-h-36 overflow-auto text-sm text-muted-foreground">{[...parsed.issues, ...plan.skipped].map((r) => <li key={`${r.row}-${r.message}`}>Row {r.row}: {r.message}</li>)}</ul>}
+          </div> : <div className="max-h-72 overflow-auto border border-border"><table className="w-full text-left text-sm"><thead className="bg-muted"><tr><th className="p-2">Row</th><th className="p-2">Name</th><th className="p-2">Admission no.</th><th className="p-2">Gender</th><th className="p-2">Date of birth</th></tr></thead><tbody>{plan.accepted.map((r) => <tr key={r.row} className="border-t border-border"><td className="p-2">{r.row}</td><td className="p-2">{r.name}</td><td className="p-2">{r.admissionNo || "—"}</td><td className="p-2">{r.gender || "—"}</td><td className="p-2">{formatDob(r.dob) || "—"}</td></tr>)}</tbody></table></div>}
+          {[...parsed.issues, ...plan.skipped, ...(parsed.notes ?? [])].length > 0 && <ul className="max-h-36 overflow-auto text-sm text-muted-foreground">{[...parsed.issues, ...plan.skipped, ...(parsed.notes ?? [])].map((r) => <li key={`${r.row}-${r.message}`}>Row {r.row}: {r.message}</li>)}</ul>}
           <div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button><Button onClick={confirm} disabled={!canEdit || sourceClass !== classId || plan.overCapacity || !plan.accepted.length}><Upload />Import {plan.accepted.length} learners</Button></div>
         </>}
       </DialogContent>

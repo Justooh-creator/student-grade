@@ -77,3 +77,19 @@ export function weeklyTotals(weeks: number[][], days: string[], daily: { boys: n
     return { open, cumulative, boys, girls, total: boys + girls };
   });
 }
+
+/** Blank rows left after the boys for later male admissions, as in GES class registers. */
+export const REGISTER_GAP_ROWS = 3;
+
+/**
+ * GES register order: boys A–Z, a few blank rows, then girls A–Z, then any learner whose sex is not recorded.
+ * `null` marks a blank gap row. The gap is only added when boys are followed by other learners.
+ */
+export function registerOrder<T extends { name: string; gender: string }>(learners: T[], gap = REGISTER_GAP_ROWS): (T | null)[] {
+  const byName = (a: T, b: T) => a.name.localeCompare(b.name);
+  const pick = (sex: Sex) => learners.filter((l) => sexOf(l.gender) === sex).sort(byName);
+  const boys = pick("M");
+  const rest = [...pick("F"), ...pick("")];
+  if (!boys.length || !rest.length) return [...boys, ...rest];
+  return [...boys, ...Array.from({ length: gap }, () => null), ...rest];
+}
