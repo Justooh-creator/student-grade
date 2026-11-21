@@ -20,8 +20,9 @@ export function KgReportSheet({ student, school, watermark = false }: { student:
   const promotion = school.term === "Term 3"
     ? student.promotion === "promoted" ? nextClassName(student.classId) : student.promotion === "retained" ? `Retained in ${level.name}` : "To be decided"
     : "—";
-  const field = (label: string, value: string, bold = true) => (
-    <p className="min-w-0"><span className="font-bold">{label}: </span><span className={bold ? "font-bold" : ""}>{value || "—"}</span></p>
+  // Right-column details sit flush with the right margin, mirroring the left column.
+  const field = (label: string, value: string, right = false) => (
+    <p className={`min-w-0 ${right ? "text-right" : ""}`}><span className="font-bold">{label}: </span><span className="font-bold">{value || "—"}</span></p>
   );
   return (
     <div style={{ breakAfter: "page", pageBreakAfter: "always" }} className="print-sheet sheet-a4 relative mx-auto mb-6 flex flex-col overflow-hidden border border-rule px-[11mm] py-[7mm] text-[#1b1a16] shadow-[0_20px_50px_-30px_rgba(0,0,0,0.5)]">
@@ -47,13 +48,13 @@ export function KgReportSheet({ student, school, watermark = false }: { student:
 
       <div className={`${gap} grid grid-cols-2 gap-x-6 gap-y-0.5 text-[9.5pt]`}>
         {field("Learner name", student.name)}
-        {field("Term", `${termWord} · ${school.academicYear}`)}
+        {field("Term", `${termWord} · ${school.academicYear}`, true)}
         {field("Class", level.name)}
-        {field("Sex", student.gender ?? "")}
+        {field("Sex", student.gender ?? "", true)}
         {field("Date of birth", formatDob(student.dob))}
-        {field("Age", ageLabel(student.dob))}
+        {field("Age", ageLabel(student.dob), true)}
         {field("Vacation date", school.vacationDate ?? "")}
-        {field("Next term begins", school.reopeningDate)}
+        {field("Next term begins", school.reopeningDate, true)}
       </div>
 
       <div className={`${gap} flex flex-wrap gap-x-4 text-[8.5pt]`}>
@@ -81,7 +82,7 @@ export function KgReportSheet({ student, school, watermark = false }: { student:
       <div className={`${gap} ${remarkGap} text-[9pt]`}>
         <div className="grid grid-cols-2 gap-x-6">
           <p><span className="font-bold">Attendance: </span><span className="num">{student.attendance || "—"}</span> <span className="font-bold">out of </span><span className="num">{school.totalAttendance || "—"}</span></p>
-          <p><span className="font-bold">Promoted to: </span><span className="font-bold">{promotion}</span></p>
+          <p className="text-right"><span className="font-bold">Promoted to: </span><span className="font-bold">{promotion}</span></p>
         </div>
         <p><span className="font-bold">Conduct: </span>{student.conduct || "—"}</p>
         <p><span className="font-bold">Interest: </span>{student.interest || "—"}</p>

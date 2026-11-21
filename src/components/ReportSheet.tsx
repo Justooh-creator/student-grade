@@ -67,7 +67,7 @@ function TerminalReportSheet({ student, students, school, watermark = false }: {
               <span className="font-bold text-[#1b1a16]">Name: </span>
               <span className="font-bold">{student.name}</span>
             </p>
-            <p>
+            <p className="text-right">
               <span className="font-bold text-[#1b1a16]">Class: </span>
               <span className="font-bold">{level.name}</span>
             </p>
@@ -75,7 +75,7 @@ function TerminalReportSheet({ student, students, school, watermark = false }: {
               <span className="font-bold text-[#1b1a16]">Admission No.: </span>
               <span className="num">{student.admissionNo || "—"}</span>
             </p>
-            <p>
+            <p className="text-right">
               <span className="font-bold text-[#1b1a16]">Position in class: </span>
               <span className="num font-bold">
                 {kg ? "—" : `${ordinal(position)} of ${ranking.classSize}`}
@@ -85,7 +85,7 @@ function TerminalReportSheet({ student, students, school, watermark = false }: {
               <span className="font-bold text-[#1b1a16]">Date of birth: </span>
               <span className="num font-bold">{dobWithAge(student.dob)}</span>
             </p>
-            <p>
+            <p className="text-right">
               <span className="font-bold text-[#1b1a16]">Attendance: </span>
               <span className="num">
                 {student.attendance || "—"} / {school.totalAttendance || "—"} days
@@ -104,11 +104,11 @@ function TerminalReportSheet({ student, students, school, watermark = false }: {
                 <span className="font-bold">—</span>
               </p>
             )}
-            <p>
+            <p className="text-right">
               <span className="font-bold text-[#1b1a16]">Vacation date: </span>
               <span className="font-bold">{school.vacationDate || "—"}</span>
             </p>
-            <p>
+            <p className="col-start-2 text-right">
               <span className="font-bold text-[#1b1a16]">Reopening date: </span>
               <span className="font-bold">{school.reopeningDate || "—"}</span>
             </p>

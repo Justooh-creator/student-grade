@@ -1,7 +1,7 @@
 /**
  * KG 1–2 term progress checklists (Kindergarten Learners Progress Report used by partner schools).
  * Ratings are stored per learner in `scores["kgm:t<term>:<nn>"].level` so they sync field by field
- * and reset with the other term work at year rollover. KG 1 uses the KG 2 checklist until a KG 1 sheet is supplied.
+ * and reset with the other term work at year rollover. KG 1 and KG 2 each follow their school-issued assessment tool.
  */
 import { baseClassId, type ClassId } from "./ges";
 import type { Student } from "./store";
@@ -86,8 +86,67 @@ const KG2_TERMS: Record<1 | 2 | 3, string[]> = {
   ],
 };
 
-/** KG 1 shares the KG 2 checklist for now; replace `kg1` when the school supplies its own sheet. */
-const BANK: Record<"kg1" | "kg2", Record<1 | 2 | 3, string[]>> = { kg1: KG2_TERMS, kg2: KG2_TERMS };
+/** KG 1 Assessment Tool supplied by the school (Mad. Stella): 14, 16 and 20 items for Terms 1–3. */
+const KG1_TERMS: Record<1 | 2 | 3, string[]> = {
+  1: [
+    "Provide information about oneself.",
+    "Listen attentively to others and respond appropriately.",
+    "Follow one- or two-part oral directions.",
+    "Sort and match common colours, shapes and sizes.",
+    "Match upper-case and lower-case letters correctly.",
+    "Recognise left to right sequence.",
+    "Arrange five letters of the English alphabet in order.",
+    "Draw a beautiful picture of himself or herself.",
+    "Mention some functions of body parts.",
+    "Compare objects to show more or less than.",
+    "Demonstrate the proper way to handle a book.",
+    "Draw a family tree.",
+    "Count numerals one to ten correctly.",
+    "Read the English alphabet A–J correctly.",
+  ],
+  2: [
+    "Identify three good manners our family values.",
+    "Demonstrate how to use daily greetings.",
+    "Copy a letter correctly.",
+    "Tell the time of the day.",
+    "Recognise the basic components of a book.",
+    "Mention some special places in the community.",
+    "Draw yourself in your future job.",
+    "Count the number of letters that form the word CHIEF.",
+    "Clap to find the number of syllables in words.",
+    "Write numerals 1–10 in order.",
+    "Identify and name shapes.",
+    "Copy lower-case and upper-case letters in order.",
+    "Read two-letter words correctly.",
+    "Make curves in different directions.",
+    "Identify activities done during 6th March.",
+    "Do simple addition.",
+  ],
+  3: [
+    "Identify three sources of light.",
+    "Talk about dangers associated with handling some types of light, e.g. a candle.",
+    "Assign numerals to groups of objects.",
+    "Read a picture book.",
+    "Copy own name.",
+    "Associate objects with words.",
+    "Use letter-sounds to match the names of animals.",
+    "Tell which source he or she fetches water from.",
+    "Mention some uses of water.",
+    "Make simple sentences with sources of water.",
+    "Mention three things that can show the presence of air.",
+    "Identify the parts of a plant.",
+    "Tell the position of objects in a space.",
+    "Select appropriate clothing to suit various weather conditions.",
+    "Identify roles of some leaders in the community.",
+    "Copy a word correctly.",
+    "Write letters A–Z in order.",
+    "Copy numerals 1–15 correctly.",
+    "Form two-letter words and read them.",
+    "Retell a story heard.",
+  ],
+};
+
+const BANK: Record<"kg1" | "kg2", Record<1 | 2 | 3, string[]>> = { kg1: KG1_TERMS, kg2: KG2_TERMS };
 
 /** "Term 2" → 2. Anything unrecognised counts as Term 1. */
 export function kgTermNo(term: string | undefined | null): 1 | 2 | 3 {

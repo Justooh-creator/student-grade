@@ -52,4 +52,10 @@ describe("learner register import", () => {
     expect(parseDob("01/01/2030", today)).toBeNull();
     expect(parseDob("soon", today)).toBeNull();
   });
+  it("reads handwritten register dates with spaces around the slashes", () => {
+    const today = new Date("2026-11-20T00:00:00Z");
+    expect(parseDob("21 / 5 / 14", today)).toBe("2014-05-21");
+    expect(parseDob("10 /3/ 15", today)).toBe("2015-03-10");
+    expect(parseDob("10/3/15.", today)).toBe("2015-03-10");
+  });
 });

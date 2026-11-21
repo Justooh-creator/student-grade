@@ -29,7 +29,8 @@ export function parseDob(value: unknown, today: Date = new Date()): string | nul
   };
   if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : iso(value.getUTCFullYear(), value.getUTCMonth() + 1, value.getUTCDate());
   if (typeof value === "number") return serial(value);
-  const s = String(value).trim();
+  // Handwritten registers are often read back as "21 / 5 / 14" or "10/3/15." — tidy the separators first.
+  const s = String(value).trim().replace(/(\d)\s*([-/.])\s*(?=\d)/g, "$1$2").replace(/[.,]+$/, "");
   if (!s) return "";
   if (/^\d{5}$/.test(s)) return serial(Number(s));
   let m = /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/.exec(s);
