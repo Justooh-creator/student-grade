@@ -857,6 +857,16 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      dev_confirm_user: { Args: { _user: string }; Returns: undefined }
+      dev_unverified_users: {
+        Args: never
+        Returns: {
+          created_at: string
+          display_name: string
+          email: string
+          id: string
+        }[]
+      }
       ensure_default_fees: { Args: { _school: string }; Returns: undefined }
       fee_admin_ok: { Args: { _school: string }; Returns: boolean }
       get_my_license: { Args: never; Returns: Json }

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ShareAppButtons } from "@/components/ShareAppButtons";
 import { FingerprintSetting } from "@/components/FingerprintSetting";
+import { DevUnverifiedPanel } from "@/components/DevUnverifiedPanel";
 import { Button } from "@/components/ui/button";
 import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
@@ -113,6 +114,8 @@ function SettingsPage() {
         <Section title="Tell a Colleague / Headteacher">
           <ShareAppButtons />
         </Section>
+
+        <DevUnverifiedPanel />
 
         <Section title="Help & About">
           <Button asChild variant="outline" className="mb-2 w-full"><Link to="/help">❓ Help & FAQs</Link></Button>
