@@ -62,12 +62,12 @@ function TerminalReportSheet({ student, students, school, watermark = false }: {
             </div>
           </div>
 
-          <div className={`${gap} grid grid-cols-2 gap-x-6 gap-y-0.5 text-[9.5pt]`}>
+          <div className={`${gap} grid grid-cols-[1fr_auto] gap-x-6 gap-y-0.5 text-[9.5pt]`}>
             <p>
               <span className="font-bold text-[#1b1a16]">Name: </span>
               <span className="font-bold">{student.name}</span>
             </p>
-            <p className="text-right">
+            <p>
               <span className="font-bold text-[#1b1a16]">Class: </span>
               <span className="font-bold">{level.name}</span>
             </p>
@@ -75,7 +75,7 @@ function TerminalReportSheet({ student, students, school, watermark = false }: {
               <span className="font-bold text-[#1b1a16]">Admission No.: </span>
               <span className="num">{student.admissionNo || "—"}</span>
             </p>
-            <p className="text-right">
+            <p>
               <span className="font-bold text-[#1b1a16]">Position in class: </span>
               <span className="num font-bold">
                 {kg ? "—" : `${ordinal(position)} of ${ranking.classSize}`}
@@ -85,7 +85,7 @@ function TerminalReportSheet({ student, students, school, watermark = false }: {
               <span className="font-bold text-[#1b1a16]">Date of birth: </span>
               <span className="num font-bold">{dobWithAge(student.dob)}</span>
             </p>
-            <p className="text-right">
+            <p>
               <span className="font-bold text-[#1b1a16]">Attendance: </span>
               <span className="num">
                 {student.attendance || "—"} / {school.totalAttendance || "—"} days
@@ -104,11 +104,11 @@ function TerminalReportSheet({ student, students, school, watermark = false }: {
                 <span className="font-bold">—</span>
               </p>
             )}
-            <p className="text-right">
+            <p>
               <span className="font-bold text-[#1b1a16]">Vacation date: </span>
               <span className="font-bold">{school.vacationDate || "—"}</span>
             </p>
-            <p className="col-start-2 text-right">
+            <p className="col-start-2">
               <span className="font-bold text-[#1b1a16]">Reopening date: </span>
               <span className="font-bold">{school.reopeningDate || "—"}</span>
             </p>
@@ -253,7 +253,7 @@ function TerminalReportSheet({ student, students, school, watermark = false }: {
             );
           })()}
 
-          <div className="mt-auto flex items-end justify-between gap-4 pt-3 text-[8.5pt]">
+          <div className="mt-10 flex items-end justify-between gap-4 pt-3 text-[8.5pt]">
             <div className="w-[60mm] text-left">
               <div className="flex h-[13mm] items-end justify-center">
                 {school.classTeacherSignatures?.[student.classId] && (

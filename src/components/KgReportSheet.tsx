@@ -15,14 +15,14 @@ export function KgReportSheet({ student, school, watermark = false }: { student:
   // fit on one printed page (A4, and Letter on phones that default to it).
   const gap = compact ? "mt-1.5" : "mt-2";
   const remarkGap = "space-y-0.5";
-  const rowPad = compact || progress.rows.length > 20 ? "py-[0.5mm]" : "py-[0.8mm]";
+  const rowPad = compact || progress.rows.length > 20 ? "py-[0.5mm]" : progress.rows.length <= 16 ? "py-[1.6mm]" : "py-[0.8mm]";
   const termWord = ({ 1: "One", 2: "Two", 3: "Three" } as const)[(Number(/[123]/.exec(school.term)?.[0]) || 1) as 1 | 2 | 3];
   const promotion = school.term === "Term 3"
     ? student.promotion === "promoted" ? nextClassName(student.classId) : student.promotion === "retained" ? `Retained in ${level.name}` : "To be decided"
     : "—";
   // Right-column details sit flush with the right margin, mirroring the left column.
   const field = (label: string, value: string, right = false) => (
-    <p className={`min-w-0 ${right ? "text-right" : ""}`}><span className="font-bold">{label}: </span><span className="font-bold">{value || "—"}</span></p>
+    <p className="min-w-0"><span className="font-bold">{label}: </span><span className="font-bold">{value || "—"}</span></p>
   );
   return (
     <div style={{ breakAfter: "page", pageBreakAfter: "always" }} className="print-sheet sheet-a4 relative mx-auto mb-6 flex flex-col overflow-hidden border border-rule px-[11mm] py-[7mm] text-[#1b1a16] shadow-[0_20px_50px_-30px_rgba(0,0,0,0.5)]">
@@ -46,7 +46,7 @@ export function KgReportSheet({ student, school, watermark = false }: { student:
         </div>
       </div>
 
-      <div className={`${gap} grid grid-cols-2 gap-x-6 gap-y-0.5 text-[9.5pt]`}>
+      <div className={`${gap} grid grid-cols-[1fr_auto] gap-x-6 gap-y-0.5 text-[9.5pt]`}>
         {field("Learner name", student.name)}
         {field("Term", `${termWord} · ${school.academicYear}`, true)}
         {field("Class", level.name)}
@@ -80,9 +80,9 @@ export function KgReportSheet({ student, school, watermark = false }: { student:
       </table>
 
       <div className={`${gap} ${remarkGap} text-[9pt]`}>
-        <div className="grid grid-cols-2 gap-x-6">
+        <div className="grid grid-cols-[1fr_auto] gap-x-6">
           <p><span className="font-bold">Attendance: </span><span className="num">{student.attendance || "—"}</span> <span className="font-bold">out of </span><span className="num">{school.totalAttendance || "—"}</span></p>
-          <p className="text-right"><span className="font-bold">Promoted to: </span><span className="font-bold">{promotion}</span></p>
+          <p><span className="font-bold">Promoted to: </span><span className="font-bold">{promotion}</span></p>
         </div>
         <p><span className="font-bold">Conduct: </span>{student.conduct || "—"}</p>
         <p><span className="font-bold">Interest: </span>{student.interest || "—"}</p>
@@ -109,7 +109,7 @@ export function KgReportSheet({ student, school, watermark = false }: { student:
         );
       })()}
 
-      <div className="mt-auto flex shrink-0 items-end justify-between gap-4 pt-2 text-[8.5pt]">
+      <div className="mt-10 flex shrink-0 items-end justify-between gap-4 pt-2 text-[8.5pt]">
         <div className="w-[60mm]">
           <div className="flex h-[12mm] items-end justify-center">
             {school.classTeacherSignatures?.[student.classId] && <img src={school.classTeacherSignatures[student.classId]} alt="Facilitator signature" className="max-h-[12mm] max-w-[55mm] object-contain" />}
