@@ -733,6 +733,57 @@ export type Database = {
           },
         ]
       }
+      student_deletions: {
+        Row: {
+          class_id: string
+          data: Json | null
+          deleted_at: string
+          deleted_by: string | null
+          deleted_by_email: string
+          deleted_by_name: string
+          id: string
+          restored_at: string | null
+          restored_by: string | null
+          restored_by_name: string | null
+          school_id: string
+          school_name: string
+          student_id: string
+          student_name: string
+        }
+        Insert: {
+          class_id?: string
+          data?: Json | null
+          deleted_at?: string
+          deleted_by?: string | null
+          deleted_by_email?: string
+          deleted_by_name?: string
+          id?: string
+          restored_at?: string | null
+          restored_by?: string | null
+          restored_by_name?: string | null
+          school_id: string
+          school_name?: string
+          student_id: string
+          student_name?: string
+        }
+        Update: {
+          class_id?: string
+          data?: Json | null
+          deleted_at?: string
+          deleted_by?: string | null
+          deleted_by_email?: string
+          deleted_by_name?: string
+          id?: string
+          restored_at?: string | null
+          restored_by?: string | null
+          restored_by_name?: string | null
+          school_id?: string
+          school_name?: string
+          student_id?: string
+          student_name?: string
+        }
+        Relationships: []
+      }
       student_sync_conflicts: {
         Row: {
           base_value: Json
@@ -831,6 +882,10 @@ export type Database = {
     }
     Functions: {
       attendance_access: { Args: { _school: string }; Returns: Json }
+      can_delete_student: {
+        Args: { _class: string; _school: string }
+        Returns: boolean
+      }
       can_edit_attendance: {
         Args: { _class: string; _school: string }
         Returns: boolean
@@ -858,6 +913,22 @@ export type Database = {
         }
       }
       dev_confirm_user: { Args: { _user: string }; Returns: undefined }
+      dev_deleted_students: {
+        Args: never
+        Returns: {
+          class_id: string
+          deleted_at: string
+          deleted_by_email: string
+          deleted_by_name: string
+          id: string
+          restored_at: string
+          restored_by_name: string
+          school_id: string
+          school_name: string
+          student_id: string
+          student_name: string
+        }[]
+      }
       dev_unverified_users: {
         Args: never
         Returns: {
@@ -878,6 +949,20 @@ export type Database = {
         Args: { _path: string[]; _target: Json; _value: Json }
         Returns: Json
       }
+      list_deleted_students: {
+        Args: { _school: string }
+        Returns: {
+          class_id: string
+          deleted_at: string
+          deleted_by_email: string
+          deleted_by_name: string
+          id: string
+          restored_at: string
+          restored_by_name: string
+          student_id: string
+          student_name: string
+        }[]
+      }
       merge_school_ops: { Args: { _details: Json; _ops: Json }; Returns: Json }
       merge_student_ops: { Args: { _data: Json; _ops: Json }; Returns: Json }
       print_window_closed: {
@@ -893,6 +978,7 @@ export type Database = {
       redeem_code: { Args: { _code: string }; Returns: Json }
       regenerate_join_code: { Args: { _school: string }; Returns: string }
       remove_member: { Args: { _member: string }; Returns: undefined }
+      restore_deleted_student: { Args: { _id: string }; Returns: Json }
       save_daily_attendance: {
         Args: {
           _class: string

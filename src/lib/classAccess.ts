@@ -53,3 +53,18 @@ export function canEditSubject(input: AccessInput & { subject: string }): boolea
   if (userId && (assignments?.[classId] ?? []).includes(userId)) return true;
   return !!userId && (input.subjectAssignments?.[classId]?.[subject] ?? []).includes(userId);
 }
+
+/**
+ * Who may delete a learner from a class (the database's can_delete_student mirrors this):
+ * - not in a school cloud → yes
+ * - headteacher → yes, every class
+ * - KG 1 – Basic 6 → only teachers assigned to that class (no "open class" exception)
+ * - Basic 7–9 → same as the class edit rule
+ */
+export function canDeleteFromClass(input: AccessInput): boolean {
+  const { inSchool, role, userId, assignments, classId } = input;
+  if (!inSchool) return true;
+  if (role === "headteacher") return true;
+  if (!isJhs(classId as ClassId)) return !!userId && (assignments?.[classId] ?? []).includes(userId);
+  return canEditClass(input);
+}

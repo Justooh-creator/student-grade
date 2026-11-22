@@ -10,6 +10,7 @@ import { SchoolAdmin } from "@/components/SchoolAdmin";
 import { LicenseCard } from "@/components/LicenseCard";
 import { useLicense } from "@/lib/license";
 import { BackupRestore } from "@/components/BackupRestore";
+import { StudentRecycleBin } from "@/components/StudentRecycleBin";
 
 export const Route = createFileRoute("/_authenticated/school-cloud")({
   head: () => ({
@@ -107,6 +108,7 @@ function SchoolCloudPage() {
             ) : (
               <p className="text-sm text-muted-foreground">Your role: <b>Teacher</b>. Ask your headteacher to manage teachers.</p>
             )}
+            {cloud.role === "headteacher" && <StudentRecycleBin mode="head" schoolId={cloud.schoolId} userId={user.id} />}
             {backupCount > 0 && (
               <div className={card}>
                 <p className="text-sm font-bold">This phone had {backupCount} learner(s) before joining.</p>

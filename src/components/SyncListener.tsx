@@ -77,7 +77,12 @@ export function SyncListener() {
         toast.warning(`${clashes} ${clashes === 1 ? "mark was" : "marks were"} changed by another teacher at the same time. Tap "Review" to choose which to keep.`, { duration: 8000 });
         window.dispatchEvent(new Event(SYNC_CONFLICTS_EVENT));
       }
-      if (results.some((r) => r.status === "rejected")) toast.error("One learner could not be saved to this school's cloud. It is still on this phone.");
+      const notAllowed = results.filter((r) => r.reason === "not-assigned").length;
+      if (notAllowed) {
+        toast.error(`${notAllowed === 1 ? "A learner was" : `${notAllowed} learners were`} not deleted: only the headteacher or the class's assigned teacher can delete learners.`, { duration: 8000 });
+        if (user) void loadSchool(user.id);
+      }
+      if (results.some((r) => r.status === "rejected" && r.reason !== "not-assigned")) toast.error("One learner could not be saved to this school's cloud. It is still on this phone.");
       if (results.some((r) => r.invalid?.length)) toast.error("Some marks were outside the allowed range and were not saved to the cloud.");
     };
 

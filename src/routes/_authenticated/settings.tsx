@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ShareAppButtons } from "@/components/ShareAppButtons";
 import { FingerprintSetting } from "@/components/FingerprintSetting";
+import { DevRecycleBin } from "@/components/StudentRecycleBin";
 import { DevUnverifiedPanel } from "@/components/DevUnverifiedPanel";
 import { Button } from "@/components/ui/button";
 import { useAppData } from "@/lib/store";
@@ -116,6 +117,7 @@ function SettingsPage() {
         </Section>
 
         <DevUnverifiedPanel />
+        <DevRecycleBin />
 
         <Section title="Help & About">
           <Button asChild variant="outline" className="mb-2 w-full"><Link to="/help">❓ Help & FAQs</Link></Button>

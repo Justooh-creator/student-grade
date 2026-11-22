@@ -10,6 +10,8 @@ import { DesignElementsPanel } from "@/components/DesignElementsPanel";
 import { updateElement, type PlacedElement } from "@/lib/certElements";
 import { useUser } from "@/lib/auth";
 import { useLicense } from "@/lib/license";
+import { ReopenPicker } from "@/components/DatePicker";
+import { format, isValid, parse } from "date-fns";
 import { useCloud } from "@/lib/cloud";
 import { getClassLevel, schoolClassIds, type ClassId } from "@/lib/ges";
 import {
@@ -50,7 +52,8 @@ function CertificatesPage() {
   const [staffName, setStaffName] = useState("");
   const [staffPos, setStaffPos] = useState("");
   const [staffDept, setStaffDept] = useState("");
-  const [date, setDate] = useState(new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }));
+  // Empty = follow the School Details vacation date (or today); a picked date overrides it.
+  const [date, setDate] = useState("");
   const [display, setDisplay] = useState<CertDisplay>(DEFAULT_DISPLAY);
   const [signers, setSigners] = useState<SignerPreset>("ct_ht");
   const [customSigners, setCustomSigners] = useState({ left: "", right: "" });
@@ -84,7 +87,7 @@ function CertificatesPage() {
       set(d.recipient, setRecipient); set(d.classId, setClassId); set(d.theme, setTheme); set(d.mode, setMode);
       set(d.studentId, setStudentId); set(d.award, setAward); set(d.custom, setCustom); set(d.heading, setHeading);
       set(d.customHeading, setCustomHeading); set(d.citation, setCitation); set(d.staffName, setStaffName);
-      set(d.staffPos, setStaffPos); set(d.staffDept, setStaffDept); set(d.date, setDate); set(d.display, setDisplay);
+      set(d.staffPos, setStaffPos); set(d.staffDept, setStaffDept); if (typeof d.date === "string" && isCertDate(d.date)) setDate(d.date); set(d.display, setDisplay);
       set(d.signers, setSigners); set(d.customSigners, setCustomSigners); set(d.signerEdits, setSignerEdits);
       set(d.medallion, setMedallion); set(d.photoMode, setPhotoMode); set(d.frame, setFrame); set(d.photo, setPhoto);
       set(d.placed, setPlaced); set(d.fonts, setFonts); set(d.textSizes, setTextSizes); set(d.paper, setPaper);
@@ -140,7 +143,9 @@ function CertificatesPage() {
   const size = paperSize(paper, orientation, customSize);
   const chosen = inClass.find((s) => s.id === studentId);
   const photoFor = (src?: string): PhotoAdjust | undefined => photo.src ? photo : src ? { src, zoom: photo.zoom, x: photo.x, y: photo.y } : undefined;
-  const base = { heading: heading === "Custom Heading" ? customHeading : heading, date, occasion, leftSigner: titles.left, rightSigner: titles.right, leftName, rightName, leftSignature, rightSignature };
+  const defaultDate = school.vacationDate && isCertDate(school.vacationDate) ? school.vacationDate : format(new Date(), "do MMMM yyyy");
+  const certDate = date || defaultDate;
+  const base = { heading: heading === "Custom Heading" ? customHeading : heading, date: certDate, occasion, leftSigner: titles.left, rightSigner: titles.right, leftName, rightName, leftSignature, rightSignature };
 
   const certs: CertData[] = staff
     ? [{ ...base, recipient: "staff", name: staffName, line1: staffPos, line2: staffDept, award: awardTitle, citation: citation || defaultStaffCitation(awardTitle), photo: photo.src ? photo : undefined }]
@@ -248,7 +253,10 @@ function CertificatesPage() {
             </select></label>}
           {(staff || mode === "single") && award === "Custom Award" && <label className="text-sm font-semibold">Award title
             <input className={input} value={custom} onChange={(e) => setCustom(e.target.value)} placeholder="e.g. Best Reader" /></label>}
-          <label className="text-sm font-semibold">Date<input className={input} value={date} onChange={(e) => setDate(e.target.value)} /></label>
+          <div className="text-sm font-semibold">Date
+            <ReopenPicker value={certDate} onChange={setDate} placeholder="Pick award date" />
+            {!date && <span className="mt-0.5 block text-[12px] font-normal text-muted-foreground">{school.vacationDate && isCertDate(school.vacationDate) ? "Using the vacation date from School Details" : "Using today's date"}</span>}
+          </div>
           <label className="text-sm font-semibold sm:col-span-2 lg:col-span-1">Citation (optional)
             <input className={input} value={citation} onChange={(e) => setCitation(e.target.value)} placeholder="Leave blank to use the standard wording" /></label>
           </>}
@@ -382,4 +390,9 @@ function TextLinesEditor({ styles, setStyles }: { styles: CertTextStyles; setSty
     </div>
     <p className="text-xs text-muted-foreground">An empty box keeps the automatic wording. "Remove" hides the line completely.</p>
   </div>;
+}
+
+/** Accepts dates written by the calendar ("14th November 2026") or plainly ("14 November 2026"). */
+function isCertDate(v: string): boolean {
+  return ["do MMMM yyyy", "d MMMM yyyy"].some((f) => isValid(parse(v.trim(), f, new Date())));
 }

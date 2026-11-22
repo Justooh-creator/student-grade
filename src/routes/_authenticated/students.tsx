@@ -8,7 +8,8 @@ import { CONDUCT_PRESETS, HEAD_REMARK_PRESETS, INTEREST_PRESETS, MAX_STUDENTS_PE
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData, type Student } from "@/lib/store";
 import { passportPhoto, extractSignature } from "@/lib/images";
-import { ClassLock } from "@/components/ClassLock";
+import { ClassLock, useCanDeleteFromClass } from "@/components/ClassLock";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { LearnerImport } from "@/components/LearnerImport";
@@ -48,6 +49,8 @@ function StudentsPage() {
   const [name, setName] = useState("");
   const [adm, setAdm] = useState("");
   const full = list.length >= MAX_STUDENTS_PER_CLASS;
+  const canDelete = useCanDeleteFromClass(classId);
+  const [toDelete, setToDelete] = useState<Student | null>(null);
   const cloud = useCloud();
   const { user } = useUser();
   const [myName, setMyName] = useState("");
@@ -154,7 +157,7 @@ function StudentsPage() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2">
                     <p className="text-sm font-bold"><span className="num text-muted-foreground">{i + 1}.</span> {s.name}</p>
-                    <Button variant="ghost" size="icon" onClick={() => removeStudent(s.id)} className="shrink-0 text-muted-foreground hover:text-destructive" aria-label={`Remove ${s.name}`}>✕</Button>
+                    <Button variant="ghost" size="icon" disabled={!canDelete} onClick={() => setToDelete(s)} className="shrink-0 text-muted-foreground hover:text-destructive" aria-label={`Delete ${s.name}`} title={canDelete ? `Delete ${s.name}` : "Only the headteacher or this class's assigned teacher can delete learners"}>✕</Button>
                     </div>
                     <div className="mt-1 grid grid-cols-3 gap-1.5 sm:flex sm:flex-wrap sm:items-center sm:gap-2">
                       <CameraButton className="inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md bg-primary px-1 text-[12px] sm:px-2 sm:text-[13px] font-bold text-primary-foreground hover:opacity-90" title="Learner passport photo" onFile={async (f) => { { updateStudent(s.id, { photo: await passportPhoto(f) }); toast.success("Photo added to report card"); } }}>📷 Snap</CameraButton>
@@ -215,6 +218,24 @@ function StudentsPage() {
           ))}
         </section>
         </ClassLock>
+        <AlertDialog open={!!toDelete} onOpenChange={(o) => { if (!o) setToDelete(null); }}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure you want to delete {toDelete?.name || "this learner"}?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This removes the learner, their marks and their terminal report card from {level.name}.
+                {cloud.schoolId ? " Your headteacher can recover them from the School Cloud recycle bin within 14 days." : " This cannot be undone on this phone."}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={() => { if (toDelete && canDelete) { removeStudent(toDelete.id); toast.success(`${toDelete.name || "Learner"} deleted`); } setToDelete(null); }}
+              >Yes, delete</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </main>
     </div>
   );

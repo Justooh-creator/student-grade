@@ -183,6 +183,13 @@
       "when": 1795221801332,
       "tag": "0025_dev_unverified_users",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1795309065820,
+      "tag": "0026_student_recycle_bin",
+      "breakpoints": true
     }
   ]
 }

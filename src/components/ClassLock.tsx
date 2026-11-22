@@ -1,12 +1,26 @@
 import type { ReactNode } from "react";
 import { useCloud } from "@/lib/cloud";
 import { useAppData } from "@/lib/store";
-import { canEditClass, canEditSubject } from "@/lib/classAccess";
+import { canDeleteFromClass, canEditClass, canEditSubject } from "@/lib/classAccess";
 
 export function useCanEditClass(classId: string) {
   const cloud = useCloud();
   const { school } = useAppData();
   return canEditClass({
+    inSchool: !!cloud.schoolId,
+    role: cloud.role,
+    userId: cloud.userId,
+    assignments: school.classAssignments,
+    subjectAssignments: school.subjectAssignments,
+    classId,
+  });
+}
+
+/** Whether the signed-in teacher may delete learners from this class. */
+export function useCanDeleteFromClass(classId: string) {
+  const cloud = useCloud();
+  const { school } = useAppData();
+  return canDeleteFromClass({
     inSchool: !!cloud.schoolId,
     role: cloud.role,
     userId: cloud.userId,

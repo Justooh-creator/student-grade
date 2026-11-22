@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canEditClass, canEditSubject } from "./classAccess";
+import { canDeleteFromClass, canEditClass, canEditSubject } from "./classAccess";
 
 const a = { b4: ["t1"], b5: ["t1", "t2"] };
 
@@ -62,5 +62,26 @@ describe("canEditSubject — Basic 7–9", () => {
   });
   it("independent teacher edits every subject", () => {
     expect(canEditSubject({ inSchool: false, userId: "x", classId: "b7", subject: "Mathematics" })).toBe(true);
+  });
+});
+
+describe("canDeleteFromClass", () => {
+  it("KG–Basic 6: assigned teacher can delete", () => {
+    expect(canDeleteFromClass({ inSchool: true, role: "teacher", userId: "t1", assignments: a, classId: "b4" })).toBe(true);
+  });
+  it("KG–Basic 6: unassigned teacher cannot delete", () => {
+    expect(canDeleteFromClass({ inSchool: true, role: "teacher", userId: "t2", assignments: a, classId: "b4" })).toBe(false);
+  });
+  it("KG–Basic 6: class with nobody assigned cannot be deleted from by a teacher", () => {
+    expect(canDeleteFromClass({ inSchool: true, role: "teacher", userId: "t2", assignments: a, classId: "kg1" })).toBe(false);
+  });
+  it("headteacher can delete in any class", () => {
+    expect(canDeleteFromClass({ inSchool: true, role: "headteacher", userId: "h", assignments: a, classId: "kg1" })).toBe(true);
+  });
+  it("independent teacher can delete", () => {
+    expect(canDeleteFromClass({ inSchool: false, classId: "b2", userId: "x" })).toBe(true);
+  });
+  it("Basic 7–9 keeps the edit rule", () => {
+    expect(canDeleteFromClass({ inSchool: true, role: "teacher", userId: "t2", assignments: a, classId: "b7" })).toBe(true);
   });
 });

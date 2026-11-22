@@ -32,7 +32,7 @@ export interface StudentChange {
 export interface SyncQueue { seq: number; students: Record<string, StudentChange> }
 export interface WireChange { id: string; classId: string; create?: boolean; delete?: boolean; ops: { p: string[]; b: Json; v: Json }[]; snapshot?: Student }
 export interface SyncConflict { p: string[]; base: Json; local: Json; cloud: Json }
-export interface SyncResult { id: string; status: "ok" | "deleted" | "missing" | "rejected"; data?: Student; conflicts?: SyncConflict[]; invalid?: { p: string[]; reason: string }[] }
+export interface SyncResult { id: string; status: "ok" | "deleted" | "missing" | "rejected"; reason?: string; data?: Student; conflicts?: SyncConflict[]; invalid?: { p: string[]; reason: string }[] }
 
 export const CAT_KEYS = ["test1", "test2", "project", "group", "examRaw"] as const;
 const CAT_SET = new Set<string>(CAT_KEYS);
