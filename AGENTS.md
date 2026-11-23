@@ -35,3 +35,8 @@
 - Certificate design elements are a static CDN catalogue (src/lib/certElements.ts) placed as transient % -positioned layers on CertificateSheet; they never touch licensing or school data.
 - Report-card spacing comes from src/lib/reportLayout.ts (roomy without fees, compact with fees) with signatures pinned to the sheet bottom, so every card fills exactly one A4 page without changing scoring or print licensing.
 - The public sign-in page carries the feature slideshow and headteacher FAQ as static components (FeatureShowcase, LandingFaq) so SSR stays data-free.
+- Licenses print until their expiry date; print_window_closed always returns false and 1-term licenses stay locked to their first printed term via record_print — a test print must never lock a school out before the term ends.
+- Developer school-license actions go only through the is_developer()-gated dev_list_schools / dev_set_school_license RPCs (term = 100 days, year = 365 days, added to remaining days), never direct client updates of schools.
+- Class teachers see only "School license active"; the expiry date shows to headteachers, individual licenses and the developer (licenseLabel showDate), so the date never circulates to staff.
+- Timetable editing follows canEditTimetable (offline, headteacher, or the class's assigned class teacher); level hours (headteacher) retime existing timetables with breaks kept fixed via retimeTimetable.
+- Official GES term dates are optional one-tap chips from src/lib/gesCalendar.ts; they never overwrite or default school dates because Ghanaian term dates vary.

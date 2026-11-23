@@ -929,6 +929,24 @@ export type Database = {
           student_name: string
         }[]
       }
+      dev_list_schools: {
+        Args: never
+        Returns: {
+          first_printed_at: string
+          id: string
+          join_code: string
+          license_expires_at: string
+          license_permanent: boolean
+          license_terms: number
+          name: string
+          print_term_key: string
+          teacher_count: number
+        }[]
+      }
+      dev_set_school_license: {
+        Args: { _action: string; _school: string }
+        Returns: undefined
+      }
       dev_unverified_users: {
         Args: never
         Returns: {

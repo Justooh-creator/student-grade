@@ -4,6 +4,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
 import { ReopenPicker } from "@/components/DatePicker";
+import { gesDateHints } from "@/lib/gesCalendar";
 import { useState } from "react";
 import { format, parse, isValid } from "date-fns";
 import { CalendarIcon } from "lucide-react";
@@ -102,6 +103,7 @@ const ACADEMIC_YEARS = Array.from({ length: 8 }, (_, i) => {
 
 function SetupPage() {
   const { school, setSchool, students, updateStudent } = useAppData();
+  const ges = gesDateHints(school.academicYear, school.term);
   const search = Route.useSearch();
 
   return (
@@ -330,12 +332,18 @@ function SetupPage() {
                 Day school reopens
               </span>
               <ReopenPicker value={school.reopeningDate} onChange={(v) => setSchool({ reopeningDate: v })} />
+              {ges.reopen && school.reopeningDate !== ges.reopen && (
+                <button type="button" onClick={() => setSchool({ reopeningDate: ges.reopen! })} className="mt-1 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-bold text-primary">GES: {ges.reopen}</button>
+              )}
             </div>
             <div className="block">
               <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
                 Date school vacates
               </span>
               <ReopenPicker placeholder="Pick vacation date" value={school.vacationDate ?? ""} onChange={(v) => setSchool({ vacationDate: v })} />
+              {ges.vacate && school.vacationDate !== ges.vacate && (
+                <button type="button" onClick={() => setSchool({ vacationDate: ges.vacate! })} className="mt-1 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-bold text-primary">GES: {ges.vacate}</button>
+              )}
             </div>
             <Field
               label="Total attendance days"

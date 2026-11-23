@@ -4,10 +4,14 @@ import { licenseLabel, redeemCode, type LicenseState } from "@/lib/license";
 import { PAYSTACK_PLANS, PAYSTACK_TEST_PLAN, payWithPaystack } from "@/lib/paystack";
 import { verifyPaystackPayment } from "@/lib/paystack.functions";
 import { useUser } from "@/lib/auth";
+import { useCloud } from "@/lib/cloud";
 
 /** License status + payment + gift/activation code entry. Shown on the School Cloud page. */
 export function LicenseCard({ lic, onActivated }: { lic: LicenseState; onActivated: (l: LicenseState) => void }) {
   const { user } = useUser();
+  const cloud = useCloud();
+  // Only the headteacher (or a teacher's own individual license) shows the expiry date.
+  const showDate = lic.source !== "school" || cloud.role === "headteacher";
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [planId, setPlanId] = useState(PAYSTACK_PLANS[0]!.id);
@@ -83,7 +87,7 @@ export function LicenseCard({ lic, onActivated }: { lic: LicenseState; onActivat
     <div className="rounded-lg border border-border bg-card p-5">
       <p className="font-bold">License &amp; activation</p>
       <p className="mt-1 text-sm">
-        Status: <b className={lic.canPrint ? "text-primary" : "text-destructive"}>{licenseLabel(lic)}</b>
+        Status: <b className={lic.canPrint ? "text-primary" : "text-destructive"}>{licenseLabel(lic, showDate)}</b>
       </p>
       <p className="mt-1 text-sm text-muted-foreground">
         Entering learners, marks and previewing report cards is always free. Save/Print PDF needs an active license.

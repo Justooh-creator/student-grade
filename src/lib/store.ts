@@ -72,7 +72,7 @@ export const DEFAULT_SCHOOL: School = {
   address: "",
   contactPhone: "",
   term: "Term 1",
-  academicYear: "2025/2026",
+  academicYear: "2026/2027",
   reopeningDate: "",
   classTeacher: "",
   headTeacher: "",

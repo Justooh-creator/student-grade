@@ -5,6 +5,7 @@ import { ShareAppButtons } from "@/components/ShareAppButtons";
 import { FingerprintSetting } from "@/components/FingerprintSetting";
 import { DevRecycleBin } from "@/components/StudentRecycleBin";
 import { DevUnverifiedPanel } from "@/components/DevUnverifiedPanel";
+import { DevSchoolLicensePanel } from "@/components/DevSchoolLicensePanel";
 import { Button } from "@/components/ui/button";
 import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
@@ -116,6 +117,7 @@ function SettingsPage() {
           <ShareAppButtons />
         </Section>
 
+        <DevSchoolLicensePanel />
         <DevUnverifiedPanel />
         <DevRecycleBin />
 

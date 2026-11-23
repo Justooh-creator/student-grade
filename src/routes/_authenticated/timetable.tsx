@@ -5,7 +5,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { useAppData } from "@/lib/store";
 import { useCloud } from "@/lib/cloud";
 import { CLASS_LEVELS, getClassLevel, schoolClassIds, type ClassId } from "@/lib/ges";
-import { TT_DAYS, defaultTimetable, fmt12, getTimetable, type Timetable } from "@/lib/timetable";
+import { LEVEL_HOURS, LEVEL_NAMES, TT_DAYS, canEditTimetable, defaultTimetable, fmt12, getTimetable, levelOf, retimeTimetable, type Timetable, type TimetableLevel } from "@/lib/timetable";
 
 export const Route = createFileRoute("/_authenticated/timetable")({
   head: () => ({
@@ -31,7 +31,12 @@ function TimetablePage() {
   const [day, setDay] = useState<string>("Monday");
   const [edit, setEdit] = useState(false);
   const [tt, setTt] = useState<Timetable>(() => defaultTimetable("b7"));
-  const canEdit = !cloud.schoolId || cloud.role === "headteacher";
+  const isHead = !cloud.schoolId || cloud.role === "headteacher";
+  const canEdit = canEditTimetable({ inSchool: !!cloud.schoolId, role: cloud.role, userId: cloud.userId, assignments: school.classAssignments, classId });
+  const [hoursOpen, setHoursOpen] = useState(false);
+  const [level, setLevel] = useState<TimetableLevel>("primary");
+  const [openT, setOpenT] = useState(LEVEL_HOURS.primary.open);
+  const [closeT, setCloseT] = useState(LEVEL_HOURS.primary.close);
   const classList = schoolClassIds(school);
   if (!classList.includes(classId)) {
     const fallback = classList.find((c) => c.startsWith("b7")) ?? classList[0]!;
@@ -64,6 +69,21 @@ function TimetablePage() {
     periods: t.periods.filter((_, j) => j !== i),
     cells: Object.fromEntries(TT_DAYS.map((d) => [d, (t.cells[d] ?? []).filter((_, j) => j !== i)])),
   }));
+  const pickLevel = (l: TimetableLevel) => { setLevel(l); setOpenT(LEVEL_HOURS[l].open); setCloseT(LEVEL_HOURS[l].close); };
+  const applyHours = () => {
+    const ids = classList.filter((c) => levelOf(c) === level);
+    if (ids.length === 0) { toast.error(`No ${LEVEL_NAMES[level]} classes in this school`); return; }
+    const next: Record<string, Timetable> = {};
+    for (const c of ids) {
+      const r = retimeTimetable(getTimetable(school, c), openT, closeT);
+      if (!r) { toast.error("Closing time must be later than opening time, with room for lessons after the breaks."); return; }
+      next[c] = r;
+    }
+    if (!window.confirm(`Set ${ids.length} ${LEVEL_NAMES[level]} class${ids.length === 1 ? "" : "es"} to ${fmt12(openT)} – ${fmt12(closeT)}? Subjects stay the same.`)) return;
+    setSchool({ timetables: { ...(school.timetables ?? {}), ...next } });
+    setHoursOpen(false);
+    toast.success(`${LEVEL_NAMES[level]} hours updated`);
+  };
   const reset = () => { setTt(defaultTimetable(classId)); toast("GES default loaded — tap Save to keep it"); };
   const askNotify = async () => {
     if (typeof Notification === "undefined") { toast("Reminders will show inside the app"); return; }
@@ -100,6 +120,7 @@ function TimetablePage() {
           </div>
           <button onClick={() => window.print()} className="rounded-md border border-border bg-card px-3 py-2 font-bold">🖨 Print</button>
           {canEdit && !edit && <button onClick={() => setEdit(true)} className="rounded-md border border-border bg-card px-3 py-2 font-bold">✏️ Edit</button>}
+          {isHead && !edit && <button onClick={() => { if (!hoursOpen) pickLevel(levelOf(classId)); setHoursOpen((o) => !o); }} className="rounded-md border border-border bg-card px-3 py-2 font-bold">⏰ Level hours</button>}
           {edit && <>
             <button onClick={save} className="rounded-md bg-primary px-3 py-2 font-bold text-primary-foreground">Save</button>
             <button onClick={() => addSlot(false)} className="rounded-md border border-border bg-card px-3 py-2 font-bold">+ Add period</button>
@@ -108,6 +129,25 @@ function TimetablePage() {
             <button onClick={() => { setTt(getTimetable(school, classId)); setEdit(false); }} className="px-3 py-2 font-bold">Cancel</button>
           </>}
         </div>
+        {!canEdit && (
+          <p className="no-print rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">View only — the class teacher assigned in School Cloud or the headteacher can change this timetable.</p>
+        )}
+        {hoursOpen && isHead && (
+          <section className="no-print space-y-3 rounded-lg border border-border bg-card p-4">
+            <p className="font-bold">⏰ School hours by level</p>
+            <div className="flex overflow-hidden rounded-md border border-border">
+              {(["kg", "primary", "jhs"] as const).map((l) => (
+                <button key={l} onClick={() => pickLevel(l)} className={`flex-1 px-2 py-2 text-sm font-bold ${level === l ? "bg-primary text-primary-foreground" : "bg-card"}`}>{LEVEL_NAMES[l]}</button>
+              ))}
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <label className="text-sm font-bold">Opening time<input type="time" className={`${inp} mt-1 h-10`} value={openT} onChange={(e) => setOpenT(e.target.value)} /></label>
+              <label className="text-sm font-bold">Closing time<input type="time" className={`${inp} mt-1 h-10`} value={closeT} onChange={(e) => setCloseT(e.target.value)} /></label>
+            </div>
+            <p className="text-xs text-muted-foreground">Usual hours: KG 8:00 AM – 1:00 PM · Primary 7:30 AM – 1:30 PM · JHS 7:30 AM – 3:00 PM. Breaks keep their length; lessons adjust to fit. Class teachers can still fine-tune their own class.</p>
+            <button onClick={applyHours} className="w-full rounded-md bg-primary px-3 py-2 font-bold text-primary-foreground">Apply to all {LEVEL_NAMES[level]} classes</button>
+          </section>
+        )}
         {getClassLevel(classId).stage === "Junior High" && (
           <p className="no-print rounded-md bg-accent px-3 py-2 text-sm text-accent-foreground">
             Subject teachers assigned in School Cloud get a reminder 10 minutes before their lesson.{" "}

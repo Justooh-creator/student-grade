@@ -11,6 +11,7 @@ const BREAKS = ["Assembly / Worship", "Snack Break", "Lunch Break", "Closing / D
 const isBreakLabel = (s: string) => BREAKS.includes(s);
 
 function slots(kind: "kg" | "primary" | "jhs"): Period[] {
+  // KG closes at 1:00 PM
   const kg: Period[] = [
     { start: "08:00", end: "08:30", label: "Assembly / Worship", isBreak: true },
     { start: "08:30", end: "09:10", label: "P1" },
@@ -18,11 +19,24 @@ function slots(kind: "kg" | "primary" | "jhs"): Period[] {
     { start: "09:50", end: "10:20", label: "Snack Break", isBreak: true },
     { start: "10:20", end: "11:00", label: "P3" },
     { start: "11:00", end: "11:40", label: "P4" },
-    { start: "11:40", end: "12:30", label: "Lunch Break", isBreak: true },
-    { start: "12:30", end: "13:10", label: "P5" },
+    { start: "11:40", end: "12:10", label: "Lunch Break", isBreak: true },
+    { start: "12:10", end: "12:40", label: "P5" },
+    { start: "12:40", end: "13:00", label: "Closing / Dismissal", isBreak: true },
+  ];
+  // Primary closes at 1:30 PM
+  const primary: Period[] = [
+    { start: "07:30", end: "08:00", label: "Assembly / Worship", isBreak: true },
+    { start: "08:00", end: "08:50", label: "P1" },
+    { start: "08:50", end: "09:40", label: "P2" },
+    { start: "09:40", end: "10:10", label: "Snack Break", isBreak: true },
+    { start: "10:10", end: "11:00", label: "P3" },
+    { start: "11:00", end: "11:50", label: "P4" },
+    { start: "11:50", end: "12:20", label: "Lunch Break", isBreak: true },
+    { start: "12:20", end: "13:10", label: "P5" },
     { start: "13:10", end: "13:30", label: "Closing / Dismissal", isBreak: true },
   ];
-  const std: Period[] = [
+  // JHS closes at 3:00 PM
+  const jhs: Period[] = [
     { start: "07:30", end: "08:00", label: "Assembly / Worship", isBreak: true },
     { start: "08:00", end: "09:00", label: "P1" },
     { start: "09:00", end: "10:00", label: "P2" },
@@ -31,15 +45,68 @@ function slots(kind: "kg" | "primary" | "jhs"): Period[] {
     { start: "11:30", end: "12:30", label: "P4" },
     { start: "12:30", end: "13:10", label: "Lunch Break", isBreak: true },
     { start: "13:10", end: "14:10", label: "P5" },
-    { start: "14:10", end: "15:00", label: kind === "jhs" ? "P6" : "Closing / Dismissal", isBreak: kind !== "jhs" },
+    { start: "14:10", end: "15:00", label: "P6" },
   ];
-  return kind === "kg" ? kg : std;
+  return kind === "kg" ? kg : kind === "jhs" ? jhs : primary;
+}
+
+export type TimetableLevel = "kg" | "primary" | "jhs";
+export const levelOf = (classId: ClassId): TimetableLevel => (isKg(classId) ? "kg" : isJhs(classId) ? "jhs" : "primary");
+export const LEVEL_NAMES: Record<TimetableLevel, string> = { kg: "Kindergarten", primary: "Primary", jhs: "Junior High" };
+/** Standard opening and closing time per level (schools can change them). */
+export const LEVEL_HOURS: Record<TimetableLevel, { open: string; close: string }> = {
+  kg: { open: "08:00", close: "13:00" },
+  primary: { open: "07:30", close: "13:30" },
+  jhs: { open: "07:30", close: "15:00" },
+};
+
+const hhmm = (m: number) => `${String(Math.floor(m / 60) % 24).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+
+/**
+ * Move a timetable to new opening/closing times. Breaks keep their length;
+ * lessons stretch or shrink to fill the day; times round to 5 minutes.
+ * Returns null when the times are invalid or too short for the breaks.
+ */
+export function retimeTimetable(tt: Timetable, open: string, close: string): Timetable | null {
+  const ps = tt.periods;
+  const first = ps[0];
+  const last = ps[ps.length - 1];
+  if (!first || !last || !/^\d{2}:\d{2}$/.test(open) || !/^\d{2}:\d{2}$/.test(close)) return null;
+  const o = toMin(open), c = toMin(close);
+  if (c <= o) return null;
+  let fixed = 0, lessons = 0;
+  ps.forEach((p, i) => {
+    const d = Math.max(0, toMin(p.end) - toMin(p.start));
+    const gap = i === 0 ? 0 : Math.max(0, toMin(p.start) - toMin(ps[i - 1]!.end));
+    fixed += gap;
+    if (p.isBreak) fixed += d; else lessons += d;
+  });
+  const room = c - o - fixed;
+  if (lessons === 0 || room < 5) return null;
+  const factor = room / lessons;
+  const r5 = (m: number) => Math.round(m / 5) * 5;
+  let cur = o;
+  const periods = ps.map((p, i) => {
+    const d = Math.max(0, toMin(p.end) - toMin(p.start));
+    const gap = i === 0 ? 0 : Math.max(0, toMin(p.start) - toMin(ps[i - 1]!.end));
+    const s0 = cur + gap;
+    cur = s0 + (p.isBreak ? d : d * factor);
+    const end = i === ps.length - 1 ? c : r5(cur);
+    return { ...p, start: hhmm(r5(s0)), end: hhmm(end) };
+  });
+  return { periods, cells: tt.cells };
+}
+
+/** Who may edit a class timetable: offline users, the headteacher, or a teacher assigned to that class. */
+export function canEditTimetable(input: { inSchool: boolean; role?: string | undefined; userId?: string | undefined; assignments?: Record<string, string[]> | undefined; classId: string }): boolean {
+  if (!input.inSchool) return true;
+  if (input.role === "headteacher") return true;
+  return !!input.userId && (input.assignments?.[input.classId] ?? []).includes(input.userId);
 }
 
 /** Default GES/NaCCA-style weekly timetable for a class (school can edit). */
 export function defaultTimetable(classId: ClassId): Timetable {
-  const kind = isKg(classId) ? "kg" : isJhs(classId) ? "jhs" : "primary";
-  const periods = slots(kind);
+  const periods = slots(levelOf(classId));
   const subs = getClassLevel(classId).subjects;
   const core = subs.slice(0, 2); // English & Maths come daily
   const others = subs.slice(2);

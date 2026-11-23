@@ -48,7 +48,7 @@ export async function redeemCode(code: string): Promise<LicenseState> {
   };
 }
 
-/** Record the first save/print of this term (starts the 15-day window; reprints never reset it).
+/** Record the first save/print of this term (a 1-term license locks to that term; reprints never reset it).
  * When classId is given, an individual license locks to the first class printed. */
 export async function recordPrint(termKey: string, classId?: string): Promise<{ blocked: boolean; lockedTerm?: string | undefined; classBlocked?: boolean; lockedClass?: string | undefined }> {
   const { data, error } = classId
@@ -65,10 +65,11 @@ export async function recordPrint(termKey: string, classId?: string): Promise<{ 
 }
 
 
-export function licenseLabel(lic: LicenseState): string {
+/** showDate=false hides the expiry date (class teachers see only that the school license is active). */
+export function licenseLabel(lic: LicenseState, showDate = true): string {
   if (lic.source === "developer") return "Developer access — permanent";
   if (lic.status === "active") {
-    const until = lic.expiresAt ? ` until ${new Date(lic.expiresAt).toLocaleDateString()}` : "";
+    const until = showDate && lic.expiresAt ? ` until ${new Date(lic.expiresAt).toLocaleDateString("en-GB")}` : "";
     return lic.source === "school" ? `School license active${until}` : `Your license active${until}`;
   }
   if (lic.status === "expired") return "License expired — printing is locked";
