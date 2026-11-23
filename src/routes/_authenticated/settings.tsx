@@ -117,10 +117,6 @@ function SettingsPage() {
           <ShareAppButtons />
         </Section>
 
-        <DevSchoolLicensePanel />
-        <DevUnverifiedPanel />
-        <DevRecycleBin />
-
         <Section title="Help & About">
           <Button asChild variant="outline" className="mb-2 w-full"><Link to="/help">❓ Help & FAQs</Link></Button>
           <p className="text-sm">🇬🇭 EduReport Ghana — A Product of <strong>JA EduTech Solutions</strong></p>
@@ -129,6 +125,10 @@ function SettingsPage() {
             <a href="mailto:support@edureportghana.com" className="font-bold text-primary underline">support@edureportghana.com</a>
           </p>
         </Section>
+
+        <DevUnverifiedPanel />
+        <DevRecycleBin />
+        <DevSchoolLicensePanel />
       </main>
     </div>
   );
