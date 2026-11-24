@@ -40,3 +40,5 @@
 - Class teachers see only "School license active"; the expiry date shows to headteachers, individual licenses and the developer (licenseLabel showDate), so the date never circulates to staff.
 - Timetable editing follows canEditTimetable (offline, headteacher, or the class's assigned class teacher); level hours (headteacher) retime existing timetables with breaks kept fixed via retimeTimetable.
 - Official GES term dates are optional one-tap chips from src/lib/gesCalendar.ts; they never overwrite or default school dates because Ghanaian term dates vary.
+- The register photo scanner calls Google Gemini directly with the project GEMINI_API (or GEMINI_API_KEY) secret, falling back across flash models on 404/5xx, so scanning does not consume workspace AI credits; errors name the real cause (quota, key, busy) instead of blaming photo clarity.
+- dev_list_schools lists only schools with at least one member so abandoned draft schools stay out of the developer license dropdown.

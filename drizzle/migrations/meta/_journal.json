@@ -197,6 +197,13 @@
       "when": 1795398399012,
       "tag": "0027_dev_school_license_manager",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1795481521664,
+      "tag": "0028_dev_list_schools_with_teachers",
+      "breakpoints": true
     }
   ]
 }

@@ -96,7 +96,7 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
       </div>
       <div className={card}>
         <p className="font-bold">Who can edit each class</p>
-        <p className="mt-1 text-sm text-muted-foreground">Tick the teachers allowed to enter marks. Other teachers can only view. A class with nobody ticked stays open to all. Headteachers can edit every class and may also tick themselves when covering a class or subject. Basic 7–9 are assigned by subject — each subject teacher enters marks for their own subject only.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Choose the teacher allowed to enter marks for each class. Other teachers can only view. A class left on “Open to all teachers” can be edited by everyone. Headteachers can edit every class and may also pick themselves when covering a class or subject. Add a second teacher from the same list when two teachers share a class. Basic 7–9 are assigned by subject — each subject teacher enters marks for their own subject only.</p>
         <div className="mt-3 space-y-3">
           {visibleClassIds.map(getClassLevel).map((c) => {
             const list = school.classAssignments?.[c.id] ?? [];
@@ -112,34 +112,18 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
                     {c.subjects.map((sub) => {
                       const subList = subMap[sub] ?? [];
                       return (
-                        <div key={sub} className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                          <span className="w-40 shrink-0 text-xs font-bold">{sub}</span>
-                          {teachers.map((m) => (
-                            <label key={m.user_id} className="flex items-center gap-1.5 text-sm">
-                              <input type="checkbox" checked={subList.includes(m.user_id)}
-                                onChange={(e) => {
-                                  const next = e.target.checked ? [...subList, m.user_id] : subList.filter((x) => x !== m.user_id);
-                                  setSchool({ subjectAssignments: { ...(school.subjectAssignments ?? {}), [c.id]: { ...subMap, [sub]: next } } });
-                                }} />
-                              {m.name}{m.role === "headteacher" && <span className="text-xs font-bold text-primary"> (Headteacher)</span>}
-                            </label>
-                          ))}
+                        <div key={sub} className="grid grid-cols-[minmax(0,1fr)] gap-1 sm:grid-cols-[10rem_minmax(0,1fr)] sm:items-start sm:gap-3">
+                          <span className="min-w-0 pt-2 text-xs font-bold">{sub}</span>
+                          <AssignPicker list={subList} teachers={teachers}
+                            onChange={(next) => setSchool({ subjectAssignments: { ...(school.subjectAssignments ?? {}), [c.id]: { ...subMap, [sub]: next } } })} />
                         </div>
                       );
                     })}
                   </div>
                 ) : (
-                  <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
-                    {teachers.map((m) => (
-                      <label key={m.user_id} className="flex items-center gap-1.5 text-sm">
-                        <input type="checkbox" checked={list.includes(m.user_id)}
-                          onChange={(e) => {
-                            const next = e.target.checked ? [...list, m.user_id] : list.filter((x) => x !== m.user_id);
-                            setSchool({ classAssignments: { ...(school.classAssignments ?? {}), [c.id]: next } });
-                          }} />
-                        {m.name}{m.role === "headteacher" && <span className="text-xs font-bold text-primary"> (Headteacher)</span>}
-                      </label>
-                    ))}
+                  <div className="mt-2">
+                    <AssignPicker list={list} teachers={teachers}
+                      onChange={(next) => setSchool({ classAssignments: { ...(school.classAssignments ?? {}), [c.id]: next } })} />
                   </div>
                 )}
               </div>
@@ -184,5 +168,52 @@ export function SchoolAdmin({ schoolId, schoolName, joinCode, userId }: { school
         </ul>
       </div>
     </>
+  );
+}
+
+type AssignTeacher = { user_id: string; name: string; role: string };
+
+/** Drop-down picker for who may edit a class or subject. Empty list = open to all teachers. */
+function AssignPicker({ list, teachers, onChange }: { list: string[]; teachers: AssignTeacher[]; onChange: (next: string[]) => void }) {
+  const label = (m: AssignTeacher) => `${m.name}${m.role === "headteacher" ? " (Headteacher)" : ""}`;
+  const assigned = list.map((id) => teachers.find((t) => t.user_id === id) ?? { user_id: id, name: "Former teacher", role: "teacher" });
+  const rest = teachers.filter((t) => !list.includes(t.user_id));
+  return (
+    <div className="min-w-0 space-y-1.5">
+      {list.length === 0 ? (
+        <select value="" onChange={(e) => e.target.value && onChange([e.target.value])}
+          className="h-9 w-full min-w-0 rounded-md border border-border bg-card px-2 text-sm">
+          <option value="">Open to all teachers</option>
+          {teachers.map((m) => <option key={m.user_id} value={m.user_id}>{label(m)}</option>)}
+        </select>
+      ) : (
+        <>
+          {assigned.map((m, i) => (
+            <div key={m.user_id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+              <select value={m.user_id}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (!v) onChange(list.filter((x) => x !== m.user_id));
+                  else onChange(list.map((x, j) => (j === i ? v : x)).filter((x, j, arr) => arr.indexOf(x) === j));
+                }}
+                className="h-9 w-full min-w-0 rounded-md border border-primary/40 bg-card px-2 text-sm font-semibold">
+                <option value={m.user_id}>{label(m)}</option>
+                {rest.map((t) => <option key={t.user_id} value={t.user_id}>{label(t)}</option>)}
+                <option value="">— Remove (open to all) —</option>
+              </select>
+              <button type="button" aria-label={`Remove ${m.name}`} onClick={() => onChange(list.filter((x) => x !== m.user_id))}
+                className="h-9 shrink-0 rounded-md border border-input px-2.5 text-sm font-bold text-muted-foreground hover:text-destructive">×</button>
+            </div>
+          ))}
+          {rest.length > 0 && (
+            <select value="" onChange={(e) => e.target.value && onChange([...list, e.target.value])}
+              className="h-8 w-full min-w-0 rounded-md border border-dashed border-border bg-transparent px-2 text-xs text-muted-foreground">
+              <option value="">+ Add another teacher…</option>
+              {rest.map((t) => <option key={t.user_id} value={t.user_id}>{label(t)}</option>)}
+            </select>
+          )}
+        </>
+      )}
+    </div>
   );
 }

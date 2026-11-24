@@ -10,27 +10,26 @@ If there is no sex column but boys are listed first and girls follow after a gap
 "Male" and those below it "Female". Ignore headings, dates, ticks, totals and teacher names.
 If a name is hard to read, give your best guess. Return an empty list if no register is visible.`;
 
+// Gemini structured-output schema (OpenAPI subset).
 const schema = {
-  type: "object",
-  additionalProperties: false,
+  type: "OBJECT",
   required: ["learners"],
   properties: {
     learners: {
-      type: "array",
+      type: "ARRAY",
       items: {
-        type: "object",
-        additionalProperties: false,
+        type: "OBJECT",
         required: ["name", "admissionNo", "gender", "dob"],
         properties: {
-          name: { type: "string" },
-          admissionNo: { type: "string" },
-          gender: { type: "string", enum: ["Male", "Female", ""] },
-          dob: { type: "string" },
+          name: { type: "STRING" },
+          admissionNo: { type: "STRING" },
+          gender: { type: "STRING", description: '"Male", "Female" or "" when not shown' },
+          dob: { type: "STRING" },
         },
       },
     },
   },
-} as const;
+};
 
 type Learner = { name: string; admissionNo: string; gender: string; dob: string };
 
@@ -42,35 +41,54 @@ export const scanRegisterPhoto = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data }) => {
-    const apiKey = process.env['LOVABLE_API_KEY'];
-    if (!apiKey) throw new Error("Register reading is not set up yet.");
-    const { createOpenAI } = await import("@ai-sdk/openai");
-    const { streamText, Output, jsonSchema } = await import("ai");
-    const provider = createOpenAI({
-      baseURL: "https://ai.gateway.lovable.dev/v1",
-      apiKey,
-      headers: { "Lovable-API-Key": apiKey, "X-Lovable-AIG-SDK": "vercel-ai-sdk" },
+    const apiKey = process.env["GEMINI_API"] || process.env["GEMINI_API_KEY"];
+    if (!apiKey) throw new Error("Photo scanner is not set up yet. Use the Excel/CSV upload for now.");
+    const m = /^data:(image\/(?:jpeg|png|webp));base64,(.*)$/s.exec(data.image);
+    if (!m) throw new Error("Please choose a photo.");
+    const body = JSON.stringify({
+      contents: [{ role: "user", parts: [{ text: PROMPT }, { inline_data: { mime_type: m[1], data: m[2] } }] }],
+      generationConfig: { temperature: 0, responseMimeType: "application/json", responseSchema: schema },
     });
-    try {
-      const result = streamText({
-        model: provider.responses("openai/gpt-6-astra"),
-        messages: [{ role: "user", content: [
-          { type: "text", text: PROMPT },
-          { type: "image", image: data.image },
-        ] }],
-        output: Output.object({ schema: jsonSchema<{ learners: Learner[] }>(schema as never) }),
-        providerOptions: { openai: { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] } },
-      });
-      const out = await result.output;
-      return { learners: (out?.learners ?? []).map((l) => {
-        const dob = parseDob(l.dob ?? "");
-        return { name: l.name.trim().replace(/\s+/g, " "), admissionNo: l.admissionNo.trim(), gender: l.gender, ...(dob ? { dob } : {}) };
-      }).filter((l) => l.name) };
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "";
-      if (/402|credit/i.test(msg)) throw new Error("Register reading is paused right now. Please try again later.");
-      if (/429/.test(msg)) throw new Error("Too many photos at once. Wait a minute and try again.");
-      console.error("scanRegisterPhoto", e);
+    // Newest first; fall through to the next model when one is busy or retired.
+    const models = ["gemini-3.8-flash", "gemini-3.5-flash", "gemini-flash-latest"];
+    let res: Response | null = null;
+    for (const model of models) {
+      try {
+        res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+          body,
+        });
+      } catch (e) {
+        console.error("scanRegisterPhoto network", model, e);
+        res = null;
+        continue;
+      }
+      if (res.ok || ![404, 500, 503].includes(res.status)) break;
+      console.warn("scanRegisterPhoto model unavailable", model, res.status);
+    }
+    if (!res) throw new Error("Could not reach the photo scanner. Check your internet connection and try again.");
+    if (!res.ok) {
+      const errBody = await res.text().catch(() => "");
+      console.error("scanRegisterPhoto gemini", res.status, errBody.slice(0, 500));
+      if (res.status === 429) throw new Error("Photo scanner has reached today's free limit. Try again later or use the Excel/CSV upload.");
+      if (res.status === 400 && /api key/i.test(errBody)) throw new Error("Photo scanner key was not accepted. Use the Excel/CSV upload for now.");
+      if (res.status === 401 || res.status === 403) throw new Error("Photo scanner key was not accepted. Use the Excel/CSV upload for now.");
+      if (res.status >= 500) throw new Error("Photo scanner is busy right now. Wait a minute and try again.");
+      throw new Error("Photo scanner could not process this picture. Try again or use the Excel/CSV upload.");
+    }
+    const json = (await res.json().catch(() => null)) as { candidates?: { content?: { parts?: { text?: string }[] }; finishReason?: string }[] } | null;
+    const text = json?.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
+    let out: { learners?: Learner[] } | null = null;
+    try { out = text ? JSON.parse(text) : null; } catch { out = null; }
+    if (!out) {
+      console.error("scanRegisterPhoto parse", json?.candidates?.[0]?.finishReason, text.slice(0, 300));
       throw new Error("Could not read this photo. Try a clearer, well-lit picture.");
     }
+    return { learners: (out.learners ?? []).map((l) => {
+      const dob = parseDob(String(l.dob ?? ""));
+      const g = String(l.gender ?? "").trim().toLowerCase();
+      const gender = g.startsWith("m") || g === "boy" ? "Male" : g.startsWith("f") || g === "girl" ? "Female" : "";
+      return { name: String(l.name ?? "").trim().replace(/\s+/g, " "), admissionNo: String(l.admissionNo ?? "").trim(), gender, ...(dob ? { dob } : {}) };
+    }).filter((l) => l.name) };
   });
