@@ -23,6 +23,24 @@ function printReports() {
   });
 }
 
+/** Same license check as printing, for data exports (Excel); never records a print or locks a term. */
+export function LicensedExportButton({ label, onExport }: { label: string; onExport: () => Promise<void> }) {
+  const { user, ready } = useUser();
+  const lic = useLicense(user?.id);
+  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+  if (ready && !lic.loading && !lic.canPrint) {
+    return <button onClick={() => navigate({ to: "/school-cloud" })} title="Exporting needs an active license. Tap to activate." className="h-10 cursor-not-allowed rounded-md border border-border bg-muted px-5 text-sm font-semibold text-muted-foreground">🔒 Excel export locked - Activate licence</button>;
+  }
+  const run = async () => {
+    setBusy(true);
+    try { await onExport(); toast.success("Excel broadsheet downloaded."); }
+    catch { toast.error("Could not create the Excel file. Please try again."); }
+    finally { setBusy(false); }
+  };
+  return <button onClick={run} disabled={busy} className="h-10 rounded-md border border-primary bg-background px-5 text-sm font-semibold text-primary hover:bg-primary/10 disabled:opacity-60">{busy ? "Preparing Excel…" : label}</button>;
+}
+
 export function PrintButton({ label = "Print / Save whole class as PDF (A4)", classId, reportCards = false }: { label?: string; classId?: string; reportCards?: boolean }) {
   const { user, ready } = useUser();
   const lic = useLicense(user?.id);

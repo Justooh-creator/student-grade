@@ -231,6 +231,7 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
 .broadsheet-table tbody th { background: transparent; }
 .broadsheet-table tbody .learner-name { color: #000; font-weight: 700; }
 .broadsheet-table .learner-name span { color: #334155; }
+.broadsheet-table .broadsheet-summary td, .broadsheet-table .broadsheet-summary th { background: var(--muted); color: #0f172a; font-weight: 600; }
 @media print {
   @page broadsheet { size: A4 landscape; margin: 8mm; }
   body:has(.broadsheet-page) main { max-width: none; padding: 0; }

@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AppHeader } from "@/components/AppHeader";
 import { ClassPicker } from "@/components/ClassPicker";
-import { PrintButton } from "@/components/PaymentGate";
+import { LicensedExportButton, PrintButton } from "@/components/PaymentGate";
 import { Button } from "@/components/ui/button";
 import { useAppData } from "@/lib/store";
 import { validateClassSearch } from "@/lib/classSearch";
 import { getClassLevel, isKg, isJhs } from "@/lib/ges";
-import { buildBroadsheet } from "@/lib/broadsheet";
+import { buildBroadsheet, subjectSummary } from "@/lib/broadsheet";
+import { downloadBroadsheetXlsx } from "@/lib/broadsheetExcel";
 import { KG_RATINGS, kgMilestones, kgProgress } from "@/lib/kgMilestones";
 
 export const Route = createFileRoute("/_authenticated/broadsheet")({
@@ -40,7 +41,7 @@ function BroadsheetPage() {
     <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={classId} />
     <main className="mx-auto max-w-7xl px-4">
       <div className="no-print"><ClassPicker value={classId} onChange={(c) => navigate({ to: "/broadsheet", search: { class: c } })} />
-        <div className="my-5 flex flex-wrap items-center justify-between gap-3"><h1 className="text-xl font-bold">{level.name} · Class Broadsheet</h1><div className="flex flex-wrap gap-2"><Button asChild variant="outline"><Link to="/class-report/$classId" params={{ classId }}>Report cards</Link></Button>{rows.length > 0 && <PrintButton classId={classId} label="Print / Save broadsheet as PDF (landscape)" />}</div></div>
+        <div className="my-5 flex flex-wrap items-center justify-between gap-3"><h1 className="text-xl font-bold">{level.name} · Class Broadsheet</h1><div className="flex flex-wrap gap-2"><Button asChild variant="outline"><Link to="/class-report/$classId" params={{ classId }}>Report cards</Link></Button>{rows.length > 0 && <><LicensedExportButton label="Export to Excel (.xlsx)" onExport={() => downloadBroadsheetXlsx(rows, classId, school)} /><PrintButton classId={classId} label="Print / Save broadsheet as PDF (landscape)" /></>}</div></div>
       </div>
       {!rows.length ? <p className="py-10 text-center text-muted-foreground">No learners in {level.name} yet.</p> : <div className="broadsheet-pages space-y-6 overflow-x-auto">{groups.map((subjects, index) => <section className="broadsheet-page bg-paper text-foreground" key={index}>
         <div className="mb-2 flex items-end justify-between gap-4"><div><h2 className="font-display text-base font-bold">{school.name || "EduReport Ghana"}</h2><p className="text-xs">{level.name} · {school.academicYear} · {school.term} · {rows.length} learners</p></div><p className="text-xs">Master Score Sheet · {index + 1} / {groups.length}</p></div>
@@ -56,6 +57,10 @@ function BroadsheetPage() {
             if (kg) return [<td key={subject}>{r?.level ?? "—"}</td>];
             return [r?.sbaRaw, r?.sba, r?.examRaw, r?.exam, r?.total, r?.grade].map((v, n) => <td key={subject + n}>{mark(v)}</td>);
           })}{!kg && <><td>{result.gradedCount ? mark(result.totalMarks) : "—"}</td><td>{result.gradedCount ? mark(result.average) : "—"}</td><td>{position ?? "—"}</td>{jhs && <td>{result.bestSix?.subjects.length === 6 ? result.bestSix.aggregate : "—"}</td>}</>}</tr>)}</tbody>
+          <tfoot className="broadsheet-summary">{(() => { const sums = subjects.map((s) => subjectSummary(rows, s)); const tail = jhs ? 4 : 3; return <>
+            <tr><th colSpan={2} className="learner-name">Highest mark · Top learner</th>{sums.map((sm) => <td key={sm.subject} colSpan={6}>{sm.highest == null ? "—" : <><b>{mark(sm.highest)}</b> — {sm.top.join(", ")}</>}</td>)}<td colSpan={tail} /></tr>
+            <tr><th colSpan={2} className="learner-name">Class average · Graded</th>{sums.map((sm) => <td key={sm.subject} colSpan={6}>{sm.average == null ? "—" : <><b>{mark(sm.average)}</b> · {sm.graded} of {rows.length} graded</>}</td>)}<td colSpan={tail} /></tr>
+          </>; })()}</tfoot>
         </table>}
         <div className="mt-3 flex justify-between text-xs"><span>Class teacher: {school.classTeachers?.[classId] || "________________"}</span><span>Headteacher: {school.headTeacher || "________________"}</span></div>
       </section>)}</div>}

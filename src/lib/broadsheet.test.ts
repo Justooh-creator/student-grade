@@ -16,4 +16,24 @@ describe("class broadsheets", () => {
     expect(r?.position).toBeNull();
     expect(r?.result.subjects.find((s) => s.subject === "Numeracy")).toMatchObject({ level: "Gold", total: null, grade: null });
   });
+});import { subjectSummary } from "./broadsheet";
+import { broadsheetRows } from "./broadsheetExcel";
+describe("subject top performers", () => {
+  const rows = buildBroadsheet([
+    base("Ama", "b4", { Mathematics: { sba: 45, exam: 45 } }),
+    base("Kofi", "b4", { Mathematics: { sba: 45, exam: 45 } }),
+    base("Esi", "b4", { Mathematics: { sba: 30, exam: 30 } }),
+    base("Yaw", "b4", {}),
+  ], "b4");
+  it("names every learner tied on the highest total and averages only graded learners", () => {
+    expect(subjectSummary(rows, "Mathematics")).toEqual({ subject: "Mathematics", highest: 90, top: ["Ama", "Kofi"], average: 80, graded: 3 });
+  });
+  it("shows no top learner when nobody is graded", () => {
+    expect(subjectSummary(rows, "Science")).toMatchObject({ highest: null, top: [], average: null, graded: 0 });
+  });
+  it("Excel sheet lists every learner and the subject summary", () => {
+    const { data } = broadsheetRows(rows, "b4", { name: "Test School", academicYear: "2026/2027", term: "Term 1" });
+    const text = data.flat().map((c) => c?.value).filter((v) => v != null);
+    expect(text).toEqual(expect.arrayContaining(["Ama", "Kofi", "Esi", "Yaw", "Subject summary · Top performers", "Ama, Kofi"]));
+  });
 });
