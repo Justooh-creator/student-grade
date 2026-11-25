@@ -63,7 +63,17 @@ function BroadsheetPage() {
           </>; })()}</tfoot>
         </table>}
         <div className="mt-3 flex justify-between text-xs"><span>Class teacher: {school.classTeachers?.[classId] || "________________"}</span><span>Headteacher: {school.headTeacher || "________________"}</span></div>
-      </section>)}</div>}
+      </section>)}{!kg && <section className="broadsheet-page bg-paper text-foreground">
+        <h2 className="font-display text-base font-bold">{school.name || "EduReport Ghana"}</h2>
+        <p className="mb-3 text-xs">{level.name} · {school.academicYear} · {school.term} · {rows.length} learners</p>
+        <h3 className="mb-3 text-sm font-bold">Subject Summary · Top Performers</h3>
+        <table className="broadsheet-table subject-performance-table">
+          <colgroup><col className="w-1/4" /><col className="w-[12%]" /><col className="w-[39%]" /><col className="w-[12%]" /><col className="w-[12%]" /></colgroup>
+          <thead><tr><th>Subject</th><th>Highest mark /100</th><th>Top learner(s)</th><th>Class average /100</th><th>Learners graded</th></tr></thead>
+          <tbody>{level.subjects.map((subject) => { const sm = subjectSummary(rows, subject); return <tr key={subject}><th className="text-left">{subject}</th><td>{mark(sm.highest)}</td><td className="font-bold">{sm.top.join(", ") || "—"}</td><td>{mark(sm.average)}</td><td>{sm.graded} / {rows.length}</td></tr>; })}</tbody>
+        </table>
+        <div className="mt-3 flex justify-between text-xs"><span>Class teacher: {school.classTeachers?.[classId] || "________________"}</span><span>Headteacher: {school.headTeacher || "________________"}</span></div>
+      </section>}</div>}
     </main>
   </div>;
 }

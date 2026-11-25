@@ -47,4 +47,7 @@
 - [x] Bundle: sign-in feature slideshow (8 slides), headteacher FAQ, © 2026 footer, dynamic A4 report spacing, vacation date on reports, District Director of Education signer presets.
 - [x] Bundle 2: 13 reordered sign-in FAQs, 9-slide animated showcase with timer bar and promotion slide, certificate sizes, KG subject order, Share App (menu, Settings, sign-in).
 - [x] Pack A: removed 9 teacherless schools, developer school list hides schools without teachers, register photo scanner on Gemini key, School Cloud "Who can edit" drop-downs.
-- [ ] Pack B: broadsheet top performer/class average rows and Excel (.xlsx) export (waiting on build credits).
+- [x] Pack B: broadsheet top performer/class average rows and Excel (.xlsx) export.
+- [ ] Batch 1: preserve signature/stamp ink, rearrange Basic 1–9 headers, dedicated broadsheet subject summary in preview/PDF.
+- [ ] Batch 2: head-only bin clearing, 15-day display countdown, collapsed developer bin/permanent clearing, targeted developer announcements.
+- [ ] Verify both batches with tests and signed-in preview/print flows.

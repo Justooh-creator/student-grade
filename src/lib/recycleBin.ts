@@ -12,6 +12,11 @@ export function daysUntilPurge(deletedAt: string, now = Date.now()): number {
   return Math.max(0, Math.ceil((new Date(deletedAt).getTime() + KEEP_DAYS * DAY - now) / DAY));
 }
 
+/** School display starts at 15; restore permission remains exactly 14 days. */
+export function headDaysLeft(deletedAt: string, now = Date.now()): number {
+  return Math.max(0, 15 - daysSince(deletedAt, now));
+}
+
 /** Whether a headteacher may still restore it themselves. */
 export function headCanRestore(deletedAt: string, now = Date.now()): boolean {
   return now - new Date(deletedAt).getTime() <= HEAD_RESTORE_DAYS * DAY;

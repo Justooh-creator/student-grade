@@ -11,6 +11,7 @@ import { useDutyRosters } from "@/lib/dutyRoster";
 import { useAppData } from "@/lib/store";
 import { fmt12, useLessonAlerts } from "@/lib/timetable";
 import { useTabSwipe } from "@/hooks/useTabSwipe";
+import { AnnouncementBanner } from "@/components/DeveloperAnnouncements";
 
 
 const tabBase = "min-w-0 flex-1 text-center leading-tight whitespace-nowrap overflow-hidden text-ellipsis border-b-2 px-0.5 py-2.5 text-[10.5px] font-semibold sm:flex-none sm:whitespace-nowrap sm:px-3 sm:text-sm";
@@ -185,6 +186,7 @@ export function AppHeader({
           {cloud.status === "synced" ? "● Cloud saved" : cloud.status === "saving" ? "○ Saving…" : cloud.status === "offline" ? "! Not saved" : cloud.status === "no-school" ? "Join school cloud" : cloud.status === "loading" ? "…" : "Offline mode"}
         </Link>
       </div>
+      <AnnouncementBanner />
       {unread.length > 0 && !pathname.startsWith("/staff-meeting") && (
         <Link to="/staff-meeting" className="mx-auto mt-2 flex max-w-5xl items-center gap-2 rounded-md bg-accent px-3 py-2 text-xs font-bold text-accent-foreground">
           📣 {unread.length} new staff meeting notice{unread.length > 1 ? "s" : ""}: {unread[0]?.title} — tap to view

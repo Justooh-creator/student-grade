@@ -3,7 +3,9 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { getClassLevel, type ClassId } from "@/lib/ges";
-import { daysUntilPurge, headCanRestore, HEAD_RESTORE_DAYS } from "@/lib/recycleBin";
+import { daysUntilPurge, headDaysLeft, headCanRestore, HEAD_RESTORE_DAYS } from "@/lib/recycleBin";
+import { ChevronDown, Trash2 } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { loadSchool } from "@/lib/cloud";
 
 type Row = {
@@ -24,17 +26,32 @@ export function StudentRecycleBin({ mode, schoolId, userId }: { mode: "head" | "
   const [rows, setRows] = useState<Row[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState(false);
+  const [open, setOpen] = useState(mode === "head");
 
   const load = useCallback(async () => {
+    if (mode === "head" && !schoolId) return;
     const res = mode === "developer"
       ? await supabase.rpc("dev_deleted_students")
-      : await supabase.rpc("list_deleted_students", { _school: schoolId! });
+      : await supabase.rpc("list_deleted_students", { _school: schoolId ?? "" });
     if (res.error) { setError(true); setRows([]); return; }
     setError(false);
     setRows((res.data as Row[]) ?? []);
   }, [mode, schoolId]);
 
-  useEffect(() => { if (mode === "developer" || schoolId) void load(); }, [load, mode, schoolId]);
+  useEffect(() => { if (open && (mode === "developer" || schoolId)) void load(); }, [load, mode, schoolId, open]);
+
+  const emptyBin = async () => {
+    const prompt = mode === "developer"
+      ? "Permanently delete all un-restored learners from every school's recycle bin? Their marks and records cannot be recovered."
+      : "Empty your school's recycle bin? The developer can still recover these learners within 30 days of deletion.";
+    if (!window.confirm(prompt)) return;
+    setBusy("empty");
+    const { error: err } = await supabase.rpc("empty_student_bin", mode === "developer" ? {} : { _school: schoolId ?? "" });
+    setBusy(null);
+    if (err) { toast.error(err.message); return; }
+    toast.success(mode === "developer" ? "Recycle bin permanently emptied." : "School bin cleared. Developer recovery copies retained.");
+    void load();
+  };
 
   const restore = async (r: Row) => {
     if (!window.confirm(`Restore ${r.student_name || "this learner"} to ${className(r.class_id)} with all their previous marks and records?`)) return;
@@ -51,9 +68,9 @@ export function StudentRecycleBin({ mode, schoolId, userId }: { mode: "head" | "
   const restored = rows?.filter((r) => r.restored_at) ?? [];
 
   const card = (r: Row) => {
-    const left = daysUntilPurge(r.deleted_at);
+    const left = mode === "developer" ? daysUntilPurge(r.deleted_at) : headDaysLeft(r.deleted_at);
     const headOk = headCanRestore(r.deleted_at);
-    const canRestore = !r.restored_at && (mode === "developer" || headOk);
+    const canRestore = !r.restored_at && (mode === "developer" ? left > 0 : headOk);
     return (
       <div key={r.id} className="rounded-md border border-border p-3 text-sm">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
@@ -73,7 +90,7 @@ export function StudentRecycleBin({ mode, schoolId, userId }: { mode: "head" | "
         {r.restored_at ? (
           <p className="mt-2 text-xs font-semibold text-primary">✅ Restored {when(r.restored_at)}{r.restored_by_name ? ` by ${r.restored_by_name}` : ""}</p>
         ) : canRestore ? (
-          <Button size="sm" className="mt-2" disabled={busy === r.id} onClick={() => restore(r)}>{busy === r.id ? "Restoring…" : "♻️ Restore learner"}</Button>
+          <Button size="sm" className="mt-2" disabled={busy !== null} onClick={() => restore(r)}>{busy === r.id ? "Restoring…" : "♻️ Restore learner"}</Button>
         ) : (
           <p className="mt-2 text-xs">
             Beyond {HEAD_RESTORE_DAYS} days — <a href={`${DEV_WHATSAPP}?text=${encodeURIComponent(`Hello, please recover ${r.student_name} (${className(r.class_id)}) deleted on ${when(r.deleted_at)}.`)}`} target="_blank" rel="noreferrer" className="font-bold text-primary underline">contact the developer to recover</a>.
@@ -84,8 +101,9 @@ export function StudentRecycleBin({ mode, schoolId, userId }: { mode: "head" | "
   };
 
   return (
-    <section className={`rounded-lg border bg-card p-4 shadow-sm ${mode === "developer" ? "border-2 border-amber-400" : "border-border"}`}>
-      <h2 className="font-display text-base font-bold text-primary">{mode === "developer" ? "🛠️ Developer: Deleted learners (all schools)" : "♻️ Student Recycle Bin"}</h2>
+    <Collapsible open={open} onOpenChange={setOpen} className="rounded-lg border border-border bg-card p-4 shadow-sm">
+      {mode === "developer" ? <CollapsibleTrigger asChild><Button variant="ghost" className="h-auto w-full justify-between whitespace-normal px-0 text-left font-bold text-primary"><span>Developer: Deleted learners (all schools)</span><ChevronDown className={`size-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} /></Button></CollapsibleTrigger> : <h2 className="font-display text-base font-bold text-primary">♻️ Student Recycle Bin</h2>}
+      <CollapsibleContent>
       <p className="mt-1 text-xs text-muted-foreground">
         {mode === "developer"
           ? "Every deletion in the last 30 days, with school, class, who deleted and when. You can restore any of them."
@@ -104,8 +122,12 @@ export function StudentRecycleBin({ mode, schoolId, userId }: { mode: "head" | "
           {restored.map(card)}
         </div>
       )}
-      <Button variant="outline" size="sm" className="mt-3" onClick={() => void load()}>🔄 Refresh</Button>
-    </section>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => void load()}>🔄 Refresh</Button>
+        <Button variant="destructive" size="sm" disabled={busy !== null || !waiting.length} onClick={() => void emptyBin()}><Trash2 className="size-4" />{busy === "empty" ? "Emptying…" : "Empty Bin"}</Button>
+      </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
 

@@ -6,6 +6,7 @@ import { FingerprintSetting } from "@/components/FingerprintSetting";
 import { DevRecycleBin } from "@/components/StudentRecycleBin";
 import { DevUnverifiedPanel } from "@/components/DevUnverifiedPanel";
 import { DevSchoolLicensePanel } from "@/components/DevSchoolLicensePanel";
+import { DevAnnouncementPanel } from "@/components/DeveloperAnnouncements";
 import { Button } from "@/components/ui/button";
 import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
@@ -128,6 +129,7 @@ function SettingsPage() {
 
         <DevUnverifiedPanel />
         <DevRecycleBin />
+        <DevAnnouncementPanel />
         <DevSchoolLicensePanel />
       </main>
     </div>

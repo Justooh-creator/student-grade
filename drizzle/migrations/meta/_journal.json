@@ -204,6 +204,13 @@
       "when": 1795481521664,
       "tag": "0028_dev_list_schools_with_teachers",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1795573076250,
+      "tag": "0029_recycle_bin_views_and_announcements",
+      "breakpoints": true
     }
   ]
 }

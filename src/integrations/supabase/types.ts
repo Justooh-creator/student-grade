@@ -14,6 +14,32 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcement_dismissals: {
+        Row: {
+          announcement_id: string
+          revision: number
+          user_id: string
+        }
+        Insert: {
+          announcement_id: string
+          revision: number
+          user_id?: string
+        }
+        Update: {
+          announcement_id?: string
+          revision?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_dismissals_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "developer_announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_feedback: {
         Row: {
           category: string
@@ -145,6 +171,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      developer_announcements: {
+        Row: {
+          active: boolean
+          audience: string
+          body: string
+          created_at: string
+          created_by: string
+          id: string
+          kind: string
+          revision: number
+          title: string
+          updated_at: string
+          whatsapp_phone: string
+        }
+        Insert: {
+          active?: boolean
+          audience?: string
+          body: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          kind?: string
+          revision?: number
+          title: string
+          updated_at?: string
+          whatsapp_phone?: string
+        }
+        Update: {
+          active?: boolean
+          audience?: string
+          body?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          kind?: string
+          revision?: number
+          title?: string
+          updated_at?: string
+          whatsapp_phone?: string
+        }
+        Relationships: []
       }
       duty_roster_acks: {
         Row: {
@@ -741,6 +809,7 @@ export type Database = {
           deleted_by: string | null
           deleted_by_email: string
           deleted_by_name: string
+          head_hidden_at: string | null
           id: string
           restored_at: string | null
           restored_by: string | null
@@ -757,6 +826,7 @@ export type Database = {
           deleted_by?: string | null
           deleted_by_email?: string
           deleted_by_name?: string
+          head_hidden_at?: string | null
           id?: string
           restored_at?: string | null
           restored_by?: string | null
@@ -773,6 +843,7 @@ export type Database = {
           deleted_by?: string | null
           deleted_by_email?: string
           deleted_by_name?: string
+          head_hidden_at?: string | null
           id?: string
           restored_at?: string | null
           restored_by?: string | null
@@ -956,6 +1027,7 @@ export type Database = {
           id: string
         }[]
       }
+      empty_student_bin: { Args: { _school?: string }; Returns: number }
       ensure_default_fees: { Args: { _school: string }; Returns: undefined }
       fee_admin_ok: { Args: { _school: string }; Returns: boolean }
       get_my_license: { Args: never; Returns: Json }
@@ -980,6 +1052,28 @@ export type Database = {
           student_id: string
           student_name: string
         }[]
+      }
+      list_my_announcements: {
+        Args: never
+        Returns: {
+          active: boolean
+          audience: string
+          body: string
+          created_at: string
+          created_by: string
+          id: string
+          kind: string
+          revision: number
+          title: string
+          updated_at: string
+          whatsapp_phone: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "developer_announcements"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       merge_school_ops: { Args: { _details: Json; _ops: Json }; Returns: Json }
       merge_student_ops: { Args: { _data: Json; _ops: Json }; Returns: Json }

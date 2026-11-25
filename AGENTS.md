@@ -42,3 +42,6 @@
 - Official GES term dates are optional one-tap chips from src/lib/gesCalendar.ts; they never overwrite or default school dates because Ghanaian term dates vary.
 - The register photo scanner calls Google Gemini directly with the project GEMINI_API (or GEMINI_API_KEY) secret, falling back across flash models on 404/5xx, so scanning does not consume workspace AI credits; errors name the real cause (quota, key, busy) instead of blaming photo clarity.
 - dev_list_schools lists only schools with at least one member so abandoned draft schools stay out of the developer license dropdown.
+- Developer announcements use developer-only RLS writes and list_my_announcements for server-validated audiences; account-scoped revision dismissals avoid leaking targeted notices.
+- Headteacher bin clearing sets head_hidden_at through empty_student_bin; developer clearing removes only unrestored archives, keeping school clearing independent of recovery retention.
+- Broadsheet subject summaries print on their own named landscape page and reuse subjectSummary, preserving score-sheet pagination and Excel parity.

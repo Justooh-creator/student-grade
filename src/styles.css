@@ -232,6 +232,9 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
 .broadsheet-table tbody .learner-name { color: #000; font-weight: 700; }
 .broadsheet-table .learner-name span { color: #334155; }
 .broadsheet-table .broadsheet-summary td, .broadsheet-table .broadsheet-summary th { background: var(--muted); color: #0f172a; font-weight: 600; }
+.subject-performance-table { font-size: 12px; }
+.subject-performance-table th:first-child { width: auto; text-align: left; }
+.subject-performance-table td, .subject-performance-table th { padding: 7px 6px; }
 @media print {
   @page broadsheet { size: A4 landscape; margin: 8mm; }
   body:has(.broadsheet-page) main { max-width: none; padding: 0; }
@@ -243,6 +246,9 @@ h1,h2,h3,h4,h5,h6,legend,th{font-weight:700;}
   .broadsheet-table tbody tr { height: 4.4mm; }
   .broadsheet-table .learner-name { width: 34mm; }
   .broadsheet-table th:first-child { width: 6mm; }
+  .subject-performance-table { font-size: 10pt; }
+  .subject-performance-table th:first-child { width: auto; }
+  .subject-performance-table td, .subject-performance-table th { padding: 2mm; }
   .broadsheet-page, .broadsheet-table td, .broadsheet-table tbody th, .broadsheet-table .learner-name span { color: #000 !important; }
   .broadsheet-table th, .broadsheet-table td { border-color: #555; }
 }

@@ -67,10 +67,17 @@ function TerminalReportSheet({ student, students, school, watermark = false }: {
               <span className="font-bold text-[#1b1a16]">Name: </span>
               <span className="font-bold">{student.name}</span>
             </p>
+            <div aria-hidden="true" />
             <p>
               <span className="font-bold text-[#1b1a16]">Class: </span>
               <span className="font-bold">{level.name}</span>
             </p>
+            {school.term === "Term 3" ? (
+              <p>
+                <span className="font-bold">{student.promotion === "retained" ? "Retained in: " : "Promoted to: "}</span>
+                <span className="font-bold">{student.promotion === "promoted" ? nextClassName(student.classId) : student.promotion === "retained" ? level.name : "To be decided"}</span>
+              </p>
+            ) : <p><span className="font-bold">Promoted to: </span><span className="font-bold">—</span></p>}
             <p>
               <span className="font-bold text-[#1b1a16]">Admission No.: </span>
               <span className="num">{student.admissionNo || "—"}</span>
@@ -91,19 +98,6 @@ function TerminalReportSheet({ student, students, school, watermark = false }: {
                 {student.attendance || "—"} / {school.totalAttendance || "—"} days
               </span>
             </p>
-            {school.term === "Term 3" ? (
-              <p>
-                <span className="font-bold text-[#1b1a16]">Promotion: </span>
-                <span className="font-bold">
-                  {student.promotion === "promoted" ? `Promoted to ${nextClassName(student.classId)}` : student.promotion === "retained" ? `Retained in ${level.name}` : "To be decided"}
-                </span>
-              </p>
-            ) : (
-              <p>
-                <span className="font-bold text-[#1b1a16]">Promoted to: </span>
-                <span className="font-bold">—</span>
-              </p>
-            )}
             <p>
               <span className="font-bold text-[#1b1a16]">Vacation date: </span>
               <span className="font-bold">{school.vacationDate || "—"}</span>

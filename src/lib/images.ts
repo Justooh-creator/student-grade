@@ -1,3 +1,5 @@
+import { inkOpacity } from "./signatureInk";
+
 function loadImage(file: File): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -24,14 +26,15 @@ export async function passportPhoto(file: File): Promise<string> {
   return c.toDataURL("image/jpeg", 0.72);
 }
 
-/** Keep only dark pen strokes from a photo of a signature on paper; paper becomes transparent. */
+/** Preserve original signature/stamp ink colours while removing the paper. */
 export async function extractSignature(file: File): Promise<string> {
   const img = await loadImage(file);
   const scale = Math.min(1, 600 / Math.max(img.width, img.height));
   const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
   const c = document.createElement("canvas");
   c.width = w; c.height = h;
-  const ctx = c.getContext("2d")!;
+  const ctx = c.getContext("2d");
+  if (!ctx) throw new Error("Could not prepare this image.");
   ctx.drawImage(img, 0, 0, w, h);
   const d = ctx.getImageData(0, 0, w, h);
   const px = d.data;
@@ -39,20 +42,14 @@ export async function extractSignature(file: File): Promise<string> {
   const lum = new Uint8Array(w * h);
   const hist = new Array(256).fill(0);
   for (let i = 0; i < w * h; i++) {
-    const l = Math.round(0.299 * px[i * 4]! + 0.587 * px[i * 4 + 1]! + 0.114 * px[i * 4 + 2]!);
-    lum[i] = l; hist[l]++;
+    const l = Math.round(0.299 * (px[i * 4] ?? 0) + 0.587 * (px[i * 4 + 1] ?? 0) + 0.114 * (px[i * 4 + 2] ?? 0));
+    lum[i] = l; hist[l] = (hist[l] ?? 0) + 1;
   }
   let acc = 0, paper = 255;
-  for (let v = 0; v < 256; v++) { acc += hist[v]; if (acc >= w * h * 0.85) { paper = v; break; } }
-  const ink = paper * 0.62, soft = paper * 0.8;
+  for (let v = 0; v < 256; v++) { acc += hist[v] ?? 0; if (acc >= w * h * 0.85) { paper = v; break; } }
   let minX = w, minY = h, maxX = 0, maxY = 0;
   for (let i = 0; i < w * h; i++) {
-    const l = lum[i]!;
-    let a = 0;
-    if (l <= ink) a = 255; else if (l < soft) a = Math.round(255 * (soft - l) / (soft - ink));
-    const r = px[i * 4]!, b = px[i * 4 + 2]!;
-    const blue = b > r + 25;
-    px[i * 4] = blue ? 20 : 15; px[i * 4 + 1] = blue ? 40 : 15; px[i * 4 + 2] = blue ? 140 : 20;
+    const a = inkOpacity(px[i * 4] ?? 0, px[i * 4 + 1] ?? 0, px[i * 4 + 2] ?? 0, paper);
     px[i * 4 + 3] = a;
     if (a > 80) { const x = i % w, y = (i / w) | 0; if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y; }
   }
