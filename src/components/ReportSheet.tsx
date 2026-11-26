@@ -51,6 +51,9 @@ function TerminalReportSheet({ student, students, school, watermark = false }: {
             {school.contactPhone?.trim() && (
               <p className="num break-words text-[9pt] font-bold">School contact: {school.contactPhone.trim()}</p>
             )}
+            {school.contactEmail?.trim() && (
+              <p className="break-words text-[9pt] font-bold">Email: {school.contactEmail.trim()}</p>
+            )}
             {(school.district || school.region) && (
               <p className="text-[9pt] font-bold">
                 {[school.district && `${school.district} District`, school.region && `${school.region} Region`].filter(Boolean).join(" · ")}

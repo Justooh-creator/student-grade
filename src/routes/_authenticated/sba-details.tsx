@@ -6,6 +6,7 @@ import { CAT_PARTS, GRADE_BANDS, parseScore, getClassLevel, isKg, ordinal, usesC
 import { KG_RATINGS, kgProgress } from "@/lib/kgMilestones";
 import { KgChecklist } from "@/components/KgChecklist";
 import { classRanking, computeStudentResult } from "@/lib/results";
+import { sortLearnersBoysFirst } from "@/lib/register";
 import { validateClassSearch } from "@/lib/classSearch";
 import { useAppData } from "@/lib/store";
 import { ClassLock, useCanEditSubject } from "@/components/ClassLock";
@@ -32,7 +33,7 @@ function Index() {
   const classId = search.class ?? "b4";
   const level = getClassLevel(classId);
   const cat = usesCat(classId);
-  const classStudents = useMemo(() => students.filter((s) => s.classId === classId), [students, classId]);
+  const classStudents = useMemo(() => sortLearnersBoysFirst(students.filter((s) => s.classId === classId)), [students, classId]);
   const ranking = useMemo(() => classRanking(students, classId), [students, classId]);
   const selected = classStudents.find((s) => s.id === search.student) ?? classStudents[0] ?? null;
   const canSubject = useCanEditSubject(classId);

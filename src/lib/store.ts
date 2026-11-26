@@ -8,6 +8,8 @@ export interface School {
   address: string;
   /** Optional public school/headteacher phone printed on report cards. */
   contactPhone?: string;
+  /** Optional public school email address printed on report cards. */
+  contactEmail?: string;
   term: string;
   academicYear: string;
   reopeningDate: string;
@@ -71,6 +73,7 @@ export const DEFAULT_SCHOOL: School = {
   name: "",
   address: "",
   contactPhone: "",
+  contactEmail: "",
   term: "Term 1",
   academicYear: "2026/2027",
   reopeningDate: "",

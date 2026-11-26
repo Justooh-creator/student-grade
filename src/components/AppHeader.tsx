@@ -147,7 +147,7 @@ export function AppHeader({
   const { user } = useUser();
   const cloud = useCloud();
   const { unread } = useStaffNotices();
-  const { reminders: dutyReminders, nextWeek } = useDutyRosters();
+  const { reminders: dutyReminders, reminderInfo } = useDutyRosters();
   const { school: appSchool } = useAppData();
   const lessonAlerts = useLessonAlerts(appSchool, cloud.schoolId ? cloud.userId : null);
   const navClass = activeClass ?? "b4";
@@ -199,7 +199,7 @@ export function AppHeader({
       ))}
       {dutyReminders.length > 0 && !pathname.startsWith("/duty-roster") && (
         <Link to="/duty-roster" className="mx-auto mt-2 flex max-w-5xl items-center gap-2 rounded-md bg-accent px-3 py-2 text-xs font-bold text-accent-foreground">
-          🗓️ You are on duty {dutyReminders[0]?.week_start === nextWeek ? "next week" : "this week"} — tap to view and acknowledge
+          {reminderInfo.bannerText}
         </Link>
       )}
       <nav className="mx-auto mt-2 flex max-w-5xl overflow-x-auto px-1 sm:px-2">

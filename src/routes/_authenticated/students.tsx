@@ -16,6 +16,7 @@ import { LearnerImport } from "@/components/LearnerImport";
 import { useCloud } from "@/lib/cloud";
 import { supabase } from "@/integrations/supabase/client";
 import { countPresentDays, parseTermDate, type DayRow } from "@/lib/attendanceFill";
+import { sortLearnersBoysFirst } from "@/lib/register";
 import { canCustomHeadRemark } from "@/lib/headteacher";
 import { useUser } from "@/lib/auth";
 import { ScrollJump } from "@/components/ScrollJump";
@@ -42,10 +43,7 @@ function StudentsPage() {
   const navigate = useNavigate();
   const classId = search.class ?? "b4";
   const level = getClassLevel(classId);
-  const list = useMemo(() => {
-    const rank = (g?: string) => { const v = (g ?? "").trim().toLowerCase(); return v.startsWith("m") || v === "boy" ? 0 : v.startsWith("f") || v === "girl" ? 1 : 2; };
-    return students.filter((s) => s.classId === classId).map((s, i) => ({ s, i })).sort((a, b) => rank(a.s.gender) - rank(b.s.gender) || a.i - b.i).map((x) => x.s);
-  }, [students, classId]);
+  const list = useMemo(() => sortLearnersBoysFirst(students.filter((s) => s.classId === classId)), [students, classId]);
   const [name, setName] = useState("");
   const [adm, setAdm] = useState("");
   const full = list.length >= MAX_STUDENTS_PER_CLASS;

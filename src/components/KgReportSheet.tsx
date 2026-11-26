@@ -41,6 +41,7 @@ export function KgReportSheet({ student, school, watermark = false }: { student:
           {school.motto?.trim() && <p className="text-[9pt] font-bold italic">“{school.motto.trim()}”</p>}
           <p className="text-[9pt] font-bold">{school.address || "School address"}</p>
           {school.contactPhone?.trim() && <p className="num text-[9pt] font-bold">School contact: {school.contactPhone.trim()}</p>}
+          {school.contactEmail?.trim() && <p className="break-words text-[9pt] font-bold">Email: {school.contactEmail.trim()}</p>}
           {(school.district || school.region) && <p className="text-[9pt] font-bold">{[school.district && `${school.district} District`, school.region && `${school.region} Region`].filter(Boolean).join(" · ")}</p>}
           <p className="mt-1 text-[11pt] font-bold uppercase tracking-[0.08em]">Kindergarten Learners Progress Report</p>
         </div>

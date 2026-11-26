@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ShareAppButtons } from "@/components/ShareAppButtons";
 import { FingerprintSetting } from "@/components/FingerprintSetting";
+import { NotificationSetting } from "@/components/NotificationSetting";
 import { DevRecycleBin } from "@/components/StudentRecycleBin";
 import { DevUnverifiedPanel } from "@/components/DevUnverifiedPanel";
 import { DevSchoolLicensePanel } from "@/components/DevSchoolLicensePanel";
@@ -95,6 +96,10 @@ function SettingsPage() {
         <Section title="Security: Fingerprint & Face Unlock">
           {user ? <FingerprintSetting userId={user.id} email={user.email ?? ""} /> : <p className="text-sm text-muted-foreground">Sign in to use fingerprint or face unlock.</p>}
           <p className="mt-2 text-xs text-muted-foreground">Uses your phone's own fingerprint or face recognition — whichever is set up. Your face and fingerprint stay inside your phone; EduReport never receives them.</p>
+        </Section>
+
+        <Section title="Device Notifications">
+          <NotificationSetting userId={user?.id} schoolId={cloud.schoolId} />
         </Section>
 
         <Section title="Account">

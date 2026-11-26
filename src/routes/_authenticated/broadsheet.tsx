@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ClassPicker } from "@/components/ClassPicker";
 import { LicensedExportButton, PrintButton } from "@/components/PaymentGate";
@@ -6,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useAppData } from "@/lib/store";
 import { validateClassSearch } from "@/lib/classSearch";
 import { getClassLevel, isKg, isJhs } from "@/lib/ges";
-import { buildBroadsheet, subjectSummary } from "@/lib/broadsheet";
+import { ordinal } from "@/lib/ges";
+import { buildBroadsheet, subjectMeritList, subjectSummary } from "@/lib/broadsheet";
 import { downloadBroadsheetXlsx } from "@/lib/broadsheetExcel";
 import { KG_RATINGS, kgMilestones, kgProgress } from "@/lib/kgMilestones";
 
@@ -36,14 +38,60 @@ function BroadsheetPage() {
   const kgItems = kg ? kgMilestones(classId, school.term) : [];
   const groups = kg ? [level.subjects] : Array.from({ length: Math.ceil(level.subjects.length / 3) }, (_, i) => level.subjects.slice(i * 3, i * 3 + 3));
   const fields = ["Raw SBA /100", "SBA /50", "Raw Exam /100", "Exam /50", "Total /100", "Grade"];
+  const [meritOpen, setMeritOpen] = useState(false);
+  const [meritSubject, setMeritSubject] = useState(level.subjects[0] ?? "");
+  useEffect(() => {
+    if (!level.subjects.includes(meritSubject)) setMeritSubject(level.subjects[0] ?? "");
+    if (kg) setMeritOpen(false);
+  }, [classId, kg]); // eslint-disable-line react-hooks/exhaustive-deps
+  const meritRows = !kg && meritSubject ? subjectMeritList(rows, meritSubject) : [];
 
   return <div className="min-h-screen bg-background pb-8">
     <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} activeClass={classId} />
     <main className="mx-auto max-w-7xl px-4">
       <div className="no-print"><ClassPicker value={classId} onChange={(c) => navigate({ to: "/broadsheet", search: { class: c } })} />
-        <div className="my-5 flex flex-wrap items-center justify-between gap-3"><h1 className="text-xl font-bold">{level.name} · Class Broadsheet</h1><div className="flex flex-wrap gap-2"><Button asChild variant="outline"><Link to="/class-report/$classId" params={{ classId }}>Report cards</Link></Button>{rows.length > 0 && <><LicensedExportButton label="Export to Excel (.xlsx)" onExport={() => downloadBroadsheetXlsx(rows, classId, school)} /><PrintButton classId={classId} label="Print / Save broadsheet as PDF (landscape)" /></>}</div></div>
+        <div className="my-5 flex flex-wrap items-center justify-between gap-3"><h1 className="text-xl font-bold">{level.name} · {meritOpen ? "Subject Merit List" : "Class Broadsheet"}</h1><div className="flex flex-wrap gap-2"><Button asChild variant="outline"><Link to="/class-report/$classId" params={{ classId }}>Report cards</Link></Button>{!kg && rows.length > 0 && <Button type="button" variant={meritOpen ? "default" : "outline"} onClick={() => setMeritOpen((o) => !o)}>{meritOpen ? "Back to Broadsheet" : "Subject Merit List"}</Button>}{rows.length > 0 && !meritOpen && <LicensedExportButton label="Export to Excel (.xlsx)" onExport={() => downloadBroadsheetXlsx(rows, classId, school)} />}{rows.length > 0 && <PrintButton classId={classId} label={meritOpen ? "Print / Save Merit List (PDF)" : "Print / Save broadsheet as PDF (landscape)"} />}</div></div>
+        {meritOpen && !kg && rows.length > 0 && (
+          <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-3">
+            <label className="flex items-center gap-2 text-sm font-semibold">Subject:
+              <select value={meritSubject} onChange={(e) => setMeritSubject(e.target.value)} className="h-10 rounded-md border border-input bg-background px-3 font-normal">
+                {level.subjects.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </label>
+            <span className="text-xs text-muted-foreground">Ranked 1st to last by total score /100 (GES tie-breaking).</span>
+          </div>
+        )}
       </div>
-      {!rows.length ? <p className="py-10 text-center text-muted-foreground">No learners in {level.name} yet.</p> : <div className="broadsheet-pages space-y-6 overflow-x-auto">{groups.map((subjects, index) => <section className="broadsheet-page bg-paper text-foreground" key={index}>
+      {!rows.length ? <p className="py-10 text-center text-muted-foreground">No learners in {level.name} yet.</p> : meritOpen && !kg ? (
+        <div className="broadsheet-pages overflow-x-auto">
+          <section className="broadsheet-page bg-paper text-foreground">
+            <div className="mb-3 flex items-end justify-between gap-4">
+              <div>
+                <h2 className="font-display text-base font-bold">{school.name || "EduReport Ghana"}</h2>
+                <p className="text-xs">{level.name} · {school.academicYear} · {school.term} · {rows.length} learners</p>
+              </div>
+              <p className="text-xs font-bold uppercase tracking-wider">Subject Merit List · {meritSubject}</p>
+            </div>
+            <table className="broadsheet-table subject-performance-table">
+              <thead><tr><th>Position</th><th className="learner-name">Name of Learner</th><th>Admission No.</th><th>SBA /50</th><th>Exam /50</th><th>Total /100</th><th>Grade</th></tr></thead>
+              <tbody>
+                {meritRows.map((m) => (
+                  <tr key={m.student.id}>
+                    <td className="font-bold">{m.position != null ? ordinal(m.position) : "—"}</td>
+                    <th className="learner-name">{m.student.name}</th>
+                    <td>{m.student.admissionNo || "—"}</td>
+                    <td>{mark(m.sba)}</td>
+                    <td>{mark(m.exam)}</td>
+                    <td className="font-bold">{mark(m.total)}</td>
+                    <td>{m.grade ?? "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="mt-3 flex justify-between text-xs"><span>Class teacher: {school.classTeachers?.[classId] || "________________"}</span><span>Headteacher: {school.headTeacher || "________________"}</span></div>
+          </section>
+        </div>
+      ) : <div className="broadsheet-pages space-y-6 overflow-x-auto">{groups.map((subjects, index) => <section className="broadsheet-page bg-paper text-foreground" key={index}>
         <div className="mb-2 flex items-end justify-between gap-4"><div><h2 className="font-display text-base font-bold">{school.name || "EduReport Ghana"}</h2><p className="text-xs">{level.name} · {school.academicYear} · {school.term} · {rows.length} learners</p></div><p className="text-xs">Master Score Sheet · {index + 1} / {groups.length}</p></div>
         {kg ? <>
           <table className="broadsheet-table"><thead><tr><th>No.</th><th className="learner-name">Learner / Admission no.</th>{kgItems.map((m) => <th key={m.key}>{m.n}</th>)}{KG_RATINGS.map((r) => <th key={r.code}>{r.code}</th>)}<th>Rated</th></tr></thead>

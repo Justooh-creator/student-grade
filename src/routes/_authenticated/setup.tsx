@@ -137,6 +137,14 @@ function SetupPage() {
               placeholder="Enter the school's contact number"
             />
             <Field
+              label="School email address (optional)"
+              value={school.contactEmail ?? ""}
+              onChange={(v) => setSchool({ contactEmail: v })}
+              type="email"
+              maxLength={120}
+              placeholder="e.g. info@school.edu.gh"
+            />
+            <Field
               label="School motto"
               value={school.motto ?? ""}
               onChange={(v) => setSchool({ motto: v })}

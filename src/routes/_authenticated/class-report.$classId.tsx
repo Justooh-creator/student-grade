@@ -6,6 +6,7 @@ import { PrintButton } from "@/components/PaymentGate";
 import { ClassTransfer } from "@/components/ClassTransfer";
 import { ClassWhatsAppShare } from "@/components/ClassWhatsAppShare";
 import { getClassLevel, type ClassId } from "@/lib/ges";
+import { sortLearnersBoysFirst } from "@/lib/register";
 import { useAppData } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/lib/auth";
@@ -35,7 +36,7 @@ function ClassReportPage() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const level = getClassLevel(classId as ClassId);
-  const list = students.filter((s) => s.classId === classId);
+  const list = sortLearnersBoysFirst(students.filter((s) => s.classId === classId));
 
   if (!mounted) return <div className="p-10 text-center text-sm text-muted-foreground">Loading report cards…</div>;
 

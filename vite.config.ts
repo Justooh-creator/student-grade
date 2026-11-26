@@ -23,6 +23,7 @@ export default defineConfig({
         outDir: "dist/client",
         devOptions: { enabled: false },
         workbox: {
+          importScripts: ["/push-sw.js"],
           globPatterns: ["**/*.{js,css,png,svg,ico,woff2}"],
           maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
           navigateFallback: null,

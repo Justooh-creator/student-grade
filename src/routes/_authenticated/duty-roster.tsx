@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AppHeader } from "@/components/AppHeader";
+import { NotificationSetting } from "@/components/NotificationSetting";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppData } from "@/lib/store";
 import { openSms, openWhatsApp } from "@/lib/whatsapp";
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/_authenticated/duty-roster")({
 
 const input = "h-10 w-full rounded-md border border-border bg-card px-3 text-sm outline-none focus:border-primary";
 const WEEKS = 16;
-const blankT = (): DutyEntry => ({ day: "All week", duty: DUTY_PRESETS[0]!, time: "", location: "", teacherId: "", teacherName: "" });
+const blankT = (): DutyEntry => ({ day: "", duty: DUTY_PRESETS[0]!, time: "", location: "", teacherId: "", teacherName: "" });
 const addWeeks = (ws: string, n: number) => { const d = new Date(ws + "T00:00:00Z"); d.setUTCDate(d.getUTCDate() + n * 7); return d.toISOString().slice(0, 10); };
 
 function DutyRosterPage() {
@@ -86,7 +87,7 @@ function DutyRosterPage() {
         const add: DutyEntry[] = [];
         for (const g of groups) for (const sex of ["m", "f"]) {
           const s = pick(g.list, sex, wi);
-          if (s) add.push({ day: "All week", duty: STUDENT_DUTY, time: "", location: "", teacherId: "", teacherName: `${s.name} (${g.tag})` });
+          if (s) add.push({ day: "", duty: STUDENT_DUTY, time: "", location: "", teacherId: "", teacherName: `${s.name} (${g.tag})` });
         }
         next[ws] = [...kept, ...add];
       });
@@ -125,6 +126,11 @@ function DutyRosterPage() {
       <AppHeader schoolName={school.name} term={school.term} year={school.academicYear} />
       <main className="mx-auto max-w-3xl p-4">
         <h1 className="font-display text-xl font-bold">🗓️ Teachers' Duty Roster</h1>
+        {mounted && cloud.schoolId && (
+          <div className="mt-3 rounded-xl border border-border bg-card p-3">
+            <NotificationSetting userId={cloud.userId} schoolId={cloud.schoolId} />
+          </div>
+        )}
         {mounted && !cloud.schoolId && (
           <p className="mt-3 rounded-lg border border-border bg-card p-3 text-sm">
             The duty roster works inside a School Cloud. <Link to="/school-cloud" className="font-bold text-primary">Open School Cloud</Link> to create or join your school.

@@ -211,6 +211,13 @@
       "when": 1795573076250,
       "tag": "0029_recycle_bin_views_and_announcements",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1795658491212,
+      "tag": "0030_create_push_subscriptions",
+      "breakpoints": true
     }
   ]
 }

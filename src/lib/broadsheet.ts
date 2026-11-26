@@ -38,3 +38,28 @@ export function subjectSummary(rows: BroadsheetRow[], subject: string): SubjectS
     graded: graded.length,
   };
 }
+
+export interface SubjectMeritRow {
+  student: Student;
+  sba: number | null;
+  exam: number | null;
+  total: number | null;
+  grade: number | null;
+  position: number | null;
+}
+
+/** Full 1st-to-last ranking for one subject using GES tie-breaking; ungraded learners appear at the bottom. */
+export function subjectMeritList(rows: BroadsheetRow[], subject: string): SubjectMeritRow[] {
+  const items = rows.map(({ student, result }) => {
+    const r = result.subjects.find((s) => s.subject === subject);
+    return { student, sba: r?.sba ?? null, exam: r?.exam ?? null, total: r?.total ?? null, grade: r?.grade ?? null };
+  });
+  const graded = items.filter((x) => x.total != null).sort((a, b) => b.total! - a.total! || a.student.name.localeCompare(b.student.name, undefined, { sensitivity: "base" }));
+  const ungraded = items.filter((x) => x.total == null).sort((a, b) => a.student.name.localeCompare(b.student.name, undefined, { sensitivity: "base" }));
+  let pos = 0;
+  const ranked: SubjectMeritRow[] = graded.map((item, i) => {
+    if (i === 0 || item.total !== graded[i - 1]!.total) pos = i + 1;
+    return { ...item, position: pos };
+  });
+  return [...ranked, ...ungraded.map((u) => ({ ...u, position: null }))];
+}

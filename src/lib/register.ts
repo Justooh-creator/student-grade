@@ -51,9 +51,26 @@ export function weekGroups(days: string[]): number[][] {
 }
 
 export type Sex = "M" | "F" | "";
-export function sexOf(gender: string): Sex {
-  const g = gender.trim().toLowerCase();
+export function sexOf(gender?: string): Sex {
+  const g = (gender ?? "").trim().toLowerCase();
   return g.startsWith("m") || g === "boy" ? "M" : g.startsWith("f") || g === "girl" ? "F" : "";
+}
+
+/** Sort learners in Ghana GES order: boys A–Z, then girls A–Z, then unspecified gender A–Z. */
+export function sortLearnersBoysFirst<T extends { name: string; gender?: string }>(learners: T[]): T[] {
+  const rank = (g?: string) => { const s = sexOf(g); return s === "M" ? 0 : s === "F" ? 1 : 2; };
+  return [...learners].sort((a, b) => rank(a.gender) - rank(b.gender) || a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+}
+
+/** Running cumulative weekly attendance for one learner; unmarked/future weeks return null. */
+export function cumulativeWeekTotals(marks: Mark[], weeks: number[][], days: string[], marked: Set<string>, closed: Record<string, string>): (number | null)[] {
+  let running = 0;
+  return weeks.map((w) => {
+    const hasMarked = w.some((i) => marked.has(days[i]!) && !closed[days[i]!]);
+    if (!hasMarked) return null;
+    running += w.filter((i) => !closed[days[i]!] && marks[i] === "P").length;
+    return running;
+  });
 }
 
 /** Daily boys/girls present; closed days count as zero. */
