@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { Copy, Megaphone, MessageCircle, Pencil, X } from "lucide-react";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/lib/auth";
 import { AUDIENCES, NOTICE_KINDS, announcementError, whatsappPhone, type Announcement } from "@/lib/announcements";
+import { sendAnnouncementPush } from "@/lib/push.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -55,6 +57,7 @@ export function DevAnnouncementPanel() {
   const [audience, setAudience] = useState("all");
   const [kind, setKind] = useState("update");
   const [phone, setPhone] = useState("");
+  const pushNotice = useServerFn(sendAnnouncementPush);
   const load = useCallback(async () => {
     const { data, error } = await supabase.from("developer_announcements").select("*").order("created_at", { ascending: false });
     setLoading(false);
@@ -76,6 +79,9 @@ export function DevAnnouncementPanel() {
     const { error } = editing ? await supabase.from("developer_announcements").update(payload).eq("id", editing) : await supabase.from("developer_announcements").insert(payload);
     setBusy(false);
     if (error) { toast.error(error.message); return; }
+    if (active) {
+      void pushNotice({ data: { title: payload.title, body: payload.body, audience: payload.audience, kind: payload.kind } }).catch(() => {});
+    }
     toast.success(active ? "Announcement published." : "Draft saved."); reset(); changed();
   };
   const toggle = async (row: Announcement) => {

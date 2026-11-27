@@ -1,6 +1,18 @@
+import { useEffect } from "react";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { canOpenApp } from "@/lib/accountAccess";
+import { useCloud } from "@/lib/cloud";
+import { autoSubscribeNotifications } from "@/lib/pushNotifications";
+
+function AuthenticatedShell() {
+  const cloud = useCloud();
+  useEffect(() => {
+    if (!cloud.userId) return;
+    void autoSubscribeNotifications({ userId: cloud.userId, schoolId: cloud.schoolId });
+  }, [cloud.userId, cloud.schoolId]);
+  return <Outlet />;
+}
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -16,5 +28,5 @@ export const Route = createFileRoute("/_authenticated")({
     return { user };
   },
   pendingComponent: () => <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground" role="status">Opening EduReport…</div>,
-  component: Outlet,
+  component: AuthenticatedShell,
 });

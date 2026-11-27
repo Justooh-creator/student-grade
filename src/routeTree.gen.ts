@@ -36,6 +36,7 @@ import { Route as AuthenticatedStudentsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedTimetableRouteImport } from './routes/_authenticated/timetable'
 import { Route as AuthenticatedClassReportClassIdRouteImport } from './routes/_authenticated/class-report.$classId'
 import { Route as AuthenticatedReportStudentIdRouteImport } from './routes/_authenticated/report.$studentId'
+import { Route as ApiPublicJobsDutyRemindersRouteImport } from './routes/api/public/jobs/duty-reminders'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -179,6 +180,12 @@ const AuthenticatedReportStudentIdRoute =
     path: '/report/$studentId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicJobsDutyRemindersRoute =
+  ApiPublicJobsDutyRemindersRouteImport.update({
+    id: '/api/public/jobs/duty-reminders',
+    path: '/api/public/jobs/duty-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -207,6 +214,7 @@ export interface FileRoutesByFullPath {
   '/timetable': typeof AuthenticatedTimetableRoute
   '/class-report/$classId': typeof AuthenticatedClassReportClassIdRoute
   '/report/$studentId': typeof AuthenticatedReportStudentIdRoute
+  '/api/public/jobs/duty-reminders': typeof ApiPublicJobsDutyRemindersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -235,6 +243,7 @@ export interface FileRoutesByTo {
   '/timetable': typeof AuthenticatedTimetableRoute
   '/class-report/$classId': typeof AuthenticatedClassReportClassIdRoute
   '/report/$studentId': typeof AuthenticatedReportStudentIdRoute
+  '/api/public/jobs/duty-reminders': typeof ApiPublicJobsDutyRemindersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -265,6 +274,7 @@ export interface FileRoutesById {
   '/_authenticated/timetable': typeof AuthenticatedTimetableRoute
   '/_authenticated/class-report/$classId': typeof AuthenticatedClassReportClassIdRoute
   '/_authenticated/report/$studentId': typeof AuthenticatedReportStudentIdRoute
+  '/api/public/jobs/duty-reminders': typeof ApiPublicJobsDutyRemindersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -295,6 +305,7 @@ export interface FileRouteTypes {
     | '/timetable'
     | '/class-report/$classId'
     | '/report/$studentId'
+    | '/api/public/jobs/duty-reminders'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -323,6 +334,7 @@ export interface FileRouteTypes {
     | '/timetable'
     | '/class-report/$classId'
     | '/report/$studentId'
+    | '/api/public/jobs/duty-reminders'
   id:
     | '__root__'
     | '/'
@@ -352,6 +364,7 @@ export interface FileRouteTypes {
     | '/_authenticated/timetable'
     | '/_authenticated/class-report/$classId'
     | '/_authenticated/report/$studentId'
+    | '/api/public/jobs/duty-reminders'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -361,6 +374,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   VerifiedRoute: typeof VerifiedRoute
+  ApiPublicJobsDutyRemindersRoute: typeof ApiPublicJobsDutyRemindersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -554,6 +568,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReportStudentIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/jobs/duty-reminders': {
+      id: '/api/public/jobs/duty-reminders'
+      path: '/api/public/jobs/duty-reminders'
+      fullPath: '/api/public/jobs/duty-reminders'
+      preLoaderRoute: typeof ApiPublicJobsDutyRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -615,6 +636,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   VerifiedRoute: VerifiedRoute,
+  ApiPublicJobsDutyRemindersRoute: ApiPublicJobsDutyRemindersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
