@@ -73,13 +73,12 @@ function BroadsheetPage() {
               <p className="text-xs font-bold uppercase tracking-wider">Subject Merit List · {meritSubject}</p>
             </div>
             <table className="broadsheet-table subject-performance-table">
-              <thead><tr><th>Position</th><th className="learner-name">Name of Learner</th><th>Admission No.</th><th>SBA /50</th><th>Exam /50</th><th>Total /100</th><th>Grade</th></tr></thead>
+              <thead><tr><th>Position</th><th className="learner-name">Name of Learner</th><th>SBA /50</th><th>Exam /50</th><th>Total /100</th><th>Grade</th></tr></thead>
               <tbody>
                 {meritRows.map((m) => (
                   <tr key={m.student.id}>
                     <td className="font-bold">{m.position != null ? ordinal(m.position) : "—"}</td>
                     <th className="learner-name">{m.student.name}</th>
-                    <td>{m.student.admissionNo || "—"}</td>
                     <td>{mark(m.sba)}</td>
                     <td>{mark(m.exam)}</td>
                     <td className="font-bold">{mark(m.total)}</td>

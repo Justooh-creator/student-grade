@@ -59,7 +59,7 @@ export function sexOf(gender?: string): Sex {
 /** Sort learners in Ghana GES order: boys A–Z, then girls A–Z, then unspecified gender A–Z. */
 export function sortLearnersBoysFirst<T extends { name: string; gender?: string }>(learners: T[]): T[] {
   const rank = (g?: string) => { const s = sexOf(g); return s === "M" ? 0 : s === "F" ? 1 : 2; };
-  return [...learners].sort((a, b) => rank(a.gender) - rank(b.gender) || a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+  return [...learners].sort((a, b) => rank(a.gender) - rank(b.gender) || a.name.trim().localeCompare(b.name.trim(), undefined, { sensitivity: "base" }));
 }
 
 /** Running cumulative weekly attendance for one learner; unmarked/future weeks return null. */

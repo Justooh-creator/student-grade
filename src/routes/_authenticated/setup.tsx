@@ -72,7 +72,7 @@ function Field({
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
-  type?: "text" | "tel";
+  type?: "text" | "tel" | "email";
   maxLength?: number;
   inputMode?: "numeric" | "decimal" | "tel" | "text";
   pattern?: string;

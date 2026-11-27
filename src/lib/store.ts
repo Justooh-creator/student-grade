@@ -187,7 +187,8 @@ export function updateData(updater: (current: AppData) => AppData) {
 /** Apply data coming from the cloud without echoing it back. */
 export function applyRemote(updater: (current: AppData) => AppData) {
   hydrate();
-  data = updater(data);
+  const next = updater(data);
+  data = { ...next, students: (next.students ?? []).map(normalizeStudent) };
   persist();
   emit();
 }

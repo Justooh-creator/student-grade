@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Megaphone, Pencil, X } from "lucide-react";
+import { Copy, Megaphone, MessageCircle, Pencil, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/lib/auth";
@@ -85,6 +85,15 @@ export function DevAnnouncementPanel() {
     if (error) { toast.error(error.message); return; }
     changed();
   };
+  const copyText = async (row: Announcement) => {
+    const text = `${row.title}\n\n${row.body}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("Announcement copied.");
+    } catch {
+      toast.error("Could not copy text. Please copy it manually.");
+    }
+  };
   if (!isDev) return null;
   return <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
     <h2 className="mb-3 flex items-center gap-2 font-display text-base font-bold text-primary"><Megaphone className="size-5" />Developer Announcer</h2>
@@ -99,7 +108,12 @@ export function DevAnnouncementPanel() {
     <div className="mt-5 space-y-3 border-t border-border pt-3"><h3 className="text-sm font-bold">Announcements</h3>{loading ? <p className="text-sm text-muted-foreground">Loading…</p> : !rows.length ? <p className="text-sm text-muted-foreground">No announcements yet.</p> : rows.map((row) => <article key={row.id} className="border-b border-border pb-3">
       <p className="break-words text-sm font-bold">{row.title}</p><p className="text-xs text-muted-foreground">{row.active ? "Published" : "Draft / Inactive"} · {AUDIENCES.find((a) => a.value === row.audience)?.label} · {NOTICE_KINDS.find((a) => a.value === row.kind)?.label}</p>
       <p className="mt-1 whitespace-pre-wrap break-words text-sm">{row.body}</p>
-      <div className="mt-2 flex gap-2"><Button size="sm" variant="outline" disabled={busy} onClick={() => { setEditing(row.id); setTitle(row.title); setBody(row.body); setAudience(row.audience); setKind(row.kind); setPhone(row.whatsapp_phone); }}><Pencil className="size-3" />Edit</Button><Button size="sm" variant="outline" disabled={busy} onClick={() => void toggle(row)}>{row.active ? "Deactivate" : "Publish"}</Button></div>
+      <div className="mt-2 flex flex-wrap gap-2">
+        <Button size="sm" variant="outline" disabled={busy} onClick={() => { setEditing(row.id); setTitle(row.title); setBody(row.body); setAudience(row.audience); setKind(row.kind); setPhone(row.whatsapp_phone); }}><Pencil className="size-3" />Edit</Button>
+        <Button size="sm" variant="outline" disabled={busy} onClick={() => void toggle(row)}>{row.active ? "Deactivate" : "Publish"}</Button>
+        <Button size="sm" variant="outline" onClick={() => void copyText(row)}><Copy className="size-3" />Copy Text</Button>
+        <Button asChild size="sm" variant="outline"><a href={`https://wa.me/?text=${encodeURIComponent(`${row.title}\n\n${row.body}`)}`} target="_blank" rel="noreferrer"><MessageCircle className="size-3" />Share via WhatsApp</a></Button>
+      </div>
     </article>)}</div>
   </section>;
 }

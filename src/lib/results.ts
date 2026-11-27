@@ -1,4 +1,5 @@
 import { getClassLevel, gradeFor, isValidTotal, isJhs, isKg, kgLevelByName, KG_LEGACY_CREATIVE, KG_PHYSICAL, type ClassId } from "./ges";
+import { sortLearnersBoysFirst } from "./register";
 import type { Student } from "./store";
 
 export interface SubjectResult {
@@ -81,7 +82,7 @@ export function computeStudentResult(student: Student): StudentResult {
 }
 
 export function classRanking(students: Student[], classId: ClassId) {
-  const inClass = students.filter((s) => s.classId === classId);
+  const inClass = sortLearnersBoysFirst(students.filter((s) => s.classId === classId));
   const scored = inClass.map((s) => ({ student: s, result: computeStudentResult(s) }));
   const sorted = [...scored].sort((a, b) => b.result.totalMarks - a.result.totalMarks);
 

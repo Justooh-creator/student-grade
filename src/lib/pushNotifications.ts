@@ -27,7 +27,7 @@ export async function showLocalNotification(title: string, body: string, url = "
 }
 
 /** Request OS notification permission and register a Web Push subscription when VAPID key is configured. */
-export async function enableDeviceNotifications(opts: { userId?: string | null; schoolId?: string | null }) {
+export async function enableDeviceNotifications(opts: { userId?: string | null | undefined; schoolId?: string | null | undefined }) {
   if (typeof window === "undefined" || !("Notification" in window)) {
     return { ok: false as const, reason: "This browser does not support device notifications." };
   }

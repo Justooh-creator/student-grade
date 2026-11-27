@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { cumulativeWeekTotals, sortLearnersBoysFirst, type Mark } from "./register";
 import { buildBroadsheet, subjectMeritList } from "./broadsheet";
 import { buildRosterText, DUTY_PRESETS, dutyReminderContext, mondayOf, type DutyRoster } from "./dutyRoster";
-import type { Student } from "./store";
+import { applyRemote, getData, type Student } from "./store";
 
 const mkStudent = (id: string, name: string, gender: string, mathTotal?: number): Student => ({
   id, name, admissionNo: id, gender, classId: "b4", attendance: "50",
@@ -20,6 +20,30 @@ describe("Boys-first alphabetical sorting", () => {
       mkStudent("5", "Daniel", "Male"),
     ];
     expect(sortLearnersBoysFirst(list).map((s) => s.name)).toEqual(["Daniel", "Kwame", "Ama", "Zainab", "Alex"]);
+  });
+
+  it("sorts broadsheet rows Boys A-Z then Girls A-Z and trims leading spaces", () => {
+    const list = [
+      mkStudent("1", "Fiadufe Eva", "Female", 70),
+      mkStudent("2", " Kwame Mensah", "Male", 80),
+      mkStudent("3", "Ama Boateng", "Female", 90),
+      mkStudent("4", "Daniel Asare", "Male", 60),
+    ];
+    expect(buildBroadsheet(list, "b4").map((r) => r.student.name)).toEqual([
+      "Daniel Asare",
+      " Kwame Mensah",
+      "Ama Boateng",
+      "Fiadufe Eva",
+    ]);
+  });
+});
+
+describe("Remote student sync normalization", () => {
+  it("guarantees scores object exists when remote sync omits scores", () => {
+    const partial = { id: "s-new", name: "Kofi", admissionNo: "", gender: "Male", classId: "b4" } as unknown as Student;
+    applyRemote((cur) => ({ ...cur, students: [partial] }));
+    const saved = getData().students.find((s) => s.id === "s-new");
+    expect(saved?.scores).toEqual({});
   });
 });
 

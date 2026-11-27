@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { disableDeviceNotifications, enableDeviceNotifications, getNotificationState, type NotificationState } from "@/lib/pushNotifications";
 
-export function NotificationSetting({ userId, schoolId }: { userId?: string | null; schoolId?: string | null }) {
+export function NotificationSetting({ userId, schoolId }: { userId?: string | null | undefined; schoolId?: string | null | undefined }) {
   const [state, setState] = useState<NotificationState>("default");
   const [busy, setBusy] = useState(false);
 

@@ -79,7 +79,10 @@ function Index() {
             <>
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <label className="block min-w-0 flex-1">
-                  <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">Select learner</span>
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                    <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">Select learner</span>
+                    <span className="truncate text-sm font-bold text-primary">{selected.name}</span>
+                  </div>
                   <div className="mt-1 flex gap-1.5">
                     <button disabled={idx <= 0} onClick={() => go(classStudents[idx - 1]!.id)} aria-label="Previous learner" className="h-10 w-10 rounded-md border border-border disabled:opacity-40">‹</button>
                     <select
@@ -131,7 +134,7 @@ function Index() {
                   </thead>
                   <tbody>
                     {result.subjects.map((row) => {
-                      const e = selected.scores[row.subject];
+                      const e = selected.scores?.[row.subject];
                       return (
                        <tr key={row.subject} className="border-t border-border">
                          <td className="px-3 py-1.5 font-bold">{row.subject}{!canSubject(row.subject) && <span className="ml-1 text-[12px] font-normal text-muted-foreground">(view only)</span>}</td>

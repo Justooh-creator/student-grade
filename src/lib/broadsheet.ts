@@ -1,4 +1,5 @@
 import { isKg, type ClassId } from "./ges";
+import { sortLearnersBoysFirst } from "./register";
 import { classRanking } from "./results";
 import type { Student } from "./store";
 
@@ -50,12 +51,15 @@ export interface SubjectMeritRow {
 
 /** Full 1st-to-last ranking for one subject using GES tie-breaking; ungraded learners appear at the bottom. */
 export function subjectMeritList(rows: BroadsheetRow[], subject: string): SubjectMeritRow[] {
+  const order = new Map(sortLearnersBoysFirst(rows.map((r) => r.student)).map((s, i) => [s.id, i]));
+  const byRoster = (a: { student: Student }, b: { student: Student }) =>
+    (order.get(a.student.id) ?? 0) - (order.get(b.student.id) ?? 0);
   const items = rows.map(({ student, result }) => {
     const r = result.subjects.find((s) => s.subject === subject);
     return { student, sba: r?.sba ?? null, exam: r?.exam ?? null, total: r?.total ?? null, grade: r?.grade ?? null };
   });
-  const graded = items.filter((x) => x.total != null).sort((a, b) => b.total! - a.total! || a.student.name.localeCompare(b.student.name, undefined, { sensitivity: "base" }));
-  const ungraded = items.filter((x) => x.total == null).sort((a, b) => a.student.name.localeCompare(b.student.name, undefined, { sensitivity: "base" }));
+  const graded = items.filter((x) => x.total != null).sort((a, b) => b.total! - a.total! || byRoster(a, b));
+  const ungraded = items.filter((x) => x.total == null).sort(byRoster);
   let pos = 0;
   const ranked: SubjectMeritRow[] = graded.map((item, i) => {
     if (i === 0 || item.total !== graded[i - 1]!.total) pos = i + 1;
