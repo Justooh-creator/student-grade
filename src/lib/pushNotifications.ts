@@ -1,7 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
 import { getVapidPublicKey } from "@/lib/push.functions";
 
-export type NotificationState = "unsupported" | "denied" | "default" | "granted";
+export type NotificationState = "unsupported" | "denied" | "default" | "granted" | "off";
+export const NOTIFICATION_CHANGE = "edureport-notification-change";
 const OPT_OUT_KEY = "edureport-push-opt-out";
 let cachedVapidKey: string | null = null;
 
@@ -23,7 +24,23 @@ async function resolveVapidPublicKey(): Promise<string> {
 
 export function getNotificationState(): NotificationState {
   if (typeof window === "undefined" || !("Notification" in window)) return "unsupported";
+  if (notificationsOptedOut()) return "off";
   return Notification.permission as NotificationState;
+}
+
+export function notificationsOptedOut() {
+  if (typeof window === "undefined") return false;
+  try { return localStorage.getItem(OPT_OUT_KEY) === "1"; } catch { return false; }
+}
+
+export async function getDeviceNotificationState(): Promise<NotificationState> {
+  const state = getNotificationState();
+  if (state !== "granted") return state;
+  if (!("serviceWorker" in navigator)) return "off";
+  try {
+    const reg = await navigator.serviceWorker.getRegistration();
+    return reg && await reg.pushManager.getSubscription() ? "granted" : "off";
+  } catch { return "off"; }
 }
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
@@ -34,7 +51,7 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 }
 
 export async function showLocalNotification(title: string, body: string, url = "/duty-roster") {
-  if (typeof window === "undefined" || !("Notification" in window) || Notification.permission !== "granted") return;
+  if (typeof window === "undefined" || !("Notification" in window) || Notification.permission !== "granted" || notificationsOptedOut()) return;
   if ("serviceWorker" in navigator) {
     try {
       const reg = await navigator.serviceWorker.ready;
@@ -49,7 +66,8 @@ async function syncPushSubscription(opts: { userId?: string | null | undefined; 
   const vapidKey = await resolveVapidPublicKey();
   if (!vapidKey || !("serviceWorker" in navigator) || !("PushManager" in window) || !opts.userId) return false;
   try {
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (!reg) return false;
     const existing = await reg.pushManager.getSubscription();
     const sub = existing ?? await reg.pushManager.subscribe({
       userVisibleOnly: true,
@@ -57,7 +75,7 @@ async function syncPushSubscription(opts: { userId?: string | null | undefined; 
     });
     const json = sub.toJSON();
     if (!json.endpoint) return false;
-    await supabase.from("push_subscriptions").upsert({
+    const { error } = await supabase.from("push_subscriptions").upsert({
       user_id: opts.userId,
       school_id: opts.schoolId ?? null,
       endpoint: json.endpoint,
@@ -65,6 +83,8 @@ async function syncPushSubscription(opts: { userId?: string | null | undefined; 
       auth: json.keys?.["auth"] ?? "",
       updated_at: new Date().toISOString(),
     }, { onConflict: "endpoint" });
+    if (error) return false;
+    window.dispatchEvent(new Event(NOTIFICATION_CHANGE));
     return true;
   } catch {
     return false;
@@ -82,6 +102,7 @@ export async function enableDeviceNotifications(opts: { userId?: string | null |
     return { ok: false as const, reason: "Notifications were blocked. Allow them in your browser site settings." };
   }
   const pushRegistered = await syncPushSubscription(opts);
+  if (!pushRegistered) return { ok: false as const, reason: "Phone alerts could not be enabled. Check your connection and try again on the published app." };
   await showLocalNotification("EduReport Alerts Enabled", "You will receive duty roster and school notices on this device.");
   return { ok: true as const, pushRegistered };
 }
@@ -99,15 +120,20 @@ export async function autoSubscribeNotifications(opts: { userId?: string | null 
 }
 
 export async function disableDeviceNotifications(userId?: string | null) {
-  if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
+  if (typeof window === "undefined") return;
   try { localStorage.setItem(OPT_OUT_KEY, "1"); } catch { /* ignore */ }
   try {
-    const reg = await navigator.serviceWorker.ready;
-    const sub = await reg.pushManager.getSubscription();
+    const reg = "serviceWorker" in navigator ? await navigator.serviceWorker.getRegistration() : undefined;
+    const sub = reg ? await reg.pushManager.getSubscription() : null;
     if (sub) {
       const endpoint = sub.endpoint;
-      await sub.unsubscribe();
+      if (!await sub.unsubscribe()) throw new Error("Could not turn off phone alerts. Please try again.");
       if (userId) await supabase.from("push_subscriptions").delete().eq("user_id", userId).eq("endpoint", endpoint);
     }
-  } catch { /* ignore */ }
+  } catch (error) {
+    try { localStorage.removeItem(OPT_OUT_KEY); } catch { /* ignore */ }
+    throw error;
+  } finally {
+    window.dispatchEvent(new Event(NOTIFICATION_CHANGE));
+  }
 }

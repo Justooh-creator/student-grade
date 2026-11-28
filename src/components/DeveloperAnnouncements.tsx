@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Copy, Megaphone, MessageCircle, Pencil, X } from "lucide-react";
+import { Copy, Megaphone, MessageCircle, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,19 +10,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 const CHANGE = "edureport-announcements-changed";
 
 export function AnnouncementBanner() {
   const { user } = useUser();
   const [rows, setRows] = useState<Announcement[]>([]);
+  const [loadedFor, setLoadedFor] = useState<string | null>(null);
+  const [dismissing, setDismissing] = useState(false);
   useEffect(() => {
     setRows([]);
+    setLoadedFor(null);
     if (!user) return;
     let alive = true;
     const load = async () => {
       const { data, error } = await supabase.rpc("list_my_announcements");
-      if (alive && !error) setRows(data ?? []);
+      if (alive && !error) { setRows(data ?? []); setLoadedFor(user.id); }
     };
     const visible = () => { if (document.visibilityState === "visible") void load(); };
     void load();
@@ -33,17 +37,29 @@ export function AnnouncementBanner() {
   }, [user?.id]);
 
   const dismiss = async (row: Announcement) => {
-    if (!user) return;
+    if (!user || dismissing) return;
+    setDismissing(true);
     const { error } = await supabase.from("announcement_dismissals").upsert({ user_id: user.id, announcement_id: row.id, revision: row.revision });
+    setDismissing(false);
     if (error) { toast.error("Could not dismiss this announcement. Try again when connected."); return; }
     setRows((current) => current.filter((a) => a.id !== row.id));
   };
 
-  return <div className="mx-auto max-w-5xl">{rows.map((row) => <div key={row.id} role="status" className={`mx-3 mt-2 flex items-start gap-2 rounded-md border p-3 ${row.kind === "urgent" ? "border-destructive bg-destructive text-destructive-foreground" : "border-accent bg-accent text-accent-foreground"}`}>
-    <Megaphone className="mt-0.5 size-4 shrink-0" />
-    <div className="min-w-0 flex-1 text-sm"><p className="font-bold break-words">{row.title}</p><p className="mt-1 whitespace-pre-wrap break-words">{row.body}</p>{row.whatsapp_phone && <Button asChild variant="outline" size="sm" className="mt-2 bg-card text-foreground"><a href={`https://wa.me/${row.whatsapp_phone}?text=${encodeURIComponent(row.title)}`} target="_blank" rel="noreferrer">WhatsApp</a></Button>}</div>
-    <Button variant="ghost" size="icon" className="size-7 shrink-0" aria-label={`Dismiss ${row.title}`} onClick={() => void dismiss(row)}><X className="size-4" /></Button>
-  </div>)}</div>;
+  const row = loadedFor === user?.id ? rows[0] : undefined;
+  if (!row) return null;
+  return <Dialog key={`${row.id}:${row.revision}`} open onOpenChange={(open) => { if (!open) void dismiss(row); }}>
+    <DialogContent className="max-h-[85dvh] w-[calc(100%-2rem)] max-w-md gap-0 overflow-y-auto rounded-2xl border-border bg-card p-0 text-center [&>button]:text-primary-foreground" onInteractOutside={(event) => event.preventDefault()}>
+      <div className="bg-linear-to-br from-primary to-primary/85 px-10 py-6 text-primary-foreground">
+        <DialogTitle className="break-words font-display text-xl font-bold">{row.title}</DialogTitle>
+      </div>
+      <div className="space-y-5 p-6">
+        <div aria-hidden="true" className="mx-auto flex size-20 items-center justify-center rounded-full bg-primary/10 text-primary"><Megaphone className="size-10" /></div>
+        <DialogDescription className="whitespace-pre-wrap break-words text-base font-semibold leading-relaxed text-foreground">{row.body}</DialogDescription>
+        {row.whatsapp_phone && <Button asChild variant="outline" className="w-full"><a href={`https://wa.me/${row.whatsapp_phone}?text=${encodeURIComponent(row.title)}`} target="_blank" rel="noreferrer"><MessageCircle className="size-4" />Chat on WhatsApp</a></Button>}
+        <Button disabled={dismissing} className="w-full" onClick={() => void dismiss(row)}>{dismissing ? "Saving…" : "Got it"}</Button>
+      </div>
+    </DialogContent>
+  </Dialog>;
 }
 
 export function DevAnnouncementPanel() {
@@ -100,6 +116,16 @@ export function DevAnnouncementPanel() {
       toast.error("Could not copy text. Please copy it manually.");
     }
   };
+  const remove = async (row: Announcement) => {
+    if (!window.confirm(`Permanently delete “${row.title}”? This removes it from everyone's in-app notices. Phone alerts already delivered cannot be recalled.`)) return;
+    setBusy(true);
+    const { error, data } = await supabase.from("developer_announcements").delete().eq("id", row.id).select("id");
+    setBusy(false);
+    if (error || !data?.length) { toast.error("Could not delete this announcement. Try again."); return; }
+    if (editing === row.id) reset();
+    toast.success("Announcement deleted.");
+    changed();
+  };
   if (!isDev) return null;
   return <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
     <h2 className="mb-3 flex items-center gap-2 font-display text-base font-bold text-primary"><Megaphone className="size-5" />Developer Announcer</h2>
@@ -117,6 +143,7 @@ export function DevAnnouncementPanel() {
       <div className="mt-2 flex flex-wrap gap-2">
         <Button size="sm" variant="outline" disabled={busy} onClick={() => { setEditing(row.id); setTitle(row.title); setBody(row.body); setAudience(row.audience); setKind(row.kind); setPhone(row.whatsapp_phone); }}><Pencil className="size-3" />Edit</Button>
         <Button size="sm" variant="outline" disabled={busy} onClick={() => void toggle(row)}>{row.active ? "Deactivate" : "Publish"}</Button>
+        <Button size="sm" variant="destructive" disabled={busy} onClick={() => void remove(row)}><Trash2 className="size-3" />Delete</Button>
         <Button size="sm" variant="outline" onClick={() => void copyText(row)}><Copy className="size-3" />Copy Text</Button>
         <Button asChild size="sm" variant="outline"><a href={`https://wa.me/?text=${encodeURIComponent(`${row.title}\n\n${row.body}`)}`} target="_blank" rel="noreferrer"><MessageCircle className="size-3" />Share via WhatsApp</a></Button>
       </div>

@@ -9,6 +9,7 @@ export function BackupRestore({ canRestore, schoolId = null }: { canRestore: boo
   const btn = "rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground disabled:opacity-50";
 
   function exportBackup() {
+    if (schoolId && !canRestore) return;
     const data = getData();
     const blob = new Blob([JSON.stringify(buildBackup(data, new Date(), schoolId), null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -42,7 +43,7 @@ export function BackupRestore({ canRestore, schoolId = null }: { canRestore: boo
       <p className="font-bold">💾 Backup & Restore</p>
       <p className="mt-1 text-sm text-muted-foreground">Download a copy of your school details, learners, marks and remarks. Photos, logos, signatures and stamps are not included. The file is not encrypted — keep it safe — it contains learners' personal information.</p>
       <div className="mt-3 flex flex-wrap gap-2">
-        <button onClick={exportBackup} className={btn}>Download backup</button>
+        {(!schoolId || canRestore) && <button onClick={exportBackup} className={btn}>Download backup</button>}
         {canRestore && (
           <>
             <button onClick={() => fileRef.current?.click()} disabled={busy} className="rounded-md border border-border px-4 py-2 text-sm font-bold disabled:opacity-50">Restore from backup</button>
@@ -50,7 +51,7 @@ export function BackupRestore({ canRestore, schoolId = null }: { canRestore: boo
           </>
         )}
       </div>
-      {!canRestore && <p className="mt-2 text-xs text-muted-foreground">Only the headteacher can restore a backup for the school.</p>}
+      {!canRestore && <p className="mt-2 text-xs text-muted-foreground">Only the headteacher can download or restore school backups. Your changes still sync to School Cloud.</p>}
     </div>
   );
 }

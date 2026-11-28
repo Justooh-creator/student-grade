@@ -218,6 +218,13 @@
       "when": 1795658491212,
       "tag": "0030_create_push_subscriptions",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1795824354694,
+      "tag": "0031_staff_tools_registration_and_duty_weeks",
+      "breakpoints": true
     }
   ]
 }

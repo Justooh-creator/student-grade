@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { notificationsOptedOut } from "@/lib/pushNotifications";
 import { useCloud } from "@/lib/cloud";
 
 export const DUTY_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"] as const;
@@ -16,7 +17,7 @@ export const DUTY_PRESETS = [
 ];
 
 export type DutyEntry = { day: string; duty: string; time: string; location: string; teacherId: string; teacherName: string };
-export type DutyRoster = { id: string; school_id: string; created_by: string; week_start: string; entries: DutyEntry[]; notes: string; updated_at: string };
+export type DutyRoster = { id: string; school_id: string; created_by: string; week_start: string; entries: DutyEntry[]; notes: string; updated_at: string; week_number?: number | null };
 
 /** Monday (yyyy-mm-dd) of the week containing `d`, shifted by `offsetWeeks`. */
 export function mondayOf(d = new Date(), offsetWeeks = 0): string {
@@ -35,9 +36,9 @@ export function weekLabel(weekStart: string) {
 
 const cleanDutyLabel = (d: string) => d.replace(/\s*\(whole week\)/gi, "").trim() || "Teacher on Duty";
 
-export function buildRosterText(r: Pick<DutyRoster, "week_start" | "entries" | "notes">, schoolName?: string, onlyTeacher?: string) {
+export function buildRosterText(r: Pick<DutyRoster, "week_start" | "entries" | "notes" | "week_number">, schoolName?: string, onlyTeacher?: string) {
   const list = onlyTeacher ? r.entries.filter((e) => e.teacherId === onlyTeacher || e.teacherName === onlyTeacher) : r.entries;
-  const lines = [`🗓️ *TEACHERS' DUTY ROSTER*${schoolName ? ` — ${schoolName}` : ""}`, `Week: ${weekLabel(r.week_start)}`, ""];
+  const lines = [`🗓️ *TEACHERS' DUTY ROSTER*${schoolName ? ` — ${schoolName}` : ""}`, `Week${r.week_number ? ` ${r.week_number}` : ""}: ${weekLabel(r.week_start)}`, ""];
   const general = list.filter((e) => !DUTY_DAYS.includes(e.day as (typeof DUTY_DAYS)[number]));
   if (general.length) {
     for (const e of general) lines.push(`• ${e.teacherName || "—"}: ${cleanDutyLabel(e.duty)}${e.time ? ` (${e.time})` : ""}${e.location ? ` @ ${e.location}` : ""}`);
@@ -118,13 +119,16 @@ export function dutyReminderContext(
 
 export function useDutyRosters() {
   const cloud = useCloud();
+  const [loaded, setLoaded] = useState(false);
   const [rosters, setRosters] = useState<DutyRoster[]>([]);
   const [acks, setAcks] = useState<{ roster_id: string; user_id: string }[]>([]);
 
   const load = useCallback(async () => {
-    if (!cloud.schoolId) { setRosters([]); return; }
-    const { data } = await supabase.from("duty_rosters").select("*").eq("school_id", cloud.schoolId)
+    if (!cloud.schoolId) { setRosters([]); setLoaded(false); return; }
+    const { data, error } = await supabase.from("duty_rosters").select("*").eq("school_id", cloud.schoolId)
       .gte("week_start", mondayOf(new Date(), -20)).order("week_start", { ascending: false });
+    if (error) return;
+    setLoaded(true);
     const list = (data ?? []) as unknown as DutyRoster[];
     setRosters(list);
     if (list.length) {
@@ -154,7 +158,7 @@ export function useDutyRosters() {
   const reminders = reminderInfo.reminders;
 
   useEffect(() => {
-    if (!reminderInfo.notificationTitle || !reminderInfo.notificationBody || typeof window === "undefined" || !("Notification" in window) || Notification.permission !== "granted") return;
+    if (!reminderInfo.notificationTitle || !reminderInfo.notificationBody || typeof window === "undefined" || !("Notification" in window) || Notification.permission !== "granted" || notificationsOptedOut()) return;
     const todayKey = `edureport-duty-notified:${new Date().toISOString().slice(0, 10)}:${reminders[0]?.id ?? ""}`;
     try {
       if (localStorage.getItem(todayKey)) return;
@@ -171,5 +175,5 @@ export function useDutyRosters() {
     }
   }, [reminderInfo.notificationTitle, reminderInfo.notificationBody, reminders]);
 
-  return { rosters, acks, acknowledge, reload: load, reminders, reminderInfo, cloud, thisWeek, nextWeek };
+  return { loaded, rosters, acks, acknowledge, reload: load, reminders, reminderInfo, cloud, thisWeek, nextWeek };
 }

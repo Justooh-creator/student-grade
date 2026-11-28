@@ -249,6 +249,7 @@ export type Database = {
           notes: string
           school_id: string
           updated_at: string
+          week_number: number | null
           week_start: string
         }
         Insert: {
@@ -259,6 +260,7 @@ export type Database = {
           notes?: string
           school_id: string
           updated_at?: string
+          week_number?: number | null
           week_start: string
         }
         Update: {
@@ -269,6 +271,7 @@ export type Database = {
           notes?: string
           school_id?: string
           updated_at?: string
+          week_number?: number | null
           week_start?: string
         }
         Relationships: [
@@ -1054,6 +1057,10 @@ export type Database = {
           print_term_key: string
           teacher_count: number
         }[]
+      }
+      dev_registration_list: {
+        Args: { _offset?: number; _search?: string }
+        Returns: Json
       }
       dev_set_school_license: {
         Args: { _action: string; _school: string }

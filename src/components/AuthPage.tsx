@@ -137,7 +137,7 @@ export function AuthPage() {
       <header className="border-b border-border bg-primary px-6 py-5 text-primary-foreground">
         <div className="mx-auto flex max-w-5xl items-center gap-3">
           <img src="/icon-192.png" alt="EduReport logo" className="h-14 w-14 rounded-md object-contain" />
-          <div><p className="font-display text-2xl font-black tracking-tight sm:text-3xl">EduReport Ghana</p><p className="text-sm font-medium text-primary-foreground/90">School Management and SBA</p></div>
+          <div className="min-w-0"><p className="font-display text-2xl font-black tracking-tight sm:text-3xl">EduReport Ghana</p><p className="text-sm font-medium text-primary-foreground/90">Manage Students. Simplify Assessments. Create Reports with Ease.</p></div>
         </div>
       </header>
       <main className="mx-auto w-full max-w-md px-5 py-10 sm:py-14">

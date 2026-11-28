@@ -116,7 +116,7 @@ function SchoolCloudPage() {
                 <button onClick={upload} disabled={busy} className={`${btn} mt-3`}>Upload to School Cloud</button>
               </div>
             )}
-            <BackupRestore canRestore={cloud.role === "headteacher"} schoolId={cloud.schoolId} />
+            {cloud.role === "headteacher" && <BackupRestore canRestore schoolId={cloud.schoolId} />}
             <div className={card}>
               <p className="font-bold">Joined the wrong school?</p>
               <p className="text-sm text-muted-foreground">Enter your headteacher's School Code to switch to the right school.</p>

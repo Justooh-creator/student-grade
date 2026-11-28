@@ -51,3 +51,12 @@
 - [ ] Batch 1: preserve signature/stamp ink, rearrange Basic 1–9 headers, dedicated broadsheet subject summary in preview/PDF.
 - [ ] Batch 2: head-only bin clearing, 15-day display countdown, collapsed developer bin/permanent clearing, targeted developer announcements.
 - [ ] Verify both batches with tests and signed-in preview/print flows.
+
+## Current staff and developer bundle
+- [ ] Header subtitle, EduReport share icon and centered Settings credits.
+- [ ] Headteacher-only School Cloud backup controls; preserve teacher uploads.
+- [ ] Notification ON/OFF toggle; retain background delivery and honor OFF for local alerts.
+- [ ] Editable duty plans with added/deleted weeks and persistent week numbers.
+- [ ] Confirmed announcement deletion and revision-aware broadcast popups.
+- [ ] Compact developer-only registration panel with search and eight accounts per page.
+- [ ] Run regression tests, check preview and save the completed bundle.

@@ -8,6 +8,7 @@ import { DevRecycleBin } from "@/components/StudentRecycleBin";
 import { DevUnverifiedPanel } from "@/components/DevUnverifiedPanel";
 import { DevSchoolLicensePanel } from "@/components/DevSchoolLicensePanel";
 import { DevAnnouncementPanel } from "@/components/DeveloperAnnouncements";
+import { DevRegistrationsPanel } from "@/components/DevRegistrationsPanel";
 import { Button } from "@/components/ui/button";
 import { useAppData } from "@/lib/store";
 import { useUser } from "@/lib/auth";
@@ -15,6 +16,10 @@ import { useCloud } from "@/lib/cloud";
 import { getTheme, setTheme, getFontSize, setFontSize, type ThemeChoice, type FontSizeChoice } from "@/lib/theme";
 
 export const Route = createFileRoute("/_authenticated/settings")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    registrationSearch: typeof search["registrationSearch"] === "string" ? search["registrationSearch"].slice(0, 100) : "",
+    registrationPage: Math.max(0, Math.min(125000, Math.floor(Number(search["registrationPage"]) || 0))),
+  }),
   head: () => ({
     meta: [
       { title: "Settings — EduReport Ghana" },
@@ -125,14 +130,15 @@ function SettingsPage() {
 
         <Section title="Help & About">
           <Button asChild variant="outline" className="mb-2 w-full"><Link to="/help">❓ Help & FAQs</Link></Button>
-          <p className="text-sm">🇬🇭 EduReport Ghana — A Product of <strong>JA EduTech Solutions</strong></p>
-          <p className="mt-1 text-sm">
+          <p className="text-center text-sm">🇬🇭 EduReport Ghana — A Product of <strong>JA EduTech Solutions</strong></p>
+          <p className="mt-1 text-center text-sm">
             <a href="https://wa.me/233530887628" target="_blank" rel="noreferrer" className="font-bold text-primary underline">Chat on WhatsApp</a>{" • "}
             <a href="mailto:support@edureportghana.com" className="font-bold text-primary underline">support@edureportghana.com</a>
           </p>
         </Section>
 
         <DevUnverifiedPanel />
+        <DevRegistrationsPanel />
         <DevRecycleBin />
         <DevAnnouncementPanel />
         <DevSchoolLicensePanel />
